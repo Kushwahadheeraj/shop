@@ -1,5 +1,4 @@
 
-import React from "react";
 import Image5 from '../Image/both.jpg'
 import Image from "next/image";
 

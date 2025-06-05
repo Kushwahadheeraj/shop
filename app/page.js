@@ -1,13 +1,16 @@
-import { Button } from "@/components/ui/button"
-import Header from "@/components/header"
-import Navbar from "@/components/Navbar"
+import Header from '@/components/header';
+import Navbar from '@/components/Navbar';
+import HomePage from './Home/HomePage';
+import Footer from '@/components/footer';
 
 export default function Home() {
   return (
-    <div>
-      <Header/>
-      <Navbar/>
-      <Button>Click me</Button>
-    </div>
-  )
+        <div >
+          <Header />
+          <Navbar />
+          <HomePage />
+          <Footer />
+        </div>
+
+  );
 }

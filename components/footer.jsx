@@ -1,3 +1,5 @@
+import AppStore from '@/public/appstore.png';
+import Image from 'next/image';
 export default function Footer() {
   return (
     <footer className="bg-black text-white pt-10 pb-4 px-4">
@@ -52,8 +54,8 @@ export default function Footer() {
             <h3 className="font-bold mb-2 tracking-wide">DOWNLOAD OUR APP</h3>
             <div className="w-8 border-b-2 border-gray-400 mb-2"></div>
             <div className="flex flex-col gap-2 mt-2">
-              <img src="/appstore.png" alt="App Store" className="w-32" />
-              <img src="/googleplay.png" alt="Google Play" className="w-32" />
+              <Image src={AppStore} alt="App Store" className="w-32" />
+              {/* <img src="/googleplay.png" alt="Google Play" className="w-32" /> */}
             </div>
           </div>
           {/* CONNECT WITH US */}
@@ -69,6 +71,7 @@ export default function Footer() {
         </div>
         {/* Payment Methods */}
         <div className="flex flex-wrap gap-2 justify-center mt-8 mb-4">
+
           <img src="/cod.png" alt="Cash on Delivery" className="h-7" />
           <img src="/gpay.png" alt="GPay" className="h-7" />
           <img src="/visa.png" alt="Visa" className="h-7" />

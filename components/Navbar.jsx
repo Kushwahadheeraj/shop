@@ -15,7 +15,7 @@ const navItems = [
 
 export default function Navbar() {
   return (
-    <nav className='bg-black w-full text-white'>
+    <nav className='bg-black w-full text-white  lg:visible  lg:!flex lg:basis-auto md:hidden hidden '>
       <ul className='flex items-center px-2 py-2'>
         {navItems.map((item) => (
           <li key={item.label} className='relative group px-3'>
@@ -367,7 +367,7 @@ export default function Navbar() {
             {item.label === 'SANITARY WARE & FAUCETS' && (
               <div className='absolute top-full left-0 w-[20rem] bg-white text-black shadow-lg p-6 hidden group-hover:grid  gap-2 z-50'>
                 {/* Column 1 */}
-                <ul class='submenu'>
+                <ul className='submenu'>
                   <li>
                     <a href='#'>Acrylic Products</a>
                   </li>

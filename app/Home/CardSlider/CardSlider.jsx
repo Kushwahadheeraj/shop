@@ -24,7 +24,7 @@ import card20 from '@/public/spraypaints.jpeg';
 import card21 from '@/public/tools.jpeg';
 import card22 from '@/public/trank.webp';
 import card23 from '@/public/wallpaper.jpeg';
-import card24 from '@/public/waterproofing.avif';
+import card24 from '@/public/watterproofing.jpg';
 
 
 const cards = [

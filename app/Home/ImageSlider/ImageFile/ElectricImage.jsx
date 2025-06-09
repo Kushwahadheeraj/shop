@@ -1,4 +1,4 @@
-import Image3 from '../Image/electrical.jpg';
+import Image3 from '@/public/electrical.jpg';
 import Image from 'next/image';
 
 const dataSlider = [
@@ -17,7 +17,7 @@ const ElectricImage = () => {
         <div key={index} className='relative'>
           <Image
             src={slide.image}
-            alt={slide.title}
+            alt={slide.mainText}
             className='w-full h-screen  object-cover'
           />
           <div

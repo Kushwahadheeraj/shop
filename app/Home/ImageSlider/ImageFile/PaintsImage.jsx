@@ -18,7 +18,7 @@ const PaintsImage = () => {
         <div key={index} className='relative'>
           <Image
             src={slide.image}
-            alt={slide.title}
+            alt={slide.mainText}
             className='w-full h-screen  object-cover'
           />
           <div

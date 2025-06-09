@@ -40,6 +40,7 @@ export default function Card() {
                             <div className="h-96 w-72">
                                 <Image className="h-full w-full stroke-black object-cover"
                                     src={slider.imageUrl}
+                                    alt={slider.mainText}
                                     />
                             </div>
                             

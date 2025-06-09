@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import Image4 from '../Image/saver.png';
+import Image4 from '@/public/saver.png';
 
 const dataSlider = [
   {
@@ -20,7 +20,7 @@ const FaucetsImage = () => {
         <div key={index} className='relative'>
           <Image
             src={slide.image}
-            alt={slide.title}
+            alt={slide.mainText}
             className='w-full h-screen object-cover'
           />
           <div className='absolute inset-0 lg:ml-36 lg:w-[422px] w-[220px] flex flex-col justify-center lg:text-center lg:items-center text-white lg:p-4'>

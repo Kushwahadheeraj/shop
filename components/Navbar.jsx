@@ -1,8 +1,8 @@
 import React from 'react';
 
 const navItems = [
-  { label: 'HOME', href: '#', active: true },
-  { label: 'SHOP', href: '#' },
+  { label: 'HOME', href: '/' },
+  { label: 'SHOP', href: '/Shop' },
   { label: 'PAINTS', href: '#', hasDropdown: true },
   { label: 'ELECTRICALS', href: '#', hasDropdown: true },
   { label: 'SANITARY WARE & FAUCETS', href: '#', hasDropdown: true },
@@ -10,12 +10,12 @@ const navItems = [
   { label: 'ADHESIVE', href: '#' },
   { label: 'CLEANING', href: '#' },
   { label: 'TOOLS', href: '#', hasDropdown: true },
-  { label: 'TRACKING', href: '#' },
+  { label: 'TRACKING', href: '/Tracking' },
 ];
 
 export default function Navbar() {
   return (
-    <nav className='bg-black w-full text-white  lg:visible  lg:!flex lg:basis-auto md:hidden hidden '>
+    <nav className="fixed top-24 left-0 w-full z-40 h-12 bg-black text-white lg:visible lg:!flex lg:basis-auto md:hidden hidden">
       <ul className='flex items-center px-2 py-2'>
         {navItems.map((item) => (
           <li key={item.label} className='relative group px-3'>

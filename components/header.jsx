@@ -13,7 +13,8 @@ export default function Header() {
 
   return (
     <>
-      <header className='flex w-full items-center justify-between px-4 py-3 bg-white border-b'>
+  
+      <header className='fixed top-0 left-0 w-full z-50 h-24 flex items-center justify-between px-4 py-3 bg-white border-b shadow'>
         {/* Left: Hamburger, Logo, Brand */}
         <div className='flex items-center gap-3'>
           {/* Hamburger menu icon */}

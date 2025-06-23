@@ -1,19 +1,25 @@
 "use client";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import {
+  CardDescription,
+  CardTitle,
+} from "@/components/ui/card";
 import { User } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 
-export default function Tracking() {
+export default function Orders() {
   const [orderId, setOrderId] = useState("");
   const [email, setEmail] = useState("");
 
   return (
     <div className="bg-[#f8f8f8] min-h-screen py-8">
       <div className="max-w-6xl mx-auto bg-white rounded shadow-sm">
-        <h1 className="text-3xl font-extrabold text-center py-6 tracking-widest">TRACK YOUR ORDER</h1>
+         <div>
+              <CardTitle className="text-2xl">MY ACCOUNT</CardTitle>
+              <CardDescription className="text-lg">ORDERS</CardDescription>
+            </div>
         <Separator />
         <div className="flex flex-col md:flex-row">
           {/* Sidebar */}
@@ -29,7 +35,8 @@ export default function Tracking() {
                 <li>
                   <Link
                     href="/dashboard"
-                    className="block font-bold border-l-4 border-yellow-400 pl-2 bg-gray-100"
+                    className="block hover:bg-gray-100 pl-2 py-1 cursor-pointer"
+
                   >
                     DASHBOARD
                   </Link>
@@ -37,7 +44,7 @@ export default function Tracking() {
                 <li>
                   <Link
                     href="/Orders"
-                    className="block hover:bg-gray-100 pl-2 py-1 cursor-pointer"
+                    className="block font-bold border-l-4 border-yellow-400 pl-2 bg-gray-100"
                   >
                     ORDERS
                   </Link>
@@ -78,40 +85,20 @@ export default function Tracking() {
             </nav>
           </div>
           {/* Main Content */}
-          <div className="md:w-2/3 px-8 py-8">
-            <p className="mb-6 text-gray-600">
-              To track your order please enter your Order ID in the box below and press the "Track" button.
-              This was given to you on your receipt and in the confirmation email you should have received.
-            </p>
-            <form className="flex flex-col md:flex-row gap-4 items-center">
-              <div className="flex-1">
-                <label className="block font-bold mb-1">Order ID</label>
-                <Input
-                  placeholder="Found in your order confirmation email."
-                  value={orderId}
-                  onChange={e => setOrderId(e.target.value)}
-                  className="w-full"
-                />
+           <div className="w-full md:w-3/4">
+              <div className="text-center space-y-4">
+                <p className="text-gray-600">No order has been made yet.</p>
+                <Button asChild className="bg-yellow-400 hover:bg-yellow-500">
+                  <Link href="/shop">
+                    BROWSE PRODUCTS
+                  </Link>
+                </Button>
               </div>
-              <div className="flex-1">
-                <label className="block font-bold mb-1">Billing email</label>
-                <Input
-                  placeholder="Email you used during checkout."
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  className="w-full"
-                />
-              </div>
-              <Button
-                type="submit"
-                className="bg-yellow-400 hover:bg-yellow-500 text-white font-bold px-8 py-2 mt-6 md:mt-0"
-              >
-                TRACK
-              </Button>
-            </form>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    // </div>
   );
 }
+

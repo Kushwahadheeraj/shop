@@ -3,7 +3,8 @@ import "./globals.css";
 import Header from "@/components/header";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/footer";
-import Update from "./Update/Update";
+import { ClerkProvider } from "@clerk/nextjs";
+import UpdateWrapper from "@/components/UpdateWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,16 +23,20 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased pt-36`}
-      >
-        <Header />
-        <Navbar />
-        {children}
-        <Update />
-        <Footer />
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased pt-36`}
+        >
+          <Header />
+          {/* <Navbar /> */}
+          <UpdateWrapper />
+          {children}
+          <Footer />
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
+
+

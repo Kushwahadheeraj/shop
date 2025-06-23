@@ -6,14 +6,16 @@ import Logo from '@/public/logo.png';
 import Sidebar from './Sidebar';
 import { FiMenu } from 'react-icons/fi';
 import { IoClose } from 'react-icons/io5';
+import LoginRegisterModal from "@/components/LoginRegisterModal";
 
 
 export default function Header() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
 
   return (
     <>
-  
+
       <header className='fixed top-0 left-0 w-full z-50 h-24 flex items-center justify-between px-4 py-3 bg-white border-b shadow'>
         {/* Left: Hamburger, Logo, Brand */}
         <div className='flex items-center gap-3'>
@@ -26,7 +28,6 @@ export default function Header() {
           >
             {sidebarOpen ? <IoClose size={24} /> : <FiMenu size={24} />}
           </button>
-
           <Image
             src={Logo}
             alt='Hardware Shack Logo'
@@ -63,11 +64,11 @@ export default function Header() {
         </div>
         {/* Right: Cart button only on mobile, show login/register on md+ */}
         <div className='flex items-center gap-4'>
-          <Link href='/login' className='hidden md:block'>
-            <p className='bg-yellow-400 hover:bg-yellow-500 text-white font-bold px-6 py-2 rounded-full transition'>
-              LOGIN / REGISTER
-            </p>
-          </Link>
+          {/* <Link href='/login' className='hidden md:block'> */}
+              {/* LOGIN / REGISTER */}
+              <button  onClick={() => setShowLogin(true)} className='bg-yellow-400 hover:bg-yellow-500 text-white font-bold px-6 py-2 rounded-full transition'>Login / Register</button>
+              <LoginRegisterModal open={showLogin} onClose={() => setShowLogin(false)} />
+          {/* </Link> */}
           <span className='h-8 border-l border-gray-300 hidden md:inline-block'></span>
           <Link href='/cart'>
             <p className='bg-yellow-400 hover:bg-yellow-500 text-white font-bold w-12 h-12 rounded-full flex items-center justify-center transition'>

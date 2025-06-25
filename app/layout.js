@@ -1,10 +1,11 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/header";
-import Navbar from "@/components/Navbar";
+// import Header from "@/components/header";
+// import Navbar from "@/components/Navbar";
 import Footer from "@/components/footer";
-import { ClerkProvider } from "@clerk/nextjs";
+// import { ClerkProvider } from "@clerk/nextjs";
 import UpdateWrapper from "@/components/UpdateWrapper";
+import { AuthProvider } from '../components/AuthContext';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,19 +24,21 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased pt-36`}
-        >
-          <Header />
-          {/* <Navbar /> */}
-          <UpdateWrapper />
-          {children}
-          <Footer />
-        </body>
-      </html>
-    </ClerkProvider>
+    // <ClerkProvider>
+      <AuthProvider>
+        <html lang="en">
+          <body
+            className={`${geistSans.variable} ${geistMono.variable} antialiased `}
+          >
+            {/* <Header /> */}
+            {/* <Navbar /> */}
+            <UpdateWrapper />
+            {children}
+            <Footer />
+          </body>
+        </html>
+      </AuthProvider>
+    // </ClerkProvider>
   );
 }
 

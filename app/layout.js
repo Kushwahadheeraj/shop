@@ -1,11 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-// import Header from "@/components/header";
-// import Navbar from "@/components/Navbar";
-import Footer from "@/components/footer";
-// import { ClerkProvider } from "@clerk/nextjs";
 import UpdateWrapper from "@/components/UpdateWrapper";
 import { AuthProvider } from '../components/AuthContext';
+import ConditionalFooter from "@/components/ConditionalFooter";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,21 +21,17 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    // <ClerkProvider>
       <AuthProvider>
         <html lang="en">
           <body
             className={`${geistSans.variable} ${geistMono.variable} antialiased `}
           >
-            {/* <Header /> */}
-            {/* <Navbar /> */}
             <UpdateWrapper />
             {children}
-            <Footer />
+            <ConditionalFooter />
           </body>
         </html>
       </AuthProvider>
-    // </ClerkProvider>
   );
 }
 

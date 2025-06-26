@@ -6,15 +6,22 @@ import { Button } from "@/components/ui/button";
 const navItems = [
   { name: "Home", path: "/Dashboard/Home" },
   { name: "Paint", path: "/Dashboard/Paint" },
-  { name: "Electrical", path: "/Dashboard/Electrical" },
-  { name: "Tools", path: "/Dashboard/Tools" },
-  { name: "Fitting", path: "/Dashboard/Fitting" },
-  { name: "Plumbing", path: "/Dashboard/Plumbing" },
   { name: "Sanitary", path: "/Dashboard/Sanitary" },
+  { name: "Plumbing", path: "/Dashboard/Plumbing" },
+  { name: "Tools", path: "/Dashboard/Tools" },
   { name: "Hardware", path: "/Dashboard/Hardware" },
-  { name: "Lighting", path: "/Dashboard/Lighting" },
+  { name: "Cements & POP", path: "/Dashboard/Cements" },
+  { name: "Roofer", path: "/Dashboard/Roofer" },
+  { name: "PVC Mats", path: "/Dashboard/PvcMats" },
+  { name: "Fiber Sheet", path: "/Dashboard/Fiber" },
+  { name: "Home Decor", path: "/Dashboard/HomeDecor" },
+  { name: "Pipe", path: "/Dashboard/Pipe" },
+  { name: "Brush", path: "/Dashboard/Brush" },
   { name: "Adhesives", path: "/Dashboard/Adhesives" },
-  { name: "Abrasives", path: "/Dashboard/Abrasives" },
+  { name: "Cleaning", path: "/Dashboard/Cleaning" },
+  { name: "Electrical", path: "/Dashboard/Electrical" },
+  { name: "Electrical Fitting", path: "/Dashboard/Fitting" },
+  { name: "Lighting", path: "/Dashboard/Lighting" },
 ];
 
 export default function Sidebar({ onSetting, onLogout }) {
@@ -25,13 +32,12 @@ export default function Sidebar({ onSetting, onLogout }) {
         <ul className="p-4 space-y-2">
           {navItems.map((item) => (
             <li key={item.name}>
-              <Link href={item.path} legacyBehavior>
+              <Link href={item.path}>
                 <Button
-                  asChild
                   variant="ghost"
                   className="w-full justify-start text-left text-white hover:bg-gray-800 cursor-pointer"
                 >
-                  <a>{item.name}</a>
+                  {item.name}
                 </Button>
               </Link>
             </li>

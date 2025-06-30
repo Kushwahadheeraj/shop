@@ -1,8 +1,11 @@
+import ProductForm from './ProductForm';
+
 export default function RooferPage() {
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Adhesives Section</h1>
-      <p>This is the Adhesives section of the dashboard. You can add adhesives-related content here.</p>
+      <h1 className="text-2xl font-bold mb-4">Roofer Products</h1>
+      <ProductForm />
+      {/* List products here */}
     </div>
   );
 } 

@@ -18,6 +18,7 @@ connectDB();
 app.use('/api/seller', require('./routes/sellerRoutes'));
 app.use('/api/adhesives-products', adhesivesProductRoutes);
 app.use('/api/brush-products', brushProductRoutes);
+app.use('/api/cleaning-products', require('./routes/cleaningProductRoutes'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {

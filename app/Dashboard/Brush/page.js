@@ -1,4 +1,10 @@
-import ProductForm from "./ProductForm.jsx";
-export default function Page() {
-  return <ProductForm />;
+import ProductForm from './ProductForm';
+
+export default function BrushPage() {
+  return (
+    <div>
+      <h1 className="text-2xl font-bold mb-4">Brush Product</h1>
+      <ProductForm />
+    </div>
+  );
 } 

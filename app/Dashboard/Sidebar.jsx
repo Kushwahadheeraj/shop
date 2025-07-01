@@ -294,12 +294,12 @@ export default function Sidebar({ onSetting, onLogout, open, onClose }) {
                 <ul className="pl-4">
                   {section.subItems.map((item) => (
                     <li key={item.name}>
-                      <a
+                      <Link
                         href={item.path}
                         className="block px-2 py-2 rounded text-sm hover:bg-zinc-700 transition"
                       >
                         {item.name}
-                      </a>
+                      </Link>
                     </li>
                   ))}
                 </ul>

@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
+import Link from "next/link";
 
 
 
@@ -268,19 +269,27 @@ export default function Sidebar({ onSetting, onLogout, open, onClose }) {
 
           {sections.map((section) => (
             <div key={section.name} className="mb-2">
-              <button
-                className="flex items-center w-full px-2 py-2 rounded text-sm font-semibold hover:bg-zinc-700 transition group"
-                onClick={() => handleToggle(section.name)}
-              >
-                <span className="flex-1 text-left">{section.name}</span>
+              <div className="flex items-center w-full">
+                <Link
+                  href={section.path}
+                  className="flex-1 text-left px-2 py-2 rounded text-sm font-semibold hover:bg-zinc-700 transition group cursor-pointer"
+                  onClick={() => handleToggle(section.name)}
+                >
+                  {section.name}
+                </Link>
                 {section.subItems && section.subItems.length > 0 && (
-                  openSection === section.name ? (
-                    <FiChevronUp className="ml-2 transition-transform" />
-                  ) : (
-                    <FiChevronDown className="ml-2 transition-transform" />
-                  )
+                  <button
+                    className="ml-2"
+                    onClick={(e) => { e.stopPropagation(); handleToggle(section.name); }}
+                  >
+                    {openSection === section.name ? (
+                      <FiChevronUp className="transition-transform" />
+                    ) : (
+                      <FiChevronDown className="transition-transform" />
+                    )}
+                  </button>
                 )}
-              </button>
+              </div>
               {openSection === section.name && section.subItems && (
                 <ul className="pl-4">
                   {section.subItems.map((item) => (

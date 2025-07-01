@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const connectDB = require('./config/db');
+const adhesivesProductRoutes = require('./routes/adhesivesProductRoutes');
+const brushProductRoutes = require('./routes/brushProductRoutes');
 
 const app = express();
 
@@ -14,6 +16,8 @@ connectDB();
 
 // Routes
 app.use('/api/seller', require('./routes/sellerRoutes'));
+app.use('/api/adhesives-products', adhesivesProductRoutes);
+app.use('/api/brush-products', brushProductRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

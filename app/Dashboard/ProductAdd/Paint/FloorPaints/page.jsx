@@ -1,0 +1,10 @@
+import ProductForm from "./ProductForm";
+
+export default function FloorPaints() {
+  return (
+    <div>
+      <h1 className="text-2xl font-bold mb-4">Floor Paints</h1>
+      <ProductForm />
+    </div>
+  );
+} 

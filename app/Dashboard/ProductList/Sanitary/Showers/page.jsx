@@ -1,0 +1,10 @@
+import ProductList from "./ProductList";
+
+export default function Showers() {
+  return (
+    <div>
+      <h1 className="text-2xl font-bold mb-4">Showers</h1>
+      <ProductList />
+    </div>
+  );
+} 

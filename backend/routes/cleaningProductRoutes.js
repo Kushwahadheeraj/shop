@@ -28,4 +28,54 @@ router.post('/', upload.array('photos', 5), async (req, res) => {
   }
 });
 
+// Get all cleaning products
+router.get('/', async (req, res) => {
+  try {
+    const products = await CleaningProduct.find();
+    res.json(products);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Get one cleaning product by ID
+router.get('/:id', async (req, res) => {
+  try {
+    const product = await CleaningProduct.findById(req.params.id);
+    if (!product) return res.status(404).json({ error: 'Product not found' });
+    res.json(product);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Update cleaning product by ID
+router.put('/:id', upload.array('photos', 5), async (req, res) => {
+  try {
+    let updateData = { ...req.body };
+    if (req.files && req.files.length > 0) {
+      updateData.photos = req.files.map(file => file.path);
+    }
+    if (updateData.tags) {
+      updateData.tags = Array.isArray(updateData.tags) ? updateData.tags : [updateData.tags];
+    }
+    const product = await CleaningProduct.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    if (!product) return res.status(404).json({ error: 'Product not found' });
+    res.json(product);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Delete cleaning product by ID
+router.delete('/:id', async (req, res) => {
+  try {
+    const result = await CleaningProduct.findByIdAndDelete(req.params.id);
+    if (!result) return res.status(404).json({ error: 'Product not found' });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 module.exports = router; 

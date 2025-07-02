@@ -4,6 +4,7 @@ require('dotenv').config();
 const connectDB = require('./config/db');
 const adhesivesProductRoutes = require('./routes/adhesivesProductRoutes');
 const brushProductRoutes = require('./routes/brushProductRoutes');
+const analyticsRoutes = require('./routes/analyticsRoutes');
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use('/api/seller', require('./routes/sellerRoutes'));
 app.use('/api/adhesives-products', adhesivesProductRoutes);
 app.use('/api/brush-products', brushProductRoutes);
 app.use('/api/cleaning-products', require('./routes/cleaningProductRoutes'));
+app.use('/api/analytics', analyticsRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

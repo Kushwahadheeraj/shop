@@ -7,248 +7,481 @@ import Link from "next/link";
 
 
 const sections = [
-  { name: "Adhesives", path: "/Dashboard/Adhesives" },
-  { name: "Brush", path: "/Dashboard/Brush" },
-  { name: "Cements & POP", path: "/Dashboard/Cements" },
-  { name: "Cleaning", path: "/Dashboard/Cleaning" },
-  { name: "Dry Wall Gypsum Screws", path: "/Dashboard/Dry" },
+  {name: "Dashboard",path: "/Dashboard"},
+  {name: "Product Add",
+    subItems:[
+{ name: "Adhesives", path: "/Dashboard/ProductAdd/Adhesives" },
+  { name: "Brush", path: "/Dashboard/ProductAdd/Brush" },
+  { name: "Cements & POP", path: "/Dashboard/ProductAdd/Cements" },
+  { name: "Cleaning", path: "/Dashboard/ProductAdd/Cleaning" },
+  { name: "Dry Wall Gypsum Screws", path: "/Dashboard/ProductAdd/Dry" },
   {
     name: "Electrical Item",
-    subItems: [
-      { name: "Adaptors", path: "/Dashboard/Electrical/Adaptors" },
-      { name: "Ceiling Roses", path: "/Dashboard/Electrical/CeilingRoses" },
-      { name: "Dimmer", path: "/Dashboard/Electrical/Dimmer" },
-      { name: "Distribution Boards", path: "/Dashboard/Electrical/DistributionBoards" },
-      { name: "Door Bells", path: "/Dashboard/Electrical/DoorBells" },
-      { name: "DP-switch", path: "/Dashboard/Electrical/DPswitch" },
-      { name: "Earthing Accessories", path: "/Dashboard/Electrical/EarthingAccessories" },
-      { name: "ELCBs OR RCCBs", path: "/Dashboard/Electrical/ELCBsRCCBs" },
-      { name: "Electrical Fittings", path: "/Dashboard/Electrical/ElectricalFittings", subItems: [] },
-      { name: "Fans", path: "/Dashboard/Electrical/Fans", subItems: [] },
-      { name: "Flexible Conduit", path: "/Dashboard/Electrical/FlexibleConduit" },
-      { name: "Flexible Wires", path: "/Dashboard/Electrical/FlexibleWires" },
-      { name: "Fuse Carriers", path: "/Dashboard/Electrical/FuseCarriers" },
-      { name: "Holders", path: "/Dashboard/Electrical/Holders" },
-      { name: "Indicator", path: "/Dashboard/Electrical/Indicator" },
-      { name: "Insulation Tapes", path: "/Dashboard/Electrical/InsulationTapes" },
-      { name: "Isolators", path: "/Dashboard/Electrical/Isolators" },
-      { name: "Jacks", path: "/Dashboard/Electrical/Jacks" },
-      { name: "KIT KAT Fuses", path: "/Dashboard/Electrical/KITKATFuses" },
-      { name: "Lights", path: "/Dashboard/Electrical/Lights", subItems: [] },
-      { name: "Main Switch", path: "/Dashboard/Electrical/MainSwitch" },
-      { name: "MCB", path: "/Dashboard/Electrical/MCB" },
-      { name: "Modular/Surface Box", path: "/Dashboard/Electrical/ModularSurfaceBox" },
-      { name: "Motor Starters", path: "/Dashboard/Electrical/MotorStarters" },
-      { name: "Motors", path: "/Dashboard/Electrical/Motors" },
-      { name: "Others", path: "/Dashboard/Electrical/Others" },
-      { name: "Pin top", path: "/Dashboard/Electrical/PinTop" },
-      { name: "Plug", path: "/Dashboard/Electrical/Plug" },
-      { name: "Power Strips", path: "/Dashboard/Electrical/PowerStrips" },
-      { name: "PVC Clips", path: "/Dashboard/Electrical/PVCClips" },
-      { name: "Regulators", path: "/Dashboard/Electrical/Regulators" },
-      { name: "Rotary Switch", path: "/Dashboard/Electrical/RotarySwitch" },
-      { name: "Sockets", path: "/Dashboard/Electrical/Sockets" },
-      { name: "Switch & Socket", path: "/Dashboard/Electrical/SwitchAndSocket" },
-      { name: "Switch Plates", path: "/Dashboard/Electrical/SwitchPlates" },
-      { name: "Switches", path: "/Dashboard/Electrical/Switches" },
-      { name: "Travel adaptor", path: "/Dashboard/Electrical/TravelAdaptor" },
-      { name: "TV outlets", path: "/Dashboard/Electrical/TVOutlets" },
-      { name: "Uni Switch Socket Combined Units", path: "/Dashboard/Electrical/UniSwitch" },
-      { name: "Water Heater", path: "/Dashboard/Electrical/Water Heater" },
-      { name: "Water Heaters", path: "/Dashboard/Electrical/WaterHeaters" },
-      { name: "Wires & Cables", path: "/Dashboard/Electrical/WiresAndCables" },
+    subItemsName: [
+      { name: "Adaptors", path: "/Dashboard/ProductAdd/Electrical/Adaptors" },
+      { name: "Ceiling Roses", path: "/Dashboard/ProductAdd/Electrical/CeilingRoses" },
+      { name: "Dimmer", path: "/Dashboard/ProductAdd/Electrical/Dimmer" },
+      { name: "Distribution Boards", path: "/Dashboard/ProductAdd/Electrical/DistributionBoards" },
+      { name: "Door Bells", path: "/Dashboard/ProductAdd/Electrical/DoorBells" },
+      { name: "DP-switch", path: "/Dashboard/ProductAdd/Electrical/DPswitch" },
+      { name: "Earthing Accessories", path: "/Dashboard/ProductAdd/Electrical/EarthingAccessories" },
+      { name: "ELCBs OR RCCBs", path: "/Dashboard/ProductAdd/Electrical/ELCBsRCCBs" },
+      { name: "Electrical Fittings", path: "/Dashboard/ProductAdd/Electrical/ElectricalFittings", subItemsNameComponent: [] },
+      { name: "Fans", path: "/Dashboard/ProductAdd/Electrical/Fans", subItemsNameComponent: [] },
+      { name: "Flexible Conduit", path: "/Dashboard/ProductAdd/Electrical/FlexibleConduit" },
+      { name: "Flexible Wires", path: "/Dashboard/ProductAdd/Electrical/FlexibleWires" },
+      { name: "Fuse Carriers", path: "/Dashboard/ProductAdd/Electrical/FuseCarriers" },
+      { name: "Holders", path: "/Dashboard/ProductAdd/Electrical/Holders" },
+      { name: "Indicator", path: "/Dashboard/ProductAdd/Electrical/Indicator" },
+      { name: "Insulation Tapes", path: "/Dashboard/ProductAdd/Electrical/InsulationTapes" },
+      { name: "Isolators", path: "/Dashboard/ProductAdd/Electrical/Isolators" },
+      { name: "Jacks", path: "/Dashboard/ProductAdd/Electrical/Jacks" },
+      { name: "KIT KAT Fuses", path: "/Dashboard/ProductAdd/Electrical/KITKATFuses" },
+      { name: "Lights", path: "/Dashboard/ProductAdd/Electrical/Lights", subItemsNameComponent: [] },
+      { name: "Main Switch", path: "/Dashboard/ProductAdd/Electrical/MainSwitch" },
+      { name: "MCB", path: "/Dashboard/ProductAdd/Electrical/MCB" },
+      { name: "Modular/Surface Box", path: "/Dashboard/ProductAdd/Electrical/ModularSurfaceBox" },
+      { name: "Motor Starters", path: "/Dashboard/ProductAdd/Electrical/MotorStarters" },
+      { name: "Motors", path: "/Dashboard/ProductAdd/Electrical/Motors" },
+      { name: "Others", path: "/Dashboard/ProductAdd/Electrical/Others" },
+      { name: "Pin top", path: "/Dashboard/ProductAdd/Electrical/PinTop" },
+      { name: "Plug", path: "/Dashboard/ProductAdd/Electrical/Plug" },
+      { name: "Power Strips", path: "/Dashboard/ProductAdd/Electrical/PowerStrips" },
+      { name: "PVC Clips", path: "/Dashboard/ProductAdd/Electrical/PVCClips" },
+      { name: "Regulators", path: "/Dashboard/ProductAdd/Electrical/Regulators" },
+      { name: "Rotary Switch", path: "/Dashboard/ProductAdd/Electrical/RotarySwitch" },
+      { name: "Sockets", path: "/Dashboard/ProductAdd/Electrical/Sockets" },
+      { name: "Switch & Socket", path: "/Dashboard/ProductAdd/Electrical/SwitchAndSocket" },
+      { name: "Switch Plates", path: "/Dashboard/ProductAdd/Electrical/SwitchPlates" },
+      { name: "Switches", path: "/Dashboard/ProductAdd/Electrical/Switches" },
+      { name: "Travel adaptor", path: "/Dashboard/ProductAdd/Electrical/TravelAdaptor" },
+      { name: "TV outlets", path: "/Dashboard/ProductAdd/Electrical/TVOutlets" },
+      { name: "Uni Switch Socket Combined Units", path: "/Dashboard/ProductAdd/Electrical/UniSwitch" },
+      { name: "Water Heater", path: "/Dashboard/ProductAdd/Electrical/Water Heater" },
+      { name: "Water Heaters", path: "/Dashboard/ProductAdd/Electrical/WaterHeaters" },
+      { name: "Wires & Cables", path: "/Dashboard/ProductAdd/Electrical/WiresAndCables" },
+
     ],
-    path: "/Dashboard/Electrical"
   },
-  { name: "Electrical Fitting", path: "/Dashboard/Fitting" },
-  { name: "Fiber Sheet", path: "/Dashboard/Fiber" },
-  { name: "Hardware", path: "/Dashboard/Hardware" },
-  { name: "Home", path: "/Dashboard/Home" },
-  { name: "Home Decor", path: "/Dashboard/HomeDecor" },
-  { name: "House Hold Ladder", path: "/Dashboard/HouseHold" },
-  { name: "Lighting", path: "/Dashboard/Lighting" },
+  { name: "Electrical Fitting", path: "/Dashboard/ProductAdd/Fitting" },
+  { name: "Fiber Sheet", path: "/Dashboard/ProductAdd/Fiber" },
+  { name: "Hardware", path: "/Dashboard/ProductAdd/Hardware" },
+  { name: "Home", path: "/Dashboard/ProductAdd/Home" },
+  { name: "Home Decor", path: "/Dashboard/ProductAdd/HomeDecor" },
+  { name: "House Hold Ladder", path: "/Dashboard/ProductAdd/HouseHold" },
+  { name: "Lighting", path: "/Dashboard/ProductAdd/Lighting" },
   {
     name: "Locks & accessories",
-    subItems: [
+    subItemsName: [
       {
         name: "DOOR ACCESSORIES",
-        path: "/Dashboard/Locks/DoorAccessories",
-        subItems: []
+        subItemsNameComponent: []
       },
       {
         name: "DOOR CONTROLS",
-        path: "/Dashboard/Locks/DoorControls",
-        subItems: [
-          { name: "Door Handles", path: "/Dashboard/Locks/DoorControls/DoorHandles", subItems: [] },
-          { name: "Door Locks", path: "/Dashboard/Locks/DoorControls/DoorLocks", subItems: [] },
-          { name: "Folding Brackets", path: "/Dashboard/Locks/DoorControls/FoldingBrackets", subItems: [] },
+        subItemsNameComponent: [
+          { name: "Door Handles", path: "/Dashboard/ProductAdd/Locks/DoorControls/DoorHandles", subItemsNameComponent: [] },
+          { name: "Door Locks", path: "/Dashboard/ProductAdd/Locks/DoorControls/DoorLocks", subItemsNameComponent: [] },
+          { name: "Folding Brackets", path: "/Dashboard/ProductAdd/Locks/DoorControls/FoldingBrackets", subItemsNameComponent: [] },
         ]
       },
       {
         name: "FURNITURE FITTINGS",
-        path: "/Dashboard/Locks/FurnitureFittings",
-        subItems: [
-          { name: "Furniture Locks", path: "/Dashboard/Locks/FurnitureFittings/FurnitureLocks", subItems: [] },
+        subItemsNameComponent: [
+          { name: "Furniture Locks", path: "/Dashboard/ProductAdd/Locks/FurnitureFittings/FurnitureLocks", subItemsNameComponent: [] },
         ]
       },
       {
         name: "GLASS HARDWARE",
-        path: "/Dashboard/Locks/GlassHardware",
-        subItems: []
+        subItemsNameComponent: []
       },
       {
         name: "LEVER MORTISE LOCKS",
-        path: "/Dashboard/Locks/LeverMortiseLocks",
-        subItems: [
-          { name: "Mortice Locks", path: "/Dashboard/Locks/LeverMortiseLocks/MorticeLocks", subItems: [] },
-          { name: "Mortise Lock Body", path: "/Dashboard/Locks/LeverMortiseLocks/MortiseLockBody", subItems: [] },
+        subItemsNameComponent: [
+          { name: "Mortice Locks", path: "/Dashboard/ProductAdd/Locks/LeverMortiseLocks/MorticeLocks", subItemsNameComponent: [] },
+          { name: "Mortise Lock Body", path: "/Dashboard/ProductAdd/Locks/LeverMortiseLocks/MortiseLockBody", subItemsNameComponent: [] },
         ]
       },
-      { name: "Padlocks", path: "/Dashboard/Locks/Padlocks", subItems: [] },
-      { name: "Patch Fittings", path: "/Dashboard/Locks/PatchFittings", subItems: [] },
+      { name: "Padlocks", path: "/Dashboard/ProductAdd/Locks/Padlocks", subItemsNameComponent: [] },
+      { name: "Patch Fittings", path: "/Dashboard/ProductAdd/Locks/PatchFittings", subItemsNameComponent: [] },
       {
         name: "POPULAR MORTISE SERIES",
-        path: "/Dashboard/Locks/PopularMortiseSeries",
-        subItems: []
+        subItemsNameComponent: []
       },
       {
         name: "PREMIUM MORTISE SERIES",
-        path: "/Dashboard/Locks/PremiumMortiseSeries",
-        subItems: []
+        subItemsNameComponent: []
       },
-      { name: "Rim Locks", path: "/Dashboard/Locks/RimLocks", subItems: [] },
+      { name: "Rim Locks", path: "/Dashboard/ProductAdd/Locks/RimLocks", subItemsNameComponent: [] },
     ],
-    path: "/Dashboard/Locks"
   },
   {
     name: "Paint",
-    subItems: [
-      { name: "Acrylic Emulsion Paint", path: "/Dashboard/Paint/AcrylicEmulsionPaint", subItems: [] },
-      { name: "Aspa Paints", path: "/Dashboard/Paint/AspaPaints", subItems: [] },
-      { name: "Exterior paints", path: "/Dashboard/Paint/ExteriorPaints", subItems: [] },
-      { name: "Floor Paints", path: "/Dashboard/Paint/FloorPaints", subItems: [] },
-      { name: "Industrial Coatings", path: "/Dashboard/Paint/IndustrialCoatings", subItems: [] },
-      { name: "Interior Paints", path: "/Dashboard/Paint/InteriorPaints", subItems: [] },
-      { name: "Painting Tools", path: "/Dashboard/Paint/PaintingTools", subItems: [] },
-      { name: "Primer and Wall Putty", path: "/Dashboard/Paint/PrimerAndWallPutty", subItems: [] },
-      { name: "Sanitizer", path: "/Dashboard/Paint/Sanitizer", subItems: [] },
-      { name: "Spray Paints", path: "/Dashboard/Paint/SprayPaints", subItems: [] },
-      { name: "Stainers&Thinners", path: "/Dashboard/Paint/StainersThinners", subItems: [] },
-      { name: "Stencils", path: "/Dashboard/Paint/Stencils", subItems: [] },
-      { name: "Tile Guard", path: "/Dashboard/Paint/TileGuard", subItems: [] },
-      { name: "wall stickers and wallpapers", path: "/Dashboard/Paint/WallStickersWallpapers", subItems: [] },
-      { name: "Wood & Metal", path: "/Dashboard/Paint/WoodMetal", subItems: [] },
+    subItemsName: [
+      { name: "Acrylic Emulsion Paint", path: "/Dashboard/ProductAdd/Paint/AcrylicEmulsionPaint", subItemsNameComponent: [] },
+      { name: "Aspa Paints", path: "/Dashboard/ProductAdd/Paint/AspaPaints", subItemsNameComponent: [] },
+      { name: "Exterior paints", path: "/Dashboard/ProductAdd/Paint/ExteriorPaints", subItemsNameComponent: [] },
+      { name: "Floor Paints", path: "/Dashboard/ProductAdd/Paint/FloorPaints", subItemsNameComponent: [] },
+      { name: "Industrial Coatings", path: "/Dashboard/ProductAdd/Paint/IndustrialCoatings", subItemsNameComponent: [] },
+      { name: "Interior Paints", path: "/Dashboard/ProductAdd/Paint/InteriorPaints", subItemsNameComponent: [] },
+      { name: "Painting Tools", path: "/Dashboard/ProductAdd/Paint/PaintingTools", subItemsNameComponent: [] },
+      { name: "Primer and Wall Putty", path: "/Dashboard/ProductAdd/Paint/PrimerAndWallPutty", subItemsNameComponent: [] },
+      { name: "Sanitizer", path: "/Dashboard/ProductAdd/Paint/Sanitizer", subItemsNameComponent: [] },
+      { name: "Spray Paints", path: "/Dashboard/ProductAdd/Paint/SprayPaints", subItemsNameComponent: [] },
+      { name: "Stainers&Thinners", path: "/Dashboard/ProductAdd/Paint/StainersThinners", subItemsNameComponent: [] },
+      { name: "Stencils", path: "/Dashboard/ProductAdd/Paint/Stencils", subItemsNameComponent: [] },
+      { name: "Tile Guard", path: "/Dashboard/ProductAdd/Paint/TileGuard", subItemsNameComponent: [] },
+      { name: "wall stickers and wallpapers", path: "/Dashboard/ProductAdd/Paint/WallStickersWallpapers", subItemsNameComponent: [] },
+      { name: "Wood & Metal", path: "/Dashboard/ProductAdd/Paint/WoodMetal", subItemsNameComponent: [] },
     ],
-    path: "/Dashboard/Paint"
   },
   {
     name: "Pipes & Fittings",
-    subItems: [
-      { name: "Ashirvad Pipes", path: "/Dashboard/Pipes/AshirvadPipes", subItems: [] },
-      { name: "Astral Pipes", path: "/Dashboard/Pipes/AstralPipes", subItems: [] },
-      { name: "Finolex Pipes", path: "/Dashboard/Pipes/FinolexPipes", subItems: [] },
+subItemsName: [
+      { name: "Ashirvad Pipes", path: "/Dashboard/ProductAdd/Pipes/AshirvadPipes", subItemsNameComponent: [] },
+      { name: "Astral Pipes", path: "/Dashboard/ProductAdd/Pipes/AstralPipes", subItemsNameComponent: [] },
+      { name: "Finolex Pipes", path: "/Dashboard/ProductAdd/Pipes/FinolexPipes", subItemsNameComponent: [] },
     ],
-    path: "/Dashboard/Pipes"
   },
   {
     name: "PVC Mats",
-    subItems: [
-      { name: "Floor Mats", path: "/Dashboard/PvcMats/Floor" },
-      { name: "Door Mats", path: "/Dashboard/PvcMats/Door" },
+    subItemsName: [
+      { name: "Floor Mats", path: "/Dashboard/ProductAdd/PvcMats/Floor" },
+      { name: "Door Mats", path: "/Dashboard/ProductAdd/PvcMats/Door" },
     ],
-    path: "/Dashboard/PvcMats"
   },
   {
     name: "Roofer",
-    subItems: [
-      { name: "Shingles", path: "/Dashboard/Roofer/Shingles" },
-      { name: "Metal Roofing", path: "/Dashboard/Roofer/Metal" },
+    subItemsName: [
+      { name: "Shingles", path: "/Dashboard/ProductAdd/Roofer/Shingles" },
+      { name: "Metal Roofing", path: "/Dashboard/ProductAdd/Roofer/Metal" },
     ],
-    path: "/Dashboard/Roofer"
   },
   {
     name: "Sanitary Ware & faucets",
-    subItems: [
-      { name: "Acrylic Products", path: "/Dashboard/Sanitary/AcrylicProducts", subItems: [] },
-      { name: "Bathroom Accessories", path: "/Dashboard/Sanitary/BathroomAccessories", subItems: [] },
-      { name: "Bathsense", path: "/Dashboard/Sanitary/Bathsense", subItems: [] },
-      { name: "Closets", path: "/Dashboard/Sanitary/Closets", subItems: [] },
-      { name: "Coral bath fixtures", path: "/Dashboard/Sanitary/CoralBathFixtures", subItems: [] },
-      { name: "Corsa", path: "/Dashboard/Sanitary/Corsa", subItems: [] },
-      { name: "Essess", path: "/Dashboard/Sanitary/Essess", subItems: [] },
-      { name: "Faucets", path: "/Dashboard/Sanitary/Faucets", subItems: [] },
-      { name: "Hardware & Bathroom Accessories", path: "/Dashboard/Sanitary/HardwareBathroomAccessories", subItems: [] },
-      { name: "Health Faucet", path: "/Dashboard/Sanitary/HealthFaucet", subItems: [] },
-      { name: "Hindware", path: "/Dashboard/Sanitary/Hindware", subItems: [] },
-      { name: "Jaquar", path: "/Dashboard/Sanitary/Jaquar", subItems: [] },
-      { name: "Kitchen Sinks", path: "/Dashboard/Sanitary/KitchenSinks", subItems: [] },
-      { name: "LEMON Bathroom Accessories", path: "/Dashboard/Sanitary/LemonBathroomAccessories", subItems: [] },
-      { name: "Leo Bath Fittings", path: "/Dashboard/Sanitary/LeoBathFittings", subItems: [] },
-      { name: "Parryware", path: "/Dashboard/Sanitary/Parryware", subItems: [] },
-      { name: "Pearl Precious Products", path: "/Dashboard/Sanitary/PearlPreciousProducts", subItems: [] },
-      { name: "Showers", path: "/Dashboard/Sanitary/Showers", subItems: [] },
-      { name: "Taps", path: "/Dashboard/Sanitary/Taps", subItems: [] },
-      { name: "Washbasins", path: "/Dashboard/Sanitary/Washbasins", subItems: [] },
-      { name: "Waterman", path: "/Dashboard/Sanitary/Waterman", subItems: [] },
-      { name: "WaterTec", path: "/Dashboard/Sanitary/WaterTec", subItems: [] },
+    subItemsName: [
+      { name: "Acrylic Products", path: "/Dashboard/ProductAdd/Sanitary/AcrylicProducts", subItemsNameComponent: [] },
+      { name: "Bathroom Accessories", path: "/Dashboard/ProductAdd/Sanitary/BathroomAccessories", subItemsNameComponent: [] },
+      { name: "Bathsense", path: "/Dashboard/ProductAdd/Sanitary/Bathsense", subItemsNameComponent: [] },
+      { name: "Closets", path: "/Dashboard/ProductAdd/Sanitary/Closets", subItemsNameComponent: [] },
+      { name: "Coral bath fixtures", path: "/Dashboard/ProductAdd/Sanitary/CoralBathFixtures", subItemsNameComponent: [] },
+      { name: "Corsa", path: "/Dashboard/ProductAdd/Sanitary/Corsa", subItemsNameComponent: [] },
+      { name: "Essess", path: "/Dashboard/ProductAdd/Sanitary/Essess", subItemsNameComponent: [] },
+      { name: "Faucets", path: "/Dashboard/ProductAdd/Sanitary/Faucets", subItemsNameComponent: [] },
+      { name: "Hardware & Bathroom Accessories", path: "/Dashboard/ProductAdd/Sanitary/HardwareBathroomAccessories", subItemsNameComponent: [] },
+      { name: "Health Faucet", path: "/Dashboard/ProductAdd/Sanitary/HealthFaucet", subItemsNameComponent: [] },
+      { name: "Hindware", path: "/Dashboard/ProductAdd/Sanitary/Hindware", subItemsNameComponent: [] },
+      { name: "Jaquar", path: "/Dashboard/ProductAdd/Sanitary/Jaquar", subItemsNameComponent: [] },
+      { name: "Kitchen Sinks", path: "/Dashboard/ProductAdd/Sanitary/KitchenSinks", subItemsNameComponent: [] },
+      { name: "LEMON Bathroom Accessories", path: "/Dashboard/ProductAdd/Sanitary/LemonBathroomAccessories", subItemsNameComponent: [] },
+      { name: "Leo Bath Fittings", path: "/Dashboard/ProductAdd/Sanitary/LeoBathFittings", subItemsNameComponent: [] },
+      { name: "Parryware", path: "/Dashboard/ProductAdd/Sanitary/Parryware", subItemsNameComponent: [] },
+      { name: "Pearl Precious Products", path: "/Dashboard/ProductAdd/Sanitary/PearlPreciousProducts", subItemsNameComponent: [] },
+      { name: "Showers", path: "/Dashboard/ProductAdd/Sanitary/Showers", subItemsNameComponent: [] },
+      { name: "Taps", path: "/Dashboard/ProductAdd/Sanitary/Taps", subItemsNameComponent: [] },
+      { name: "Washbasins", path: "/Dashboard/ProductAdd/Sanitary/Washbasins", subItemsNameComponent: [] },
+      { name: "Waterman", path: "/Dashboard/ProductAdd/Sanitary/Waterman", subItemsNameComponent: [] },
+      { name: "WaterTec", path: "/Dashboard/ProductAdd/Sanitary/WaterTec", subItemsNameComponent: [] },
     ],
-    path: "/Dashboard/Sanitary"
   },
   {
     name: "Tools",
-    subItems: [
-      { name: "abrasives", path: "/Dashboard/Tools/abrasives", subItems: [] },
-      { name: "Allen Keys", path: "/Dashboard/Tools/AllenKeys", subItems: [] },
-      { name: "Brush", path: "/Dashboard/Tools/Brush", subItems: [] },
-      { name: "Carpenter Pincer", path: "/Dashboard/Tools/CarpenterPincer", subItems: [] },
-      { name: "Centre Punches", path: "/Dashboard/Tools/CentrePunches", subItems: [] },
-      { name: "Chisels", path: "/Dashboard/Tools/Chisels", subItems: [] },
-      { name: "Clamps", path: "/Dashboard/Tools/Clamps", subItems: [] },
-      { name: "Crowbar", path: "/Dashboard/Tools/Crowbar", subItems: [] },
-      { name: "Cutters", path: "/Dashboard/Tools/Cutters", subItems: [] },
-      { name: "files", path: "/Dashboard/Tools/files", subItems: [] },
-      { name: "Garden Tools", path: "/Dashboard/Tools/GardenTools", subItems: [] },
-      { name: "Gear Pullers", path: "/Dashboard/Tools/GearPullers", subItems: [] },
-      { name: "Glass cutter", path: "/Dashboard/Tools/GlassCutter", subItems: [] },
-      { name: "glue gun", path: "/Dashboard/Tools/gluegun", subItems: [] },
-      { name: "Grease Gun", path: "/Dashboard/Tools/GreaseGun", subItems: [] },
-      { name: "Hacksaw Blades", path: "/Dashboard/Tools/HacksawBlades", subItems: [] },
-      { name: "Hammer", path: "/Dashboard/Tools/Hammer", subItems: [] },
-      { name: "Hammer Drills", path: "/Dashboard/Tools/HammerDrills", subItems: [] },
-      { name: "hand tools", path: "/Dashboard/Tools/handtools", subItems: [] },
-      { name: "level", path: "/Dashboard/Tools/level", subItems: [] },
-      { name: "Lubrications", path: "/Dashboard/Tools/Lubrications", subItems: [] },
-      { name: "Measurement Scale", path: "/Dashboard/Tools/MeasurementScale", subItems: [] },
-      { name: "Measuring Tape", path: "/Dashboard/Tools/MeasuringTape", subItems: [] },
-      { name: "Multimeter", path: "/Dashboard/Tools/Multimeter", subItems: [] },
-      { name: "Plier", path: "/Dashboard/Tools/Plier", subItems: [] },
-      { name: "Polishing Accessories", path: "/Dashboard/Tools/PolishingAccessories", subItems: [] },
-      { name: "power tools", path: "/Dashboard/Tools/powertools", subItems: [] },
-      { name: "saw", path: "/Dashboard/Tools/saw", subItems: [] },
-      { name: "Screw Driver", path: "/Dashboard/Tools/ScrewDriver", subItems: [] },
-      { name: "Silicon Gun", path: "/Dashboard/Tools/SiliconGun", subItems: [] },
-      { name: "Socket set", path: "/Dashboard/Tools/Socketset", subItems: [] },
-      { name: "Spanners", path: "/Dashboard/Tools/Spanners", subItems: [] },
-      { name: "Spare Malets", path: "/Dashboard/Tools/SpareMalets", subItems: [] },
-      { name: "Tool Compartments", path: "/Dashboard/Tools/ToolCompartments", subItems: [] },
-      { name: "toolkit set", path: "/Dashboard/Tools/toolkitset", subItems: [] },
-      { name: "various tool bits", path: "/Dashboard/Tools/varioustoolbits", subItems: [] },
-      { name: "wood chisel", path: "/Dashboard/Tools/woodChisel", subItems: [] },
-      { name: "wood items", path: "/Dashboard/Tools/woodItems", subItems: [] },
-      { name: "Wrench", path: "/Dashboard/Tools/Wrench", subItems: [] },
+    subItemsName: [
+      { name: "abrasives", path: "/Dashboard/ProductAdd/Tools/abrasives", subItemsNameComponent: [] },
+      { name: "Allen Keys", path: "/Dashboard/ProductAdd/Tools/AllenKeys", subItemsNameComponent: [] },
+      { name: "Brush", path: "/Dashboard/ProductAdd/Tools/Brush", subItemsNameComponent: [] },
+      { name: "Carpenter Pincer", path: "/Dashboard/ProductAdd/Tools/CarpenterPincer", subItemsNameComponent: [] },
+      { name: "Centre Punches", path: "/Dashboard/ProductAdd/Tools/CentrePunches", subItemsNameComponent: [] },
+      { name: "Chisels", path: "/Dashboard/ProductAdd/Tools/Chisels", subItemsNameComponent: [] },
+      { name: "Clamps", path: "/Dashboard/ProductAdd/Tools/Clamps", subItemsNameComponent: [] },
+      { name: "Crowbar", path: "/Dashboard/ProductAdd/Tools/Crowbar", subItemsNameComponent: [] },
+      { name: "Cutters", path: "/Dashboard/ProductAdd/Tools/Cutters", subItemsNameComponent: [] },
+      { name: "files", path: "/Dashboard/ProductAdd/Tools/files", subItemsNameComponent: [] },
+      { name: "Garden Tools", path: "/Dashboard/ProductAdd/Tools/GardenTools", subItemsNameComponent: [] },
+      { name: "Gear Pullers", path: "/Dashboard/ProductAdd/Tools/GearPullers", subItemsNameComponent: [] },
+      { name: "Glass cutter", path: "/Dashboard/ProductAdd/Tools/GlassCutter", subItemsNameComponent: [] },
+      { name: "glue gun", path: "/Dashboard/ProductAdd/Tools/gluegun", subItemsNameComponent: [] },
+      { name: "Grease Gun", path: "/Dashboard/ProductAdd/Tools/GreaseGun", subItemsNameComponent: [] },
+      { name: "Hacksaw Blades", path: "/Dashboard/ProductAdd/Tools/HacksawBlades", subItemsNameComponent: [] },
+      { name: "Hammer", path: "/Dashboard/ProductAdd/Tools/Hammer", subItemsNameComponent: [] },
+      { name: "Hammer Drills", path: "/Dashboard/ProductAdd/Tools/HammerDrills", subItemsNameComponent: [] },
+      { name: "hand tools", path: "/Dashboard/ProductAdd/Tools/handtools", subItemsNameComponent: [] },
+      { name: "level", path: "/Dashboard/ProductAdd/Tools/level", subItemsNameComponent: [] },
+      { name: "Lubrications", path: "/Dashboard/ProductAdd/Tools/Lubrications", subItemsNameComponent: [] },
+      { name: "Measurement Scale", path: "/Dashboard/ProductAdd/Tools/MeasurementScale", subItemsNameComponent: [] },
+      { name: "Measuring Tape", path: "/Dashboard/ProductAdd/Tools/MeasuringTape", subItemsNameComponent: [] },
+      { name: "Multimeter", path: "/Dashboard/ProductAdd/Tools/Multimeter", subItemsNameComponent: [] },
+      { name: "Plier", path: "/Dashboard/ProductAdd/Tools/Plier", subItemsNameComponent: [] },
+      { name: "Polishing Accessories", path: "/Dashboard/ProductAdd/Tools/PolishingAccessories", subItemsNameComponent: [] },
+      { name: "power tools", path: "/Dashboard/ProductAdd/Tools/powertools", subItemsNameComponent: [] },
+      { name: "saw", path: "/Dashboard/ProductAdd/Tools/saw", subItemsNameComponent: [] },
+      { name: "Screw Driver", path: "/Dashboard/ProductAdd/Tools/ScrewDriver", subItemsNameComponent: [] },
+      { name: "Silicon Gun", path: "/Dashboard/ProductAdd/Tools/SiliconGun", subItemsNameComponent: [] },
+      { name: "Socket set", path: "/Dashboard/ProductAdd/Tools/Socketset", subItemsNameComponent: [] },
+      { name: "Spanners", path: "/Dashboard/ProductAdd/Tools/Spanners", subItemsNameComponent: [] },
+      { name: "Spare Malets", path: "/Dashboard/ProductAdd/Tools/SpareMalets", subItemsNameComponent: [] },
+      { name: "Tool Compartments", path: "/Dashboard/ProductAdd/Tools/ToolCompartments", subItemsNameComponent: [] },
+      { name: "toolkit set", path: "/Dashboard/ProductAdd/Tools/toolkitset", subItemsNameComponent: [] },
+      { name: "various tool bits", path: "/Dashboard/ProductAdd/Tools/varioustoolbits", subItemsNameComponent: [] },
+      { name: "wood chisel", path: "/Dashboard/ProductAdd/Tools/woodChisel", subItemsNameComponent: [] },
+      { name: "wood items", path: "/Dashboard/ProductAdd/Tools/woodItems", subItemsNameComponent: [] },
+      { name: "Wrench", path: "/Dashboard/ProductAdd/Tools/Wrench", subItemsNameComponent: [] },
     ],
-    path: "/Dashboard/Tools"
   },
-  { name: "Uncategorized", path: "/Dashboard/Uncategorized" },
+  { name: "Uncategorized", path: "/Dashboard/ProductAdd/Uncategorized" },
   {
     name: "WaterProofing",
-    subItems: [
-      { name: "Bathrooms", path: "/Dashboard/WaterProofing/Bathrooms", subItems: [] },
-      { name: "Cracks & Joints", path: "/Dashboard/WaterProofing/CracksJoints", subItems: [] },
-      { name: "Interiors", path: "/Dashboard/WaterProofing/Interiors", subItems: [] },
+    subItemsName: [
+      { name: "Bathrooms", path: "/Dashboard/ProductAdd/WaterProofing/Bathrooms", subItemsNameComponent: [] },
+      { name: "Cracks & Joints", path: "/Dashboard/ProductAdd/WaterProofing/CracksJoints", subItemsNameComponent: [] },
+      { name: "Interiors", path: "/Dashboard/ProductAdd/WaterProofing/Interiors", subItemsNameComponent: [] },
     ],
-    path: "/Dashboard/WaterProofing"
   },
+    ]},  
+  {name: "Product List",subItems:[
+    { name: "Adhesives", path: "/Dashboard/ProductList/Adhesives" },
+      { name: "Brush", path: "/Dashboard/ProductList/Brush" },
+      { name: "Cements & POP", path: "/Dashboard/ProductList/Cements" },
+      { name: "Cleaning", path: "/Dashboard/ProductList/Cleaning" },
+      { name: "Dry Wall Gypsum Screws", path: "/Dashboard/ProductList/Dry" },
+      {
+        name: "Electrical Item",
+        subItemsName: [
+          { name: "Adaptors", path: "/Dashboard/ProductList/Electrical/Adaptors" },
+          { name: "Ceiling Roses", path: "/Dashboard/ProductList/Electrical/CeilingRoses" },
+          { name: "Dimmer", path: "/Dashboard/ProductList/Electrical/Dimmer" },
+          { name: "Distribution Boards", path: "/Dashboard/ProductList/Electrical/DistributionBoards" },
+          { name: "Door Bells", path: "/Dashboard/ProductList/Electrical/DoorBells" },
+          { name: "DP-switch", path: "/Dashboard/ProductList/Electrical/DPswitch" },
+          { name: "Earthing Accessories", path: "/Dashboard/ProductList/Electrical/EarthingAccessories" },
+          { name: "ELCBs OR RCCBs", path: "/Dashboard/ProductList/Electrical/ELCBsRCCBs" },
+          { name: "Electrical Fittings", path: "/Dashboard/ProductList/Electrical/ElectricalFittings", subItemsNameComponent: [] },
+          { name: "Fans", path: "/Dashboard/ProductList/Electrical/Fans", subItemsNameComponent: [] },
+          { name: "Flexible Conduit", path: "/Dashboard/ProductList/Electrical/FlexibleConduit" },
+          { name: "Flexible Wires", path: "/Dashboard/ProductList/Electrical/FlexibleWires" },
+          { name: "Fuse Carriers", path: "/Dashboard/ProductList/Electrical/FuseCarriers" },
+          { name: "Holders", path: "/Dashboard/ProductList/Electrical/Holders" },
+          { name: "Indicator", path: "/Dashboard/ProductList/Electrical/Indicator" },
+          { name: "Insulation Tapes", path: "/Dashboard/ProductList/Electrical/InsulationTapes" },
+          { name: "Isolators", path: "/Dashboard/ProductList/Electrical/Isolators" },
+          { name: "Jacks", path: "/Dashboard/ProductList/Electrical/Jacks" },
+          { name: "KIT KAT Fuses", path: "/Dashboard/ProductList/Electrical/KITKATFuses" },
+          { name: "Lights", path: "/Dashboard/ProductList/Electrical/Lights", subItemsNameComponent: [] },
+          { name: "Main Switch", path: "/Dashboard/ProductList/Electrical/MainSwitch" },
+          { name: "MCB", path: "/Dashboard/ProductList/Electrical/MCB" },
+          { name: "Modular/Surface Box", path: "/Dashboard/ProductList/Electrical/ModularSurfaceBox" },
+          { name: "Motor Starters", path: "/Dashboard/ProductList/Electrical/MotorStarters" },
+          { name: "Motors", path: "/Dashboard/ProductList/Electrical/Motors" },
+          { name: "Others", path: "/Dashboard/ProductList/Electrical/Others" },
+          { name: "Pin top", path: "/Dashboard/ProductList/Electrical/PinTop" },
+          { name: "Plug", path: "/Dashboard/ProductList/Electrical/Plug" },
+          { name: "Power Strips", path: "/Dashboard/ProductList/Electrical/PowerStrips" },
+          { name: "PVC Clips", path: "/Dashboard/ProductList/Electrical/PVCClips" },
+          { name: "Regulators", path: "/Dashboard/ProductList/Electrical/Regulators" },
+          { name: "Rotary Switch", path: "/Dashboard/ProductList/Electrical/RotarySwitch" },
+          { name: "Sockets", path: "/Dashboard/ProductList/Electrical/Sockets" },
+          { name: "Switch & Socket", path: "/Dashboard/ProductList/Electrical/SwitchAndSocket" },
+          { name: "Switch Plates", path: "/Dashboard/ProductList/Electrical/SwitchPlates" },
+          { name: "Switches", path: "/Dashboard/ProductList/Electrical/Switches" },
+          { name: "Travel adaptor", path: "/Dashboard/ProductList/Electrical/TravelAdaptor" },
+          { name: "TV outlets", path: "/Dashboard/ProductList/Electrical/TVOutlets" },
+          { name: "Uni Switch Socket Combined Units", path: "/Dashboard/ProductList/Electrical/UniSwitch" },
+          { name: "Water Heater", path: "/Dashboard/ProductList/Electrical/Water Heater" },
+          { name: "Water Heaters", path: "/Dashboard/ProductList/Electrical/WaterHeaters" },
+          { name: "Wires & Cables", path: "/Dashboard/ProductList/Electrical/WiresAndCables" },
+    
+        ],
+      },
+      { name: "Electrical Fitting", path: "/Dashboard/ProductList/Fitting" },
+      { name: "Fiber Sheet", path: "/Dashboard/ProductList/Fiber" },
+      { name: "Hardware", path: "/Dashboard/ProductList/Hardware" },
+      { name: "Home", path: "/Dashboard/ProductList/Home" },
+      { name: "Home Decor", path: "/Dashboard/ProductList/HomeDecor" },
+      { name: "House Hold Ladder", path: "/Dashboard/ProductList/HouseHold" },
+      { name: "Lighting", path: "/Dashboard/ProductList/Lighting" },
+      {
+        name: "Locks & accessories",
+        subItemsName: [
+          {
+            name: "DOOR ACCESSORIES",
+            subItemsNameComponent: []
+          },
+          {
+            name: "DOOR CONTROLS",
+            subItemsNameComponent: [
+              { name: "Door Handles", path: "/Dashboard/ProductList/Locks/DoorControls/DoorHandles", subItemsNameComponent: [] },
+              { name: "Door Locks", path: "/Dashboard/ProductList/Locks/DoorControls/DoorLocks", subItemsNameComponent: [] },
+              { name: "Folding Brackets", path: "/Dashboard/ProductList/Locks/DoorControls/FoldingBrackets", subItemsNameComponent: [] },
+            ]
+          },
+          {
+            name: "FURNITURE FITTINGS",
+            subItemsNameComponent: [
+              { name: "Furniture Locks", path: "/Dashboard/ProductList/Locks/FurnitureFittings/FurnitureLocks", subItemsNameComponent: [] },
+            ]
+          },
+          {
+            name: "GLASS HARDWARE",
+            subItemsNameComponent: []
+          },
+          {
+            name: "LEVER MORTISE LOCKS",
+            subItemsNameComponent: [
+              { name: "Mortice Locks", path: "/Dashboard/ProductList/Locks/LeverMortiseLocks/MorticeLocks", subItemsNameComponent: [] },
+              { name: "Mortise Lock Body", path: "/Dashboard/ProductList/Locks/LeverMortiseLocks/MortiseLockBody", subItemsNameComponent: [] },
+            ]
+          },
+          { name: "Padlocks", path: "/Dashboard/ProductList/Locks/Padlocks", subItemsNameComponent: [] },
+          { name: "Patch Fittings", path: "/Dashboard/ProductList/Locks/PatchFittings", subItemsNameComponent: [] },
+          {
+            name: "POPULAR MORTISE SERIES",
+            subItemsNameComponent: []
+          },
+          {
+            name: "PREMIUM MORTISE SERIES",
+            subItemsNameComponent: []
+          },
+          { name: "Rim Locks", path: "/Dashboard/ProductList/Locks/RimLocks", subItemsNameComponent: [] },
+        ],
+      },
+      {
+        name: "Paint",
+        subItemsName: [
+          { name: "Acrylic Emulsion Paint", path: "/Dashboard/ProductList/Paint/AcrylicEmulsionPaint", subItemsNameComponent: [] },
+          { name: "Aspa Paints", path: "/Dashboard/ProductList/Paint/AspaPaints", subItemsNameComponent: [] },
+          { name: "Exterior paints", path: "/Dashboard/ProductList/Paint/ExteriorPaints", subItemsNameComponent: [] },
+          { name: "Floor Paints", path: "/Dashboard/ProductList/Paint/FloorPaints", subItemsNameComponent: [] },
+          { name: "Industrial Coatings", path: "/Dashboard/ProductList/Paint/IndustrialCoatings", subItemsNameComponent: [] },
+          { name: "Interior Paints", path: "/Dashboard/ProductList/Paint/InteriorPaints", subItemsNameComponent: [] },
+          { name: "Painting Tools", path: "/Dashboard/ProductList/Paint/PaintingTools", subItemsNameComponent: [] },
+          { name: "Primer and Wall Putty", path: "/Dashboard/ProductList/Paint/PrimerAndWallPutty", subItemsNameComponent: [] },
+          { name: "Sanitizer", path: "/Dashboard/ProductList/Paint/Sanitizer", subItemsNameComponent: [] },
+          { name: "Spray Paints", path: "/Dashboard/ProductList/Paint/SprayPaints", subItemsNameComponent: [] },
+          { name: "Stainers&Thinners", path: "/Dashboard/ProductList/Paint/StainersThinners", subItemsNameComponent: [] },
+          { name: "Stencils", path: "/Dashboard/ProductList/Paint/Stencils", subItemsNameComponent: [] },
+          { name: "Tile Guard", path: "/Dashboard/ProductList/Paint/TileGuard", subItemsNameComponent: [] },
+          { name: "wall stickers and wallpapers", path: "/Dashboard/ProductList/Paint/WallStickersWallpapers", subItemsNameComponent: [] },
+          { name: "Wood & Metal", path: "/Dashboard/ProductList/Paint/WoodMetal", subItemsNameComponent: [] },
+        ],
+      },
+      {
+        name: "Pipes & Fittings",
+    subItemsName: [
+          { name: "Ashirvad Pipes", path: "/Dashboard/ProductList/Pipes/AshirvadPipes", subItemsNameComponent: [] },
+          { name: "Astral Pipes", path: "/Dashboard/ProductList/Pipes/AstralPipes", subItemsNameComponent: [] },
+          { name: "Finolex Pipes", path: "/Dashboard/ProductList/Pipes/FinolexPipes", subItemsNameComponent: [] },
+        ],
+      },
+      {
+        name: "PVC Mats",
+        subItemsName: [
+          { name: "Floor Mats", path: "/Dashboard/ProductList/PvcMats/Floor" },
+          { name: "Door Mats", path: "/Dashboard/ProductList/PvcMats/Door" },
+        ],
+      },
+      {
+        name: "Roofer",
+        subItemsName: [
+          { name: "Shingles", path: "/Dashboard/ProductList/Roofer/Shingles" },
+          { name: "Metal Roofing", path: "/Dashboard/ProductList/Roofer/Metal" },
+        ],
+      },
+      {
+        name: "Sanitary Ware & faucets",
+        subItemsName: [
+          { name: "Acrylic Products", path: "/Dashboard/ProductList/Sanitary/AcrylicProducts", subItemsNameComponent: [] },
+          { name: "Bathroom Accessories", path: "/Dashboard/ProductList/Sanitary/BathroomAccessories", subItemsNameComponent: [] },
+          { name: "Bathsense", path: "/Dashboard/ProductList/Sanitary/Bathsense", subItemsNameComponent: [] },
+          { name: "Closets", path: "/Dashboard/ProductList/Sanitary/Closets", subItemsNameComponent: [] },
+          { name: "Coral bath fixtures", path: "/Dashboard/ProductList/Sanitary/CoralBathFixtures", subItemsNameComponent: [] },
+          { name: "Corsa", path: "/Dashboard/ProductList/Sanitary/Corsa", subItemsNameComponent: [] },
+          { name: "Essess", path: "/Dashboard/ProductList/Sanitary/Essess", subItemsNameComponent: [] },
+          { name: "Faucets", path: "/Dashboard/ProductList/Sanitary/Faucets", subItemsNameComponent: [] },
+          { name: "Hardware & Bathroom Accessories", path: "/Dashboard/ProductList/Sanitary/HardwareBathroomAccessories", subItemsNameComponent: [] },
+          { name: "Health Faucet", path: "/Dashboard/ProductList/Sanitary/HealthFaucet", subItemsNameComponent: [] },
+          { name: "Hindware", path: "/Dashboard/ProductList/Sanitary/Hindware", subItemsNameComponent: [] },
+          { name: "Jaquar", path: "/Dashboard/ProductList/Sanitary/Jaquar", subItemsNameComponent: [] },
+          { name: "Kitchen Sinks", path: "/Dashboard/ProductList/Sanitary/KitchenSinks", subItemsNameComponent: [] },
+          { name: "LEMON Bathroom Accessories", path: "/Dashboard/ProductList/Sanitary/LemonBathroomAccessories", subItemsNameComponent: [] },
+          { name: "Leo Bath Fittings", path: "/Dashboard/ProductList/Sanitary/LeoBathFittings", subItemsNameComponent: [] },
+          { name: "Parryware", path: "/Dashboard/ProductList/Sanitary/Parryware", subItemsNameComponent: [] },
+          { name: "Pearl Precious Products", path: "/Dashboard/ProductList/Sanitary/PearlPreciousProducts", subItemsNameComponent: [] },
+          { name: "Showers", path: "/Dashboard/ProductList/Sanitary/Showers", subItemsNameComponent: [] },
+          { name: "Taps", path: "/Dashboard/ProductList/Sanitary/Taps", subItemsNameComponent: [] },
+          { name: "Washbasins", path: "/Dashboard/ProductList/Sanitary/Washbasins", subItemsNameComponent: [] },
+          { name: "Waterman", path: "/Dashboard/ProductList/Sanitary/Waterman", subItemsNameComponent: [] },
+          { name: "WaterTec", path: "/Dashboard/ProductList/Sanitary/WaterTec", subItemsNameComponent: [] },
+        ],
+      },
+      {
+        name: "Tools",
+        subItemsName: [
+          { name: "abrasives", path: "/Dashboard/ProductList/Tools/abrasives", subItemsNameComponent: [] },
+          { name: "Allen Keys", path: "/Dashboard/ProductList/Tools/AllenKeys", subItemsNameComponent: [] },
+          { name: "Brush", path: "/Dashboard/ProductList/Tools/Brush", subItemsNameComponent: [] },
+          { name: "Carpenter Pincer", path: "/Dashboard/ProductList/Tools/CarpenterPincer", subItemsNameComponent: [] },
+          { name: "Centre Punches", path: "/Dashboard/ProductList/Tools/CentrePunches", subItemsNameComponent: [] },
+          { name: "Chisels", path: "/Dashboard/ProductList/Tools/Chisels", subItemsNameComponent: [] },
+          { name: "Clamps", path: "/Dashboard/ProductList/Tools/Clamps", subItemsNameComponent: [] },
+          { name: "Crowbar", path: "/Dashboard/ProductList/Tools/Crowbar", subItemsNameComponent: [] },
+          { name: "Cutters", path: "/Dashboard/ProductList/Tools/Cutters", subItemsNameComponent: [] },
+          { name: "files", path: "/Dashboard/ProductList/Tools/files", subItemsNameComponent: [] },
+          { name: "Garden Tools", path: "/Dashboard/ProductList/Tools/GardenTools", subItemsNameComponent: [] },
+          { name: "Gear Pullers", path: "/Dashboard/ProductList/Tools/GearPullers", subItemsNameComponent: [] },
+          { name: "Glass cutter", path: "/Dashboard/ProductList/Tools/GlassCutter", subItemsNameComponent: [] },
+          { name: "glue gun", path: "/Dashboard/ProductList/Tools/gluegun", subItemsNameComponent: [] },
+          { name: "Grease Gun", path: "/Dashboard/ProductList/Tools/GreaseGun", subItemsNameComponent: [] },
+          { name: "Hacksaw Blades", path: "/Dashboard/ProductList/Tools/HacksawBlades", subItemsNameComponent: [] },
+          { name: "Hammer", path: "/Dashboard/ProductList/Tools/Hammer", subItemsNameComponent: [] },
+          { name: "Hammer Drills", path: "/Dashboard/ProductList/Tools/HammerDrills", subItemsNameComponent: [] },
+          { name: "hand tools", path: "/Dashboard/ProductList/Tools/handtools", subItemsNameComponent: [] },
+          { name: "level", path: "/Dashboard/ProductList/Tools/level", subItemsNameComponent: [] },
+          { name: "Lubrications", path: "/Dashboard/ProductList/Tools/Lubrications", subItemsNameComponent: [] },
+          { name: "Measurement Scale", path: "/Dashboard/ProductList/Tools/MeasurementScale", subItemsNameComponent: [] },
+          { name: "Measuring Tape", path: "/Dashboard/ProductList/Tools/MeasuringTape", subItemsNameComponent: [] },
+          { name: "Multimeter", path: "/Dashboard/ProductList/Tools/Multimeter", subItemsNameComponent: [] },
+          { name: "Plier", path: "/Dashboard/ProductList/Tools/Plier", subItemsNameComponent: [] },
+          { name: "Polishing Accessories", path: "/Dashboard/ProductList/Tools/PolishingAccessories", subItemsNameComponent: [] },
+          { name: "power tools", path: "/Dashboard/ProductList/Tools/powertools", subItemsNameComponent: [] },
+          { name: "saw", path: "/Dashboard/ProductList/Tools/saw", subItemsNameComponent: [] },
+          { name: "Screw Driver", path: "/Dashboard/ProductList/Tools/ScrewDriver", subItemsNameComponent: [] },
+          { name: "Silicon Gun", path: "/Dashboard/ProductList/Tools/SiliconGun", subItemsNameComponent: [] },
+          { name: "Socket set", path: "/Dashboard/ProductList/Tools/Socketset", subItemsNameComponent: [] },
+          { name: "Spanners", path: "/Dashboard/ProductList/Tools/Spanners", subItemsNameComponent: [] },
+          { name: "Spare Malets", path: "/Dashboard/ProductList/Tools/SpareMalets", subItemsNameComponent: [] },
+          { name: "Tool Compartments", path: "/Dashboard/ProductList/Tools/ToolCompartments", subItemsNameComponent: [] },
+          { name: "toolkit set", path: "/Dashboard/ProductList/Tools/toolkitset", subItemsNameComponent: [] },
+          { name: "various tool bits", path: "/Dashboard/ProductList/Tools/varioustoolbits", subItemsNameComponent: [] },
+          { name: "wood chisel", path: "/Dashboard/ProductList/Tools/woodChisel", subItemsNameComponent: [] },
+          { name: "wood items", path: "/Dashboard/ProductList/Tools/woodItems", subItemsNameComponent: [] },
+          { name: "Wrench", path: "/Dashboard/ProductList/Tools/Wrench", subItemsNameComponent: [] },
+        ],
+      },
+      { name: "Uncategorized", path: "/Dashboard/ProductList/Uncategorized" },
+      {
+        name: "WaterProofing",
+        subItemsName: [
+          { name: "Bathrooms", path: "/Dashboard/ProductList/WaterProofing/Bathrooms", subItemsNameComponent: [] },
+          { name: "Cracks & Joints", path: "/Dashboard/ProductList/WaterProofing/CracksJoints", subItemsNameComponent: [] },
+          { name: "Interiors", path: "/Dashboard/ProductList/WaterProofing/Interiors", subItemsNameComponent: [] },
+        ],
+      },
+        ]},
+  {name: "Order List",path: "/Dashboard/OrderList"},
+  {name: "User List",path: "/Dashboard/UserList"},
+  {name: "Category List",path: "/Dashboard/CategoryList"},
+  {name: "Brand List",path: "/Dashboard/BrandList"},
+  {name: "Banner List",path: "/Dashboard/BannerList"},
+  {name: "Coupon List",path: "/Dashboard/CouponList"},
+  {name: "Setting",path: "/Dashboard/Setting"},
+  {name: "Contact Us",path: "/Dashboard/ContactUs"},
+  {name: "About Us",path: "/Dashboard/AboutUs"},
+  {name: "Privacy Policy",path: "/Dashboard/PrivacyPolicy"},
+  {name: "Terms & Conditions",path: "/Dashboard/TermsAndConditions"},
+  {name: "FAQ",path: "/Dashboard/FAQ"},
+  
+  
+  
 ];
 
 
@@ -256,13 +489,14 @@ const sections = [
 export default function Sidebar({ onSetting, onLogout, open, onClose }) {
   // Track open state for each collapsible item by name
   const [openSection, setOpenSection] = useState(null);
+  const [openSubSection, setOpenSubSection] = useState(null);
 
 
   const handleToggle = (name) => {
     setOpenSection(openSection === name ? null : name);
   };
   return (
-    <aside className="w-64 flex text-black flex-col h-screen">
+    <aside className="w-64 h-screen bg-white rounded-2xl shadow-lg p-4 flex flex-col text-zinc-800 border border-zinc-100">
       <div className="p-4 font-bold text-xl">LOGO</div>
       <nav className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
         <ul className="p-4 space-y-2">
@@ -270,13 +504,17 @@ export default function Sidebar({ onSetting, onLogout, open, onClose }) {
           {sections.map((section) => (
             <div key={section.name} className="mb-2">
               <div className="flex items-center w-full">
-                <Link
-                  href={section.path}
-                  className="flex-1 text-left px-2 py-2 rounded text-sm font-semibold hover:bg-zinc-700 transition group cursor-pointer"
-                  onClick={() => handleToggle(section.name)}
-                >
-                  {section.name}
-                </Link>
+                {section.path ? (
+                  <Link
+                    href={section.path}
+                    className={`flex-1 text-left px-3 py-2 rounded-lg text-sm transition group cursor-pointer ${openSection === section.name ? "bg-zinc-100 font-semibold shadow" : "hover:bg-zinc-100"}`}
+                    onClick={() => handleToggle(section.name)}
+                  >
+                    {section.name}
+                  </Link>
+                ) : (
+                  <span className="flex-1 text-left px-2 py-2 rounded text-sm font-semibold">{section.name}</span>
+                )}
                 {section.subItems && section.subItems.length > 0 && (
                   <button
                     className="ml-2"
@@ -289,18 +527,56 @@ export default function Sidebar({ onSetting, onLogout, open, onClose }) {
                     )}
                   </button>
                 )}
+                {section.subItemsName && section.subItemsName.length > 0 && (
+                  <button
+                    className="ml-2"
+                    onClick={(e) => { e.stopPropagation(); handleToggle(section.name); }}
+                  >
+                    {openSection === section.name ? (
+                      <FiChevronUp className="transition-transform" />
+                    ) : (
+                      <FiChevronDown className="transition-transform" />
+                    )}
+                  </button>
+                )}
+                {section.subItemsNameComponent && section.subItemsNameComponent.length > 0 && (
+                  <button
+                    className="ml-2"
+                    onClick={(e) => { e.stopPropagation(); handleToggle(section.name); }}
+                  >
+                    {openSection === section.name ? (
+                      <FiChevronUp className="transition-transform" />
+                    ) : (
+                      <FiChevronDown className="transition-transform" />
+                    )}
+                  </button>
+                )}
               </div>
-              {openSection === section.name && section.subItems && (
+              {openSection === section.name && (section.subItems || section.subItemsName || section.subItemsNameComponent) && (
                 <ul className="pl-4">
-                  {section.subItems.map((item) => (
-                    <li key={item.name}>
-                      <Link
-                        href={item.path}
-                        className="block px-2 py-2 rounded text-sm hover:bg-zinc-700 transition"
-                      >
-                        {item.name}
-                      </Link>
-                    </li>
+                  {Array.isArray(section.subItems) && section.subItems.map((item) => (
+                    <SidebarItem
+                      key={item.name}
+                      item={item}
+                      openSubSection={openSubSection}
+                      setOpenSubSection={setOpenSubSection}
+                    />
+                  ))}
+                  {Array.isArray(section.subItemsName) && section.subItemsName.map((item) => (
+                    <SidebarItem
+                      key={item.name}
+                      item={item}
+                      openSubSection={openSubSection}
+                      setOpenSubSection={setOpenSubSection}
+                    />
+                  ))}
+                  {Array.isArray(section.subItemsNameComponent) && section.subItemsNameComponent.map((item) => (
+                    <SidebarItem
+                      key={item.name}
+                      item={item}
+                      openSubSection={openSubSection}
+                      setOpenSubSection={setOpenSubSection}
+                    />
                   ))}
                 </ul>
               )}
@@ -325,5 +601,57 @@ export default function Sidebar({ onSetting, onLogout, open, onClose }) {
         </Button>
       </div>
     </aside>
+  );
+}
+
+function SidebarItem({ item, openSubSection, setOpenSubSection }) {
+  const hasSubItemsName = Array.isArray(item.subItemsName) && item.subItemsName.length > 0;
+  const hasSubItemsNameComponent = Array.isArray(item.subItemsNameComponent) && item.subItemsNameComponent.length > 0;
+  const isOpen = openSubSection === item.name;
+
+  return (
+    <li>
+      <div className="flex items-center">
+        {item.path ? (
+          <Link
+            href={item.path}
+            className="block px-2 py-2 rounded text-sm hover:bg-zinc-700 transition flex-1"
+            onClick={() => (hasSubItemsName || hasSubItemsNameComponent) ? setOpenSubSection(isOpen ? null : item.name) : undefined}
+          >
+            {item.name}
+          </Link>
+        ) : (
+          <span className="block px-2 py-2 rounded text-sm flex-1">{item.name}</span>
+        )}
+        {(hasSubItemsName || hasSubItemsNameComponent) && (
+          <button
+            className="ml-2"
+            onClick={e => { e.stopPropagation(); setOpenSubSection(isOpen ? null : item.name); }}
+          >
+            {isOpen ? <FiChevronUp /> : <FiChevronDown />}
+          </button>
+        )}
+      </div>
+      {isOpen && (
+        <ul className="pl-4">
+          {hasSubItemsName && item.subItemsName.map(child =>
+            <SidebarItem
+              key={child.name}
+              item={child}
+              openSubSection={openSubSection}
+              setOpenSubSection={setOpenSubSection}
+            />
+          )}
+          {hasSubItemsNameComponent && item.subItemsNameComponent.map(child =>
+            <SidebarItem
+              key={child.name}
+              item={child}
+              openSubSection={openSubSection}
+              setOpenSubSection={setOpenSubSection}
+            />
+          )}
+        </ul>
+      )}
+    </li>
   );
 } 

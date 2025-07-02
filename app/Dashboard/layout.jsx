@@ -2,13 +2,13 @@
 import React from 'react';
 import { useAuth } from '../../components/AuthContext';
 import Sidebar from './Sidebar';
-import Navbar from './Navbar';
+import Navbar from '@/app/Dashboard/Navbar';
 
 export default function DashboardLayout({ children }) {
   const { user, logout } = useAuth();
 
   const handleSetting = () => {
-    alert('Settings clicked');
+    // Implement settings logic here
   };
 
   return (
@@ -17,7 +17,9 @@ export default function DashboardLayout({ children }) {
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-screen">
         <Navbar />
-        <main className="flex-1 bg-gray-50 p-6 overflow-auto">{children}</main>
+        <main className="flex-1 p-6 overflow-auto bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white">
+          {children}
+        </main>
       </div>
     </div>
   );

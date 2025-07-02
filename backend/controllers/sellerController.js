@@ -52,15 +52,33 @@ exports.login = async (req, res) => {
   }
 };
 
+// exports.getMe = async (req, res) => {
+//   try {
+//     const seller = await Seller.findById(req.sellerId).select('email username');
+//     if (!seller) {
+//       return res.status(404).json({ message: 'Seller not found' });
+//     }
+//     res.json({
+//       name: seller.username,
+//       email: seller.email
+//     });
+//   } catch (error) {
+//     console.error('Get seller info error:', error);
+//     res.status(500).json({ message: 'Failed to get seller info' });
+//   }
+// };
 exports.getMe = async (req, res) => {
   try {
-    const seller = await Seller.findById(req.sellerId).select('-password');
+    const seller = await Seller.findById(req.sellerId).select('email username avatar');
     if (!seller) {
       return res.status(404).json({ message: 'Seller not found' });
     }
-    res.json(seller);
+    res.json({
+      name: seller.username,
+      email: seller.email,
+      avatar: seller.avatar || "" // Add avatar field to your model if not present
+    });
   } catch (error) {
-    console.error('Get seller info error:', error);
     res.status(500).json({ message: 'Failed to get seller info' });
   }
 };

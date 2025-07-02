@@ -1,0 +1,10 @@
+import ProductList from "./ProductList";
+
+export default function Multimeter() {
+  return (
+    <div>
+      <h1 className="text-2xl font-bold mb-4">Multimeter</h1>
+      <ProductList />
+    </div>
+  );
+} 

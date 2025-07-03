@@ -5,6 +5,7 @@ const connectDB = require('./config/db');
 const adhesivesRoutes = require('./routes/adhesivesRoutes');
 const brushRoutes = require('./routes/brushRoutes');
 const analyticsRoutes = require('./routes/analyticsRoutes');
+const electricalRoutes = require('./routes/electricalRoutes');
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use('/api/adhesives-products', adhesivesRoutes);
 app.use('/api/brush-products', brushRoutes);
 app.use('/api/cleaning-products', require('./routes/cleaningRoutes'));
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/electrical-products', electricalRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

@@ -1,56 +1,59 @@
-const ElectricalModels = require('../../models/ElectricalModels');
+const Electrical = require('../../models/ElectricalModels');
 
-exports.create = async (req, res) => {
+// Create Fan
+exports.createFan = async (req, res) => {
   try {
-    const product = new ElectricalModels({
-      ...req.body,
-      type: 'WaterHeaters',
-      photos: req.files ? req.files.map(f => f.path) : [],
-      tags: req.body.tags ? Array.isArray(req.body.tags) ? req.body.tags : [req.body.tags] : [],
-    });
-    await product.save();
-    res.status(201).json(product);
+    const fan = new Electrical({ ...req.body, type: 'Fans' });
+    await fan.save();
+    res.status(201).json(fan);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ message: err.message });
   }
 };
 
-exports.update = async (req, res) => {
+// Get All Fans
+exports.getAllFans = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOneAndUpdate(
-      { _id: req.params.id, type: 'WaterHeaters' },
-      { ...req.body },
+    const fans = await Electrical.find({ type: 'Fans' });
+    res.json(fans);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Get Fan by ID
+exports.getFanById = async (req, res) => {
+  try {
+    const fan = await Electrical.findOne({ _id: req.params.id, type: 'Fans' });
+    if (!fan) return res.status(404).json({ message: 'Not found' });
+    res.json(fan);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Update Fan
+exports.updateFan = async (req, res) => {
+  try {
+    const fan = await Electrical.findOneAndUpdate(
+      { _id: req.params.id, type: 'Fans' },
+      req.body,
       { new: true }
     );
-    res.json(product);
+    if (!fan) return res.status(404).json({ message: 'Not found' });
+    res.json(fan);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ message: err.message });
   }
 };
 
-exports.delete = async (req, res) => {
+// Delete Fan
+exports.deleteFan = async (req, res) => {
   try {
-    await ElectricalModels.deleteOne({ _id: req.params.id, type: 'WaterHeaters' });
-    res.json({ success: true });
+    const fan = await Electrical.findOneAndDelete({ _id: req.params.id, type: 'Fans' });
+    if (!fan) return res.status(404).json({ message: 'Not found' });
+    res.json({ message: 'Deleted successfully' });
   } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-};
-
-exports.getAll = async (req, res) => {
-  try {
-    const products = await ElectricalModels.find({ type: 'WaterHeaters' });
-    res.json(products);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-};
-
-exports.getOne = async (req, res) => {
-  try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, type: 'WaterHeaters' });
-    res.json(product);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(500).json({ message: err.message });
   }
 }; 

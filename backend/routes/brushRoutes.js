@@ -1,18 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const BrushModels = require('../models/BrushModels');
+const brushController = require('../controllers/brushController');
 
-// Create product
-router.post('/', async (req, res) => {
-  try {
-    const product = new BrushModels(req.body);
-    await product.save();
-    res.status(201).json(product);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
-
-// (You can add GET, PUT, DELETE as needed)
+// Create
+router.post('/', brushController.createBrush);
+// Get all
+router.get('/', brushController.getAllBrushes);
+// Get by id
+router.get('/:id', brushController.getBrushById);
+// Update
+router.put('/:id', brushController.updateBrush);
+// Delete
+router.delete('/:id', brushController.deleteBrush);
 
 module.exports = router;

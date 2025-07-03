@@ -1,63 +1,59 @@
-const ElectricalModels = require('../../models/ElectricalModels');
+const Electrical = require('../../models/ElectricalModels');
 
-// Create
-exports.create = async (req, res) => {
+// Create Adaptor
+exports.createAdaptor = async (req, res) => {
   try {
-    const product = new ElectricalModels({
-      ...req.body,
-      type: 'Adaptors',
-      photos: req.files ? req.files.map(f => f.path) : [],
-      tags: req.body.tags ? Array.isArray(req.body.tags) ? req.body.tags : [req.body.tags] : [],
-      productNo: req.body.productNo,
-      productQualityName: req.body.productQualityName
-    });
-    await product.save();
-    res.status(201).json(product);
+    const adaptor = new Electrical({ ...req.body, type: 'Adaptors' });
+    await adaptor.save();
+    res.status(201).json(adaptor);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ message: err.message });
   }
 };
 
-// Update
-exports.update = async (req, res) => {
+// Get All Adaptors
+exports.getAllAdaptors = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOneAndUpdate(
+    const adaptors = await Electrical.find({ type: 'Adaptors' });
+    res.json(adaptors);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Get Adaptor by ID
+exports.getAdaptorById = async (req, res) => {
+  try {
+    const adaptor = await Electrical.findOne({ _id: req.params.id, type: 'Adaptors' });
+    if (!adaptor) return res.status(404).json({ message: 'Not found' });
+    res.json(adaptor);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Update Adaptor
+exports.updateAdaptor = async (req, res) => {
+  try {
+    const adaptor = await Electrical.findOneAndUpdate(
       { _id: req.params.id, type: 'Adaptors' },
-      { ...req.body, productNo: req.body.productNo, productQualityName: req.body.productQualityName },
+      req.body,
       { new: true }
     );
-    res.json(product);
+    if (!adaptor) return res.status(404).json({ message: 'Not found' });
+    res.json(adaptor);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ message: err.message });
   }
 };
 
-// Delete
-exports.delete = async (req, res) => {
+// Delete Adaptor
+exports.deleteAdaptor = async (req, res) => {
   try {
-    await ElectricalModels.deleteOne({ _id: req.params.id, type: 'Adaptors' });
-    res.json({ success: true });
+    const adaptor = await Electrical.findOneAndDelete({ _id: req.params.id, type: 'Adaptors' });
+    if (!adaptor) return res.status(404).json({ message: 'Not found' });
+    res.json({ message: 'Deleted successfully' });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(500).json({ message: err.message });
   }
 };
-
-// Get All
-exports.getAll = async (req, res) => {
-  try {
-    const products = await ElectricalModels.find({ type: 'Adaptors' });
-    res.json(products);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-};
-
-// Get One
-exports.getOne = async (req, res) => {
-  try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, type: 'Adaptors' });
-    res.json(product);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-}; 

@@ -92,7 +92,7 @@ export default function ProductForm({ product, onSave }) {
       }
     });
     photos.forEach(f => data.append('photos', f));
-    const res = await fetch('/api/electrical/adaptors', { method: product ? 'PUT' : 'POST', body: data });
+    const res = await fetch('/api/electrical-products/adaptors', { method: product ? 'PUT' : 'POST', body: data });
     if (res.ok) {
       onSave && onSave();
       setForm({

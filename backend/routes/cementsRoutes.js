@@ -1,31 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');
-const CementsModels = require('../models/CementsModels');
+const cementsController = require('../controllers/cementsController');
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/cements/');
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
-  }
-});
-const upload = multer({ storage: storage, limits: { files: 5 } });
+// Create
+router.post('/', cementsController.createCement);
+// Get all
+router.get('/', cementsController.getAllCements);
+// Get by id
+router.get('/:id', cementsController.getCementById);
+// Update
+router.put('/:id', cementsController.updateCement);
+// Delete
+router.delete('/:id', cementsController.deleteCement);
 
-router.post('/', upload.array('photos', 5), async (req, res) => {
-  try {
-    const photoPaths = req.files.map(file => file.path);
-    const product = new CementsModels({
-      ...req.body,
-      photos: photoPaths,
-      tags: req.body.tags ? Array.isArray(req.body.tags) ? req.body.tags : [req.body.tags] : [],
-    });
-    await product.save();
-    res.status(201).json(product);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
-
-module.exports = router; 
+module.exports = router;

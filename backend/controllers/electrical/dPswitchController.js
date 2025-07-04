@@ -1,9 +1,28 @@
 const Electrical = require('../../models/ElectricalModels');
+const cloudinary = require('../../config/cloudinary');
+const streamifier = require('streamifier');
+
+function uploadToCloudinary(buffer) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { resource_type: 'image', folder: 'dPswitch' },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result.secure_url);
+      }
+    );
+    streamifier.createReadStream(buffer).pipe(stream);
+  });
+}
 
 // Create DPswitch
 exports.createDPswitch = async (req, res) => {
   try {
-    const dPswitch = new Electrical({ ...req.body, type: 'Fans' });
+    let photoUrls = [];
+    if (req.files && req.files.length > 0) {
+      photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+    }
+    const dPswitch = new Electrical({ ...req.body, photos: photoUrls, type: 'DPswitch' });
     await dPswitch.save();
     res.status(201).json(dPswitch);
   } catch (err) {

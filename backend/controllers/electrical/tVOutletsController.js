@@ -1,11 +1,30 @@
 const Electrical = require('../../models/ElectricalModels');
+const cloudinary = require('../../config/cloudinary');
+const streamifier = require('streamifier');
+
+function uploadToCloudinary(buffer) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { resource_type: 'image', folder: 'tVOutlets' },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result.secure_url);
+      }
+    );
+    streamifier.createReadStream(buffer).pipe(stream);
+  });
+}
 
 // Create TVOutlet
 exports.createTVOutlet = async (req, res) => {
   try {
-    const item = new Electrical({ ...req.body, type: 'TVOutlets' });
-    await item.save();
-    res.status(201).json(item);
+    let photoUrls = [];
+    if (req.files && req.files.length > 0) {
+      photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+    }
+    const tvOutlet = new Electrical({ ...req.body, photos: photoUrls, type: 'TVOutlet' });
+    await tvOutlet.save();
+    res.status(201).json(tvOutlet);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

@@ -1,11 +1,30 @@
 const Electrical = require('../../models/ElectricalModels');
+const cloudinary = require('../../config/cloudinary');
+const streamifier = require('streamifier');
 
-// Create Fan
+function uploadToCloudinary(buffer) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { resource_type: 'image', folder: 'wiresAndCables' },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result.secure_url);
+      }
+    );
+    streamifier.createReadStream(buffer).pipe(stream);
+  });
+}
+
+// Create WiresAndCables
 exports.createWiresAndCables = async (req, res) => {
   try {
-    const fan = new Electrical({ ...req.body, type: 'Fans' });
-    await fan.save();
-    res.status(201).json(fan);
+    let photoUrls = [];
+    if (req.files && req.files.length > 0) {
+      photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+    }
+    const wiresAndCables = new Electrical({ ...req.body, photos: photoUrls, type: 'WiresAndCables' });
+    await wiresAndCables.save();
+    res.status(201).json(wiresAndCables);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

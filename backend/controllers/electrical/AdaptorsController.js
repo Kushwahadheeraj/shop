@@ -1,9 +1,29 @@
 const Electrical = require('../../models/ElectricalModels');
+const cloudinary = require('../../config/cloudinary');
+const streamifier = require('streamifier');
+
+function uploadToCloudinary(buffer) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { resource_type: 'image', folder: 'adaptors' },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result.secure_url);
+      }
+    );
+    streamifier.createReadStream(buffer).pipe(stream);
+  });
+}
 
 // Create Adaptor
 exports.createAdaptor = async (req, res) => {
   try {
-    const adaptor = new Electrical({ ...req.body, type: 'Adaptors' });
+    let photoUrls = [];
+    if (req.files && req.files.length > 0) {
+      // Upload all files in parallel
+      photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+    }
+    const adaptor = new Electrical({ ...req.body, photos: photoUrls, type: 'Adaptors' });
     await adaptor.save();
     res.status(201).json(adaptor);
   } catch (err) {

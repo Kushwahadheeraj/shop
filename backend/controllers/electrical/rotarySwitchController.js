@@ -1,18 +1,37 @@
 const Electrical = require('../../models/ElectricalModels');
+const cloudinary = require('../../config/cloudinary');
+const streamifier = require('streamifier');
+
+function uploadToCloudinary(buffer) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { resource_type: 'image', folder: 'rotarySwitch' },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result.secure_url);
+      }
+    );
+    streamifier.createReadStream(buffer).pipe(stream);
+  });
+}
 
 // Create RotarySwitch
 exports.createRotarySwitch = async (req, res) => {
   try {
-    const item = new Electrical({ ...req.body, type: 'RotarySwitch' });
-    await item.save();
-    res.status(201).json(item);
+    let photoUrls = [];
+    if (req.files && req.files.length > 0) {
+      photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+    }
+    const rotarySwitch = new Electrical({ ...req.body, photos: photoUrls, type: 'RotarySwitch' });
+    await rotarySwitch.save();
+    res.status(201).json(rotarySwitch);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 };
 
 // Get All RotarySwitches
-exports.getAllRotarySwitches = async (req, res) => {
+exports.getAllRotarySwitchs = async (req, res) => {
   try {
     const items = await Electrical.find({ type: 'RotarySwitch' });
     res.json(items);

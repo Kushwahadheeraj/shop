@@ -1,57 +1,57 @@
 const Electrical = require('../../models/ElectricalModels');
 
-// Create Fan
-exports.createFan = async (req, res) => {
+// Create Earthing Accessory
+exports.createEarthingAccessory = async (req, res) => {
   try {
-    const fan = new Electrical({ ...req.body, type: 'Fans' });
-    await fan.save();
-    res.status(201).json(fan);
+    const accessory = new Electrical({ ...req.body, type: 'Fans' });
+    await accessory.save();
+    res.status(201).json(accessory);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 };
 
-// Get All Fans
-exports.getAllFans = async (req, res) => {
+// Get All Earthing Accessories
+exports.getAllEarthingAccessories = async (req, res) => {
   try {
-    const fans = await Electrical.find({ type: 'Fans' });
-    res.json(fans);
+    const accessories = await Electrical.find({ type: 'Fans' });
+    res.json(accessories);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-// Get Fan by ID
-exports.getFanById = async (req, res) => {
+// Get Earthing Accessory by ID
+exports.getEarthingAccessoryById = async (req, res) => {
   try {
-    const fan = await Electrical.findOne({ _id: req.params.id, type: 'Fans' });
-    if (!fan) return res.status(404).json({ message: 'Not found' });
-    res.json(fan);
+    const accessory = await Electrical.findOne({ _id: req.params.id, type: 'Fans' });
+    if (!accessory) return res.status(404).json({ message: 'Not found' });
+    res.json(accessory);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-// Update Fan
-exports.updateFan = async (req, res) => {
+// Update Earthing Accessory
+exports.updateEarthingAccessory = async (req, res) => {
   try {
-    const fan = await Electrical.findOneAndUpdate(
+    const accessory = await Electrical.findOneAndUpdate(
       { _id: req.params.id, type: 'Fans' },
       req.body,
       { new: true }
     );
-    if (!fan) return res.status(404).json({ message: 'Not found' });
-    res.json(fan);
+    if (!accessory) return res.status(404).json({ message: 'Not found' });
+    res.json(accessory);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 };
 
-// Delete Fan
-exports.deleteFan = async (req, res) => {
+// Delete Earthing Accessory
+exports.deleteEarthingAccessory = async (req, res) => {
   try {
-    const fan = await Electrical.findOneAndDelete({ _id: req.params.id, type: 'Fans' });
-    if (!fan) return res.status(404).json({ message: 'Not found' });
+    const accessory = await Electrical.findOneAndDelete({ _id: req.params.id, type: 'Fans' });
+    if (!accessory) return res.status(404).json({ message: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
     res.status(500).json({ message: err.message });

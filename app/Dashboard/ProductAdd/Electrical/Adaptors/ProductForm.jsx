@@ -26,7 +26,8 @@ export default function ProductForm({ product, onSave }) {
     totalProduct: '',
     category: CATEGORY_OPTIONS[0],
     tag: [],
-    photos: []
+    photos: [],
+    type: 'Adaptors'
   });
   const [photos, setPhotos] = useState([]);
   const [preview, setPreview] = useState([]);
@@ -91,8 +92,9 @@ export default function ProductForm({ product, onSave }) {
         data.append(k, v);
       }
     });
+    
     photos.forEach(f => data.append('photos', f));
-    const res = await fetch('/api/electrical-products/adaptors', { method: product ? 'PUT' : 'POST', body: data });
+    const res = await fetch('http://localhost:3001/api/electrical-products/adaptors', { method: product ? 'PUT' : 'POST', body: data });
     if (res.ok) {
       onSave && onSave();
       setForm({
@@ -106,7 +108,8 @@ export default function ProductForm({ product, onSave }) {
         totalProduct: '',
         category: CATEGORY_OPTIONS[0],
         tag: [],
-        photos: []
+        photos: [],
+        type: 'Adaptors'
       });
       setPhotos([]);
       setPreview([]);
@@ -118,7 +121,7 @@ export default function ProductForm({ product, onSave }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-xl mx-auto p-4 bg-white rounded shadow">
       <h2 className="text-xl font-bold mb-2">Add Adaptors Product</h2>
-      <Input placeholder="Product Name" value={form.name} onChange={handleChange} required />
+      <Input name="name" placeholder="Product Name" value={form.name} onChange={handleChange} required />
       <div>
         <Input name="photos" type="file" multiple onChange={handleFiles} accept="image/*" />
         {photoError && <div className="text-red-500 text-xs mt-1">{photoError}</div>}
@@ -136,13 +139,13 @@ export default function ProductForm({ product, onSave }) {
           </div>
         )}
       </div>
-      <Textarea placeholder="Description" value={form.description} onChange={handleChange} />
+      <Textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} />
       <div className="flex gap-2">
-        <Input type="number" placeholder="Price" value={form.price} onChange={handleChange} required />
-        <Input type="number" placeholder="Discount" value={form.discount} onChange={handleChange} />
-        <Input type="number" placeholder="Discount Price" value={form.discountPrice} readOnly />
+        <Input name="price" type="number" placeholder="Price" value={form.price} onChange={handleChange} required />
+        <Input name="discount" type="number" placeholder="Discount" value={form.discount} onChange={handleChange} />
+        <Input name="discountPrice" type="number" placeholder="Discount Price" value={form.discountPrice} readOnly />
       </div>
-      <Input type="number" placeholder="Total Product" value={form.totalProduct} onChange={handleChange} required />
+      <Input name="totalProduct" type="number" placeholder="Total Product" value={form.totalProduct} onChange={handleChange} required />
       <div>
         <label className="block text-sm font-medium mb-1">Category</label>
         <select

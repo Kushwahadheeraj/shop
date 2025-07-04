@@ -1,57 +1,57 @@
 const Electrical = require('../../models/ElectricalModels');
 
-// Create Fan
-exports.createFan = async (req, res) => {
+// Create Insulation Tape
+exports.createInsulationTape = async (req, res) => {
   try {
-    const fan = new Electrical({ ...req.body, type: 'Fans' });
-    await fan.save();
-    res.status(201).json(fan);
+    const insulationTape = new Electrical({ ...req.body, type: 'Fans' });
+    await insulationTape.save();
+    res.status(201).json(insulationTape);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 };
 
-// Get All Fans
-exports.getAllFans = async (req, res) => {
+// Get All Insulation Tapes
+exports.getAllInsulationTapes = async (req, res) => {
   try {
-    const fans = await Electrical.find({ type: 'Fans' });
-    res.json(fans);
+    const insulationTapes = await Electrical.find({ type: 'Fans' });
+    res.json(insulationTapes);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-// Get Fan by ID
-exports.getFanById = async (req, res) => {
+// Get Insulation Tape by ID
+exports.getInsulationTapeById = async (req, res) => {
   try {
-    const fan = await Electrical.findOne({ _id: req.params.id, type: 'Fans' });
-    if (!fan) return res.status(404).json({ message: 'Not found' });
-    res.json(fan);
+    const insulationTape = await Electrical.findOne({ _id: req.params.id, type: 'Fans' });
+    if (!insulationTape) return res.status(404).json({ message: 'Not found' });
+    res.json(insulationTape);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-// Update Fan
-exports.updateFan = async (req, res) => {
+// Update Insulation Tape
+exports.updateInsulationTape = async (req, res) => {
   try {
-    const fan = await Electrical.findOneAndUpdate(
+    const insulationTape = await Electrical.findOneAndUpdate(
       { _id: req.params.id, type: 'Fans' },
       req.body,
       { new: true }
     );
-    if (!fan) return res.status(404).json({ message: 'Not found' });
-    res.json(fan);
+    if (!insulationTape) return res.status(404).json({ message: 'Not found' });
+    res.json(insulationTape);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 };
 
-// Delete Fan
-exports.deleteFan = async (req, res) => {
+// Delete Insulation Tape
+exports.deleteInsulationTape = async (req, res) => {
   try {
-    const fan = await Electrical.findOneAndDelete({ _id: req.params.id, type: 'Fans' });
-    if (!fan) return res.status(404).json({ message: 'Not found' });
+    const insulationTape = await Electrical.findOneAndDelete({ _id: req.params.id, type: 'Fans' });
+    if (!insulationTape) return res.status(404).json({ message: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
     res.status(500).json({ message: err.message });

@@ -1,7 +1,7 @@
 const Electrical = require('../../models/ElectricalModels');
 
 // Create Fan
-exports.createFan = async (req, res) => {
+exports.createHolder = async (req, res) => {
   try {
     const fan = new Electrical({ ...req.body, type: 'Fans' });
     await fan.save();
@@ -12,7 +12,7 @@ exports.createFan = async (req, res) => {
 };
 
 // Get All Fans
-exports.getAllFans = async (req, res) => {
+exports.getAllHolders = async (req, res) => {
   try {
     const fans = await Electrical.find({ type: 'Fans' });
     res.json(fans);
@@ -22,7 +22,7 @@ exports.getAllFans = async (req, res) => {
 };
 
 // Get Fan by ID
-exports.getFanById = async (req, res) => {
+exports.getHolderById = async (req, res) => {
   try {
     const fan = await Electrical.findOne({ _id: req.params.id, type: 'Fans' });
     if (!fan) return res.status(404).json({ message: 'Not found' });
@@ -33,7 +33,7 @@ exports.getFanById = async (req, res) => {
 };
 
 // Update Fan
-exports.updateFan = async (req, res) => {
+exports.updateHolder = async (req, res) => {
   try {
     const fan = await Electrical.findOneAndUpdate(
       { _id: req.params.id, type: 'Fans' },
@@ -48,7 +48,7 @@ exports.updateFan = async (req, res) => {
 };
 
 // Delete Fan
-exports.deleteFan = async (req, res) => {
+exports.deleteHolder = async (req, res) => {
   try {
     const fan = await Electrical.findOneAndDelete({ _id: req.params.id, type: 'Fans' });
     if (!fan) return res.status(404).json({ message: 'Not found' });

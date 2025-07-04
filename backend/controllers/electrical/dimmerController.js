@@ -1,18 +1,37 @@
 const Electrical = require('../../models/ElectricalModels');
+const cloudinary = require('../../config/cloudinary');
+const streamifier = require('streamifier');
 
-// Create Fan
-exports.createFan = async (req, res) => {
+function uploadToCloudinary(buffer) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { resource_type: 'image', folder: 'dimmer' },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result.secure_url);
+      }
+    );
+    streamifier.createReadStream(buffer).pipe(stream);
+  });
+}
+
+// Create Dimmer
+exports.createDimmer = async (req, res) => {
   try {
-    const fan = new Electrical({ ...req.body, type: 'Fans' });
-    await fan.save();
-    res.status(201).json(fan);
+    let photoUrls = [];
+    if (req.files && req.files.length > 0) {
+      photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+    }
+    const dimmer = new Electrical({ ...req.body, photos: photoUrls, type: 'Dimmer' });
+    await dimmer.save();
+    res.status(201).json(dimmer);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 };
 
 // Get All Fans
-exports.getAllFans = async (req, res) => {
+exports.getAllDimmers = async (req, res) => {
   try {
     const fans = await Electrical.find({ type: 'Fans' });
     res.json(fans);
@@ -22,7 +41,7 @@ exports.getAllFans = async (req, res) => {
 };
 
 // Get Fan by ID
-exports.getFanById = async (req, res) => {
+exports.getDimmerById = async (req, res) => {
   try {
     const fan = await Electrical.findOne({ _id: req.params.id, type: 'Fans' });
     if (!fan) return res.status(404).json({ message: 'Not found' });
@@ -33,7 +52,7 @@ exports.getFanById = async (req, res) => {
 };
 
 // Update Fan
-exports.updateFan = async (req, res) => {
+exports.updateDimmer = async (req, res) => {
   try {
     const fan = await Electrical.findOneAndUpdate(
       { _id: req.params.id, type: 'Fans' },
@@ -48,7 +67,7 @@ exports.updateFan = async (req, res) => {
 };
 
 // Delete Fan
-exports.deleteFan = async (req, res) => {
+exports.deleteDimmer = async (req, res) => {
   try {
     const fan = await Electrical.findOneAndDelete({ _id: req.params.id, type: 'Fans' });
     if (!fan) return res.status(404).json({ message: 'Not found' });

@@ -1,12 +1,12 @@
-const Paint = require('../../models/PaintModels');
-const cloudinary = require('../../config/cloudinary');
+const Paint = require('../../../models/PaintModels');
+const cloudinary = require('../../../config/cloudinary');
 const streamifier = require('streamifier');
 
 // Helper for Cloudinary upload
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { resource_type: 'image', folder: 'paint/InteriorPaints' },
+      { resource_type: 'image', folder: 'paint/GemPaints' },
       (error, result) => {
         if (error) return reject(error);
         resolve(result.secure_url);
@@ -17,7 +17,7 @@ function uploadToCloudinary(buffer) {
 }
 
 // CREATE
-exports.createInteriorPaints = async (req, res) => {
+exports.createGemPaints = async (req, res) => {
   try {
     let photoUrls = [];
     if (req.files && req.files.length > 0) {
@@ -29,7 +29,7 @@ exports.createInteriorPaints = async (req, res) => {
     const item = new Paint({
       ...req.body,
       photos: photoUrls,
-      category: 'InteriorPaints'
+      category: 'GemPaints'
     });
     await item.save();
     res.status(201).json(item);
@@ -39,9 +39,9 @@ exports.createInteriorPaints = async (req, res) => {
 };
 
 // GET ALL
-exports.getAllInteriorPaints = async (req, res) => {
+exports.getAllGemPaints = async (req, res) => {
   try {
-    const items = await Paint.find({ category: 'InteriorPaints' });
+    const items = await Paint.find({ category: 'GemPaints' });
     res.json(items);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -49,9 +49,9 @@ exports.getAllInteriorPaints = async (req, res) => {
 };
 
 // GET ONE
-exports.getOneInteriorPaints = async (req, res) => {
+exports.getOneGemPaints = async (req, res) => {
   try {
-    const item = await Paint.findOne({ _id: req.params.id, category: 'InteriorPaints' });
+    const item = await Paint.findOne({ _id: req.params.id, category: 'GemPaints' });
     if (!item) return res.status(404).json({ message: 'Not found' });
     res.json(item);
   } catch (err) {
@@ -60,10 +60,10 @@ exports.getOneInteriorPaints = async (req, res) => {
 };
 
 // UPDATE
-exports.updateInteriorPaints = async (req, res) => {
+exports.updateGemPaints = async (req, res) => {
   try {
     const item = await Paint.findOneAndUpdate(
-      { _id: req.params.id, category: 'InteriorPaints' },
+      { _id: req.params.id, category: 'GemPaints' },
       req.body,
       { new: true }
     );
@@ -75,9 +75,9 @@ exports.updateInteriorPaints = async (req, res) => {
 };
 
 // DELETE
-exports.deleteInteriorPaints = async (req, res) => {
+exports.deleteGemPaints = async (req, res) => {
   try {
-    const item = await Paint.findOneAndDelete({ _id: req.params.id, category: 'InteriorPaints' });
+    const item = await Paint.findOneAndDelete({ _id: req.params.id, category: 'GemPaints' });
     if (!item) return res.status(404).json({ message: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

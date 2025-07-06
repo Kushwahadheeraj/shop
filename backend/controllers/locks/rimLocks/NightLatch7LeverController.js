@@ -5,7 +5,7 @@ const streamifier = require('streamifier');
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { resource_type: 'image', folder: 'doorStopper' },
+      { resource_type: 'NightLatch7Lever', folder: 'nightlatch7lever' },
       (error, result) => {
         if (error) return reject(error);
         resolve(result.secure_url);
@@ -15,13 +15,13 @@ function uploadToCloudinary(buffer) {
   });
 }
 
-exports.createDoorKing = async (req, res) => {
+exports.createNightLatch7Lever = async (req, res) => {
   try {
     let photoUrls = [];
     if (req.files && req.files.length > 0) {
       photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
-    const item = new Lock({ ...req.body, photos: photoUrls, type: 'DoorStopper' });
+    const item = new Lock({ ...req.body, photos: photoUrls, type: 'NightLatch7Lever' });
     await item.save();
     res.status(201).json(item);
   } catch (err) {
@@ -29,18 +29,18 @@ exports.createDoorKing = async (req, res) => {
   }
 };
 
-exports.getAllDoorKings = async (req, res) => {
+exports.getAllNightLatch7Lever = async (req, res) => {
   try {
-    const items = await Lock.find({ type: 'DoorStopper' });
+    const items = await Lock.find({ type: 'NightLatch7Lever' });
     res.json(items);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-exports.getDoorKingById = async (req, res) => {
+exports.getNightLatch7LeverById = async (req, res) => {
   try {
-    const item = await Lock.findOne({ _id: req.params.id, type: 'DoorStopper' });
+    const item = await Lock.findOne({ _id: req.params.id, type: 'NightLatch7Lever' });
     if (!item) return res.status(404).json({ message: 'Not found' });
     res.json(item);
   } catch (err) {
@@ -48,10 +48,10 @@ exports.getDoorKingById = async (req, res) => {
   }
 };
 
-exports.updateDoorKing = async (req, res) => {
+exports.updateNightLatch7Lever = async (req, res) => {
   try {
     const item = await Lock.findOneAndUpdate(
-      { _id: req.params.id, type: 'DoorStopper' },
+      { _id: req.params.id, type: 'NightLatch7Lever' },
       req.body,
       { new: true }
     );
@@ -62,9 +62,9 @@ exports.updateDoorKing = async (req, res) => {
   }
 };
 
-exports.deleteDoorKing = async (req, res) => {
+exports.deleteNightLatch7Lever = async (req, res) => {
   try {
-    const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'DoorStopper' });
+    const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'NightLatch7Lever' });
     if (!item) return res.status(404).json({ message: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

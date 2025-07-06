@@ -1,11 +1,11 @@
-const Lock = require('../../models/locksModel');
-const cloudinary = require('../../config/cloudinary');
+const Lock = require('../../../models/locksModel');
+const cloudinary = require('../../../config/cloudinary');
 const streamifier = require('streamifier');
 
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { resource_type: 'image', folder: 'hinges' },
+      { resource_type: 'Hinges', folder: 'hinges' },
       (error, result) => {
         if (error) return reject(error);
         resolve(result.secure_url);
@@ -15,13 +15,13 @@ function uploadToCloudinary(buffer) {
   });
 }
 
-exports.createHinge = async (req, res) => {
+exports.createHinges = async (req, res) => {
   try {
     let photoUrls = [];
     if (req.files && req.files.length > 0) {
       photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
-    const item = new Lock({ ...req.body, photos: photoUrls, type: 'Hinge' });
+    const item = new Lock({ ...req.body, photos: photoUrls, type: 'Hinges' });
     await item.save();
     res.status(201).json(item);
   } catch (err) {
@@ -31,16 +31,16 @@ exports.createHinge = async (req, res) => {
 
 exports.getAllHinges = async (req, res) => {
   try {
-    const items = await Lock.find({ type: 'Hinge' });
+    const items = await Lock.find({ type: 'Hinges' });
     res.json(items);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-exports.getHingeById = async (req, res) => {
+exports.getHingesById = async (req, res) => {
   try {
-    const item = await Lock.findOne({ _id: req.params.id, type: 'Hinge' });
+    const item = await Lock.findOne({ _id: req.params.id, type: 'Hinges' });
     if (!item) return res.status(404).json({ message: 'Not found' });
     res.json(item);
   } catch (err) {
@@ -48,10 +48,10 @@ exports.getHingeById = async (req, res) => {
   }
 };
 
-exports.updateHinge = async (req, res) => {
+exports.updateHinges = async (req, res) => {
   try {
     const item = await Lock.findOneAndUpdate(
-      { _id: req.params.id, type: 'Hinge' },
+      { _id: req.params.id, type: 'Hinges' },
       req.body,
       { new: true }
     );
@@ -62,9 +62,9 @@ exports.updateHinge = async (req, res) => {
   }
 };
 
-exports.deleteHinge = async (req, res) => {
+exports.deleteHinges = async (req, res) => {
   try {
-    const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'Hinge' });
+    const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'Hinges' });
     if (!item) return res.status(404).json({ message: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

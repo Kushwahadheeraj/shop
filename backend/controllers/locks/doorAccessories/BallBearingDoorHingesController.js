@@ -5,7 +5,7 @@ const streamifier = require('streamifier');
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { resource_type: 'image', folder: 'ballBearingDoorHinges' },
+      { resource_type: 'BallBearingDoorHinges', folder: 'ballbearingdoorhinges' },
       (error, result) => {
         if (error) return reject(error);
         resolve(result.secure_url);
@@ -15,13 +15,13 @@ function uploadToCloudinary(buffer) {
   });
 }
 
-exports.createBallBearingDoorHinge = async (req, res) => {
+exports.createBallBearingDoorHinges = async (req, res) => {
   try {
     let photoUrls = [];
     if (req.files && req.files.length > 0) {
       photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
-    const item = new Lock({ ...req.body, photos: photoUrls, type: 'BallBearingDoorHinge' });
+    const item = new Lock({ ...req.body, photos: photoUrls, type: 'BallBearingDoorHinges' });
     await item.save();
     res.status(201).json(item);
   } catch (err) {
@@ -31,16 +31,16 @@ exports.createBallBearingDoorHinge = async (req, res) => {
 
 exports.getAllBallBearingDoorHinges = async (req, res) => {
   try {
-    const items = await Lock.find({ type: 'BallBearingDoorHinge' });
+    const items = await Lock.find({ type: 'BallBearingDoorHinges' });
     res.json(items);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-exports.getBallBearingDoorHingeById = async (req, res) => {
+exports.getBallBearingDoorHingesById = async (req, res) => {
   try {
-    const item = await Lock.findOne({ _id: req.params.id, type: 'BallBearingDoorHinge' });
+    const item = await Lock.findOne({ _id: req.params.id, type: 'BallBearingDoorHinges' });
     if (!item) return res.status(404).json({ message: 'Not found' });
     res.json(item);
   } catch (err) {
@@ -48,10 +48,10 @@ exports.getBallBearingDoorHingeById = async (req, res) => {
   }
 };
 
-exports.updateBallBearingDoorHinge = async (req, res) => {
+exports.updateBallBearingDoorHinges = async (req, res) => {
   try {
     const item = await Lock.findOneAndUpdate(
-      { _id: req.params.id, type: 'BallBearingDoorHinge' },
+      { _id: req.params.id, type: 'BallBearingDoorHinges' },
       req.body,
       { new: true }
     );
@@ -62,9 +62,9 @@ exports.updateBallBearingDoorHinge = async (req, res) => {
   }
 };
 
-exports.deleteBallBearingDoorHinge = async (req, res) => {
+exports.deleteBallBearingDoorHinges = async (req, res) => {
   try {
-    const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'BallBearingDoorHinge' });
+    const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'BallBearingDoorHinges' });
     if (!item) return res.status(404).json({ message: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

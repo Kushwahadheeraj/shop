@@ -5,7 +5,7 @@ const streamifier = require('streamifier');
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { resource_type: 'image', folder: 'doorStopper' },
+      { resource_type: 'DoorStopper', folder: 'doorstopper' },
       (error, result) => {
         if (error) return reject(error);
         resolve(result.secure_url);
@@ -29,7 +29,7 @@ exports.createDoorStopper = async (req, res) => {
   }
 };
 
-exports.getAllDoorStoppers = async (req, res) => {
+exports.getAllDoorStopper = async (req, res) => {
   try {
     const items = await Lock.find({ type: 'DoorStopper' });
     res.json(items);

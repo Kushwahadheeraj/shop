@@ -6,6 +6,7 @@ const adhesivesRoutes = require('./routes/adhesivesRoutes');
 const brushRoutes = require('./routes/brushRoutes');
 const analyticsRoutes = require('./routes/analyticsRoutes');
 const electricalRoutes = require('./routes/electricalRoutes');
+const locksRoutes = require('./routes/locksRoutes');
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use('/api/brush-products', brushRoutes);
 app.use('/api/cleaning-products', require('./routes/cleaningRoutes'));
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/electrical-products', electricalRoutes);
+app.use('/api/locks-products', locksRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

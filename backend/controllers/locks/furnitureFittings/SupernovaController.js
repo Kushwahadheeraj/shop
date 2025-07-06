@@ -5,7 +5,7 @@ const streamifier = require('streamifier');
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { resource_type: 'image', folder: 'supernova' },
+      { resource_type: 'Supernova', folder: 'supernova' },
       (error, result) => {
         if (error) return reject(error);
         resolve(result.secure_url);
@@ -29,7 +29,7 @@ exports.createSupernova = async (req, res) => {
   }
 };
 
-exports.getAllSupernovas = async (req, res) => {
+exports.getAllSupernova = async (req, res) => {
   try {
     const items = await Lock.find({ type: 'Supernova' });
     res.json(items);

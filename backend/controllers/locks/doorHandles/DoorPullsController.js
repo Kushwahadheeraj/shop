@@ -5,7 +5,7 @@ const streamifier = require('streamifier');
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { resource_type: 'image', folder: 'doorPulls' },
+      { resource_type: 'DoorPulls', folder: 'doorpulls' },
       (error, result) => {
         if (error) return reject(error);
         resolve(result.secure_url);
@@ -15,13 +15,13 @@ function uploadToCloudinary(buffer) {
   });
 }
 
-exports.createDoorPull = async (req, res) => {
+exports.createDoorPulls = async (req, res) => {
   try {
     let photoUrls = [];
     if (req.files && req.files.length > 0) {
       photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
-    const item = new Lock({ ...req.body, photos: photoUrls, type: 'DoorPull' });
+    const item = new Lock({ ...req.body, photos: photoUrls, type: 'DoorPulls' });
     await item.save();
     res.status(201).json(item);
   } catch (err) {
@@ -31,16 +31,16 @@ exports.createDoorPull = async (req, res) => {
 
 exports.getAllDoorPulls = async (req, res) => {
   try {
-    const items = await Lock.find({ type: 'DoorPull' });
+    const items = await Lock.find({ type: 'DoorPulls' });
     res.json(items);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-exports.getDoorPullById = async (req, res) => {
+exports.getDoorPullsById = async (req, res) => {
   try {
-    const item = await Lock.findOne({ _id: req.params.id, type: 'DoorPull' });
+    const item = await Lock.findOne({ _id: req.params.id, type: 'DoorPulls' });
     if (!item) return res.status(404).json({ message: 'Not found' });
     res.json(item);
   } catch (err) {
@@ -48,10 +48,10 @@ exports.getDoorPullById = async (req, res) => {
   }
 };
 
-exports.updateDoorPull = async (req, res) => {
+exports.updateDoorPulls = async (req, res) => {
   try {
     const item = await Lock.findOneAndUpdate(
-      { _id: req.params.id, type: 'DoorPull' },
+      { _id: req.params.id, type: 'DoorPulls' },
       req.body,
       { new: true }
     );
@@ -62,9 +62,9 @@ exports.updateDoorPull = async (req, res) => {
   }
 };
 
-exports.deleteDoorPull = async (req, res) => {
+exports.deleteDoorPulls = async (req, res) => {
   try {
-    const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'DoorPull' });
+    const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'DoorPulls' });
     if (!item) return res.status(404).json({ message: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

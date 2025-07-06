@@ -5,7 +5,7 @@ const streamifier = require('streamifier');
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { resource_type: 'image', folder: 'tableLock' },
+      { resource_type: 'TableLock', folder: 'tablelock' },
       (error, result) => {
         if (error) return reject(error);
         resolve(result.secure_url);
@@ -29,7 +29,7 @@ exports.createTableLock = async (req, res) => {
   }
 };
 
-exports.getAllTableLocks = async (req, res) => {
+exports.getAllTableLock = async (req, res) => {
   try {
     const items = await Lock.find({ type: 'TableLock' });
     res.json(items);

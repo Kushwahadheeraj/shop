@@ -311,4 +311,4 @@ registerCrudRoutes('padlocks/premium-padlocks', premiumPadlocksController, 'Prem
 registerCrudRoutes('padlocks/padlocks', padlocksController, 'Padlocks');
 registerCrudRoutes('padlocks/disc-padlocks', discPadlocksController, 'DiscPadlocks');
 
-module.exports = router;
+module.exports = router; 

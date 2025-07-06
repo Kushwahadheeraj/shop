@@ -1,11 +1,11 @@
-const Lock = require('../../models/locksModel');
-const cloudinary = require('../../config/cloudinary');
+const Lock = require('../../../models/locksModel');
+const cloudinary = require('../../../config/cloudinary');
 const streamifier = require('streamifier');
 
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { resource_type: 'image', folder: 'doorEye' },
+      { resource_type: 'DoorEye', folder: 'dooreye' },
       (error, result) => {
         if (error) return reject(error);
         resolve(result.secure_url);
@@ -29,7 +29,7 @@ exports.createDoorEye = async (req, res) => {
   }
 };
 
-exports.getAllDoorEyes = async (req, res) => {
+exports.getAllDoorEye = async (req, res) => {
   try {
     const items = await Lock.find({ type: 'DoorEye' });
     res.json(items);

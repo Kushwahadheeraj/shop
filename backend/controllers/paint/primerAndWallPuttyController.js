@@ -1,4 +1,4 @@
-const Paint = require('../../models//models/PaintModels');
+const Paint = require('../../models/PaintModels');
 // AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
 
 const cloudinary = require('../../config/cloudinary');

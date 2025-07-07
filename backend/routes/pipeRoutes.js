@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
-const finolexPipes = require('./finolexPipesController');
-const ashirvadPipes = require('./ashirvadPipesController');
-const astralPipes = require('./astralPipesController');
-const nepulPipes = require('./nepulPipes');
+const finolexPipes = require('../controllers/pipe/finolexPipesController');
+const ashirvadPipes = require('../controllers/pipe/ashirvadPipesController');
+const astralPipes = require('../controllers/pipe/astralPipesController');
+const nepulPipes = require('../controllers/pipe/nepulPipes');
 
 // Helper to register CRUD routes for a controller
 function registerCrudRoutes(basePath, controller, name) {

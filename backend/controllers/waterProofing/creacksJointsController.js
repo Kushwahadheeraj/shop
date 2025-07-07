@@ -1,8 +1,8 @@
+const WaterProofing = require('../../models/WaterProofingModels');
 // AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
 
 const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
-// TODO: Set correct model import
 /**
  * Uploads a buffer to Cloudinary and returns the secure URL.
  * @param {Buffer} buffer
@@ -30,7 +30,7 @@ exports.createCreacksJoints = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new CreacksJointsModel({ ...req.body, photos: photoUrls, category: 'creacksJoints' });
+    const product = new WaterProofing({ ...req.body, photos: photoUrls, category: 'creacksJoints' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -50,7 +50,7 @@ exports.updateCreacksJoints = async (req, res) => {
       }
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
-    const product = await CreacksJointsModel.findOneAndUpdate(
+    const product = await WaterProofing.findOneAndUpdate(
       { _id: req.params.id, category: 'creacksJoints' },
       update,
       { new: true }
@@ -63,7 +63,7 @@ exports.updateCreacksJoints = async (req, res) => {
 };
 exports.getAllCreacksJoints = async (req, res) => {
   try {
-    const products = await ToolsModel.find({ category: 'creacksJoints' });
+    const products = await WaterProofing.find({ category: 'creacksJoints' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllCreacksJoints = async (req, res) => {
 
 exports.getOneCreacksJoints = async (req, res) => {
   try {
-    const product = await ToolsModel.findOne({ _id: req.params.id, category: 'creacksJoints' });
+    const product = await WaterProofing.findOne({ _id: req.params.id, category: 'creacksJoints' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneCreacksJoints = async (req, res) => {
 
 exports.deleteCreacksJoints = async (req, res) => {
   try {
-    const product = await ToolsModel.findOneAndDelete({ _id: req.params.id, category: 'creacksJoints' });
+    const product = await WaterProofing.findOneAndDelete({ _id: req.params.id, category: 'creacksJoints' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

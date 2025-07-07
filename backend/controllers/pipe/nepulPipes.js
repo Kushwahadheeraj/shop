@@ -1,10 +1,30 @@
 const Pipe = require('../../models/PipeModels');
+const cloudinary = require('../../config/cloudinary');
+const streamifier = require('streamifier');
+
+function uploadToCloudinary(buffer) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream((err, result) => {
+      if (err) return reject(err);
+      resolve(result.secure_url);
+    });
+    streamifier.createReadStream(buffer).pipe(stream);
+  });
+}
 
 // CREATE
 exports.createNepulPipes = async (req, res) => {
   try {
+    if (!req.files || req.files.length < 1) {
+      return res.status(400).json({ error: 'At least 1 image is required.' });
+    }
+    if (req.files.length > 5) {
+      return res.status(400).json({ error: 'No more than 5 images allowed.' });
+    }
+    const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     const item = new Pipe({
       ...req.body,
+      photos: photoUrls,
       category: 'NepulPipes'
     });
     await item.save();

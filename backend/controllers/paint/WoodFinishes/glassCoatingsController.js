@@ -1,7 +1,7 @@
-const Paint = require('../../../models//models/PaintModels');
+const Paint = require('../../../models/PaintModels');
 // AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
 
-const cloudinary = require('../../config/cloudinary');
+const cloudinary = require('../../../config/cloudinary');
 const streamifier = require('streamifier');
 /**
  * Uploads a buffer to Cloudinary and returns the secure URL.

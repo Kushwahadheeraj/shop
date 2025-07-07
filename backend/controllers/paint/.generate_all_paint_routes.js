@@ -1,3 +1,4 @@
+const Paint = require('../../models//models/PaintModels');
 // .generate_all_paint_routes.js
 // Script to auto-generate backend/routes/paintRoutes.js for all controllers in /paint and subfolders, using specific function names
 

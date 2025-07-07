@@ -1,8 +1,8 @@
+const Paint = require('../../../models//models/PaintModels');
 // AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
 
 const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
-// TODO: Set correct model import
 /**
  * Uploads a buffer to Cloudinary and returns the secure URL.
  * @param {Buffer} buffer
@@ -30,7 +30,7 @@ exports.createMelamyne = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new MelamyneModel({ ...req.body, photos: photoUrls, category: 'melamyne' });
+    const product = new Paint({ ...req.body, photos: photoUrls, category: 'melamyne' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -50,7 +50,7 @@ exports.updateMelamyne = async (req, res) => {
       }
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
-    const product = await MelamyneModel.findOneAndUpdate(
+    const product = await Paint.findOneAndUpdate(
       { _id: req.params.id, category: 'melamyne' },
       update,
       { new: true }

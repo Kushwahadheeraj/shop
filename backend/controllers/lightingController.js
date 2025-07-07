@@ -61,7 +61,7 @@ exports.updateLighting = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-exports.getAllLightings = async (req, res) => {
+exports.getAllLighting = async (req, res) => {
   try {
     const lightings = await Lighting.find();
     res.json(lightings);
@@ -75,6 +75,16 @@ exports.deleteLighting = async (req, res) => {
     const lighting = await Lighting.findByIdAndDelete(req.params.id);
     if (!lighting) return res.status(404).json({ message: 'Not found' });
     res.json({ message: 'Deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getOneLighting = async (req, res) => {
+  try {
+    const lighting = await LightingModels.findById(req.params.id);
+    if (!lighting) return res.status(404).json({ message: 'Not found' });
+    res.json(lighting);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

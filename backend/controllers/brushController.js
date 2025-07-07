@@ -61,7 +61,17 @@ exports.updateBrush = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-exports.getAllBrushes = async (req, res) => {
+
+exports.getOneBrush = async (req, res) => {
+  try {
+    const brush = await BrushModels.findOne({ _id: req.params.id, category: 'brush' });
+    if (!brush) return res.status(404).json({ error: 'Not found' });
+    res.json(brush);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+exports.getAllBrush = async (req, res) => {
   try {
     const brushes = await Brush.find();
     res.json(brushes);

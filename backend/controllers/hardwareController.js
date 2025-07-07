@@ -61,7 +61,7 @@ exports.updateHardware = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-exports.getAllHardwares = async (req, res) => {
+exports.getAllHardware = async (req, res) => {
   try {
     const hardwares = await Hardware.find();
     res.json(hardwares);
@@ -75,6 +75,16 @@ exports.deleteHardware = async (req, res) => {
     const hardware = await Hardware.findByIdAndDelete(req.params.id);
     if (!hardware) return res.status(404).json({ message: 'Not found' });
     res.json({ message: 'Deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getOneHardware = async (req, res) => {
+  try {
+    const hardware = await HardwareModels.findById(req.params.id);
+    if (!hardware) return res.status(404).json({ message: 'Not found' });
+    res.json(hardware);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

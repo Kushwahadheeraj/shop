@@ -70,11 +70,21 @@ exports.getAllCements = async (req, res) => {
   }
 };
 
-exports.deleteCement = async (req, res) => {
+exports.deleteCements = async (req, res) => {
   try {
     const cement = await Cements.findByIdAndDelete(req.params.id);
     if (!cement) return res.status(404).json({ message: 'Not found' });
     res.json({ message: 'Deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getOneCements = async (req, res) => {
+  try {
+    const cements = await CementsModels.findById(req.params.id);
+    if (!cements) return res.status(404).json({ message: 'Not found' });
+    res.json(cements);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

@@ -61,7 +61,7 @@ exports.updateHomeDecor = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-exports.getAllHomeDecors = async (req, res) => {
+exports.getAllHomeDecor = async (req, res) => {
   try {
     const homeDecors = await HomeDecor.find();
     res.json(homeDecors);
@@ -75,6 +75,16 @@ exports.deleteHomeDecor = async (req, res) => {
     const homeDecor = await HomeDecor.findByIdAndDelete(req.params.id);
     if (!homeDecor) return res.status(404).json({ message: 'Not found' });
     res.json({ message: 'Deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getOneHomeDecor = async (req, res) => {
+  try {
+    const homeDecor = await HomeDecorModels.findById(req.params.id);
+    if (!homeDecor) return res.status(404).json({ message: 'Not found' });
+    res.json(homeDecor);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

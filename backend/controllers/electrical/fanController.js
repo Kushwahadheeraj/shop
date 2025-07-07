@@ -1,14 +1,7 @@
-// AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
-
-const cloudinary = require('../config/cloudinary');
+const ElectricalModels = require('../../models/ElectricalModels');
+const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
-const ElectricalModels = require('../models/ElectricalModels');
-// TODO: Set correct model import
-/**
- * Uploads a buffer to Cloudinary and returns the secure URL.
- * @param {Buffer} buffer
- * @returns {Promise<string>}
- */
+
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream((err, result) => {
@@ -19,10 +12,7 @@ function uploadToCloudinary(buffer) {
   });
 }
 
-/**
- * Create a new Fans product.
- */
-exports.createFans = async (req, res) => {
+exports.createFan = async (req, res) => {
   try {
     if (!req.files || req.files.length < 1) {
       return res.status(400).json({ error: 'At least 1 image is required.' });
@@ -31,7 +21,7 @@ exports.createFans = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new FansModel({ ...req.body, photos: photoUrls, category: 'fans' });
+    const product = new ElectricalModels({ ...req.body, photos: photoUrls, category: 'fan' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -39,10 +29,26 @@ exports.createFans = async (req, res) => {
   }
 };
 
-/**
- * Update a Fans product by ID.
- */
-exports.updateFans = async (req, res) => {
+exports.getAllFan = async (req, res) => {
+  try {
+    const products = await ElectricalModels.find({ category: 'fan' });
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getOneFan = async (req, res) => {
+  try {
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'fan' });
+    if (!product) return res.status(404).json({ error: 'Not found' });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.updateFan = async (req, res) => {
   try {
     let update = { ...req.body };
     if (req.files && req.files.length > 0) {
@@ -51,8 +57,8 @@ exports.updateFans = async (req, res) => {
       }
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
-    const product = await FansModel.findOneAndUpdate(
-      { _id: req.params.id, category: 'fans' },
+    const product = await ElectricalModels.findOneAndUpdate(
+      { _id: req.params.id, category: 'fan' },
       update,
       { new: true }
     );
@@ -62,30 +68,12 @@ exports.updateFans = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-exports.getAllFans = async (req, res) => {
-  try {
-    const fans = await Electrical.find({ type: 'Fans' });
-    res.json(fans);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
 
 exports.deleteFan = async (req, res) => {
   try {
-    const fan = await Electrical.findOneAndDelete({ _id: req.params.id, type: 'Fans' });
-    if (!fan) return res.status(404).json({ message: 'Not found' });
-    res.json({ message: 'Deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-exports.getOneFans = async (req, res) => {
-  try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'fans' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'fan' });
     if (!product) return res.status(404).json({ error: 'Not found' });
-    res.json(product);
+    res.json({ message: 'Deleted successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

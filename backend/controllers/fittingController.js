@@ -61,7 +61,7 @@ exports.updateFitting = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-exports.getAllFittings = async (req, res) => {
+exports.getAllFitting = async (req, res) => {
   try {
     const fittings = await Fitting.find();
     res.json(fittings);
@@ -75,6 +75,16 @@ exports.deleteFitting = async (req, res) => {
     const fitting = await Fitting.findByIdAndDelete(req.params.id);
     if (!fitting) return res.status(404).json({ message: 'Not found' });
     res.json({ message: 'Deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getOneFitting = async (req, res) => {
+  try {
+    const fitting = await FittingModels.findById(req.params.id);
+    if (!fitting) return res.status(404).json({ message: 'Not found' });
+    res.json(fitting);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

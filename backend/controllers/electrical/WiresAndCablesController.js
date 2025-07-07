@@ -1,14 +1,7 @@
-// AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
-
-const cloudinary = require('../config/cloudinary');
+const ElectricalModels = require('../../models/ElectricalModels');
+const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
-const ElectricalModels = require('../models/ElectricalModels');
-// TODO: Set correct model import
-/**
- * Uploads a buffer to Cloudinary and returns the secure URL.
- * @param {Buffer} buffer
- * @returns {Promise<string>}
- */
+
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream((err, result) => {
@@ -19,9 +12,6 @@ function uploadToCloudinary(buffer) {
   });
 }
 
-/**
- * Create a new WiresAndCables product.
- */
 exports.createWiresAndCables = async (req, res) => {
   try {
     if (!req.files || req.files.length < 1) {
@@ -31,7 +21,7 @@ exports.createWiresAndCables = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new WiresAndCablesModel({ ...req.body, photos: photoUrls, category: 'wiresAndCables' });
+    const product = new ElectricalModels({ ...req.body, photos: photoUrls, category: 'wiresAndCables' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -39,9 +29,25 @@ exports.createWiresAndCables = async (req, res) => {
   }
 };
 
-/**
- * Update a WiresAndCables product by ID.
- */
+exports.getAllWiresAndCables = async (req, res) => {
+  try {
+    const products = await ElectricalModels.find({ category: 'wiresAndCables' });
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getOneWiresAndCables = async (req, res) => {
+  try {
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'wiresAndCables' });
+    if (!product) return res.status(404).json({ error: 'Not found' });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 exports.updateWiresAndCables = async (req, res) => {
   try {
     let update = { ...req.body };
@@ -51,7 +57,7 @@ exports.updateWiresAndCables = async (req, res) => {
       }
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
-    const product = await WiresAndCablesModel.findOneAndUpdate(
+    const product = await ElectricalModels.findOneAndUpdate(
       { _id: req.params.id, category: 'wiresAndCables' },
       update,
       { new: true }
@@ -63,30 +69,11 @@ exports.updateWiresAndCables = async (req, res) => {
   }
 };
 
-exports.getAllWiresAndCables = async (req, res) => {
-  try {
-    const fans = await Electrical.find({ type: 'Fans' });
-    res.json(fans);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
 exports.deleteWiresAndCables = async (req, res) => {
   try {
-    const fan = await Electrical.findOneAndDelete({ _id: req.params.id, type: 'Fans' });
-    if (!fan) return res.status(404).json({ message: 'Not found' });
-    res.json({ message: 'Deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-exports.getOneWiresAndCables = async (req, res) => {
-  try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'wiresAndCables' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'wiresAndCables' });
     if (!product) return res.status(404).json({ error: 'Not found' });
-    res.json(product);
+    res.json({ message: 'Deleted successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

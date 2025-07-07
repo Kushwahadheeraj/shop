@@ -1,6 +1,6 @@
 // AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
 
-const cloudinary = require('../config/cloudinary');
+const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
 const locksModel = require('../models/locksModel');
 /**

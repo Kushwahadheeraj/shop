@@ -1,5 +1,5 @@
 const Lock = require('../models/locksModel');
-const cloudinary = require('../config/cloudinary');
+const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
 
 function uploadToCloudinary(buffer) {

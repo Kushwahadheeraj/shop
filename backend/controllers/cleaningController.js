@@ -61,7 +61,7 @@ exports.updateCleaning = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-exports.getAllCleanings = async (req, res) => {
+exports.getAllCleaning = async (req, res) => {
   try {
     const cleanings = await Cleaning.find();
     res.json(cleanings);
@@ -75,6 +75,16 @@ exports.deleteCleaning = async (req, res) => {
     const cleaning = await Cleaning.findByIdAndDelete(req.params.id);
     if (!cleaning) return res.status(404).json({ message: 'Not found' });
     res.json({ message: 'Deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getOneCleaning = async (req, res) => {
+  try {
+    const cleaning = await CleaningModels.findById(req.params.id);
+    if (!cleaning) return res.status(404).json({ message: 'Not found' });
+    res.json(cleaning);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

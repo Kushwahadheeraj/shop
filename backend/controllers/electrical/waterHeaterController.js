@@ -1,14 +1,7 @@
-// AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
-
-const ElectricalModels = require('../models/ElectricalModels');
-const cloudinary = require('../config/cloudinary');
+const ElectricalModels = require('../../models/ElectricalModels');
+const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
 
-/**
- * Uploads a buffer to Cloudinary and returns the secure URL.
- * @param {Buffer} buffer
- * @returns {Promise<string>}
- */
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream((err, result) => {
@@ -19,9 +12,6 @@ function uploadToCloudinary(buffer) {
   });
 }
 
-/**
- * Create a new WaterHeater product.
- */
 exports.createWaterHeater = async (req, res) => {
   try {
     if (!req.files || req.files.length < 1) {
@@ -39,9 +29,25 @@ exports.createWaterHeater = async (req, res) => {
   }
 };
 
-/**
- * Update a WaterHeater product by ID.
- */
+exports.getAllWaterHeater = async (req, res) => {
+  try {
+    const products = await ElectricalModels.find({ category: 'waterHeater' });
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getOneWaterHeater = async (req, res) => {
+  try {
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'waterHeater' });
+    if (!product) return res.status(404).json({ error: 'Not found' });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 exports.updateWaterHeater = async (req, res) => {
   try {
     let update = { ...req.body };
@@ -63,31 +69,12 @@ exports.updateWaterHeater = async (req, res) => {
   }
 };
 
-exports.getAllWaterHeaters = async (req, res) => {
-  try {
-    const items = await ElectricalModels.find({ category: 'waterHeater' });
-    res.json(items);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-exports.getOneWaterHeater = async (req, res) => {
-  try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'waterHeater' });
-    if (!product) return res.status(404).json({ error: 'Not found' });
-    res.json(product);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
 exports.deleteWaterHeater = async (req, res) => {
   try {
-    const item = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'waterHeater' });
-    if (!item) return res.status(404).json({ message: 'Not found' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'waterHeater' });
+    if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };

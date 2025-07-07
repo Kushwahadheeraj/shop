@@ -61,7 +61,7 @@ exports.updateFiber = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-exports.getAllFibers = async (req, res) => {
+exports.getAllFiber = async (req, res) => {
   try {
     const fibers = await Fiber.find();
     res.json(fibers);
@@ -75,6 +75,16 @@ exports.deleteFiber = async (req, res) => {
     const fiber = await Fiber.findByIdAndDelete(req.params.id);
     if (!fiber) return res.status(404).json({ message: 'Not found' });
     res.json({ message: 'Deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getOneFiber = async (req, res) => {
+  try {
+    const fiber = await FiberModels.findById(req.params.id);
+    if (!fiber) return res.status(404).json({ message: 'Not found' });
+    res.json(fiber);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

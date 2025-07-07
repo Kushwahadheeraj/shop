@@ -61,9 +61,19 @@ exports.updateAdhesives = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+exports.getOneAdhesives = async (req, res) => {
+  try {
+    const adhesive = await AdhesivesModels.findById(req.params.id);
+    if (!adhesive) return res.status(404).json({ message: 'Not found' });
+    res.json(adhesive);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 exports.getAllAdhesives = async (req, res) => {
   try {
-    const adhesives = await Adhesives.find();
+    const adhesives = await AdhesivesModels.find();
     res.json(adhesives);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -72,7 +82,7 @@ exports.getAllAdhesives = async (req, res) => {
 
 exports.deleteAdhesives = async (req, res) => {
   try {
-    const adhesive = await Adhesives.findByIdAndDelete(req.params.id);
+    const adhesive = await AdhesivesModels.findByIdAndDelete(req.params.id);
     if (!adhesive) return res.status(404).json({ message: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

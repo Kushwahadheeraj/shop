@@ -18,7 +18,7 @@ function walk(dir, arr = [], rel = '') {
 const baseDir = path.join(__dirname);
 const controllers = walk(baseDir);
 
-const cloudinaryImport = `const cloudinary = require('../config/cloudinary');\n`;
+const cloudinaryImport = `const cloudinary = require('../../config/cloudinary');\n`;
 const streamifierImport = `const streamifier = require('streamifier');\n`;
 const uploadHelper = `/**\n * Uploads a buffer to Cloudinary and returns the secure URL.\n * @param {Buffer} buffer\n * @returns {Promise<string>}\n */\nfunction uploadToCloudinary(buffer) {\n  return new Promise((resolve, reject) => {\n    const stream = cloudinary.uploader.upload_stream((err, result) => {\n      if (err) return reject(err);\n      resolve(result.secure_url);\n    });\n    streamifier.createReadStream(buffer).pipe(stream);\n  });\n}\n`;
 

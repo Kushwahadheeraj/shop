@@ -1,13 +1,7 @@
-// AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
-
-const cloudinary = require('../config/cloudinary');
+const ElectricalModels = require('../../models/ElectricalModels');
+const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
-// TODO: Set correct model import
-/**
- * Uploads a buffer to Cloudinary and returns the secure URL.
- * @param {Buffer} buffer
- * @returns {Promise<string>}
- */
+
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream((err, result) => {
@@ -18,9 +12,6 @@ function uploadToCloudinary(buffer) {
   });
 }
 
-/**
- * Create a new TVOutlets product.
- */
 exports.createTVOutlets = async (req, res) => {
   try {
     if (!req.files || req.files.length < 1) {
@@ -30,7 +21,7 @@ exports.createTVOutlets = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new TVOutletsModel({ ...req.body, photos: photoUrls, category: 'tVOutlets' });
+    const product = new ElectricalModels({ ...req.body, photos: photoUrls, category: 'tVOutlets' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -38,9 +29,25 @@ exports.createTVOutlets = async (req, res) => {
   }
 };
 
-/**
- * Update a TVOutlets product by ID.
- */
+exports.getAllTVOutlets = async (req, res) => {
+  try {
+    const products = await ElectricalModels.find({ category: 'tVOutlets' });
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getOneTVOutlets = async (req, res) => {
+  try {
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'tVOutlets' });
+    if (!product) return res.status(404).json({ error: 'Not found' });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 exports.updateTVOutlets = async (req, res) => {
   try {
     let update = { ...req.body };
@@ -50,7 +57,7 @@ exports.updateTVOutlets = async (req, res) => {
       }
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
-    const product = await TVOutletsModel.findOneAndUpdate(
+    const product = await ElectricalModels.findOneAndUpdate(
       { _id: req.params.id, category: 'tVOutlets' },
       update,
       { new: true }
@@ -61,21 +68,13 @@ exports.updateTVOutlets = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-exports.getAllTVOutlets = async (req, res) => {
-  try {
-    const items = await Electrical.find({ type: 'TVOutlets' });
-    res.json(items);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
 
-exports.deleteTVOutlet = async (req, res) => {
+exports.deleteTVOutlets = async (req, res) => {
   try {
-    const item = await Electrical.findOneAndDelete({ _id: req.params.id, type: 'TVOutlets' });
-    if (!item) return res.status(404).json({ message: 'Not found' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'tVOutlets' });
+    if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };

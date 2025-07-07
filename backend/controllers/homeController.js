@@ -61,7 +61,7 @@ exports.updateHome = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-exports.getAllHomes = async (req, res) => {
+exports.getAllHome = async (req, res) => {
   try {
     const homes = await Home.find();
     res.json(homes);
@@ -75,6 +75,16 @@ exports.deleteHome = async (req, res) => {
     const home = await Home.findByIdAndDelete(req.params.id);
     if (!home) return res.status(404).json({ message: 'Not found' });
     res.json({ message: 'Deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getOneHome = async (req, res) => {
+  try {
+    const home = await HomeModels.findById(req.params.id);
+    if (!home) return res.status(404).json({ message: 'Not found' });
+    res.json(home);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

@@ -1,13 +1,7 @@
-// AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
-
-const cloudinary = require('../config/cloudinary');
+const ElectricalModels = require('../../models/ElectricalModels');
+const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
-// TODO: Set correct model import
-/**
- * Uploads a buffer to Cloudinary and returns the secure URL.
- * @param {Buffer} buffer
- * @returns {Promise<string>}
- */
+
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream((err, result) => {
@@ -18,9 +12,6 @@ function uploadToCloudinary(buffer) {
   });
 }
 
-/**
- * Create a new DPswitch product.
- */
 exports.createDPswitch = async (req, res) => {
   try {
     if (!req.files || req.files.length < 1) {
@@ -30,7 +21,7 @@ exports.createDPswitch = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new DPswitchModel({ ...req.body, photos: photoUrls, category: 'dPswitch' });
+    const product = new ElectricalModels({ ...req.body, photos: photoUrls, category: 'dPswitch' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -38,9 +29,25 @@ exports.createDPswitch = async (req, res) => {
   }
 };
 
-/**
- * Update a DPswitch product by ID.
- */
+exports.getAllDPswitch = async (req, res) => {
+  try {
+    const products = await ElectricalModels.find({ category: 'dPswitch' });
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getOneDPswitch = async (req, res) => {
+  try {
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'dPswitch' });
+    if (!product) return res.status(404).json({ error: 'Not found' });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 exports.updateDPswitch = async (req, res) => {
   try {
     let update = { ...req.body };
@@ -50,7 +57,7 @@ exports.updateDPswitch = async (req, res) => {
       }
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
-    const product = await DPswitchModel.findOneAndUpdate(
+    const product = await ElectricalModels.findOneAndUpdate(
       { _id: req.params.id, category: 'dPswitch' },
       update,
       { new: true }
@@ -61,21 +68,13 @@ exports.updateDPswitch = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-exports.getAllDPswitchs = async (req, res) => {
-  try {
-    const dPswitches = await Electrical.find({ type: 'Fans' });
-    res.json(dPswitches);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
 
 exports.deleteDPswitch = async (req, res) => {
   try {
-    const dPswitch = await Electrical.findOneAndDelete({ _id: req.params.id, type: 'Fans' });
-    if (!dPswitch) return res.status(404).json({ message: 'Not found' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'dPswitch' });
+    if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };

@@ -61,7 +61,7 @@ exports.updateDry = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-exports.getAllDrys = async (req, res) => {
+exports.getAllDry = async (req, res) => {
   try {
     const drys = await Dry.find();
     res.json(drys);
@@ -75,6 +75,16 @@ exports.deleteDry = async (req, res) => {
     const dry = await Dry.findByIdAndDelete(req.params.id);
     if (!dry) return res.status(404).json({ message: 'Not found' });
     res.json({ message: 'Deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getOneDry = async (req, res) => {
+  try {
+    const dry = await DryModels.findById(req.params.id);
+    if (!dry) return res.status(404).json({ message: 'Not found' });
+    res.json(dry);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

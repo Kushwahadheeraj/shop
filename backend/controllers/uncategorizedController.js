@@ -61,7 +61,7 @@ exports.updateUncategorized = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-exports.getAllUncategorizeds = async (req, res) => {
+exports.getAllUncategorized = async (req, res) => {
   try {
     const uncategorizeds = await Uncategorized.find();
     res.json(uncategorizeds);
@@ -75,6 +75,16 @@ exports.deleteUncategorized = async (req, res) => {
     const uncategorized = await Uncategorized.findByIdAndDelete(req.params.id);
     if (!uncategorized) return res.status(404).json({ message: 'Not found' });
     res.json({ message: 'Deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getOneUncategorized = async (req, res) => {
+  try {
+    const uncategorized = await UncategorizedModels.findById(req.params.id);
+    if (!uncategorized) return res.status(404).json({ message: 'Not found' });
+    res.json(uncategorized);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

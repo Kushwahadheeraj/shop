@@ -1,8 +1,9 @@
 // AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
 
+const ElectricalModels = require('../models/ElectricalModels');
 const cloudinary = require('../config/cloudinary');
 const streamifier = require('streamifier');
-// TODO: Set correct model import
+
 /**
  * Uploads a buffer to Cloudinary and returns the secure URL.
  * @param {Buffer} buffer
@@ -30,7 +31,7 @@ exports.createWaterHeater = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new WaterHeaterModel({ ...req.body, photos: photoUrls, category: 'waterHeater' });
+    const product = new ElectricalModels({ ...req.body, photos: photoUrls, category: 'waterHeater' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -50,7 +51,7 @@ exports.updateWaterHeater = async (req, res) => {
       }
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
-    const product = await WaterHeaterModel.findOneAndUpdate(
+    const product = await ElectricalModels.findOneAndUpdate(
       { _id: req.params.id, category: 'waterHeater' },
       update,
       { new: true }
@@ -61,18 +62,29 @@ exports.updateWaterHeater = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
 exports.getAllWaterHeaters = async (req, res) => {
   try {
-    const items = await Electrical.find({ type: 'WaterHeater' });
+    const items = await ElectricalModels.find({ category: 'waterHeater' });
     res.json(items);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
+exports.getOneWaterHeater = async (req, res) => {
+  try {
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'waterHeater' });
+    if (!product) return res.status(404).json({ error: 'Not found' });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 exports.deleteWaterHeater = async (req, res) => {
   try {
-    const item = await Electrical.findOneAndDelete({ _id: req.params.id, type: 'WaterHeater' });
+    const item = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'waterHeater' });
     if (!item) return res.status(404).json({ message: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

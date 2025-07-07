@@ -2,6 +2,7 @@
 
 const cloudinary = require('../config/cloudinary');
 const streamifier = require('streamifier');
+const ElectricalModels = require('../models/ElectricalModels');
 // TODO: Set correct model import
 /**
  * Uploads a buffer to Cloudinary and returns the secure URL.
@@ -61,6 +62,7 @@ exports.updateWiresAndCables = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
 exports.getAllWiresAndCables = async (req, res) => {
   try {
     const fans = await Electrical.find({ type: 'Fans' });
@@ -77,5 +79,15 @@ exports.deleteWiresAndCables = async (req, res) => {
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getOneWiresAndCables = async (req, res) => {
+  try {
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'wiresAndCables' });
+    if (!product) return res.status(404).json({ error: 'Not found' });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };

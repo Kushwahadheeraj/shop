@@ -1,4 +1,4 @@
-const Lock = require('../models/locksModel');
+const Lock = require('../../models/LocksModels');
 const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
 
@@ -15,7 +15,7 @@ function uploadToCloudinary(buffer) {
   });
 }
 
-exports.createpatchFittingss = async (req, res) => {
+exports.createPatchFittingss = async (req, res) => {
   try {
     let photoUrls = [];
     if (req.files && req.files.length > 0) {
@@ -29,7 +29,7 @@ exports.createpatchFittingss = async (req, res) => {
   }
 };
 
-exports.getAllpatchFittingss = async (req, res) => {
+exports.getAllPatchFittingss = async (req, res) => {
   try {
     const items = await Lock.find({ type: 'patchFittingss' });
     res.json(items);
@@ -38,17 +38,17 @@ exports.getAllpatchFittingss = async (req, res) => {
   }
 };
 
-exports.getpatchFittingssById = async (req, res) => {
-  try {
-    const item = await Lock.findOne({ _id: req.params.id, type: 'patchFittingss' });
-    if (!item) return res.status(404).json({ message: 'Not found' });
-    res.json(item);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
+// exports.getPatchFittingssById = async (req, res) => {
+//   try {
+//     const item = await Lock.findOne({ _id: req.params.id, type: 'patchFittingss' });
+//     if (!item) return res.status(404).json({ message: 'Not found' });
+//     res.json(item);
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// };
 
-exports.updatepatchFittingss = async (req, res) => {
+exports.updatePatchFittingss = async (req, res) => {
   try {
     const item = await Lock.findOneAndUpdate(
       { _id: req.params.id, type: 'patchFittingss' },
@@ -62,7 +62,7 @@ exports.updatepatchFittingss = async (req, res) => {
   }
 };
 
-exports.deletepatchFittingss = async (req, res) => {
+exports.deletePatchFittingss = async (req, res) => {
   try {
     const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'patchFittingss' });
     if (!item) return res.status(404).json({ message: 'Not found' });
@@ -70,4 +70,16 @@ exports.deletepatchFittingss = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-}; 
+};
+
+exports.getOnePatchFittingss = async (req, res) => {
+  try {
+    const item = await Lock.findOne({ _id: req.params.id, type: 'patchFittingss' });
+    if (!item) return res.status(404).json({ message: 'Not found' });
+    res.json(item);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+

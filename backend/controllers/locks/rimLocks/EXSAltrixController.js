@@ -1,6 +1,7 @@
 // AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
 
-const cloudinary = require('../../config/cloudinary');
+const Lock = require('../../../models/LocksModels');
+const cloudinary = require('../../../config/cloudinary');
 const streamifier = require('streamifier');
 // TODO: Set correct model import
 /**
@@ -30,7 +31,7 @@ exports.createEXSAltrix = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new EXSAltrixModel({ ...req.body, photos: photoUrls, category: 'EXSAltrix' });
+    const product = new Lock({ ...req.body, photos: photoUrls, category: 'EXSAltrix' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -50,7 +51,7 @@ exports.updateEXSAltrix = async (req, res) => {
       }
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
-    const product = await EXSAltrixModel.findOneAndUpdate(
+    const product = await Lock.findOneAndUpdate(
       { _id: req.params.id, category: 'EXSAltrix' },
       update,
       { new: true }
@@ -75,6 +76,16 @@ exports.deleteEXSAltrix = async (req, res) => {
     const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'EXSAltrix' });
     if (!item) return res.status(404).json({ message: 'Not found' });
     res.json({ message: 'Deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getOneEXSAltrix = async (req, res) => {
+  try {
+    const item = await Lock.findOne({ _id: req.params.id, type: 'EXSAltrix' });
+    if (!item) return res.status(404).json({ message: 'Not found' });
+    res.json(item);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

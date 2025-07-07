@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const electricalProductSchema = new mongoose.Schema({
+const locksProductSchema = new mongoose.Schema({
   type: { type: String, required: true }, // e.g., Adaptors, CeilingRoses, etc.
   name: { type: String, required: true },
   productNo: { type: String, required: true },
@@ -15,11 +15,11 @@ const electricalProductSchema = new mongoose.Schema({
   tag: [String],
 }, { timestamps: true });
 
-electricalProductSchema.pre('save', function(next) {
+locksProductSchema.pre('save', function(next) {
   if (this.price && this.discount) {
     this.discountPrice = Math.max(this.price - this.discount, 0);
   }
   next();
 });
 
-module.exports = mongoose.model('ElectricalModels', electricalProductSchema); 
+module.exports = mongoose.model('LocksModels', locksProductSchema); 

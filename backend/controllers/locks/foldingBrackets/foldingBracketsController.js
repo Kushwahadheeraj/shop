@@ -1,6 +1,7 @@
 // AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
 
-const cloudinary = require('../../config/cloudinary');
+const Lock = require('../../../models/LocksModels');
+const cloudinary = require('../../../config/cloudinary');
 const streamifier = require('streamifier');
 // TODO: Set correct model import
 /**
@@ -30,7 +31,7 @@ exports.createFoldingBrackets = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new FoldingBracketsModel({ ...req.body, photos: photoUrls, category: 'foldingBrackets' });
+    const product = new Lock({ ...req.body, photos: photoUrls, category: 'foldingBrackets' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -50,7 +51,7 @@ exports.updateFoldingBrackets = async (req, res) => {
       }
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
-    const product = await FoldingBracketsModel.findOneAndUpdate(
+    const product = await Lock.findOneAndUpdate(
       { _id: req.params.id, category: 'foldingBrackets' },
       update,
       { new: true }
@@ -61,7 +62,7 @@ exports.updateFoldingBrackets = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-exports.getAllfoldingBrackets = async (req, res) => {
+exports.getAllFoldingBrackets = async (req, res) => {
   try {
     const items = await Lock.find({ type: 'foldingBrackets' });
     res.json(items);
@@ -70,11 +71,21 @@ exports.getAllfoldingBrackets = async (req, res) => {
   }
 };
 
-exports.deletefoldingBrackets = async (req, res) => {
+exports.deleteFoldingBrackets = async (req, res) => {
   try {
     const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'foldingBrackets' });
     if (!item) return res.status(404).json({ message: 'Not found' });
     res.json({ message: 'Deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getOneFoldingBrackets = async (req, res) => {
+  try {
+    const item = await Lock.findOne({ _id: req.params.id, type: 'foldingBrackets' });
+    if (!item) return res.status(404).json({ message: 'Not found' });
+    res.json(item);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

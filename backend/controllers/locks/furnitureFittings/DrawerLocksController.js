@@ -1,8 +1,9 @@
 // AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
 
-const cloudinary = require('../../config/cloudinary');
+const Lock = require('../../../models/LocksModels');
+const cloudinary = require('../../../config/cloudinary');
 const streamifier = require('streamifier');
-// TODO: Set correct model import
+
 /**
  * Uploads a buffer to Cloudinary and returns the secure URL.
  * @param {Buffer} buffer
@@ -30,7 +31,7 @@ exports.createDrawerLocks = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new DrawerLocksModel({ ...req.body, photos: photoUrls, category: 'DrawerLocks' });
+    const product = new Lock({ ...req.body, photos: photoUrls, category: 'DrawerLocks' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -50,7 +51,7 @@ exports.updateDrawerLocks = async (req, res) => {
       }
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
-    const product = await DrawerLocksModel.findOneAndUpdate(
+    const product = await Lock.findOneAndUpdate(
       { _id: req.params.id, category: 'DrawerLocks' },
       update,
       { new: true }
@@ -75,6 +76,16 @@ exports.deleteDrawerLocks = async (req, res) => {
     const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'DrawerLocks' });
     if (!item) return res.status(404).json({ message: 'Not found' });
     res.json({ message: 'Deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getOneDrawerLocks = async (req, res) => {
+  try {
+    const item = await Lock.findOne({ _id: req.params.id, type: 'DrawerLocks' });
+    if (!item) return res.status(404).json({ message: 'Not found' });
+    res.json(item);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

@@ -1,8 +1,9 @@
 // AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
 
-const cloudinary = require('../../config/cloudinary');
+const Lock = require('../../../models/LocksModels');
+const cloudinary = require('../../../config/cloudinary');
 const streamifier = require('streamifier');
-// TODO: Set correct model import
+
 /**
  * Uploads a buffer to Cloudinary and returns the secure URL.
  * @param {Buffer} buffer
@@ -30,7 +31,7 @@ exports.createThickDoorHinge = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new ThickDoorHingeModel({ ...req.body, photos: photoUrls, category: 'ThickDoorHinge' });
+    const product = new Lock({ ...req.body, photos: photoUrls, category: 'ThickDoorHinge' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -50,7 +51,7 @@ exports.updateThickDoorHinge = async (req, res) => {
       }
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
-    const product = await ThickDoorHingeModel.findOneAndUpdate(
+    const product = await Lock.findOneAndUpdate(
       { _id: req.params.id, category: 'ThickDoorHinge' },
       update,
       { new: true }
@@ -75,6 +76,16 @@ exports.deleteThickDoorHinge = async (req, res) => {
     const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'ThickDoorHinge' });
     if (!item) return res.status(404).json({ message: 'Not found' });
     res.json({ message: 'Deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getOneThickDoorHinge = async (req, res) => {
+  try {
+    const item = await Lock.findOne({ _id: req.params.id, type: 'ThickDoorHinge' });
+    if (!item) return res.status(404).json({ message: 'Not found' });
+    res.json(item);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

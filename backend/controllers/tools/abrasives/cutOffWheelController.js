@@ -1,8 +1,8 @@
+const Tools = require('../../../models/ToolsModels');
 // AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
 
-const cloudinary = require('../../config/cloudinary');
+const cloudinary = require('../../../config/cloudinary');
 const streamifier = require('streamifier');
-// TODO: Set correct model import
 /**
  * Uploads a buffer to Cloudinary and returns the secure URL.
  * @param {Buffer} buffer
@@ -30,7 +30,7 @@ exports.createCutOffWheel = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new CutOffWheelModel({ ...req.body, photos: photoUrls, category: 'cutOffWheel' });
+    const product = new Tools({ ...req.body, photos: photoUrls, category: 'cutOffWheel' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -50,7 +50,7 @@ exports.updateCutOffWheel = async (req, res) => {
       }
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
-    const product = await CutOffWheelModel.findOneAndUpdate(
+    const product = await Tools.findOneAndUpdate(
       { _id: req.params.id, category: 'cutOffWheel' },
       update,
       { new: true }
@@ -63,7 +63,7 @@ exports.updateCutOffWheel = async (req, res) => {
 };
 exports.getAllCutOffWheel = async (req, res) => {
   try {
-    const products = await ToolsModel.find({ category: 'cutOffWheel' });
+    const products = await Tools.find({ category: 'cutOffWheel' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllCutOffWheel = async (req, res) => {
 
 exports.getOneCutOffWheel = async (req, res) => {
   try {
-    const product = await ToolsModel.findOne({ _id: req.params.id, category: 'cutOffWheel' });
+    const product = await Tools.findOne({ _id: req.params.id, category: 'cutOffWheel' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneCutOffWheel = async (req, res) => {
 
 exports.deleteCutOffWheel = async (req, res) => {
   try {
-    const product = await ToolsModel.findOneAndDelete({ _id: req.params.id, category: 'cutOffWheel' });
+    const product = await Tools.findOneAndDelete({ _id: req.params.id, category: 'cutOffWheel' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

@@ -1,8 +1,8 @@
+const Tools = require('../../models/ToolsModels');
 // AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
 
 const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
-// TODO: Set correct model import
 /**
  * Uploads a buffer to Cloudinary and returns the secure URL.
  * @param {Buffer} buffer
@@ -30,7 +30,7 @@ exports.createHacksawBlades = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new HacksawBladesModel({ ...req.body, photos: photoUrls, category: 'hacksawBlades' });
+    const product = new Tools({ ...req.body, photos: photoUrls, category: 'hacksawBlades' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -50,7 +50,7 @@ exports.updateHacksawBlades = async (req, res) => {
       }
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
-    const product = await HacksawBladesModel.findOneAndUpdate(
+    const product = await Tools.findOneAndUpdate(
       { _id: req.params.id, category: 'hacksawBlades' },
       update,
       { new: true }
@@ -63,7 +63,7 @@ exports.updateHacksawBlades = async (req, res) => {
 };
 exports.getAllHacksawBlades = async (req, res) => {
   try {
-    const products = await ToolsModel.find({ category: 'hacksawBlades' });
+    const products = await Tools.find({ category: 'hacksawBlades' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllHacksawBlades = async (req, res) => {
 
 exports.getOneHacksawBlades = async (req, res) => {
   try {
-    const product = await ToolsModel.findOne({ _id: req.params.id, category: 'hacksawBlades' });
+    const product = await Tools.findOne({ _id: req.params.id, category: 'hacksawBlades' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneHacksawBlades = async (req, res) => {
 
 exports.deleteHacksawBlades = async (req, res) => {
   try {
-    const product = await ToolsModel.findOneAndDelete({ _id: req.params.id, category: 'hacksawBlades' });
+    const product = await Tools.findOneAndDelete({ _id: req.params.id, category: 'hacksawBlades' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

@@ -21,7 +21,7 @@ const pvcMatsRoutes = require('./routes/pvcMatsRoutes');
 const rooferRoutes = require('./routes/rooferRoutes');
 const sanitaryRoutes = require('./routes/sanitaryRoutes');
 const sellerRoutes = require('./routes/sellerRoutes');
-// const toolsRoutes = require('./routes/toolsRoutes');
+const toolsRoutes = require('./routes/toolsRoutes');
 const uncategorizedRoutes = require('./routes/uncategorizedRoutes');
 const waterProofingRoutes = require('./routes/waterProofingRoutes');
 
@@ -54,7 +54,7 @@ app.use('/api/pipe-products', pipeRoutes);
 app.use('/api/pvc-mats-products', pvcMatsRoutes);
 app.use('/api/roofer-products', rooferRoutes);
 app.use('/api/sanitary-products', sanitaryRoutes);
-// app.use('/api/tools-products', toolsRoutes);
+app.use('/api/tools-products', toolsRoutes);
 app.use('/api/uncategorized-products', uncategorizedRoutes);
 app.use('/api/water-proofing-products', waterProofingRoutes);
 

@@ -13,11 +13,11 @@ router.post('/api/roofer/metal', upload.array('photos', 5), metalController.crea
 router.get('/api/roofer/metal', metalController.getAllMetal);
 router.get('/api/roofer/metal/:id', metalController.getOneMetal);
 router.put('/api/roofer/metal/:id', upload.array('photos', 5), metalController.updateMetal);
-router.deleteMetal('/api/roofer/metal/:id', metalController.deleteMetal);
+router.delete('/api/roofer/metal/:id', metalController.deleteMetal);
 router.post('/api/roofer/shingles', upload.array('photos', 5), shinglesController.createMetal);
 router.get('/api/roofer/shingles', shinglesController.getAllMetal);
 router.get('/api/roofer/shingles/:id', shinglesController.getOneMetal);
 router.put('/api/roofer/shingles/:id', upload.array('photos', 5), shinglesController.updateMetal);
-router.deleteMetal('/api/roofer/shingles/:id', shinglesController.deleteMetal);
+router.delete('/api/roofer/shingles/:id', shinglesController.deleteMetal);
 
 module.exports = router;

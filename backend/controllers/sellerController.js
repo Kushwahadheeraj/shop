@@ -23,18 +23,37 @@ function uploadToCloudinary(buffer) {
  */
 exports.createSeller = async (req, res) => {
   try {
-    if (!req.files || req.files.length < 1) {
-      return res.status(400).json({ error: 'At least 1 image is required.' });
-    }
-    if (req.files.length > 5) {
-      return res.status(400).json({ error: 'No more than 5 images allowed.' });
-    }
-    const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Seller({ ...req.body, photos: photoUrls, category: 'seller' });
-    await product.save();
-    res.status(201).json(product);
+    const { email, password, username, avatar } = req.body;
+    const seller = new Seller({ email, password, username, avatar });
+    await seller.save();
+    res.status(201).json(seller);
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+};
+
+/**
+ * Get all Sellers.
+ */
+exports.getAllSeller = async (req, res) => {
+  try {
+    const sellers = await Seller.find();
+    res.json(sellers);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+/**
+ * Get one Seller by ID.
+ */
+exports.getOneSeller = async (req, res) => {
+  try {
+    const seller = await Seller.findById(req.params.id);
+    if (!seller) return res.status(404).json({ message: 'Not found' });
+    res.json(seller);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };
 
@@ -43,21 +62,28 @@ exports.createSeller = async (req, res) => {
  */
 exports.updateSeller = async (req, res) => {
   try {
-    let update = { ...req.body };
-    if (req.files && req.files.length > 0) {
-      if (req.files.length > 5) {
-        return res.status(400).json({ error: 'No more than 5 images allowed.' });
-      }
-      update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    }
-    const product = await Seller.findOneAndUpdate(
-      { _id: req.params.id, category: 'seller' },
-      update,
+    const { email, password, username, avatar } = req.body;
+    const seller = await Seller.findByIdAndUpdate(
+      req.params.id,
+      { email, password, username, avatar },
       { new: true }
     );
-    if (!product) return res.status(404).json({ error: 'Not found' });
-    res.json(product);
+    if (!seller) return res.status(404).json({ message: 'Not found' });
+    res.json(seller);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: err.message });
+  }
+};
+
+/**
+ * Delete a Seller by ID.
+ */
+exports.deleteSeller = async (req, res) => {
+  try {
+    const seller = await Seller.findByIdAndDelete(req.params.id);
+    if (!seller) return res.status(404).json({ message: 'Not found' });
+    res.json({ message: 'Deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };

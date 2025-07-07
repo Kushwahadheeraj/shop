@@ -70,7 +70,7 @@ exports.getAllAdhesives = async (req, res) => {
   }
 };
 
-exports.deleteAdhesive = async (req, res) => {
+exports.deleteAdhesives = async (req, res) => {
   try {
     const adhesive = await Adhesives.findByIdAndDelete(req.params.id);
     if (!adhesive) return res.status(404).json({ message: 'Not found' });

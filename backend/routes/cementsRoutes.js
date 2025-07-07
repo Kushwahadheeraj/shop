@@ -1,16 +1,16 @@
-const express = require('express');
-const router = express.Router();
-const cementsController = require('../controllers/cementsController');
+// AUTO-GENERATED ROUTES AND SERVER IMPORTS. DO NOT EDIT MANUALLY.
 
-// Create
-router.post('/', cementsController.createCement);
-// Get all
+const express = require('express');
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+const router = express.Router();
+const cementsController = require('../controllers/cementsController.js');
+
+router.post('/', upload.array('photos', 5), cementsController.createCements);
 router.get('/', cementsController.getAllCements);
-// Get by id
-router.get('/:id', cementsController.getCementById);
-// Update
-router.put('/:id', cementsController.updateCement);
-// Delete
-router.delete('/:id', cementsController.deleteCement);
+router.get('/:id', cementsController.getOneCements);
+router.put('/:id', upload.array('photos', 5), cementsController.updateCements);
+router.delete('/:id', cementsController.deleteCements);
 
 module.exports = router;

@@ -1,36 +1,66 @@
-const Electrical = require('../../models/ElectricalModels');
-const cloudinary = require('../../config/cloudinary');
-const streamifier = require('streamifier');
+// AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
 
+const cloudinary = require('../config/cloudinary');
+const streamifier = require('streamifier');
+// TODO: Set correct model import
+/**
+ * Uploads a buffer to Cloudinary and returns the secure URL.
+ * @param {Buffer} buffer
+ * @returns {Promise<string>}
+ */
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      { resource_type: 'image', folder: 'pvCClips' },
-      (error, result) => {
-        if (error) return reject(error);
-        resolve(result.secure_url);
-      }
-    );
+    const stream = cloudinary.uploader.upload_stream((err, result) => {
+      if (err) return reject(err);
+      resolve(result.secure_url);
+    });
     streamifier.createReadStream(buffer).pipe(stream);
   });
 }
 
-// Create PVCClip
-exports.createPVCClip = async (req, res) => {
+/**
+ * Create a new PvCClips product.
+ */
+exports.createPvCClips = async (req, res) => {
   try {
-    let photoUrls = [];
-    if (req.files && req.files.length > 0) {
-      photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+    if (!req.files || req.files.length < 1) {
+      return res.status(400).json({ error: 'At least 1 image is required.' });
     }
-    const pvcClip = new Electrical({ ...req.body, photos: photoUrls, type: 'PVCClip' });
-    await pvcClip.save();
-    res.status(201).json(pvcClip);
+    if (req.files.length > 5) {
+      return res.status(400).json({ error: 'No more than 5 images allowed.' });
+    }
+    const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+    const product = new PvCClipsModel({ ...req.body, photos: photoUrls, category: 'pvCClips' });
+    await product.save();
+    res.status(201).json(product);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
-// Get All PVCClips
+/**
+ * Update a PvCClips product by ID.
+ */
+exports.updatePvCClips = async (req, res) => {
+  try {
+    let update = { ...req.body };
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+    }
+    const product = await PvCClipsModel.findOneAndUpdate(
+      { _id: req.params.id, category: 'pvCClips' },
+      update,
+      { new: true }
+    );
+    if (!product) return res.status(404).json({ error: 'Not found' });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 exports.getAllPVCClips = async (req, res) => {
   try {
     const items = await Electrical.find({ type: 'PVCClips' });
@@ -40,33 +70,6 @@ exports.getAllPVCClips = async (req, res) => {
   }
 };
 
-// Get PVCClip by ID
-exports.getPVCClipById = async (req, res) => {
-  try {
-    const item = await Electrical.findOne({ _id: req.params.id, type: 'PVCClips' });
-    if (!item) return res.status(404).json({ message: 'Not found' });
-    res.json(item);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-// Update PVCClip
-exports.updatePVCClip = async (req, res) => {
-  try {
-    const item = await Electrical.findOneAndUpdate(
-      { _id: req.params.id, type: 'PVCClips' },
-      req.body,
-      { new: true }
-    );
-    if (!item) return res.status(404).json({ message: 'Not found' });
-    res.json(item);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-};
-
-// Delete PVCClip
 exports.deletePVCClip = async (req, res) => {
   try {
     const item = await Electrical.findOneAndDelete({ _id: req.params.id, type: 'PVCClips' });
@@ -75,4 +78,4 @@ exports.deletePVCClip = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-}; 
+};

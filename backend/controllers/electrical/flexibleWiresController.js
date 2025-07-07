@@ -1,36 +1,66 @@
-const Electrical = require('../../models/ElectricalModels');
-const cloudinary = require('../../config/cloudinary');
-const streamifier = require('streamifier');
+// AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
 
+const cloudinary = require('../config/cloudinary');
+const streamifier = require('streamifier');
+// TODO: Set correct model import
+/**
+ * Uploads a buffer to Cloudinary and returns the secure URL.
+ * @param {Buffer} buffer
+ * @returns {Promise<string>}
+ */
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      { resource_type: 'image', folder: 'flexibleWires' },
-      (error, result) => {
-        if (error) return reject(error);
-        resolve(result.secure_url);
-      }
-    );
+    const stream = cloudinary.uploader.upload_stream((err, result) => {
+      if (err) return reject(err);
+      resolve(result.secure_url);
+    });
     streamifier.createReadStream(buffer).pipe(stream);
   });
 }
 
-// Create Fan
-exports.createFlexibleWire = async (req, res) => {
+/**
+ * Create a new FlexibleWires product.
+ */
+exports.createFlexibleWires = async (req, res) => {
   try {
-    let photoUrls = [];
-    if (req.files && req.files.length > 0) {
-      photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+    if (!req.files || req.files.length < 1) {
+      return res.status(400).json({ error: 'At least 1 image is required.' });
     }
-    const fan = new Electrical({ ...req.body, photos: photoUrls, type: 'Fans' });
-    await fan.save();
-    res.status(201).json(fan);
+    if (req.files.length > 5) {
+      return res.status(400).json({ error: 'No more than 5 images allowed.' });
+    }
+    const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+    const product = new FlexibleWiresModel({ ...req.body, photos: photoUrls, category: 'flexibleWires' });
+    await product.save();
+    res.status(201).json(product);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
-// Get All Fans
+/**
+ * Update a FlexibleWires product by ID.
+ */
+exports.updateFlexibleWires = async (req, res) => {
+  try {
+    let update = { ...req.body };
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+    }
+    const product = await FlexibleWiresModel.findOneAndUpdate(
+      { _id: req.params.id, category: 'flexibleWires' },
+      update,
+      { new: true }
+    );
+    if (!product) return res.status(404).json({ error: 'Not found' });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 exports.getAllFlexibleWires = async (req, res) => {
   try {
     const fans = await Electrical.find({ type: 'Fans' });
@@ -40,33 +70,6 @@ exports.getAllFlexibleWires = async (req, res) => {
   }
 };
 
-// Get Fan by ID
-exports.getFlexibleWireById = async (req, res) => {
-  try {
-    const fan = await Electrical.findOne({ _id: req.params.id, type: 'Fans' });
-    if (!fan) return res.status(404).json({ message: 'Not found' });
-    res.json(fan);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-// Update Fan
-exports.updateFlexibleWire = async (req, res) => {
-  try {
-    const fan = await Electrical.findOneAndUpdate(
-      { _id: req.params.id, type: 'Fans' },
-      req.body,
-      { new: true }
-    );
-    if (!fan) return res.status(404).json({ message: 'Not found' });
-    res.json(fan);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-};
-
-// Delete Fan
 exports.deleteFlexibleWire = async (req, res) => {
   try {
     const fan = await Electrical.findOneAndDelete({ _id: req.params.id, type: 'Fans' });
@@ -75,4 +78,4 @@ exports.deleteFlexibleWire = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-}; 
+};

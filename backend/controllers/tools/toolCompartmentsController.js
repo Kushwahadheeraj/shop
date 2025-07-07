@@ -1,8 +1,8 @@
-// AUTO-REFRACTORED FOR PROFESSIONAL USAGE. DO NOT EDIT MANUALLY.
+// AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
 
-const cloudinary = require('../../config/cloudinary');
+const cloudinary = require('../config/cloudinary');
 const streamifier = require('streamifier');
-const ToolsModel = require('../../models/ToolsModels');
+// TODO: Set correct model import
 /**
  * Uploads a buffer to Cloudinary and returns the secure URL.
  * @param {Buffer} buffer
@@ -30,34 +30,9 @@ exports.createToolCompartments = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new ToolsModel({ ...req.body, photos: photoUrls, category: 'toolCompartments' });
+    const product = new ToolCompartmentsModel({ ...req.body, photos: photoUrls, category: 'toolCompartments' });
     await product.save();
     res.status(201).json(product);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-/**
- * Get all ToolCompartments products.
- */
-exports.getAllToolCompartments = async (req, res) => {
-  try {
-    const products = await ToolsModel.find({ category: 'toolCompartments' });
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-/**
- * Get a single ToolCompartments product by ID.
- */
-exports.getOneToolCompartments = async (req, res) => {
-  try {
-    const product = await ToolsModel.findOne({ _id: req.params.id, category: 'toolCompartments' });
-    if (!product) return res.status(404).json({ error: 'Not found' });
-    res.json(product);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -75,7 +50,7 @@ exports.updateToolCompartments = async (req, res) => {
       }
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
-    const product = await ToolsModel.findOneAndUpdate(
+    const product = await ToolCompartmentsModel.findOneAndUpdate(
       { _id: req.params.id, category: 'toolCompartments' },
       update,
       { new: true }
@@ -86,10 +61,25 @@ exports.updateToolCompartments = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+exports.getAllToolCompartments = async (req, res) => {
+  try {
+    const products = await ToolsModel.find({ category: 'toolCompartments' });
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
-/**
- * Delete a ToolCompartments product by ID.
- */
+exports.getOneToolCompartments = async (req, res) => {
+  try {
+    const product = await ToolsModel.findOne({ _id: req.params.id, category: 'toolCompartments' });
+    if (!product) return res.status(404).json({ error: 'Not found' });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 exports.deleteToolCompartments = async (req, res) => {
   try {
     const product = await ToolsModel.findOneAndDelete({ _id: req.params.id, category: 'toolCompartments' });

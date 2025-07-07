@@ -1,36 +1,66 @@
-const Electrical = require('../../models/ElectricalModels');
-const cloudinary = require('../../config/cloudinary');
-const streamifier = require('streamifier');
+// AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
 
+const cloudinary = require('../config/cloudinary');
+const streamifier = require('streamifier');
+// TODO: Set correct model import
+/**
+ * Uploads a buffer to Cloudinary and returns the secure URL.
+ * @param {Buffer} buffer
+ * @returns {Promise<string>}
+ */
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      { resource_type: 'image', folder: 'switches' },
-      (error, result) => {
-        if (error) return reject(error);
-        resolve(result.secure_url);
-      }
-    );
+    const stream = cloudinary.uploader.upload_stream((err, result) => {
+      if (err) return reject(err);
+      resolve(result.secure_url);
+    });
     streamifier.createReadStream(buffer).pipe(stream);
   });
 }
 
-// Create Switch
-exports.createSwitch = async (req, res) => {
+/**
+ * Create a new Switches product.
+ */
+exports.createSwitches = async (req, res) => {
   try {
-    let photoUrls = [];
-    if (req.files && req.files.length > 0) {
-      photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+    if (!req.files || req.files.length < 1) {
+      return res.status(400).json({ error: 'At least 1 image is required.' });
     }
-    const sw = new Electrical({ ...req.body, photos: photoUrls, type: 'Switches' });
-    await sw.save();
-    res.status(201).json(sw);
+    if (req.files.length > 5) {
+      return res.status(400).json({ error: 'No more than 5 images allowed.' });
+    }
+    const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+    const product = new SwitchesModel({ ...req.body, photos: photoUrls, category: 'switches' });
+    await product.save();
+    res.status(201).json(product);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
-// Get All Switches
+/**
+ * Update a Switches product by ID.
+ */
+exports.updateSwitches = async (req, res) => {
+  try {
+    let update = { ...req.body };
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+    }
+    const product = await SwitchesModel.findOneAndUpdate(
+      { _id: req.params.id, category: 'switches' },
+      update,
+      { new: true }
+    );
+    if (!product) return res.status(404).json({ error: 'Not found' });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 exports.getAllSwitches = async (req, res) => {
   try {
     const switches = await Electrical.find({ type: 'Switches' });
@@ -40,33 +70,6 @@ exports.getAllSwitches = async (req, res) => {
   }
 };
 
-// Get Switch by ID
-exports.getSwitchById = async (req, res) => {
-  try {
-    const sw = await Electrical.findOne({ _id: req.params.id, type: 'Switches' });
-    if (!sw) return res.status(404).json({ message: 'Not found' });
-    res.json(sw);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-// Update Switch
-exports.updateSwitch = async (req, res) => {
-  try {
-    const sw = await Electrical.findOneAndUpdate(
-      { _id: req.params.id, type: 'Switches' },
-      req.body,
-      { new: true }
-    );
-    if (!sw) return res.status(404).json({ message: 'Not found' });
-    res.json(sw);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-};
-
-// Delete Switch
 exports.deleteSwitch = async (req, res) => {
   try {
     const sw = await Electrical.findOneAndDelete({ _id: req.params.id, type: 'Switches' });
@@ -75,4 +78,4 @@ exports.deleteSwitch = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-}; 
+};

@@ -1,9 +1,13 @@
-// AUTO-RENAMED FUNCTIONS TO MATCH FILE NAME. DO NOT EDIT MANUALLY.
-// AUTO-GENERATED IMAGE UPLOAD LOGIC. DO NOT EDIT MANUALLY.
+// AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
 
-const cloudinary = require('../../config/cloudinary');
+const cloudinary = require('../config/cloudinary');
 const streamifier = require('streamifier');
-// Helper for Cloudinary upload
+// TODO: Set correct model import
+/**
+ * Uploads a buffer to Cloudinary and returns the secure URL.
+ * @param {Buffer} buffer
+ * @returns {Promise<string>}
+ */
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream((err, result) => {
@@ -14,6 +18,9 @@ function uploadToCloudinary(buffer) {
   });
 }
 
+/**
+ * Create a new MouthOperated product.
+ */
 exports.createMouthOperated = async (req, res) => {
   try {
     if (!req.files || req.files.length < 1) {
@@ -23,14 +30,37 @@ exports.createMouthOperated = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new (require('../../models/SanitaryModels'))({ ...req.body, photos: photoUrls, category: 'corsa/OtherUsefulItems/MouthOperated' });
+    const product = new MouthOperatedModel({ ...req.body, photos: photoUrls, category: 'MouthOperated' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
+/**
+ * Update a MouthOperated product by ID.
+ */
+exports.updateMouthOperated = async (req, res) => {
+  try {
+    let update = { ...req.body };
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+    }
+    const product = await MouthOperatedModel.findOneAndUpdate(
+      { _id: req.params.id, category: 'MouthOperated' },
+      update,
+      { new: true }
+    );
+    if (!product) return res.status(404).json({ error: 'Not found' });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 exports.getAllMouthOperated = async (req, res) => {
   try {
     const products = await require('../../models/SanitaryModels').find({ category: 'corsa/OtherUsefulItems/MouthOperated' });
@@ -47,27 +77,6 @@ exports.getOneMouthOperated = async (req, res) => {
     res.json(product);
   } catch (err) {
     res.status(500).json({ error: err.message });
-  }
-};
-
-exports.updateMouthOperated = async (req, res) => {
-  try {
-    let update = { ...req.body };
-    if (req.files && req.files.length > 0) {
-      if (req.files.length > 5) {
-        return res.status(400).json({ error: 'No more than 5 images allowed.' });
-      }
-      update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    }
-    const product = await require('../../models/SanitaryModels').findOneAndUpdate(
-      { _id: req.params.id, category: 'corsa/OtherUsefulItems/MouthOperated' },
-      update,
-      { new: true }
-    );
-    if (!product) return res.status(404).json({ error: 'Not found' });
-    res.json(product);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
   }
 };
 

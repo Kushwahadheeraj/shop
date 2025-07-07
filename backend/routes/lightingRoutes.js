@@ -1,16 +1,16 @@
-const express = require('express');
-const router = express.Router();
-const lightingController = require('../controllers/lightingController');
+// AUTO-GENERATED ROUTES AND SERVER IMPORTS. DO NOT EDIT MANUALLY.
 
-// Create
-router.post('/', lightingController.createLighting);
-// Get all
-router.get('/', lightingController.getAllLightings);
-// Get by id
-router.get('/:id', lightingController.getLightingById);
-// Update
-router.put('/:id', lightingController.updateLighting);
-// Delete
+const express = require('express');
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+const router = express.Router();
+const lightingController = require('../controllers/lightingController.js');
+
+router.post('/', upload.array('photos', 5), lightingController.createLighting);
+router.get('/', lightingController.getAllLighting);
+router.get('/:id', lightingController.getOneLighting);
+router.put('/:id', upload.array('photos', 5), lightingController.updateLighting);
 router.delete('/:id', lightingController.deleteLighting);
 
 module.exports = router;

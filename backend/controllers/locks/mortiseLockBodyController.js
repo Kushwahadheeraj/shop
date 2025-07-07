@@ -1,64 +1,72 @@
-const Lock = require('../models/locksModel');
+// AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
+
 const cloudinary = require('../config/cloudinary');
 const streamifier = require('streamifier');
-
+const locksModel = require('../models/locksModel');
+/**
+ * Uploads a buffer to Cloudinary and returns the secure URL.
+ * @param {Buffer} buffer
+ * @returns {Promise<string>}
+ */
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      { resource_type: 'mortiseLockBody', folder: 'mortiselockbody' },
-      (error, result) => {
-        if (error) return reject(error);
-        resolve(result.secure_url);
-      }
-    );
+    const stream = cloudinary.uploader.upload_stream((err, result) => {
+      if (err) return reject(err);
+      resolve(result.secure_url);
+    });
     streamifier.createReadStream(buffer).pipe(stream);
   });
 }
 
-exports.createmortiseLockBody = async (req, res) => {
+/**
+ * Create a new MortiseLockBody product.
+ */
+exports.createMortiseLockBody = async (req, res) => {
   try {
-    let photoUrls = [];
-    if (req.files && req.files.length > 0) {
-      photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+    if (!req.files || req.files.length < 1) {
+      return res.status(400).json({ error: 'At least 1 image is required.' });
     }
-    const item = new Lock({ ...req.body, photos: photoUrls, type: 'mortiseLockBody' });
-    await item.save();
-    res.status(201).json(item);
+    if (req.files.length > 5) {
+      return res.status(400).json({ error: 'No more than 5 images allowed.' });
+    }
+    const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+    const product = new locksModel({ ...req.body, photos: photoUrls, category: 'mortiseLockBody' });
+    await product.save();
+    res.status(201).json(product);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
+/**
+ * Update a MortiseLockBody product by ID.
+ */
+exports.updateMortiseLockBody = async (req, res) => {
+  try {
+    let update = { ...req.body };
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+    }
+    const product = await locksModel.findOneAndUpdate(
+      { _id: req.params.id, category: 'mortiseLockBody' },
+      update,
+      { new: true }
+    );
+    if (!product) return res.status(404).json({ error: 'Not found' });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 exports.getAllmortiseLockBody = async (req, res) => {
   try {
     const items = await Lock.find({ type: 'mortiseLockBody' });
     res.json(items);
   } catch (err) {
     res.status(500).json({ message: err.message });
-  }
-};
-
-exports.getmortiseLockBodyById = async (req, res) => {
-  try {
-    const item = await Lock.findOne({ _id: req.params.id, type: 'mortiseLockBody' });
-    if (!item) return res.status(404).json({ message: 'Not found' });
-    res.json(item);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-exports.updatemortiseLockBody = async (req, res) => {
-  try {
-    const item = await Lock.findOneAndUpdate(
-      { _id: req.params.id, type: 'mortiseLockBody' },
-      req.body,
-      { new: true }
-    );
-    if (!item) return res.status(404).json({ message: 'Not found' });
-    res.json(item);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
   }
 };
 
@@ -70,4 +78,4 @@ exports.deletemortiseLockBody = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-}; 
+};

@@ -1,9 +1,13 @@
-// AUTO-RENAMED FUNCTIONS TO MATCH FILE NAME. DO NOT EDIT MANUALLY.
-// AUTO-GENERATED IMAGE UPLOAD LOGIC. DO NOT EDIT MANUALLY.
+// AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
 
-const cloudinary = require('../../config/cloudinary');
+const cloudinary = require('../config/cloudinary');
 const streamifier = require('streamifier');
-// Helper for Cloudinary upload
+// TODO: Set correct model import
+/**
+ * Uploads a buffer to Cloudinary and returns the secure URL.
+ * @param {Buffer} buffer
+ * @returns {Promise<string>}
+ */
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream((err, result) => {
@@ -14,6 +18,9 @@ function uploadToCloudinary(buffer) {
   });
 }
 
+/**
+ * Create a new Series2Swing product.
+ */
 exports.createSeries2Swing = async (req, res) => {
   try {
     if (!req.files || req.files.length < 1) {
@@ -23,14 +30,37 @@ exports.createSeries2Swing = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new (require('../../models/SanitaryModels'))({ ...req.body, photos: photoUrls, category: 'essess/Accessories/Series2Swing' });
+    const product = new Series2SwingModel({ ...req.body, photos: photoUrls, category: 'Series2Swing' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
+/**
+ * Update a Series2Swing product by ID.
+ */
+exports.updateSeries2Swing = async (req, res) => {
+  try {
+    let update = { ...req.body };
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+    }
+    const product = await Series2SwingModel.findOneAndUpdate(
+      { _id: req.params.id, category: 'Series2Swing' },
+      update,
+      { new: true }
+    );
+    if (!product) return res.status(404).json({ error: 'Not found' });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 exports.getAllSeries2Swing = async (req, res) => {
   try {
     const products = await require('../../models/SanitaryModels').find({ category: 'essess/Accessories/Series2Swing' });
@@ -47,27 +77,6 @@ exports.getOneSeries2Swing = async (req, res) => {
     res.json(product);
   } catch (err) {
     res.status(500).json({ error: err.message });
-  }
-};
-
-exports.updateSeries2Swing = async (req, res) => {
-  try {
-    let update = { ...req.body };
-    if (req.files && req.files.length > 0) {
-      if (req.files.length > 5) {
-        return res.status(400).json({ error: 'No more than 5 images allowed.' });
-      }
-      update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    }
-    const product = await require('../../models/SanitaryModels').findOneAndUpdate(
-      { _id: req.params.id, category: 'essess/Accessories/Series2Swing' },
-      update,
-      { new: true }
-    );
-    if (!product) return res.status(404).json({ error: 'Not found' });
-    res.json(product);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
   }
 };
 

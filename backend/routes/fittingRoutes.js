@@ -1,16 +1,16 @@
-const express = require('express');
-const router = express.Router();
-const fittingController = require('../controllers/fittingController');
+// AUTO-GENERATED ROUTES AND SERVER IMPORTS. DO NOT EDIT MANUALLY.
 
-// Create
-router.post('/', fittingController.createFitting);
-// Get all
-router.get('/', fittingController.getAllFittings);
-// Get by id
-router.get('/:id', fittingController.getFittingById);
-// Update
-router.put('/:id', fittingController.updateFitting);
-// Delete
+const express = require('express');
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+const router = express.Router();
+const fittingController = require('../controllers/fittingController.js');
+
+router.post('/', upload.array('photos', 5), fittingController.createFitting);
+router.get('/', fittingController.getAllFitting);
+router.get('/:id', fittingController.getOneFitting);
+router.put('/:id', upload.array('photos', 5), fittingController.updateFitting);
 router.delete('/:id', fittingController.deleteFitting);
 
 module.exports = router;

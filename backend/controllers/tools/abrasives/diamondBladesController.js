@@ -1,8 +1,8 @@
-// AUTO-REFRACTORED FOR PROFESSIONAL USAGE. DO NOT EDIT MANUALLY.
+// AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
 
-const cloudinary = require('../../config/cloudinary');
+const cloudinary = require('../config/cloudinary');
 const streamifier = require('streamifier');
-const ToolsModel = require('../../models/ToolsModels');
+// TODO: Set correct model import
 /**
  * Uploads a buffer to Cloudinary and returns the secure URL.
  * @param {Buffer} buffer
@@ -30,34 +30,9 @@ exports.createDiamondBlades = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new ToolsModel({ ...req.body, photos: photoUrls, category: 'diamondBlades' });
+    const product = new DiamondBladesModel({ ...req.body, photos: photoUrls, category: 'diamondBlades' });
     await product.save();
     res.status(201).json(product);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-/**
- * Get all DiamondBlades products.
- */
-exports.getAllDiamondBlades = async (req, res) => {
-  try {
-    const products = await ToolsModel.find({ category: 'diamondBlades' });
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-/**
- * Get a single DiamondBlades product by ID.
- */
-exports.getOneDiamondBlades = async (req, res) => {
-  try {
-    const product = await ToolsModel.findOne({ _id: req.params.id, category: 'diamondBlades' });
-    if (!product) return res.status(404).json({ error: 'Not found' });
-    res.json(product);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -75,7 +50,7 @@ exports.updateDiamondBlades = async (req, res) => {
       }
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
-    const product = await ToolsModel.findOneAndUpdate(
+    const product = await DiamondBladesModel.findOneAndUpdate(
       { _id: req.params.id, category: 'diamondBlades' },
       update,
       { new: true }
@@ -86,10 +61,25 @@ exports.updateDiamondBlades = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+exports.getAllDiamondBlades = async (req, res) => {
+  try {
+    const products = await ToolsModel.find({ category: 'diamondBlades' });
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
-/**
- * Delete a DiamondBlades product by ID.
- */
+exports.getOneDiamondBlades = async (req, res) => {
+  try {
+    const product = await ToolsModel.findOne({ _id: req.params.id, category: 'diamondBlades' });
+    if (!product) return res.status(404).json({ error: 'Not found' });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 exports.deleteDiamondBlades = async (req, res) => {
   try {
     const product = await ToolsModel.findOneAndDelete({ _id: req.params.id, category: 'diamondBlades' });

@@ -1,36 +1,66 @@
-const Electrical = require('../../models/ElectricalModels');
-const cloudinary = require('../../config/cloudinary');
-const streamifier = require('streamifier');
+// AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
 
+const cloudinary = require('../config/cloudinary');
+const streamifier = require('streamifier');
+// TODO: Set correct model import
+/**
+ * Uploads a buffer to Cloudinary and returns the secure URL.
+ * @param {Buffer} buffer
+ * @returns {Promise<string>}
+ */
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      { resource_type: 'image', folder: 'waterHeater' },
-      (error, result) => {
-        if (error) return reject(error);
-        resolve(result.secure_url);
-      }
-    );
+    const stream = cloudinary.uploader.upload_stream((err, result) => {
+      if (err) return reject(err);
+      resolve(result.secure_url);
+    });
     streamifier.createReadStream(buffer).pipe(stream);
   });
 }
 
-// Create WaterHeater
+/**
+ * Create a new WaterHeater product.
+ */
 exports.createWaterHeater = async (req, res) => {
   try {
-    let photoUrls = [];
-    if (req.files && req.files.length > 0) {
-      photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+    if (!req.files || req.files.length < 1) {
+      return res.status(400).json({ error: 'At least 1 image is required.' });
     }
-    const waterHeater = new Electrical({ ...req.body, photos: photoUrls, type: 'WaterHeater' });
-    await waterHeater.save();
-    res.status(201).json(waterHeater);
+    if (req.files.length > 5) {
+      return res.status(400).json({ error: 'No more than 5 images allowed.' });
+    }
+    const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+    const product = new WaterHeaterModel({ ...req.body, photos: photoUrls, category: 'waterHeater' });
+    await product.save();
+    res.status(201).json(product);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
-// Get All WaterHeaters
+/**
+ * Update a WaterHeater product by ID.
+ */
+exports.updateWaterHeater = async (req, res) => {
+  try {
+    let update = { ...req.body };
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+    }
+    const product = await WaterHeaterModel.findOneAndUpdate(
+      { _id: req.params.id, category: 'waterHeater' },
+      update,
+      { new: true }
+    );
+    if (!product) return res.status(404).json({ error: 'Not found' });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 exports.getAllWaterHeaters = async (req, res) => {
   try {
     const items = await Electrical.find({ type: 'WaterHeater' });
@@ -40,33 +70,6 @@ exports.getAllWaterHeaters = async (req, res) => {
   }
 };
 
-// Get WaterHeater by ID
-exports.getWaterHeaterById = async (req, res) => {
-  try {
-    const item = await Electrical.findOne({ _id: req.params.id, type: 'WaterHeater' });
-    if (!item) return res.status(404).json({ message: 'Not found' });
-    res.json(item);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-// Update WaterHeater
-exports.updateWaterHeater = async (req, res) => {
-  try {
-    const item = await Electrical.findOneAndUpdate(
-      { _id: req.params.id, type: 'WaterHeater' },
-      req.body,
-      { new: true }
-    );
-    if (!item) return res.status(404).json({ message: 'Not found' });
-    res.json(item);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-};
-
-// Delete WaterHeater
 exports.deleteWaterHeater = async (req, res) => {
   try {
     const item = await Electrical.findOneAndDelete({ _id: req.params.id, type: 'WaterHeater' });
@@ -75,4 +78,4 @@ exports.deleteWaterHeater = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-}; 
+};

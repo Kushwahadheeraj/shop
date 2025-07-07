@@ -19,9 +19,9 @@ function uploadToCloudinary(buffer) {
 }
 
 /**
- * Create a new Gluegun product.
+ * Create a new CutOffWheel product.
  */
-exports.createGluegun = async (req, res) => {
+exports.createCutOffWheel = async (req, res) => {
   try {
     if (!req.files || req.files.length < 1) {
       return res.status(400).json({ error: 'At least 1 image is required.' });
@@ -30,7 +30,7 @@ exports.createGluegun = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new ToolsModel({ ...req.body, photos: photoUrls, category: 'gluegun' });
+    const product = new ToolsModel({ ...req.body, photos: photoUrls, category: 'cutOffWheel' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -39,11 +39,11 @@ exports.createGluegun = async (req, res) => {
 };
 
 /**
- * Get all Gluegun products.
+ * Get all CutOffWheel products.
  */
-exports.getAllGluegun = async (req, res) => {
+exports.getAllCutOffWheel = async (req, res) => {
   try {
-    const products = await ToolsModel.find({ category: 'gluegun' });
+    const products = await ToolsModel.find({ category: 'cutOffWheel' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -51,11 +51,11 @@ exports.getAllGluegun = async (req, res) => {
 };
 
 /**
- * Get a single Gluegun product by ID.
+ * Get a single CutOffWheel product by ID.
  */
-exports.getOneGluegun = async (req, res) => {
+exports.getOneCutOffWheel = async (req, res) => {
   try {
-    const product = await ToolsModel.findOne({ _id: req.params.id, category: 'gluegun' });
+    const product = await ToolsModel.findOne({ _id: req.params.id, category: 'cutOffWheel' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -64,9 +64,9 @@ exports.getOneGluegun = async (req, res) => {
 };
 
 /**
- * Update a Gluegun product by ID.
+ * Update a CutOffWheel product by ID.
  */
-exports.updateGluegun = async (req, res) => {
+exports.updateCutOffWheel = async (req, res) => {
   try {
     let update = { ...req.body };
     if (req.files && req.files.length > 0) {
@@ -76,7 +76,7 @@ exports.updateGluegun = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await ToolsModel.findOneAndUpdate(
-      { _id: req.params.id, category: 'gluegun' },
+      { _id: req.params.id, category: 'cutOffWheel' },
       update,
       { new: true }
     );
@@ -88,11 +88,11 @@ exports.updateGluegun = async (req, res) => {
 };
 
 /**
- * Delete a Gluegun product by ID.
+ * Delete a CutOffWheel product by ID.
  */
-exports.deleteGluegun = async (req, res) => {
+exports.deleteCutOffWheel = async (req, res) => {
   try {
-    const product = await ToolsModel.findOneAndDelete({ _id: req.params.id, category: 'gluegun' });
+    const product = await ToolsModel.findOneAndDelete({ _id: req.params.id, category: 'cutOffWheel' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

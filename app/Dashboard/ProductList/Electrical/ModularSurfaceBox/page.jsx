@@ -1,10 +1,4 @@
 import ProductList from "./ProductList";
-
-export default function ModularSurfaceBox() {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Modular Surface Box</h1>
-      <ProductList />
-    </div>
-  );
-} 
+export default function Page() {
+  return <ProductList />;
+}

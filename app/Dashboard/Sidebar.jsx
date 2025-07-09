@@ -5,7 +5,6 @@ import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import Link from "next/link";
 
 
-
 const sections = [
   {name: "Dashboard",path: "/Dashboard"},
   {name: "Product Add",
@@ -484,6 +483,7 @@ subItemsName: [
   
 ];
 
+const getIconPath = (name) => `/sidebar-icons/${name.replace(/ /g, '')}.png`;
 
 
 export default function Sidebar({ onSetting, onLogout, open, onClose }) {
@@ -496,10 +496,10 @@ export default function Sidebar({ onSetting, onLogout, open, onClose }) {
     setOpenSection(openSection === name ? null : name);
   };
   return (
-    <aside className="w-64 h-screen bg-white rounded-2xl shadow-lg p-4 flex flex-col text-zinc-800 border border-zinc-100">
-      <div className="p-4 font-bold text-xl">LOGO</div>
+    <aside className="w-64 h-screen bg-white rounded-2xl shadow-lg p-2 flex flex-col text-zinc-800 border border-zinc-100">
+      <div className="p-2 font-bold text-xl">LOGO</div>
       <nav className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
-        <ul className="p-4 space-y-2">
+        <ul className="p-2 space-y-2">
 
           {sections.map((section) => (
             <div key={section.name} className="mb-2">
@@ -618,10 +618,12 @@ function SidebarItem({ item, openSubSection, setOpenSubSection }) {
             className="block px-2 py-2 rounded text-sm hover:bg-zinc-700 transition flex-1"
             onClick={() => (hasSubItemsName || hasSubItemsNameComponent) ? setOpenSubSection(isOpen ? null : item.name) : undefined}
           >
-            {item.name}
+            <span className="align-middle">{item.name}</span>
           </Link>
         ) : (
-          <span className="block px-2 py-2 rounded text-sm flex-1">{item.name}</span>
+          <span className="block px-2 py-2 rounded text-sm flex-1">
+            <span className="align-middle">{item.name}</span>
+          </span>
         )}
         {(hasSubItemsName || hasSubItemsNameComponent) && (
           <button

@@ -9,8 +9,5 @@ router.post('/login', sellerController.loginSeller);
 router.get('/:id', sellerController.getOneSeller);
 router.put('/:id', sellerController.updateSeller);
 router.delete('/:id', sellerController.deleteSeller);
-// ... existing code ...
-// Remove or comment out the old GET /login route
-// router.get('/login', sellerController.getAllSeller);
-// ... existing code ...
+
 module.exports = router;

@@ -3,6 +3,8 @@
 const cloudinary = require('../config/cloudinary');
 const streamifier = require('streamifier');
 const Seller = require('../models/Seller');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 /**
  * Uploads a buffer to Cloudinary and returns the secure URL.
  * @param {Buffer} buffer
@@ -19,14 +21,34 @@ function uploadToCloudinary(buffer) {
 }
 
 /**
+ * Seller Login
+ */
+exports.loginSeller = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const seller = await Seller.findOne({ email });
+    if (!seller) return res.status(400).json({ message: 'Invalid credentials' });
+    const isMatch = await bcrypt.compare(password, seller.password);
+    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+    const token = jwt.sign({ id: seller._id }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' });
+    res.json({ token, seller: { id: seller._id, email: seller.email, username: seller.username, avatar: seller.avatar } });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+/**
  * Create a new Seller product.
  */
 exports.createSeller = async (req, res) => {
   try {
     const { email, password, username, avatar } = req.body;
-    const seller = new Seller({ email, password, username, avatar });
+    const existing = await Seller.findOne({ email });
+    if (existing) return res.status(400).json({ message: 'Email already registered' });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const seller = new Seller({ email, password: hashedPassword, username, avatar });
     await seller.save();
-    res.status(201).json(seller);
+    res.status(201).json({ message: 'Registration successful', seller: { id: seller._id, email: seller.email, username: seller.username, avatar: seller.avatar } });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

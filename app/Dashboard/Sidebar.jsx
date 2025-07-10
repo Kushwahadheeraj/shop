@@ -4696,15 +4696,8 @@ const sections = [
   { name: 'Brand List', path: '/Dashboard/BrandList' },
   { name: 'Banner List', path: '/Dashboard/BannerList' },
   { name: 'Coupon List', path: '/Dashboard/CouponList' },
-  { name: 'Setting', path: '/Dashboard/Setting' },
-  { name: 'Contact Us', path: '/Dashboard/ContactUs' },
-  { name: 'About Us', path: '/Dashboard/AboutUs' },
-  { name: 'Privacy Policy', path: '/Dashboard/PrivacyPolicy' },
-  { name: 'Terms & Conditions', path: '/Dashboard/TermsAndConditions' },
-  { name: 'FAQ', path: '/Dashboard/FAQ' },
 ];
 
-const getIconPath = (name) => `/sidebar-icons/${name.replace(/ /g, '')}.png`;
 
 // Add this helper function at the top (after imports):
 function sortSidebarItems(items) {
@@ -4713,9 +4706,9 @@ function sortSidebarItems(items) {
     .map((item) => {
       // Recursively sort subItemsName, subItemsNameComponent, subItemsNameComponentName
       const sorted = { ...item };
-      if (item.subItemsName) {
-        sorted.subItemsName = sortSidebarItems(item.subItemsName);
-      }
+      // if (item.subItemsName) {
+      //   sorted.subItemsName = sortSidebarItems(item.subItemsName);
+      // }
       if (item.subItemsNameComponent) {
         sorted.subItemsNameComponent = sortSidebarItems(
           item.subItemsNameComponent
@@ -4813,11 +4806,28 @@ export default function Sidebar({ onSetting, onLogout, open, onClose }) {
                       )}
                     </button>
                   )}
+                  {section.subItemsNameComponentName &&
+                  section.subItemsNameComponentName.length > 0 && (
+                    <button
+                      className='ml-2'
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleToggle(section.name);
+                      }}
+                    >
+                      {openSection === section.name ? (
+                        <FiChevronUp className='transition-transform' />
+                      ) : (
+                        <FiChevronDown className='transition-transform' />
+                      )}
+                    </button>
+                  )}
               </div>
               {openSection === section.name &&
                 (section.subItems ||
                   section.subItemsName ||
-                  section.subItemsNameComponent) && (
+                  section.subItemsNameComponent ||
+                  section.subItemsNameComponentName) && (
                   <ul className='pl-4'>
                     {Array.isArray(section.subItems) &&
                       section.subItems.map((item) => (
@@ -4839,6 +4849,15 @@ export default function Sidebar({ onSetting, onLogout, open, onClose }) {
                       ))}
                     {Array.isArray(section.subItemsNameComponent) &&
                       section.subItemsNameComponent.map((item) => (
+                        <SidebarItem
+                          key={item.name}
+                          item={item}
+                          openSubSection={openSubSection}
+                          setOpenSubSection={setOpenSubSection}
+                        />
+                      ))}
+                       {Array.isArray(section.subItemsNameComponentName) &&
+                      section.subItemsNameComponentName.map((item) => (
                         <SidebarItem
                           key={item.name}
                           item={item}
@@ -4872,26 +4891,33 @@ export default function Sidebar({ onSetting, onLogout, open, onClose }) {
   );
 }
 
-function SidebarItem({ item, openSubSection, setOpenSubSection }) {
-  const hasSubItemsName =
-    Array.isArray(item.subItemsName) && item.subItemsName.length > 0;
-  const hasSubItemsNameComponent =
-    Array.isArray(item.subItemsNameComponent) &&
-    item.subItemsNameComponent.length > 0;
-  const isOpen = openSubSection === item.name;
+function SidebarItem({ item }) {
+  const hasSubItems = Array.isArray(item.subItems) && item.subItems.length > 0;
+  const hasSubItemsName = Array.isArray(item.subItemsName) && item.subItemsName.length > 0;
+  const hasSubItemsNameComponent = Array.isArray(item.subItemsNameComponent) && item.subItemsNameComponent.length > 0;
+  const hasSubItemsNameComponentName = Array.isArray(item.subItemsNameComponentName) && item.subItemsNameComponentName.length > 0;
+
+  // Local state for this item's expand/collapse
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleRowClick = () => {
+    if (hasSubItems || hasSubItemsName || hasSubItemsNameComponent || hasSubItemsNameComponentName) {
+      setIsOpen((prev) => !prev);
+    }
+  };
 
   return (
     <li>
-      <div className='flex items-center'>
-        {item.path ? (
+      <div
+        className={`flex items-center cursor-pointer ${
+          (hasSubItems || hasSubItemsName || hasSubItemsNameComponent || hasSubItemsNameComponentName) ? 'hover:bg-zinc-100' : ''
+        }`}
+        onClick={handleRowClick}
+      >
+        {item.path && !(hasSubItems || hasSubItemsName || hasSubItemsNameComponent || hasSubItemsNameComponentName) ? (
           <Link
             href={item.path}
             className='block px-2 py-2 rounded text-sm hover:bg-zinc-700 transition flex-1'
-            onClick={() =>
-              hasSubItemsName || hasSubItemsNameComponent
-                ? setOpenSubSection(isOpen ? null : item.name)
-                : undefined
-            }
           >
             <span className='align-middle'>{item.name}</span>
           </Link>
@@ -4900,37 +4926,29 @@ function SidebarItem({ item, openSubSection, setOpenSubSection }) {
             <span className='align-middle'>{item.name}</span>
           </span>
         )}
-        {(hasSubItemsName || hasSubItemsNameComponent) && (
-          <button
-            className='ml-2'
-            onClick={(e) => {
-              e.stopPropagation();
-              setOpenSubSection(isOpen ? null : item.name);
-            }}
-          >
+        {(hasSubItems || hasSubItemsName || hasSubItemsNameComponent || hasSubItemsNameComponentName) && (
+          <span className='ml-2'>
             {isOpen ? <FiChevronUp /> : <FiChevronDown />}
-          </button>
+          </span>
         )}
       </div>
       {isOpen && (
         <ul className='pl-4'>
+          {hasSubItems &&
+            item.subItems.map((child) => (
+              <SidebarItem key={child.name} item={child} />
+            ))}
           {hasSubItemsName &&
             item.subItemsName.map((child) => (
-              <SidebarItem
-                key={child.name}
-                item={child}
-                openSubSection={openSubSection}
-                setOpenSubSection={setOpenSubSection}
-              />
+              <SidebarItem key={child.name} item={child} />
             ))}
           {hasSubItemsNameComponent &&
             item.subItemsNameComponent.map((child) => (
-              <SidebarItem
-                key={child.name}
-                item={child}
-                openSubSection={openSubSection}
-                setOpenSubSection={setOpenSubSection}
-              />
+              <SidebarItem key={child.name} item={child} />
+            ))}
+          {hasSubItemsNameComponentName &&
+            item.subItemsNameComponentName.map((child) => (
+              <SidebarItem key={child.name} item={child} />
             ))}
         </ul>
       )}

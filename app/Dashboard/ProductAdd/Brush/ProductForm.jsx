@@ -83,7 +83,7 @@ export default function ProductForm() {
       category,
       tags,
     };
-    const res = await fetch("/api/brush-products", {
+    const res = await fetch("/api/brush-products/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),

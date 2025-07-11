@@ -7,10 +7,10 @@ const upload = multer({ storage });
 const router = express.Router();
 const fiberController = require('../controllers/fiberController.js');
 
-router.post('/', upload.array('photos', 5), fiberController.createFiber);
-router.get('/', fiberController.getAllFiber);
-router.get('/:id', fiberController.getOneFiber);
-router.put('/:id', upload.array('photos', 5), fiberController.updateFiber);
-router.delete('/:id', fiberController.deleteFiber);
+router.post('/create', upload.array('photos', 5), fiberController.createFiber);
+router.get('/get', fiberController.getAllFiber);
+router.get('/getOne:id', fiberController.getOneFiber);
+router.put('/Update:id', upload.array('photos', 5), fiberController.updateFiber);
+router.delete('/delete:id', fiberController.deleteFiber);
 
 module.exports = router;

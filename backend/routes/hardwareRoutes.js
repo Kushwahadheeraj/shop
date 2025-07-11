@@ -7,10 +7,10 @@ const upload = multer({ storage });
 const router = express.Router();
 const hardwareController = require('../controllers/hardwareController.js');
 
-router.post('/', upload.array('photos', 5), hardwareController.createHardware);
-router.get('/', hardwareController.getAllHardware);
-router.get('/:id', hardwareController.getOneHardware);
-router.put('/:id', upload.array('photos', 5), hardwareController.updateHardware);
-router.delete('/:id', hardwareController.deleteHardware);
+router.post('/create', upload.array('photos', 5), hardwareController.createHardware);
+router.get('/get', hardwareController.getAllHardware);
+router.get('/getOne:id', hardwareController.getOneHardware);
+router.put('/Update:id', upload.array('photos', 5), hardwareController.updateHardware);
+router.delete('/delete:id', hardwareController.deleteHardware);
 
 module.exports = router;

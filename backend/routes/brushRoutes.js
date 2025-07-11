@@ -7,10 +7,10 @@ const upload = multer({ storage });
 const router = express.Router();
 const brushController = require('../controllers/brushController.js');
 
-router.post('/', upload.array('photos', 5), brushController.createBrush);
-router.get('/', brushController.getAllBrush);
-router.get('/:id', brushController.getOneBrush);
-router.put('/:id', upload.array('photos', 5), brushController.updateBrush);
-router.delete('/:id', brushController.deleteBrush);
+router.post('/create', upload.array('photos', 5), brushController.createBrush);
+router.get('/get', brushController.getAllBrush);
+router.get('/getOne:id', brushController.getOneBrush);
+router.put('/Update:id', upload.array('photos', 5), brushController.updateBrush);
+router.delete('/delete:id', brushController.deleteBrush);
 
 module.exports = router;

@@ -7,10 +7,10 @@ const upload = multer({ storage });
 const router = express.Router();
 const uncategorizedController = require('../controllers/uncategorizedController.js');
 
-router.post('/', upload.array('photos', 5), uncategorizedController.createUncategorized);
-router.get('/', uncategorizedController.getAllUncategorized);
-router.get('/:id', uncategorizedController.getOneUncategorized);
-router.put('/:id', upload.array('photos', 5), uncategorizedController.updateUncategorized);
-router.delete('/:id', uncategorizedController.deleteUncategorized);
+router.post('/create', upload.array('photos', 5), uncategorizedController.createUncategorized);
+router.get('/get', uncategorizedController.getAllUncategorized);
+router.get('/getOne:id', uncategorizedController.getOneUncategorized);
+router.put('/Update:id', upload.array('photos', 5), uncategorizedController.updateUncategorized);
+router.delete('/delete:id', uncategorizedController.deleteUncategorized);
 
 module.exports = router;

@@ -92,7 +92,7 @@ export default function ProductForm({ product, onSave }) {
       }
     });
     files.forEach(f => data.append('photos', f));
-    const res = await fetch('http://localhost:5000/api/adhesives-products', { method: product ? 'PUT' : 'POST', body: data });
+    const res = await fetch('/api/adhesives-products/create', { method: product ? 'PUT' : 'POST', body: data });
     if (res.ok) onSave && onSave();
   };
 

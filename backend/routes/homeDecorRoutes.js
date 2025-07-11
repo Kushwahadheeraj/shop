@@ -7,10 +7,10 @@ const upload = multer({ storage });
 const router = express.Router();
 const homeDecorController = require('../controllers/homeDecorController.js');
 
-router.post('/', upload.array('photos', 5), homeDecorController.createHomeDecor);
-router.get('/', homeDecorController.getAllHomeDecor);
-router.get('/:id', homeDecorController.getOneHomeDecor);
-router.put('/:id', upload.array('photos', 5), homeDecorController.updateHomeDecor);
-router.delete('/:id', homeDecorController.deleteHomeDecor);
+router.post('/create', upload.array('photos', 5), homeDecorController.createHomeDecor);
+router.get('/get', homeDecorController.getAllHomeDecor);
+router.get('/getOne:id', homeDecorController.getOneHomeDecor);
+router.put('/Update:id', upload.array('photos', 5), homeDecorController.updateHomeDecor);
+router.delete('/delete:id', homeDecorController.deleteHomeDecor);
 
 module.exports = router;

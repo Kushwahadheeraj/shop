@@ -7,10 +7,10 @@ const upload = multer({ storage });
 const router = express.Router();
 const dryController = require('../controllers/dryController.js');
 
-router.post('/', upload.array('photos', 5), dryController.createDry);
-router.get('/', dryController.getAllDry);
-router.get('/:id', dryController.getOneDry);
-router.put('/:id', upload.array('photos', 5), dryController.updateDry);
-router.delete('/:id', dryController.deleteDry);
+router.post('/create', upload.array('photos', 5), dryController.createDry);
+router.get('/get', dryController.getAllDry);
+router.get('/getOne:id', dryController.getOneDry);
+router.put('/Update:id', upload.array('photos', 5), dryController.updateDry);
+router.delete('/delete:id', dryController.deleteDry);
 
 module.exports = router;

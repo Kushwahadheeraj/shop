@@ -7,10 +7,10 @@ const upload = multer({ storage });
 const router = express.Router();
 const cementsController = require('../controllers/cementsController.js');
 
-router.post('/', upload.array('photos', 5), cementsController.createCements);
-router.get('/', cementsController.getAllCements);
-router.get('/:id', cementsController.getOneCements);
-router.put('/:id', upload.array('photos', 5), cementsController.updateCements);
-router.delete('/:id', cementsController.deleteCements);
+router.post('/create', upload.array('photos', 5), cementsController.createCements);
+router.get('/get', cementsController.getAllCements);
+router.get('/getOne:id', cementsController.getOneCements);
+router.put('/Update:id', upload.array('photos', 5), cementsController.updateCements);
+router.delete('/delete:id', cementsController.deleteCements);
 
 module.exports = router;

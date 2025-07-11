@@ -48,11 +48,11 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 function crudRoutes(resource, controller) {
-  router.post(`/${resource}`, upload.array('photos', 5), controller[`create${capitalize(resource)}`]);
-  router.get(`/${resource}`, controller[`getAll${capitalize(resource)}`]);
-  router.get(`/${resource}/:id`, controller[`getOne${capitalize(resource)}`]);
-  router.put(`/${resource}/:id`, upload.array('photos', 5), controller[`update${capitalize(resource)}`]);
-  router.delete(`/${resource}/:id`, controller[`delete${capitalize(resource)}`]);
+  router.post(`/${resource}/create`, upload.array('photos', 5), controller[`create${capitalize(resource)}`]);
+  router.get(`/${resource}/get`, controller[`getAll${capitalize(resource)}`]);
+  router.get(`/${resource}/getOne:id`, controller[`getOne${capitalize(resource)}`]);
+  router.put(`/${resource}/Update:id`, upload.array('photos', 5), controller[`update${capitalize(resource)}`]);
+  router.delete(`/${resource}/delete:id`, controller[`delete${capitalize(resource)}`]);
 }
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);

@@ -1,34 +1,31 @@
 import React from "react";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { MoreHorizontal } from "lucide-react";
 
-export default function ProductTable({ products, onEdit, onDelete, onView, editId, editData, onEditChange, onEditSave, onEditCancel }) {
+export default function ProductTable({ products, onEdit, onDelete, onView }) {
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full border text-sm">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="border px-2 py-1">Name</th>
-            <th className="border px-2 py-1">Photos</th>
-            <th className="border px-2 py-1">Fix Price</th>
-            <th className="border px-2 py-1">Discount</th>
-            <th className="border px-2 py-1">Discount Price</th>
-            <th className="border px-2 py-1">Total Product</th>
-            <th className="border px-2 py-1">Category</th>
-            <th className="border px-2 py-1">Tags</th>
-            <th className="border px-2 py-1">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Name</TableHead>
+            <TableHead>Photos</TableHead>
+            <TableHead>Fix Price</TableHead>
+            <TableHead>Discount</TableHead>
+            <TableHead>Discount Price</TableHead>
+            <TableHead>Total Product</TableHead>
+            <TableHead>Category</TableHead>
+            <TableHead>Tags</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {products.map((product) => (
-            <tr key={product._id}>
-              <td className="border px-2 py-1">
-                {editId === product._id ? (
-                  <input name="name" value={editData.name} onChange={onEditChange} className="border px-1 py-0.5" />
-                ) : (
-                  product.name
-                )}
-              </td>
-              <td className="border px-2 py-1">
+            <TableRow key={product._id}>
+              <TableCell>{product.name}</TableCell>
+              <TableCell>
                 {product.photos && product.photos.length > 0 ? (
                   <div className="flex flex-row gap-1 flex-wrap">
                     {product.photos.map((url, idx) => (
@@ -38,61 +35,37 @@ export default function ProductTable({ products, onEdit, onDelete, onView, editI
                 ) : (
                   "-"
                 )}
-              </td>
-              <td className="border px-2 py-1">
-                {editId === product._id ? (
-                  <input name="fixPrice" type="number" value={editData.fixPrice} onChange={onEditChange} className="border px-1 py-0.5" />
-                ) : (
-                  product.fixPrice
-                )}
-              </td>
-              <td className="border px-2 py-1">
-                {editId === product._id ? (
-                  <input name="discount" type="number" value={editData.discount} onChange={onEditChange} className="border px-1 py-0.5" />
-                ) : (
-                  product.discount
-                )}
-              </td>
-              <td className="border px-2 py-1">{product.discountPrice}</td>
-              <td className="border px-2 py-1">
-                {editId === product._id ? (
-                  <input name="totalProduct" type="number" value={editData.totalProduct} onChange={onEditChange} className="border px-1 py-0.5" />
-                ) : (
-                  product.totalProduct
-                )}
-              </td>
-              <td className="border px-2 py-1">
-                {editId === product._id ? (
-                  <input name="category" value={editData.category} onChange={onEditChange} className="border px-1 py-0.5" />
-                ) : (
-                  product.category
-                )}
-              </td>
-              <td className="border px-2 py-1">
-                {editId === product._id ? (
-                  <input name="tags" value={editData.tags ? editData.tags.join(", ") : ""} onChange={e => onEditChange({ target: { name: "tags", value: e.target.value.split(",").map(t => t.trim()) } })} className="border px-1 py-0.5" />
-                ) : (
-                  product.tags && product.tags.length > 0 ? product.tags.join(", ") : "-"
-                )}
-              </td>
-              <td className="border px-2 py-1">
-                {editId === product._id ? (
-                  <>
-                    <Button size="sm" onClick={() => onEditSave(product._id)} className="mr-2">Save</Button>
-                    <Button size="sm" variant="outline" onClick={onEditCancel}>Cancel</Button>
-                  </>
-                ) : (
-                  <>
-                    <Button size="sm" onClick={() => onEdit(product)} className="mr-1">Edit</Button>
-                    <Button size="sm" variant="destructive" onClick={() => onDelete(product._id)} className="mr-1">Delete</Button>
-                    <Button size="sm" variant="secondary" onClick={() => onView(product)}>View</Button>
-                  </>
-                )}
-              </td>
-            </tr>
+              </TableCell>
+              <TableCell>{product.fixPrice}</TableCell>
+              <TableCell>{product.discount}</TableCell>
+              <TableCell>{product.discountPrice}</TableCell>
+              <TableCell>{product.totalProduct}</TableCell>
+              <TableCell>{product.category}</TableCell>
+              <TableCell>{product.tags && product.tags.length > 0 ? product.tags.join(", ") : "-"}</TableCell>
+              <TableCell className="text-right">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <MoreHorizontal className="w-5 h-5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => onEdit(product)}>
+                      Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onView(product)}>
+                      View
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onDelete(product._id)} className="text-red-600">
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 } 

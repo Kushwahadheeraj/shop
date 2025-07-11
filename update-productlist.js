@@ -2,9 +2,6 @@ const fs = require('fs');
 const path = require('path');
 
 function getApiPath(filePath) {
-  // Extract the category/subcategory from the file path
-  // e.g., app/Dashboard/ProductList/Adhesives/ProductList.jsx => /api/adhesives
-  // e.g., app/Dashboard/ProductList/Sanitary/Essess/Croma/ProductList.jsx => /api/sanitary/essess/croma
   const parts = filePath.split(path.sep);
   const idx = parts.findIndex(p => p.toLowerCase() === 'productlist');
   if (idx === -1) return '/api/products';
@@ -12,17 +9,28 @@ function getApiPath(filePath) {
   return rel ? `/api/${rel}` : '/api/products';
 }
 
-function getComponent(category) {
+function getCategoryName(filePath) {
+  // Get the folder names after ProductList and before ProductList.jsx
+  const parts = filePath.split(path.sep);
+  const idx = parts.findIndex(p => p.toLowerCase() === 'productlist');
+  if (idx === -1) return 'Product List';
+  const rel = parts.slice(idx + 1, -1);
+  if (rel.length === 0) return 'Product List';
+  // Capitalize each part
+  const name = rel.map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
+  return name + ' Product List';
+}
+
+function getComponent(category, title) {
   return `"use client";
 import React, { useEffect, useState } from "react";
 import ProductTable from "@/components/ProductTable";
+import { useRouter } from "next/navigation";
 
 export default function ProductList() {
   const [products, setProducts] = useState([]);
-  const [editId, setEditId] = useState(null);
-  const [editData, setEditData] = useState({});
   const [loading, setLoading] = useState(false);
-  const [viewProduct, setViewProduct] = useState(null);
+  const router = useRouter();
 
   const API_URL = "${category}";
 
@@ -39,24 +47,7 @@ export default function ProductList() {
   };
 
   const handleEdit = (product) => {
-    setEditId(product._id);
-    setEditData({ ...product });
-  };
-
-  const handleEditChange = (e) => {
-    const { name, value } = e.target;
-    setEditData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleEditSave = async (id) => {
-    setLoading(true);
-    await fetch(\`${'${API_URL}/${id}'}\`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(editData),
-    });
-    setEditId(null);
-    fetchProducts();
+    router.push(`/dashboard/product/update/${product._id}`);
   };
 
   const handleDelete = async (id) => {
@@ -67,47 +58,20 @@ export default function ProductList() {
   };
 
   const handleView = (product) => {
-    setViewProduct(product);
-  };
-
-  const handleCloseView = () => {
-    setViewProduct(null);
+    router.push(`/dashboard/product/view/${product._id}`);
   };
 
   if (loading) return <div>Loading...</div>;
 
   return (
     <div>
+      <h1 className="text-2xl font-bold mb-4">${title}</h1>
       <ProductTable
         products={products}
         onEdit={handleEdit}
         onDelete={handleDelete}
         onView={handleView}
-        editId={editId}
-        editData={editData}
-        onEditChange={handleEditChange}
-        onEditSave={handleEditSave}
-        onEditCancel={() => setEditId(null)}
       />
-      {viewProduct && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow-lg min-w-[300px] max-w-[90vw]">
-            <h2 className="text-lg font-bold mb-2">{viewProduct.name}</h2>
-            <div className="mb-2">Category: {viewProduct.category}</div>
-            <div className="mb-2">Price: {viewProduct.fixPrice}</div>
-            <div className="mb-2">Discount: {viewProduct.discount}</div>
-            <div className="mb-2">Discount Price: {viewProduct.discountPrice}</div>
-            <div className="mb-2">Total Product: {viewProduct.totalProduct}</div>
-            <div className="mb-2">Tags: {viewProduct.tags && viewProduct.tags.join(', ')}</div>
-            <div className="flex flex-row gap-2 flex-wrap mb-2">
-              {viewProduct.photos && viewProduct.photos.map((url, idx) => (
-                <img key={idx} src={url} alt="photo" className="w-16 h-16 object-cover rounded" />
-              ))}
-            </div>
-            <button onClick={handleCloseView} className="mt-2 px-4 py-1 bg-gray-200 rounded">Close</button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
@@ -121,6 +85,7 @@ if (!filePath) {
 }
 
 const apiPath = getApiPath(filePath.replace(/\\/g, '/').replace(/^.*app\/Dashboard\/ProductList\//, ''));
-const code = getComponent(apiPath);
+const title = getCategoryName(filePath.replace(/\\/g, '/').replace(/^.*app\/Dashboard\/ProductList\//, ''));
+const code = getComponent(apiPath, title);
 fs.writeFileSync(filePath, code, 'utf8');
-console.log(`Updated: ${filePath} -> API: ${apiPath}`); 
+console.log(`Updated: ${filePath} -> API: ${apiPath} -> Title: ${title}`); 

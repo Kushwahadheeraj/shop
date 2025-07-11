@@ -1,28 +1,98 @@
 "use client";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import ProductTable from "@/components/ProductTable";
 
 export default function ProductList() {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [editId, setEditId] = useState(null);
+  const [editData, setEditData] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [viewProduct, setViewProduct] = useState(null);
+
+  const API_URL = "/api/products";
 
   useEffect(() => {
-    fetch("/api/electrical/Melamyne")
-      .then(res => res.json())
-      .then(data => setProducts(data))
-      .catch(() => setProducts([]))
-      .finally(() => setLoading(false));
+    fetchProducts();
   }, []);
 
+  const fetchProducts = async () => {
+    setLoading(true);
+    const res = await fetch(API_URL);
+    const data = await res.json();
+    setProducts(data);
+    setLoading(false);
+  };
+
+  const handleEdit = (product) => {
+    setEditId(product._id);
+    setEditData({ ...product });
+  };
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleEditSave = async (id) => {
+    setLoading(true);
+    await fetch(`${API_URL}/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(editData),
+    });
+    setEditId(null);
+    fetchProducts();
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this product?")) return;
+    setLoading(true);
+    await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+    fetchProducts();
+  };
+
+  const handleView = (product) => {
+    setViewProduct(product);
+  };
+
+  const handleCloseView = () => {
+    setViewProduct(null);
+  };
+
   if (loading) return <div>Loading...</div>;
-  if (!products.length) return <div>No products found.</div>;
 
   return (
-    <ul>
-      {products.map(product => (
-        <li key={product._id}>
-          <strong>{product.name}</strong> - {product.price} ({product.category})
-        </li>
-      ))}
-    </ul>
+    <div>
+      <ProductTable
+        products={products}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onView={handleView}
+        editId={editId}
+        editData={editData}
+        onEditChange={handleEditChange}
+        onEditSave={handleEditSave}
+        onEditCancel={() => setEditId(null)}
+      />
+      {viewProduct && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg min-w-[300px] max-w-[90vw]">
+            <h2 className="text-lg font-bold mb-2">{viewProduct.name}</h2>
+            <div className="mb-2">Category: {viewProduct.category}</div>
+            <div className="mb-2">Price: {viewProduct.fixPrice}</div>
+            <div className="mb-2">Discount: {viewProduct.discount}</div>
+            <div className="mb-2">Discount Price: {viewProduct.discountPrice}</div>
+            <div className="mb-2">Total Product: {viewProduct.totalProduct}</div>
+            <div className="mb-2">Tags: {viewProduct.tags && viewProduct.tags.join(', ')}</div>
+            <div className="flex flex-row gap-2 flex-wrap mb-2">
+              {viewProduct.photos && viewProduct.photos.map((url, idx) => (
+                <img key={idx} src={url} alt="photo" className="w-16 h-16 object-cover rounded" />
+              ))}
+            </div>
+            <button onClick={handleCloseView} className="mt-2 px-4 py-1 bg-gray-200 rounded">Close</button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

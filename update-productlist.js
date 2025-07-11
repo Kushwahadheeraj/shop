@@ -1,4 +1,19 @@
-"use client";
+const fs = require('fs');
+const path = require('path');
+
+function getApiPath(filePath) {
+  // Extract the category/subcategory from the file path
+  // e.g., app/Dashboard/ProductList/Adhesives/ProductList.jsx => /api/adhesives
+  // e.g., app/Dashboard/ProductList/Sanitary/Essess/Croma/ProductList.jsx => /api/sanitary/essess/croma
+  const parts = filePath.split(path.sep);
+  const idx = parts.findIndex(p => p.toLowerCase() === 'productlist');
+  if (idx === -1) return '/api/products';
+  const rel = parts.slice(idx + 1, -1).map(p => p.toLowerCase()).join('/');
+  return rel ? `/api/${rel}` : '/api/products';
+}
+
+function getComponent(category) {
+  return `"use client";
 import React, { useEffect, useState } from "react";
 import ProductTable from "@/components/ProductTable";
 
@@ -9,7 +24,7 @@ export default function ProductList() {
   const [loading, setLoading] = useState(false);
   const [viewProduct, setViewProduct] = useState(null);
 
-  const API_URL = "/api/products";
+  const API_URL = "${category}";
 
   useEffect(() => {
     fetchProducts();
@@ -35,7 +50,7 @@ export default function ProductList() {
 
   const handleEditSave = async (id) => {
     setLoading(true);
-    await fetch(`${API_URL}/${id}`, {
+    await fetch(\`${'${API_URL}/${id}'}\`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(editData),
@@ -47,7 +62,7 @@ export default function ProductList() {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
     setLoading(true);
-    await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+    await fetch(\`${'${API_URL}/${id}'}\`, { method: "DELETE" });
     fetchProducts();
   };
 
@@ -96,3 +111,16 @@ export default function ProductList() {
     </div>
   );
 }
+`;
+}
+
+const filePath = process.argv[2];
+if (!filePath) {
+  console.error('Usage: node update-productlist.js <ProductList.jsx path>');
+  process.exit(1);
+}
+
+const apiPath = getApiPath(filePath.replace(/\\/g, '/').replace(/^.*app\/Dashboard\/ProductList\//, ''));
+const code = getComponent(apiPath);
+fs.writeFileSync(filePath, code, 'utf8');
+console.log(`Updated: ${filePath} -> API: ${apiPath}`); 

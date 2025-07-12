@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Mouth Operated", {
+      const res = await fetch(API_BASE_URL + "/electrical/Mouth Operated", {
         method: "POST",
         body: data,
       });

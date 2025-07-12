@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Allure Rossette Series", {
+      const res = await fetch(API_BASE_URL + "/electrical/Allure Rossette Series", {
         method: "POST",
         body: data,
       });

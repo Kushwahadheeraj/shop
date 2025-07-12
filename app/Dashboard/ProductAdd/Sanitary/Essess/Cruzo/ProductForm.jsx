@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Cruzo", {
+      const res = await fetch(API_BASE_URL + "/electrical/Cruzo", {
         method: "POST",
         body: data,
       });

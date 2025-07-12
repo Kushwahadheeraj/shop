@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Night Latch7 Lever", {
+      const res = await fetch(API_BASE_URL + "/electrical/Night Latch7 Lever", {
         method: "POST",
         body: data,
       });

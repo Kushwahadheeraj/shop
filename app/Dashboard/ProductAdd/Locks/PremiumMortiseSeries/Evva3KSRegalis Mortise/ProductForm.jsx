@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Evva3 K S Regalis Mortise", {
+      const res = await fetch(API_BASE_URL + "/electrical/Evva3 K S Regalis Mortise", {
         method: "POST",
         body: data,
       });

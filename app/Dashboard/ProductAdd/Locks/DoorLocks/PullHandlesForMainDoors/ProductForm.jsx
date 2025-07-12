@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Pull Handles For Main Doors", {
+      const res = await fetch(API_BASE_URL + "/electrical/Pull Handles For Main Doors", {
         method: "POST",
         body: data,
       });

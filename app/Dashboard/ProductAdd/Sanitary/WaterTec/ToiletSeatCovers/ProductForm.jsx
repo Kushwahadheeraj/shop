@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Toilet Seat Covers", {
+      const res = await fetch(API_BASE_URL + "/electrical/Toilet Seat Covers", {
         method: "POST",
         body: data,
       });

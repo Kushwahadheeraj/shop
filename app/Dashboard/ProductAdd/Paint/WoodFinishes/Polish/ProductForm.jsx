@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Polish", {
+      const res = await fetch(API_BASE_URL + "/electrical/Polish", {
         method: "POST",
         body: data,
       });

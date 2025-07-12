@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Marble Cutter", {
+      const res = await fetch(API_BASE_URL + "/electrical/Marble Cutter", {
         method: "POST",
         body: data,
       });

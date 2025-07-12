@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Maximus", {
+      const res = await fetch(API_BASE_URL + "/electrical/Maximus", {
         method: "POST",
         body: data,
       });

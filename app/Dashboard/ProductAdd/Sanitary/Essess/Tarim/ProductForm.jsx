@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Tarim", {
+      const res = await fetch(API_BASE_URL + "/electrical/Tarim", {
         method: "POST",
         body: data,
       });

@@ -74,7 +74,7 @@ export default function ProductForm() {
     formData.append("category", category);
     tags.forEach(tag => formData.append("tags", tag));
     photos.forEach(photo => formData.append("photos", photo));
-    const res = await fetch("/api/cements-products/create", {
+    const res = await fetch(API_BASE_URL + "/cements-products/create", {
       method: "POST",
       body: formData,
     });

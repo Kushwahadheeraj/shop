@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Thick Door Hinge", {
+      const res = await fetch(API_BASE_URL + "/electrical/Thick Door Hinge", {
         method: "POST",
         body: data,
       });

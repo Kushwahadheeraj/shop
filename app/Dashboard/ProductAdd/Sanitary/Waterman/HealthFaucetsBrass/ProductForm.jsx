@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Health Faucets Brass", {
+      const res = await fetch(API_BASE_URL + "/electrical/Health Faucets Brass", {
         method: "POST",
         body: data,
       });

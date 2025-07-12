@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Water Heaters", {
+      const res = await fetch(API_BASE_URL + "/electrical/Water Heaters", {
         method: "POST",
         body: data,
       });

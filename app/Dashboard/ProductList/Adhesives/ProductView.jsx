@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import API_BASE_URL from "@/lib/apiConfig";
 
 export default function ProductView() {
   const [product, setProduct] = useState(null);
@@ -14,7 +15,7 @@ export default function ProductView() {
 
   const fetchProduct = async () => {
     setLoading(true);
-    const res = await fetch("http://localhost:3001/api/adhesives-products/getOne:" + id);
+    const res = await fetch(`${API_BASE_URL}/adhesives-products/getOne:` + id);
     const data = await res.json();
     setProduct(data);
     setLoading(false);

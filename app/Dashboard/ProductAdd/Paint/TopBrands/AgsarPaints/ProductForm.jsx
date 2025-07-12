@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Agsar Paints", {
+      const res = await fetch(API_BASE_URL + "/electrical/Agsar Paints", {
         method: "POST",
         body: data,
       });

@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Europrofile Mortise Pin Cylinder With Master Key", {
+      const res = await fetch(API_BASE_URL + "/electrical/Europrofile Mortise Pin Cylinder With Master Key", {
         method: "POST",
         body: data,
       });

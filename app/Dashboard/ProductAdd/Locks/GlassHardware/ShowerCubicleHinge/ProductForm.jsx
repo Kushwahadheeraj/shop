@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Shower Cubicle Hinge", {
+      const res = await fetch(API_BASE_URL + "/electrical/Shower Cubicle Hinge", {
         method: "POST",
         body: data,
       });

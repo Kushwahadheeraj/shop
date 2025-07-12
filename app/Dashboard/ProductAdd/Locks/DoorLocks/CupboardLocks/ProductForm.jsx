@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Cupboard Locks", {
+      const res = await fetch(API_BASE_URL + "/electrical/Cupboard Locks", {
         method: "POST",
         body: data,
       });

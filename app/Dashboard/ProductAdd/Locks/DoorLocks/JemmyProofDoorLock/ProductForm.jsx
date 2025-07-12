@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Jemmy Proof Door Lock", {
+      const res = await fetch(API_BASE_URL + "/electrical/Jemmy Proof Door Lock", {
         method: "POST",
         body: data,
       });

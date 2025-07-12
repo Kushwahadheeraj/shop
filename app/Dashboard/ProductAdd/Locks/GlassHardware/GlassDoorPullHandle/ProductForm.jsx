@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Glass Door Pull Handle", {
+      const res = await fetch(API_BASE_URL + "/electrical/Glass Door Pull Handle", {
         method: "POST",
         body: data,
       });

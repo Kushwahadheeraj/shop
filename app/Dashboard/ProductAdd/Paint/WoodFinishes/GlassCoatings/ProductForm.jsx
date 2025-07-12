@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Glass Coatings", {
+      const res = await fetch(API_BASE_URL + "/electrical/Glass Coatings", {
         method: "POST",
         body: data,
       });

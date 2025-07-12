@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Water Closets", {
+      const res = await fetch(API_BASE_URL + "/electrical/Water Closets", {
         method: "POST",
         body: data,
       });

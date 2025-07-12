@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Angular Stop Cock", {
+      const res = await fetch(API_BASE_URL + "/electrical/Angular Stop Cock", {
         method: "POST",
         body: data,
       });

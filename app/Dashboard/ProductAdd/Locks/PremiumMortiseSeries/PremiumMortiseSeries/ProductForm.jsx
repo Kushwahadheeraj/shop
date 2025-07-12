@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Premium Mortise Series", {
+      const res = await fetch(API_BASE_URL + "/electrical/Premium Mortise Series", {
         method: "POST",
         body: data,
       });

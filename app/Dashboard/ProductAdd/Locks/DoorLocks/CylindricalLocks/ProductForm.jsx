@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Cylindrical Locks", {
+      const res = await fetch(API_BASE_URL + "/electrical/Cylindrical Locks", {
         method: "POST",
         body: data,
       });

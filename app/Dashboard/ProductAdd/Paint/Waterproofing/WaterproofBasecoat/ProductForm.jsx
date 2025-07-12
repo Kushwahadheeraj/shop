@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Waterproof Basecoat", {
+      const res = await fetch(API_BASE_URL + "/electrical/Waterproof Basecoat", {
         method: "POST",
         body: data,
       });

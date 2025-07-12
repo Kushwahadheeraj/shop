@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Knob Locks", {
+      const res = await fetch(API_BASE_URL + "/electrical/Knob Locks", {
         method: "POST",
         body: data,
       });

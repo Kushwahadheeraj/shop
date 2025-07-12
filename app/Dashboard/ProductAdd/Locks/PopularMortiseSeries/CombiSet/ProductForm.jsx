@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Combi Set", {
+      const res = await fetch(API_BASE_URL + "/electrical/Combi Set", {
         method: "POST",
         body: data,
       });

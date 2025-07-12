@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Cement Primer", {
+      const res = await fetch(API_BASE_URL + "/electrical/Cement Primer", {
         method: "POST",
         body: data,
       });

@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Slbm Faucet", {
+      const res = await fetch(API_BASE_URL + "/electrical/Slbm Faucet", {
         method: "POST",
         body: data,
       });

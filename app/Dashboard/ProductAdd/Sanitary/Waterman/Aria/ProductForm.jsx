@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Aria", {
+      const res = await fetch(API_BASE_URL + "/electrical/Aria", {
         method: "POST",
         body: data,
       });

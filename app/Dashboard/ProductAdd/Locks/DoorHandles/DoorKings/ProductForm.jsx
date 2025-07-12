@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Door Kings", {
+      const res = await fetch(API_BASE_URL + "/electrical/Door Kings", {
         method: "POST",
         body: data,
       });

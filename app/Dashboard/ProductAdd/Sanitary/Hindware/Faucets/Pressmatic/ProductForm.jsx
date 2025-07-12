@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Pressmatic", {
+      const res = await fetch(API_BASE_URL + "/electrical/Pressmatic", {
         method: "POST",
         body: data,
       });

@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Combipack With240mm Euro Mortise Lock", {
+      const res = await fetch(API_BASE_URL + "/electrical/Combipack With240mm Euro Mortise Lock", {
         method: "POST",
         body: data,
       });

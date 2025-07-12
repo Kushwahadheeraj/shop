@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Paint Brushes", {
+      const res = await fetch(API_BASE_URL + "/electrical/Paint Brushes", {
         method: "POST",
         body: data,
       });

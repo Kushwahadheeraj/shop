@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Exposed Mixers", {
+      const res = await fetch(API_BASE_URL + "/electrical/Exposed Mixers", {
         method: "POST",
         body: data,
       });

@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Spray Paints", {
+      const res = await fetch(API_BASE_URL + "/electrical/Spray Paints", {
         method: "POST",
         body: data,
       });

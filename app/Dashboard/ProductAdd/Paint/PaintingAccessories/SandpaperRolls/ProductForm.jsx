@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Sandpaper Rolls", {
+      const res = await fetch(API_BASE_URL + "/electrical/Sandpaper Rolls", {
         method: "POST",
         body: data,
       });

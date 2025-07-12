@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Sink Mixer", {
+      const res = await fetch(API_BASE_URL + "/electrical/Sink Mixer", {
         method: "POST",
         body: data,
       });

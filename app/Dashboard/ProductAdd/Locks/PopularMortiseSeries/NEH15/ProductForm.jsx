@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/N E H15 Low Height Design", {
+      const res = await fetch(API_BASE_URL + "/electrical/N E H15 Low Height Design", {
         method: "POST",
         body: data,
       });

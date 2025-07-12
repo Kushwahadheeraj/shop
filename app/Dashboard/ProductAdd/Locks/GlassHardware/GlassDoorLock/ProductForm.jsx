@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Glass Door Lock", {
+      const res = await fetch(API_BASE_URL + "/electrical/Glass Door Lock", {
         method: "POST",
         body: data,
       });

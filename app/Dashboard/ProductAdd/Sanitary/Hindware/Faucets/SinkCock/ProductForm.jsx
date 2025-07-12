@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Sink Cock", {
+      const res = await fetch(API_BASE_URL + "/electrical/Sink Cock", {
         method: "POST",
         body: data,
       });

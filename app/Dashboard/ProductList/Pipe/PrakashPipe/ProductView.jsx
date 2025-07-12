@@ -14,7 +14,7 @@ export default function ProductView() {
 
   const fetchProduct = async () => {
     setLoading(true);
-    const res = await fetch("/api/pipe/prakashpipe/getOne:" + id);
+    const res = await fetch(API_BASE_URL + "/pipe/prakashpipe/getOne:" + id);
     const data = await res.json();
     setProduct(data);
     setLoading(false);

@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Gloria", {
+      const res = await fetch(API_BASE_URL + "/electrical/Gloria", {
         method: "POST",
         body: data,
       });

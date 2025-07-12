@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Dimple Key", {
+      const res = await fetch(API_BASE_URL + "/electrical/Dimple Key", {
         method: "POST",
         body: data,
       });

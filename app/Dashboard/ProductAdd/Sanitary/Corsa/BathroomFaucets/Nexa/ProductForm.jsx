@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Nexa", {
+      const res = await fetch(API_BASE_URL + "/electrical/Nexa", {
         method: "POST",
         body: data,
       });

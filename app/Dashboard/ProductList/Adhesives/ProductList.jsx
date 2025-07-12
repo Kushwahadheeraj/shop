@@ -2,13 +2,14 @@
 import React, { useEffect, useState } from "react";
 import ProductTable from "@/components/ProductTable";
 import { useRouter } from "next/navigation";
+import API_BASE_URL from "@/lib/apiConfig";
 
 export default function ProductList() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const API_URL = "http://localhost:3001/api/adhesives-products";
+  const API_URL = `${API_BASE_URL}/adhesives-products`;
 
   useEffect(() => {
     fetchProducts();

@@ -14,7 +14,7 @@ export default function ProductView() {
 
   const fetchProduct = async () => {
     setLoading(true);
-    const res = await fetch("/api/tools/measuringtape/getOne:" + id);
+    const res = await fetch(API_BASE_URL + "/tools/measuringtape/getOne:" + id);
     const data = await res.json();
     setProduct(data);
     setLoading(false);

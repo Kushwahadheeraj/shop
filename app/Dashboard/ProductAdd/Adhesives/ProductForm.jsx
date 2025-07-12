@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import API_BASE_URL from "@/lib/apiConfig";
 
 const TAG_OPTIONS = [
   "Apsara",
@@ -92,7 +93,7 @@ export default function ProductForm({ product, onSave }) {
       }
     });
     files.forEach(f => data.append('photos', f));
-    const res = await fetch('http://localhost:3001/api/adhesives-products/create', { method: product ? 'PUT' : 'POST', body: data });
+    const res = await fetch(`${API_BASE_URL}/adhesives-products/create`, { method: product ? 'PUT' : 'POST', body: data });
     if (res.ok) onSave && onSave();
   };
 

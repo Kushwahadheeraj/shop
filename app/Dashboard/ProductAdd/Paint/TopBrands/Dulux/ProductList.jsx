@@ -6,7 +6,7 @@ export default function ProductList() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/electrical/Agsar Paints")
+    fetch(API_BASE_URL + "/electrical/Agsar Paints")
       .then(res => res.json())
       .then(data => setProducts(data))
       .catch(() => setProducts([]))

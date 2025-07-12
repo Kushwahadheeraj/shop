@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Synthetic Enamel", {
+      const res = await fetch(API_BASE_URL + "/electrical/Synthetic Enamel", {
         method: "POST",
         body: data,
       });

@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Wood Primer", {
+      const res = await fetch(API_BASE_URL + "/electrical/Wood Primer", {
         method: "POST",
         body: data,
       });

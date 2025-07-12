@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Tile Guard", {
+      const res = await fetch(API_BASE_URL + "/electrical/Tile Guard", {
         method: "POST",
         body: data,
       });

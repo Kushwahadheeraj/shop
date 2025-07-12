@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Series2 Swing", {
+      const res = await fetch(API_BASE_URL + "/electrical/Series2 Swing", {
         method: "POST",
         body: data,
       });

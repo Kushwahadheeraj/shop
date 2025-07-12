@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Wood Putty", {
+      const res = await fetch(API_BASE_URL + "/electrical/Wood Putty", {
         method: "POST",
         body: data,
       });

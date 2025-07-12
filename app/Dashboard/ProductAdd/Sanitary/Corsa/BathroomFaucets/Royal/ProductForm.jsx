@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Royal", {
+      const res = await fetch(API_BASE_URL + "/electrical/Royal", {
         method: "POST",
         body: data,
       });

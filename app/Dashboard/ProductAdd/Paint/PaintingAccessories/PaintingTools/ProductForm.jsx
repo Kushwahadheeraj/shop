@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Painting Tools", {
+      const res = await fetch(API_BASE_URL + "/electrical/Painting Tools", {
         method: "POST",
         body: data,
       });

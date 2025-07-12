@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Pressmatic Push Cock", {
+      const res = await fetch(API_BASE_URL + "/electrical/Pressmatic Push Cock", {
         method: "POST",
         body: data,
       });

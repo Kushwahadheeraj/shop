@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/E X S Altrix", {
+      const res = await fetch(API_BASE_URL + "/electrical/E X S Altrix", {
         method: "POST",
         body: data,
       });

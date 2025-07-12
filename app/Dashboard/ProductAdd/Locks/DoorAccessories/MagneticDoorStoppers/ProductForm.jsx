@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Magnetic Door Stoppers", {
+      const res = await fetch(API_BASE_URL + "/electrical/Magnetic Door Stoppers", {
         method: "POST",
         body: data,
       });

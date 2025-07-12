@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Square S", {
+      const res = await fetch(API_BASE_URL + "/electrical/Square S", {
         method: "POST",
         body: data,
       });

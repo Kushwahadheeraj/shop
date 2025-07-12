@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Jazz", {
+      const res = await fetch(API_BASE_URL + "/electrical/Jazz", {
         method: "POST",
         body: data,
       });

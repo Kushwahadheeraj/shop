@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Europrofile Brass Handle Set240mm", {
+      const res = await fetch(API_BASE_URL + "/electrical/Europrofile Brass Handle Set240mm", {
         method: "POST",
         body: data,
       });

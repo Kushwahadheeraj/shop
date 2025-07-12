@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Series8 B Series", {
+      const res = await fetch(API_BASE_URL + "/electrical/Series8 B Series", {
         method: "POST",
         body: data,
       });

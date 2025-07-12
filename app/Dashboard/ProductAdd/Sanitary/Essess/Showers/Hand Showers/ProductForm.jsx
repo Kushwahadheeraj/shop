@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Hand Showers", {
+      const res = await fetch(API_BASE_URL + "/electrical/Hand Showers", {
         method: "POST",
         body: data,
       });

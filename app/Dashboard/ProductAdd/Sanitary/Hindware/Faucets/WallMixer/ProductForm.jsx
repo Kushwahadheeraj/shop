@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Wall Mixer", {
+      const res = await fetch(API_BASE_URL + "/electrical/Wall Mixer", {
         method: "POST",
         body: data,
       });

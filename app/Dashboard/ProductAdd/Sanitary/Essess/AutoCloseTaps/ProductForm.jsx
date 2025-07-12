@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Auto Close Taps", {
+      const res = await fetch(API_BASE_URL + "/electrical/Auto Close Taps", {
         method: "POST",
         body: data,
       });

@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Semi Recessed Basins", {
+      const res = await fetch(API_BASE_URL + "/electrical/Semi Recessed Basins", {
         method: "POST",
         body: data,
       });

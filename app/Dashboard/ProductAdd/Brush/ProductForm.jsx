@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import API_BASE_URL from "@/lib/apiConfig";
 
 const categories = ["Paint Brush", "Roller", "Artist Brush"];
 const tagsList = ["Soft", "Hard", "Synthetic", "Natural"];
@@ -83,7 +84,7 @@ export default function ProductForm() {
       category,
       tags,
     };
-    const res = await fetch("/api/brush-products/create", {
+    const res = await fetch(`${API_BASE_URL}/brush-products/create`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),

@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Nano", {
+      const res = await fetch(API_BASE_URL + "/electrical/Nano", {
         method: "POST",
         body: data,
       });

@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Flush Valve", {
+      const res = await fetch(API_BASE_URL + "/electrical/Flush Valve", {
         method: "POST",
         body: data,
       });

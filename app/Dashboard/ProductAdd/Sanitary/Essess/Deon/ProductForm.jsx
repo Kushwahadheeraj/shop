@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Deon", {
+      const res = await fetch(API_BASE_URL + "/electrical/Deon", {
         method: "POST",
         body: data,
       });

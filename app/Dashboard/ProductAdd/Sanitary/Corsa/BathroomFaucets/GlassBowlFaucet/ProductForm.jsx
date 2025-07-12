@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Glass Bowl Faucet", {
+      const res = await fetch(API_BASE_URL + "/electrical/Glass Bowl Faucet", {
         method: "POST",
         body: data,
       });

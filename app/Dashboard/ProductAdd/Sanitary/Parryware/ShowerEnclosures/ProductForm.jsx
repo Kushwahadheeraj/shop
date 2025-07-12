@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Shower Enclosures", {
+      const res = await fetch(API_BASE_URL + "/electrical/Shower Enclosures", {
         method: "POST",
         body: data,
       });

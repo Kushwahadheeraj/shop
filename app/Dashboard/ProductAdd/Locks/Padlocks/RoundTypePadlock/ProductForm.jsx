@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Round Type Padlock", {
+      const res = await fetch(API_BASE_URL + "/electrical/Round Type Padlock", {
         method: "POST",
         body: data,
       });

@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Towy Low Height Design", {
+      const res = await fetch(API_BASE_URL + "/electrical/Towy Low Height Design", {
         method: "POST",
         body: data,
       });

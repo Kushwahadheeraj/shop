@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Sensor Taps", {
+      const res = await fetch(API_BASE_URL + "/electrical/Sensor Taps", {
         method: "POST",
         body: data,
       });

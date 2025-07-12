@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Grinders", {
+      const res = await fetch(API_BASE_URL + "/electrical/Grinders", {
         method: "POST",
         body: data,
       });

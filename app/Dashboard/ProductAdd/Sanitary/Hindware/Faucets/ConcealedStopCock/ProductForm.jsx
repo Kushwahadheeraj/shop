@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Concealed Stop Cock", {
+      const res = await fetch(API_BASE_URL + "/electrical/Concealed Stop Cock", {
         method: "POST",
         body: data,
       });

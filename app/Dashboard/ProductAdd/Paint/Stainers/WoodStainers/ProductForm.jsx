@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Wood Stainers", {
+      const res = await fetch(API_BASE_URL + "/electrical/Wood Stainers", {
         method: "POST",
         body: data,
       });

@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Polymer Cisterns", {
+      const res = await fetch(API_BASE_URL + "/electrical/Polymer Cisterns", {
         method: "POST",
         body: data,
       });

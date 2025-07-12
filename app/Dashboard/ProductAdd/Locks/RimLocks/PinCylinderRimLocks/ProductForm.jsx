@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Pin Cylinder Rim Locks", {
+      const res = await fetch(API_BASE_URL + "/electrical/Pin Cylinder Rim Locks", {
         method: "POST",
         body: data,
       });

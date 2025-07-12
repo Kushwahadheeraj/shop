@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Corner Fetch Series", {
+      const res = await fetch(API_BASE_URL + "/electrical/Corner Fetch Series", {
         method: "POST",
         body: data,
       });

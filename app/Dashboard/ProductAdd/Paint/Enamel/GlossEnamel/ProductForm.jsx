@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Gloss Enamel", {
+      const res = await fetch(API_BASE_URL + "/electrical/Gloss Enamel", {
         method: "POST",
         body: data,
       });

@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Drawer Locks", {
+      const res = await fetch(API_BASE_URL + "/electrical/Drawer Locks", {
         method: "POST",
         body: data,
       });

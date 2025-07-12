@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Crack Fillers", {
+      const res = await fetch(API_BASE_URL + "/electrical/Crack Fillers", {
         method: "POST",
         body: data,
       });

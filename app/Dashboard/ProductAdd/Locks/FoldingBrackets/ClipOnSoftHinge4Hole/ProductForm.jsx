@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Clip On Soft Hinge4 Hole", {
+      const res = await fetch(API_BASE_URL + "/electrical/Clip On Soft Hinge4 Hole", {
         method: "POST",
         body: data,
       });

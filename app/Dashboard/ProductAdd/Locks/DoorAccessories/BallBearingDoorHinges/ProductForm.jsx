@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Ball Bearing Door Hinges", {
+      const res = await fetch(API_BASE_URL + "/electrical/Ball Bearing Door Hinges", {
         method: "POST",
         body: data,
       });

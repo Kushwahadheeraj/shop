@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Wall Texture", {
+      const res = await fetch(API_BASE_URL + "/electrical/Wall Texture", {
         method: "POST",
         body: data,
       });

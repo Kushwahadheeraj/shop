@@ -74,7 +74,7 @@ export default function ProductForm() {
     formData.append("category", category);
     tags.forEach(tag => formData.append("tags", tag));
     photos.forEach(photo => formData.append("photos", photo));
-    const res = await fetch("/api/electrical/adaptors-products", {
+    const res = await fetch(API_BASE_URL + "/electrical/adaptors-products", {
       method: "POST",
       body: formData,
     });

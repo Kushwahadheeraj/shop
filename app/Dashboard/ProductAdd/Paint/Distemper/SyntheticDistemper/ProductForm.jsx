@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Synthetic Distemper", {
+      const res = await fetch(API_BASE_URL + "/electrical/Synthetic Distemper", {
         method: "POST",
         body: data,
       });

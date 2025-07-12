@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Csc Exp Kit", {
+      const res = await fetch(API_BASE_URL + "/electrical/Csc Exp Kit", {
         method: "POST",
         body: data,
       });

@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Jk Wall Putty", {
+      const res = await fetch(API_BASE_URL + "/electrical/Jk Wall Putty", {
         method: "POST",
         body: data,
       });

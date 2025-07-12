@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Diamond Blades", {
+      const res = await fetch(API_BASE_URL + "/electrical/Diamond Blades", {
         method: "POST",
         body: data,
       });

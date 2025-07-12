@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Concealed Cistern", {
+      const res = await fetch(API_BASE_URL + "/electrical/Concealed Cistern", {
         method: "POST",
         body: data,
       });

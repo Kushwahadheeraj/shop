@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Wall Showers Without Arm", {
+      const res = await fetch(API_BASE_URL + "/electrical/Wall Showers Without Arm", {
         method: "POST",
         body: data,
       });

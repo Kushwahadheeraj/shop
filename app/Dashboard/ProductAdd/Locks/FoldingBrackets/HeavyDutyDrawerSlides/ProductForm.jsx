@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Heavy Duty Drawer Slides", {
+      const res = await fetch(API_BASE_URL + "/electrical/Heavy Duty Drawer Slides", {
         method: "POST",
         body: data,
       });

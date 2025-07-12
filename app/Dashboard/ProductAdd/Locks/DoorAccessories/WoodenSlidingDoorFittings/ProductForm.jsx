@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Wooden Sliding Door Fittings", {
+      const res = await fetch(API_BASE_URL + "/electrical/Wooden Sliding Door Fittings", {
         method: "POST",
         body: data,
       });

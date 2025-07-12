@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Angle Valves", {
+      const res = await fetch(API_BASE_URL + "/electrical/Angle Valves", {
         method: "POST",
         body: data,
       });

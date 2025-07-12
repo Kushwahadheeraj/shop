@@ -1,5 +1,6 @@
 "use client"
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import API_BASE_URL from "@/lib/apiConfig";
 
 const AuthContext = createContext();
 
@@ -10,7 +11,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      fetch('http://localhost:3001/api/seller/me', {
+      fetch(`${API_BASE_URL}/seller/me`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then(res => res.json())
@@ -25,7 +26,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async (email, password) => {
-    const res = await fetch('http://localhost:3001/api/seller/login', {
+    const res = await fetch(`${API_BASE_URL}/seller/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),

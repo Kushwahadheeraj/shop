@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Bathsense Essentials", {
+      const res = await fetch(API_BASE_URL + "/electrical/Bathsense Essentials", {
         method: "POST",
         body: data,
       });

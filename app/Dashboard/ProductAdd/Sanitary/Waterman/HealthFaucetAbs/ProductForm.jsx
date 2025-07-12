@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Health Faucet Abs", {
+      const res = await fetch(API_BASE_URL + "/electrical/Health Faucet Abs", {
         method: "POST",
         body: data,
       });

@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Pull Handles", {
+      const res = await fetch(API_BASE_URL + "/electrical/Pull Handles", {
         method: "POST",
         body: data,
       });

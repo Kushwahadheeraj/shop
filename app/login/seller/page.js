@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import API_BASE_URL from "@/lib/apiConfig";
 
 export default function SellerLoginPage() {
   const router = useRouter();
@@ -23,8 +24,8 @@ export default function SellerLoginPage() {
     try {
       const res = await fetch(
         mode === "register"
-          ? "http://localhost:3001/api/seller/register"
-          : "http://localhost:3001/api/seller/login",
+          ? `${API_BASE_URL}/seller/register`
+          : `${API_BASE_URL}/seller/login`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

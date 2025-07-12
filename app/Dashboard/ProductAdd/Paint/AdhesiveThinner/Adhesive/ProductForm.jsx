@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Adhesive", {
+      const res = await fetch(API_BASE_URL + "/electrical/Adhesive", {
         method: "POST",
         body: data,
       });

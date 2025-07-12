@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Waste Coupling", {
+      const res = await fetch(API_BASE_URL + "/electrical/Waste Coupling", {
         method: "POST",
         body: data,
       });

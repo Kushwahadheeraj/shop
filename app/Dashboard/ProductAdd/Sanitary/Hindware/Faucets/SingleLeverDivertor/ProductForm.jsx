@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Single Lever Divertor", {
+      const res = await fetch(API_BASE_URL + "/electrical/Single Lever Divertor", {
         method: "POST",
         body: data,
       });

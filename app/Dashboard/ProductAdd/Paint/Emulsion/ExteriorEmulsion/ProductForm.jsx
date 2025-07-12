@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Exterior Emulsion", {
+      const res = await fetch(API_BASE_URL + "/electrical/Exterior Emulsion", {
         method: "POST",
         body: data,
       });

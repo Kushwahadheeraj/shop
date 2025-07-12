@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/S S D Type Tube Lever", {
+      const res = await fetch(API_BASE_URL + "/electrical/S S D Type Tube Lever", {
         method: "POST",
         body: data,
       });

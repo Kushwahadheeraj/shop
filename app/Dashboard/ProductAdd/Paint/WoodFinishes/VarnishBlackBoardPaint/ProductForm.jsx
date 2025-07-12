@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Varnish Black Board Paint", {
+      const res = await fetch(API_BASE_URL + "/electrical/Varnish Black Board Paint", {
         method: "POST",
         body: data,
       });

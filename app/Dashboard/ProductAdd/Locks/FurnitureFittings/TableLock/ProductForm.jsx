@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Table Lock", {
+      const res = await fetch(API_BASE_URL + "/electrical/Table Lock", {
         method: "POST",
         body: data,
       });

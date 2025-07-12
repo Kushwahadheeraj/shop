@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Ultra X L Vertibolt", {
+      const res = await fetch(API_BASE_URL + "/electrical/Ultra X L Vertibolt", {
         method: "POST",
         body: data,
       });

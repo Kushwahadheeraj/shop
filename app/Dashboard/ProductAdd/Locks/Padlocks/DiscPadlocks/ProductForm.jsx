@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Disc Padlocks", {
+      const res = await fetch(API_BASE_URL + "/electrical/Disc Padlocks", {
         method: "POST",
         body: data,
       });

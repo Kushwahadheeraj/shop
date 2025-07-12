@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Dead Locks", {
+      const res = await fetch(API_BASE_URL + "/electrical/Dead Locks", {
         method: "POST",
         body: data,
       });

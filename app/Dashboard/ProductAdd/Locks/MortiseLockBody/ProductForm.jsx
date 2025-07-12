@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Mortise Lock Body", {
+      const res = await fetch(API_BASE_URL + "/electrical/Mortise Lock Body", {
         method: "POST",
         body: data,
       });

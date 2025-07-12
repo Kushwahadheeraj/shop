@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Hydraulic Door Closers", {
+      const res = await fetch(API_BASE_URL + "/electrical/Hydraulic Door Closers", {
         method: "POST",
         body: data,
       });

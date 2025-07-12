@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Bowl Basins", {
+      const res = await fetch(API_BASE_URL + "/electrical/Bowl Basins", {
         method: "POST",
         body: data,
       });

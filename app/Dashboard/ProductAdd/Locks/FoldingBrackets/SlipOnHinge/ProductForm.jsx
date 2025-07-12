@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Slip On Hinge", {
+      const res = await fetch(API_BASE_URL + "/electrical/Slip On Hinge", {
         method: "POST",
         body: data,
       });

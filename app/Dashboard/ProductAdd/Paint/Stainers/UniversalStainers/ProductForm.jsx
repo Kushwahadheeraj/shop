@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Universal Stainers", {
+      const res = await fetch(API_BASE_URL + "/electrical/Universal Stainers", {
         method: "POST",
         body: data,
       });

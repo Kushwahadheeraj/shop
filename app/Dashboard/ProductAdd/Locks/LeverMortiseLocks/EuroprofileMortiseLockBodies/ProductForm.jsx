@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Europrofile Mortise Lock Bodies", {
+      const res = await fetch(API_BASE_URL + "/electrical/Europrofile Mortise Lock Bodies", {
         method: "POST",
         body: data,
       });

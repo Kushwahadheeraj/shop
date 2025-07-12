@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Kitchen Faucets", {
+      const res = await fetch(API_BASE_URL + "/electrical/Kitchen Faucets", {
         method: "POST",
         body: data,
       });

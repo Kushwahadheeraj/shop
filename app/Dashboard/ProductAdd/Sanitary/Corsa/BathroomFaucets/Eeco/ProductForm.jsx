@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Eeco", {
+      const res = await fetch(API_BASE_URL + "/electrical/Eeco", {
         method: "POST",
         body: data,
       });

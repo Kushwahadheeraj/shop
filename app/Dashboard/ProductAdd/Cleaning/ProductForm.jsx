@@ -74,7 +74,7 @@ export default function ProductForm() {
     formData.append("category", category);
     tags.forEach(tag => formData.append("tags", tag));
     photos.forEach(photo => formData.append("photos", photo));
-    const res = await fetch("/api/cleaning-products", {
+    const res = await fetch(API_BASE_URL + "/cleaning-products", {
       method: "POST",
       body: formData,
     });

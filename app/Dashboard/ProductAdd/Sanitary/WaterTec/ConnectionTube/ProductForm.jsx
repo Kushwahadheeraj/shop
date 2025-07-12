@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Connection Tube", {
+      const res = await fetch(API_BASE_URL + "/electrical/Connection Tube", {
         method: "POST",
         body: data,
       });

@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Ultra Latchbolt Carton", {
+      const res = await fetch(API_BASE_URL + "/electrical/Ultra Latchbolt Carton", {
         method: "POST",
         body: data,
       });

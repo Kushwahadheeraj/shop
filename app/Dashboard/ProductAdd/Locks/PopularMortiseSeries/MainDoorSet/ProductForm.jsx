@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Main Door Set", {
+      const res = await fetch(API_BASE_URL + "/electrical/Main Door Set", {
         method: "POST",
         body: data,
       });

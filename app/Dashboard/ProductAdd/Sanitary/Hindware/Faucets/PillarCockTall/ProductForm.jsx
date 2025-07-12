@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Pillar Cock Tall", {
+      const res = await fetch(API_BASE_URL + "/electrical/Pillar Cock Tall", {
         method: "POST",
         body: data,
       });

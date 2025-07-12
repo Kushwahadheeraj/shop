@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Cut Off Wheel", {
+      const res = await fetch(API_BASE_URL + "/electrical/Cut Off Wheel", {
         method: "POST",
         body: data,
       });

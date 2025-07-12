@@ -14,7 +14,7 @@ export default function ProductView() {
 
   const fetchProduct = async () => {
     setLoading(true);
-    const res = await fetch("/api/locks/doorlocks/rimdeadlock/getOne:" + id);
+    const res = await fetch(API_BASE_URL + "/locks/doorlocks/rimdeadlock/getOne:" + id);
     const data = await res.json();
     setProduct(data);
     setLoading(false);

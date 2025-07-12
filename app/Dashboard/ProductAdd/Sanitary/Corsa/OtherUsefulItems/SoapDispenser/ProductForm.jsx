@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Soap Dispenser", {
+      const res = await fetch(API_BASE_URL + "/electrical/Soap Dispenser", {
         method: "POST",
         body: data,
       });

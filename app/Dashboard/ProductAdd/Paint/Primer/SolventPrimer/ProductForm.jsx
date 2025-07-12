@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Solvent Primer", {
+      const res = await fetch(API_BASE_URL + "/electrical/Solvent Primer", {
         method: "POST",
         body: data,
       });

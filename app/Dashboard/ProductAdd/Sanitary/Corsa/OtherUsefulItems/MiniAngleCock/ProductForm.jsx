@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Mini Angle Cock", {
+      const res = await fetch(API_BASE_URL + "/electrical/Mini Angle Cock", {
         method: "POST",
         body: data,
       });

@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Floor Spring", {
+      const res = await fetch(API_BASE_URL + "/electrical/Floor Spring", {
         method: "POST",
         body: data,
       });

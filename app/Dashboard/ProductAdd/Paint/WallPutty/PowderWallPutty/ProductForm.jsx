@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Powder Wall Putty", {
+      const res = await fetch(API_BASE_URL + "/electrical/Powder Wall Putty", {
         method: "POST",
         body: data,
       });

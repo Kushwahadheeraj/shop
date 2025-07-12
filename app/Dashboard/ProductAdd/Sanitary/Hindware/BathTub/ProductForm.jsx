@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch("/api/electrical/Bath Tub", {
+      const res = await fetch(API_BASE_URL + "/electrical/Bath Tub", {
         method: "POST",
         body: data,
       });

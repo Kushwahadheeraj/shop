@@ -1,20 +1,20 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import API_BASE_URL from "@/lib/apiConfig";
 
-export default function ProductView() {
+export default function ProductView({ api, id }) {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const searchParams = useSearchParams();
-  const id = searchParams.get('id');
 
   useEffect(() => {
-    if (id) fetchProduct();
-  }, [id]);
+    if (id && api) fetchProduct();
+    // eslint-disable-next-line
+  }, [id, api]);
 
   const fetchProduct = async () => {
     setLoading(true);
-    const res = await fetch(API_BASE_URL + "/products/getOne:" + id);
+    console.log("Fetching:", `${API_BASE_URL}/${api}/getOne/${id}`);
+    const res = await fetch(`${API_BASE_URL}/${api}/getOne/${id}`);
     const data = await res.json();
     setProduct(data);
     setLoading(false);

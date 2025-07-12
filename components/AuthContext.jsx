@@ -11,7 +11,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      fetch(`${API_BASE_URL}/seller/me`, {
+      fetch(`${API_BASE_URL}/seller/register`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then(res => res.json())

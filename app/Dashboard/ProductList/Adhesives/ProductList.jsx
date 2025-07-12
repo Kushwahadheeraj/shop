@@ -35,7 +35,7 @@ export default function ProductList() {
   };
 
   const handleView = (product) => {
-    router.push("./ProductView?id=" + product._id);
+    router.push(`/Dashboard/ProductView?id=${product._id}&api=adhesives-products`);
   };
 
   if (loading) return <div>Loading...</div>;

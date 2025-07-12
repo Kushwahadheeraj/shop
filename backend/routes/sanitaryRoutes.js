@@ -1,5 +1,10 @@
 const express = require('express');
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 const router = express.Router();
+
+
 const acrylicProductsController = require('../controllers/sanitary/acrylicProductsController');
 const bathroomAccessoriesController = require('../controllers/sanitary/bathroomAccessoriesController.js');
 const BathsenseCPfittingsFaucetsAltiusController = require('../controllers/sanitary/Bathsense/CPfittingsFaucets/AltiusController.js');

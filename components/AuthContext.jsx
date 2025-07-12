@@ -10,7 +10,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      fetch('http://localhost:5000/api/seller/me', {
+      fetch('http://localhost:3001/api/seller/me', {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then(res => res.json())
@@ -25,7 +25,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async (email, password) => {
-    const res = await fetch('http://localhost:5000/api/seller/login', {
+    const res = await fetch('http://localhost:3001/api/seller/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),

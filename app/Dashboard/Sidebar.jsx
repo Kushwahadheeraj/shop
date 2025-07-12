@@ -2266,7 +2266,7 @@ const sections = [
     ],
   },
   {
-    name: 'Product Add',
+    name: 'Product List',
     subItems: [
       { name: 'Adhesives', path: '/Dashboard/ProductList/Adhesives' },
       { name: 'Brush', path: '/Dashboard/ProductList/Brush' },

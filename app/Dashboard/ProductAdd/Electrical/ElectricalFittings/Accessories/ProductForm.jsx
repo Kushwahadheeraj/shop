@@ -1,5 +1,6 @@
 ﻿"use client";
-import React, { useState } from "react";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,6 +10,9 @@ const tagsList = ["Heavy Duty", "Lightweight", "Universal", "Child Safe"];
 
 export default function ProductForm() {
   const [name, setName] = useState("");
+  const pathname = usePathname();
+  const pathParts = pathname.split("/").filter(Boolean);
+  const resource = pathParts[pathParts.length - 1];
   const [photos, setPhotos] = useState([]);
   const [preview, setPreview] = useState([]);
   const [description, setDescription] = useState("");
@@ -74,7 +78,7 @@ export default function ProductForm() {
     formData.append("category", category);
     tags.forEach(tag => formData.append("tags", tag));
     photos.forEach(photo => formData.append("photos", photo));
-    const res = await fetch(API_BASE_URL + "/electrical/adaptors-products", {
+    const res = await fetch(API_BASE_URL + "/electrical/" + resource + "/create", {
       method: "POST",
       body: formData,
     });
@@ -141,4 +145,5 @@ export default function ProductForm() {
     </form>
   );
 } 
+
 

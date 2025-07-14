@@ -10,6 +10,9 @@ const tagsList = ["Soft", "Hard", "Synthetic", "Natural"];
 
 export default function ProductForm() {
   const [name, setName] = useState("");
+  const pathname = usePathname();
+  const pathParts = pathname.split("/").filter(Boolean);
+  const resource = pathParts[pathParts.length - 1];
   const [photos, setPhotos] = useState([]);
   const [preview, setPreview] = useState([]);
   const [description, setDescription] = useState("");
@@ -84,7 +87,7 @@ export default function ProductForm() {
       category,
       tags,
     };
-    const res = await fetch(`${API_BASE_URL}/brush-products/create`, {
+    const res = await fetch(`${API_BASE_URL}/brush/create`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),

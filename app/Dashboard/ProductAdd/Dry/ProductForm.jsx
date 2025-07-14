@@ -25,6 +25,9 @@ const TAG_OPTIONS = [
 
 export default function ProductForm({
   return (<h2 className="text-xl font-bold mb-2">Add Dry Product</h2>) product, onSave }) {
+  const pathname = usePathname();
+  const pathParts = pathname.split("/").filter(Boolean);
+  const resource = pathParts[pathParts.length - 1];
   const [form, setForm] = useState(product || {
     name: '',
     price: '',
@@ -104,7 +107,7 @@ export default function ProductForm({
       }
     });
     files.forEach(f => data.append('photos', f));
-    const res = await fetch('/api/dry-products', { method: product ? 'PUT' : 'POST', body: data });
+    const res = await fetch('/api/dry', { method: product ? 'PUT' : 'POST', body: data });
     if (res.ok) onSave && onSave();
   };
 

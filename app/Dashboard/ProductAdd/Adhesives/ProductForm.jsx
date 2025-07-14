@@ -13,8 +13,7 @@ const TAG_OPTIONS = [
   "white pencil"
 ];
 
-export default function ProductForm({
-  return (<h2 className="text-xl font-bold mb-2">Add Adhesives Product</h2>) product, onSave }) {
+export default function ProductForm({ product, onSave }) {
   const [form, setForm] = useState(product || {
     name: '',
     price: '',
@@ -94,7 +93,7 @@ export default function ProductForm({
       }
     });
     files.forEach(f => data.append('photos', f));
-    const res = await fetch(`${API_BASE_URL}/adhesives-products/create`, { method: product ? 'PUT' : 'POST', body: data });
+    const res = await fetch(`${API_BASE_URL}/adhesives/create`, { method: product ? 'PUT' : 'POST', body: data });
     if (res.ok) onSave && onSave();
   };
 
@@ -148,7 +147,7 @@ export default function ProductForm({
                     onClick={() => handleRemovePhoto(idx)}
                     className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
                   >
-                    Ã—
+                    ×
                   </button>
                 </div>
               ))}
@@ -181,4 +180,3 @@ export default function ProductForm({
     </form>
   );
 } 
-

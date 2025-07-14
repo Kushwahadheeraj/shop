@@ -9,6 +9,9 @@ const tagsList = ["High Strength", "Fast Setting", "Waterproof", "Eco Friendly"]
 
 export default function ProductForm() {
   const [name, setName] = useState("");
+  const pathname = usePathname();
+  const pathParts = pathname.split("/").filter(Boolean);
+  const resource = pathParts[pathParts.length - 1];
   const [photos, setPhotos] = useState([]);
   const [preview, setPreview] = useState([]);
   const [description, setDescription] = useState("");
@@ -74,7 +77,7 @@ export default function ProductForm() {
     formData.append("category", category);
     tags.forEach(tag => formData.append("tags", tag));
     photos.forEach(photo => formData.append("photos", photo));
-    const res = await fetch(API_BASE_URL + "/cements-products/create", {
+    const res = await fetch(API_BASE_URL + "/cements/create", {
       method: "POST",
       body: formData,
     });

@@ -35,26 +35,26 @@ connectDB();
 
 // Routes
 app.use('/api/seller', sellerRoutes);
-app.use('/api/adhesives-products', adhesivesRoutes);
-app.use('/api/brush-products', brushRoutes);
-app.use('/api/cements-products', cementsRoutes);
-app.use('/api/cleaning-products', cleaningRoutes);
-app.use('/api/dry-products', dryRoutes);
-app.use('/api/electrical-products', electricalRoutes);
-app.use('/api/fiber-products', fiberRoutes);
-app.use('/api/fitting-products', fittingRoutes);
-app.use('/api/hardware-products', hardwareRoutes);
-app.use('/api/home-products', homeRoutes);
-app.use('/api/home-decor-products', homeDecorRoutes);
-app.use('/api/locks-products', locksRoutes);
-app.use('/api/paint-products', paintRoutes);
-app.use('/api/pipe-products', pipeRoutes);
-app.use('/api/pvc-mats-products', pvcMatsRoutes);
-app.use('/api/roofer-products', rooferRoutes);
-app.use('/api/sanitary-products', sanitaryRoutes);
-app.use('/api/tools-products', toolsRoutes);
-app.use('/api/uncategorized-products', uncategorizedRoutes);
-app.use('/api/water-proofing-products', waterProofingRoutes);
+app.use('/api/adhesives', adhesivesRoutes);
+app.use('/api/brush', brushRoutes);
+app.use('/api/cements', cementsRoutes);
+app.use('/api/cleaning', cleaningRoutes);
+app.use('/api/dry', dryRoutes);
+app.use('/api/electrical', electricalRoutes);
+app.use('/api/fiber', fiberRoutes);
+app.use('/api/fitting', fittingRoutes);
+app.use('/api/hardware', hardwareRoutes);
+app.use('/api/home', homeRoutes);
+app.use('/api/home-decor', homeDecorRoutes);
+app.use('/api/locks', locksRoutes);
+app.use('/api/paint', paintRoutes);
+app.use('/api/pipe', pipeRoutes);
+app.use('/api/pvc-mats', pvcMatsRoutes);
+app.use('/api/roofer', rooferRoutes);
+app.use('/api/sanitary', sanitaryRoutes);
+app.use('/api/tools', toolsRoutes);
+app.use('/api/uncategorized', uncategorizedRoutes);
+app.use('/api/waterproofing', waterProofingRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

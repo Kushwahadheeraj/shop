@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { usePathname } from "next/navigation";
+import API_BASE_URL from "@/lib/apiConfig";
 
 const CATEGORY_OPTIONS = ["Adaptors"];
 const TAG_OPTIONS = [
@@ -15,6 +17,8 @@ const TAG_OPTIONS = [
 ];
 
 export default function ProductForm({ product, onSave }) {
+  const apiUrl = `${API_BASE_URL}/electrical/adaptors/create`;
+
   const [form, setForm] = useState(product || {
     name: '',
     productNo: '',
@@ -94,7 +98,7 @@ export default function ProductForm({ product, onSave }) {
     });
     
     photos.forEach(f => data.append('photos', f));
-    const res = await fetch('http://localhost:3001/api/electrical-products/adaptors', { method: product ? 'PUT' : 'POST', body: data });
+    const res = await fetch(apiUrl, { method: product ? 'PUT' : 'POST', body: data });
     if (res.ok) {
       onSave && onSave();
       setForm({
@@ -120,7 +124,7 @@ export default function ProductForm({ product, onSave }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-xl mx-auto p-4 bg-white rounded shadow">
-      <h2 className="text-xl font-bold mb-2">Add Adaptors Product</h2>
+      <h2 className="text-xl font-bold mb-2">Add {resource.charAt(0).toUpperCase() + resource.slice(1)} Product</h2>
       <Input name="name" placeholder="Product Name" value={form.name} onChange={handleChange} required />
       <div>
         <Input name="photos" type="file" multiple onChange={handleFiles} accept="image/*" />
@@ -191,4 +195,5 @@ export default function ProductForm({ product, onSave }) {
     </form>
   );
 } 
+
 

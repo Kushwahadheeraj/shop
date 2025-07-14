@@ -1,7 +1,8 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 
 export default function ProductForm() {
+  return (<h2 className="text-xl font-bold mb-2">Add SideLock Product</h2>)
   const [form, setForm] = useState({
     type: "",
     name: "",
@@ -70,3 +71,4 @@ export default function ProductForm() {
     </form>
   );
 }
+

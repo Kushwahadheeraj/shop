@@ -17,11 +17,9 @@ export default function DashboardPage() {
   if (loading || !user) return <div>Loading...</div>;
 
   return (
-    <DashboardLayout>
-      <div>
-        <h1 className="text-2xl font-bold mb-4">Welcome, {user.username}!</h1>
-        <p>This is your seller dashboard.</p>
-      </div>
-    </DashboardLayout>
+    <div>
+      <h1 className="text-2xl font-bold mb-4">Welcome, {user.username}!</h1>
+      <p>This is your seller dashboard.</p>
+    </div>
   );
 } 

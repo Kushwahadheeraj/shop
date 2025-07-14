@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import API_BASE_URL from "@/lib/apiConfig";
+import { useAuth } from "@/components/AuthContext";
 
 export default function SellerLoginPage() {
   const router = useRouter();
@@ -11,6 +12,7 @@ export default function SellerLoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -22,29 +24,24 @@ export default function SellerLoginPage() {
     setError("");
     setSuccess("");
     try {
-      const res = await fetch(
-        mode === "register"
-          ? `${API_BASE_URL}/seller/register`
-          : `${API_BASE_URL}/seller/login`,
-        {
+      if (mode === "login") {
+        const loggedIn = await login(form.email, form.password);
+        if (loggedIn) {
+          setSuccess("Login successful! Redirecting...");
+          router.push("/Dashboard");
+        } else {
+          throw new Error("Invalid credentials");
+        }
+      } else {
+        const res = await fetch(`${API_BASE_URL}/seller/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(
-            mode === "register"
-              ? form
-              : { email: form.email, password: form.password }
-          ),
-        }
-      );
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Something went wrong");
-      if (mode === "login") {
-        localStorage.setItem("token", data.token);
-        setSuccess("Login successful! Redirecting...");
-        setTimeout(() => router.push("/Dashboard"), 1000);
-      } else {
+          body: JSON.stringify(form),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Something went wrong");
         setSuccess("Registration successful! Redirecting to login...");
-        setTimeout(() => router.push("/login/seller?mode=login"), 1000);
+        router.push("/login/seller?mode=login");
       }
     } catch (err) {
       setError(err.message);
@@ -88,6 +85,7 @@ export default function SellerLoginPage() {
             onChange={handleChange}
             className="w-full border rounded px-3 py-2"
             required
+            autoComplete="current-password"
           />
           <button
             type="submit"

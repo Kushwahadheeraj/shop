@@ -43,6 +43,9 @@ exports.loginSeller = async (req, res) => {
 exports.createSeller = async (req, res) => {
   try {
     const { email, password, username, avatar } = req.body;
+    if (!email || !password || !username) {
+      return res.status(400).json({ message: 'Email, password, and username are required.' });
+    }
     const existing = await Seller.findOne({ email });
     if (existing) return res.status(400).json({ message: 'Email already registered' });
     const hashedPassword = await bcrypt.hash(password, 10);

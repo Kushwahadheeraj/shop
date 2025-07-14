@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,8 @@ const TAG_OPTIONS = [
   "white pencil"
 ];
 
-export default function ProductForm({ product, onSave }) {
+export default function ProductForm({
+  return (<h2 className="text-xl font-bold mb-2">Add Adhesives Product</h2>) product, onSave }) {
   const [form, setForm] = useState(product || {
     name: '',
     price: '',
@@ -147,7 +148,7 @@ export default function ProductForm({ product, onSave }) {
                     onClick={() => handleRemovePhoto(idx)}
                     className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
                   >
-                    ×
+                    Ã—
                   </button>
                 </div>
               ))}
@@ -180,3 +181,4 @@ export default function ProductForm({ product, onSave }) {
     </form>
   );
 } 
+

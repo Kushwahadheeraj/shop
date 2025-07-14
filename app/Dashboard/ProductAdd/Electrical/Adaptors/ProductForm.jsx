@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -132,7 +132,7 @@ export default function ProductForm({ product, onSave }) {
                 <img src={url} alt={`Preview ${idx + 1}`} className="w-24 h-24 object-cover rounded border" />
                 <button type="button" onClick={() => handleRemovePhoto(idx)}
                   className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                  ×
+                  Ã—
                 </button>
               </div>
             ))}
@@ -191,3 +191,4 @@ export default function ProductForm({ product, onSave }) {
     </form>
   );
 } 
+

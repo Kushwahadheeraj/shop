@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -90,7 +90,7 @@ export default function ProductForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-xl mx-auto p-4 bg-white rounded shadow">
-      <h2 className="text-xl font-bold mb-2">Add Adaptors Product</h2>
+      <h2 className="text-xl font-bold mb-2">Add MeasurementScale Product</h2>
       <Input placeholder="Product Name" value={name} onChange={e => setName(e.target.value)} required />
       <div>
         <Input name="photos" type="file" multiple onChange={handleFiles} accept="image/*" />
@@ -102,7 +102,7 @@ export default function ProductForm() {
                 <img src={url} alt={`Preview ${idx + 1}`} className="w-24 h-24 object-cover rounded border" />
                 <button type="button" onClick={() => handleRemovePhoto(idx)}
                   className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                  ×
+                  Ã—
                 </button>
               </div>
             ))}
@@ -141,3 +141,4 @@ export default function ProductForm() {
     </form>
   );
 } 
+

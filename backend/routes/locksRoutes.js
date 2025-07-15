@@ -8,7 +8,6 @@ const upload = multer({ storage });
 const patchFittingsController = require('../controllers/locks/patchFittingsControllers');
 const mortiseLockBodyController = require('../controllers/locks/mortiseLockBodyController');
 const morticeLocksController = require('../controllers/locks/morticeLocksController');
-const foldingBracketsControllers = require('../controllers/locks/foldingBracketsController');
 
 // Import controllers from doorAccessories
 const concealedHingesController = require('../controllers/locks/doorAccessories/ConcealedHingesController');
@@ -168,7 +167,6 @@ function crudRoutes(resource, controller, resourceName) {
 crudRoutes('patch-fittings', patchFittingsController, 'PatchFittingss');
 crudRoutes('mortise-lock-body', mortiseLockBodyController, 'MortiseLockBody');
 crudRoutes('mortice-locks', morticeLocksController, 'MorticeLocks');
-crudRoutes('folding-brackets', foldingBracketsControllers, 'FoldingBrackets');
 
 // Door Accessories
 crudRoutes('door-accessories/concealed-hinges', concealedHingesController, 'ConcealedHinges');

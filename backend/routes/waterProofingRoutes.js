@@ -9,20 +9,20 @@ const BathroomsController = require('../controllers/waterProofing/bathroomsContr
 const CreacksJointsController = require('../controllers/waterProofing/creacksJointsController.js');
 const InteriorsController = require('../controllers/waterProofing/interiorsController.js');
 
-router.post('/api/waterProofing/Bathrooms/create', upload.array('photos', 5), BathroomsController.createBathrooms);
-router.get('/api/waterProofing/Bathrooms/get', BathroomsController.getAllBathrooms);
-router.get('/api/waterProofing/Bathrooms/getOne:id', BathroomsController.getOneBathrooms);
-router.put('/api/waterProofing/Bathrooms/Update:id', upload.array('photos', 5), BathroomsController.updateBathrooms);
-router.delete('/api/waterProofing/Bathrooms/delete:id', BathroomsController.deleteBathrooms);
-router.post('/api/waterProofing/CreacksJoints/create', upload.array('photos', 5), CreacksJointsController.createCreacksJoints);
-router.get('/api/waterProofing/CreacksJoints/get', CreacksJointsController.getAllCreacksJoints);
-router.get('/api/waterProofing/CreacksJoints/getOne:id', CreacksJointsController.getOneCreacksJoints);
-router.put('/api/waterProofing/CreacksJoints/Update:id', upload.array('photos', 5), CreacksJointsController.updateCreacksJoints);
-router.delete('/api/waterProofing/CreacksJoints/delete:id', CreacksJointsController.deleteCreacksJoints);
-router.post('/api/waterProofing/Interiors/create', upload.array('photos', 5), InteriorsController.createInteriors);
-router.get('/api/waterProofing/Interiors/get', InteriorsController.getAllInteriors);
-router.get('/api/waterProofing/Interiors/getOne:id', InteriorsController.getOneInteriors);
-router.put('/api/waterProofing/Interiors/Update:id', upload.array('photos', 5), InteriorsController.updateInteriors);
-router.delete('/api/waterProofing/Interiors/delete:id', InteriorsController.deleteInteriors);
+router.post('/bathrooms/create', upload.array('photos', 5), BathroomsController.createBathrooms);
+router.get('/bathrooms/get', BathroomsController.getAllBathrooms);
+router.get('/bathrooms/getOne:id', BathroomsController.getOneBathrooms);
+router.put('/bathrooms/Update:id', upload.array('photos', 5), BathroomsController.updateBathrooms);
+router.delete('/bathrooms/delete:id', BathroomsController.deleteBathrooms);
+router.post('/creacks-joints/create', upload.array('photos', 5), CreacksJointsController.createCreacksJoints);
+router.get('/creacks-joints/get', CreacksJointsController.getAllCreacksJoints);
+router.get('/creacks-joints/getOne:id', CreacksJointsController.getOneCreacksJoints);
+router.put('/creacks-joints/Update:id', upload.array('photos', 5), CreacksJointsController.updateCreacksJoints);
+router.delete('/creacks-joints/delete:id', CreacksJointsController.deleteCreacksJoints);
+router.post('/interiors/create', upload.array('photos', 5), InteriorsController.createInteriors);
+router.get('/interiors/get', InteriorsController.getAllInteriors);
+router.get('/interiors/getOne:id', InteriorsController.getOneInteriors);
+router.put('/interiors/Update:id', upload.array('photos', 5), InteriorsController.updateInteriors);
+router.delete('/interiors/delete:id', InteriorsController.deleteInteriors);
 
 module.exports = router;

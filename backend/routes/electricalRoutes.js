@@ -44,6 +44,48 @@ const doorBells = require('../controllers/electrical/doorBellsController');
 const distributionBoards = require('../controllers/electrical/distributionBoardsController');
 const dimmer = require('../controllers/electrical/dimmerController');
 
+// --- LIGHTS CONTROLLERS IMPORTS ---
+const ceilinglight = require('../controllers/electrical/Lights/CeilinglightController.js');
+const cFL = require('../controllers/electrical/Lights/CFLController.js');
+const deskLight = require('../controllers/electrical/Lights/DeskLightController.js');
+const focusLight = require('../controllers/electrical/Lights/FocusLightController.js');
+const gardenLight = require('../controllers/electrical/Lights/GardenLightController.js');
+const gateLight = require('../controllers/electrical/Lights/GateLightController.js');
+const gLS = require('../controllers/electrical/Lights/GLSController.js');
+const home = require('../controllers/electrical/Lights/HomeController.js');
+const lamps = require('../controllers/electrical/Lights/LampsController.js');
+const lEDBatten = require('../controllers/electrical/Lights/LEDBattenController.js');
+const lEDBulbs = require('../controllers/electrical/Lights/LEDBulbsController.js');
+const ledDownLightersSpotLight = require('../controllers/electrical/Lights/LedDownLightersSpotLightController.js');
+const lEDLuminaires = require('../controllers/electrical/Lights/LEDLuminairesController.js');
+const lEDPanelLight = require('../controllers/electrical/Lights/LEDPanelLightController.js');
+const lEDSpotlight = require('../controllers/electrical/Lights/LEDSpotlightController.js');
+const lEDStreetLight = require('../controllers/electrical/Lights/LEDStreetLightController.js');
+const lEDStrips = require('../controllers/electrical/Lights/LEDStripsController.js');
+const ledSurfaceLight = require('../controllers/electrical/Lights/LedSurfaceLightController.js');
+const lightElectronics = require('../controllers/electrical/Lights/LightElectronicsController.js');
+const mirrorLight = require('../controllers/electrical/Lights/MirrorLightController.js');
+const reflections = require('../controllers/electrical/Lights/ReflectionsController.js');
+const standardIncandescent = require('../controllers/electrical/Lights/StandardIncandescentController.js');
+const tBulb = require('../controllers/electrical/Lights/TBulbController.js');
+const tubeLight = require('../controllers/electrical/Lights/TubeLightController.js');
+const underWaterLights = require('../controllers/electrical/Lights/UnderWaterLightsController.js');
+const wallLight = require('../controllers/electrical/Lights/WallLightController.js');
+
+// --- FANS CONTROLLERS IMPORTS ---
+const cabinFans = require('../controllers/electrical/Fans/CabinFansController.js');
+const ceilingFans = require('../controllers/electrical/Fans/CeilingFansController.js');
+const pedestalfans = require('../controllers/electrical/Fans/PedestalfansController.js');
+const tableFans = require('../controllers/electrical/Fans/TableFansController.js');
+const ventilationExhaustfans = require('../controllers/electrical/Fans/VentilationExhaustfansController.js');
+const wallMountingfans = require('../controllers/electrical/Fans/WallMountingfansController.js');
+
+// --- ELECTRICALFITTINGS CONTROLLERS IMPORTS ---
+const accessories = require('../controllers/electrical/ElectricalFittings/accessoriesControllers.js');
+const circularDeepBox = require('../controllers/electrical/ElectricalFittings/circularDeepBoxControllers.js');
+const circularSurfaceBox = require('../controllers/electrical/ElectricalFittings/circularSurfaceBoxControllers.js');
+const rigidType = require('../controllers/electrical/ElectricalFittings/rigidTypeControllers.js');
+
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
@@ -99,5 +141,47 @@ crudRoutes('dPswitch', dPswitch);
 crudRoutes('doorBells', doorBells);
 crudRoutes('distributionBoards', distributionBoards);
 crudRoutes('dimmer', dimmer);
+
+// --- LIGHTS CONTROLLERS ROUTES ---
+crudRoutes('ceilinglight', ceilinglight);
+crudRoutes('cfl', cFL);
+crudRoutes('desklight', deskLight);
+crudRoutes('focuslight', focusLight);
+crudRoutes('gardenlight', gardenLight);
+crudRoutes('gatelight', gateLight);
+crudRoutes('gls', gLS);
+crudRoutes('home', home);
+crudRoutes('lamps', lamps);
+crudRoutes('ledbatten', lEDBatten);
+crudRoutes('ledbulbs', lEDBulbs);
+crudRoutes('leddownlightersspotlight', ledDownLightersSpotLight);
+crudRoutes('ledluminaires', lEDLuminaires);
+crudRoutes('ledpanellight', lEDPanelLight);
+crudRoutes('ledspotlight', lEDSpotlight);
+crudRoutes('ledstreetlight', lEDStreetLight);
+crudRoutes('ledstrips', lEDStrips);
+crudRoutes('ledsurfacelight', ledSurfaceLight);
+crudRoutes('lightelectronics', lightElectronics);
+crudRoutes('mirrorlight', mirrorLight);
+crudRoutes('reflections', reflections);
+crudRoutes('standardincandescent', standardIncandescent);
+crudRoutes('tbulb', tBulb);
+crudRoutes('tubelight', tubeLight);
+crudRoutes('underwaterlights', underWaterLights);
+crudRoutes('walllight', wallLight);
+
+// --- FANS CONTROLLERS ROUTES ---
+crudRoutes('cabinfans', cabinFans);
+crudRoutes('ceilingfans', ceilingFans);
+crudRoutes('pedestalfans', pedestalfans);
+crudRoutes('tablefans', tableFans);
+crudRoutes('ventilationexhaustfans', ventilationExhaustfans);
+crudRoutes('wallmountingfans', wallMountingfans);
+
+// --- ELECTRICALFITTINGS CONTROLLERS ROUTES ---
+crudRoutes('accessories', accessories);
+crudRoutes('circulardeepbox', circularDeepBox);
+crudRoutes('circularsurfacebox', circularSurfaceBox);
+crudRoutes('rigidtype', rigidType);
 
 module.exports = router;

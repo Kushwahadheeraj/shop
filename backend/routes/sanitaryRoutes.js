@@ -221,60 +221,60 @@ router.put('/bathroom-accessories/update:id', upload.array('photos', 5), bathroo
 router.delete('/bathroom-accessories/delete:id', bathroomAccessoriesController.deleteBathroomAccessories);
 
 // bathsense-c-pfittings-faucets-altius endpoints
-router.post('/bathsense-c-pfittings-faucets-altius/create', upload.array('photos', 5), BathsenseCPfittingsFaucetsAltiusController.createAltius);
-router.get('/bathsense-c-pfittings-faucets-altius/get', BathsenseCPfittingsFaucetsAltiusController.getAllAltius);
-router.get('/bathsense-c-pfittings-faucets-altius/getOne:id', BathsenseCPfittingsFaucetsAltiusController.getOneAltius);
-router.put('/bathsense-c-pfittings-faucets-altius/update:id', upload.array('photos', 5), BathsenseCPfittingsFaucetsAltiusController.updateAltius);
-router.delete('/bathsense-c-pfittings-faucets-altius/delete:id', BathsenseCPfittingsFaucetsAltiusController.deleteAltius);
+router.post('/bathsense-pfittings-faucets-altius/create', upload.array('photos', 5), BathsenseCPfittingsFaucetsAltiusController.createAltius);
+router.get('/bathsense-pfittings-faucets-altius/get', BathsenseCPfittingsFaucetsAltiusController.getAllAltius);
+router.get('/bathsense-pfittings-faucets-altius/getOne:id', BathsenseCPfittingsFaucetsAltiusController.getOneAltius);
+router.put('/bathsense-pfittings-faucets-altius/update:id', upload.array('photos', 5), BathsenseCPfittingsFaucetsAltiusController.updateAltius);
+router.delete('/bathsense-pfittings-faucets-altius/delete:id', BathsenseCPfittingsFaucetsAltiusController.deleteAltius);
 
 // bathsense-c-pfittings-faucets-bathsense-essentials endpoints
-router.post('/bathsense-c-pfittings-faucets-bathsense-essentials/create', upload.array('photos', 5), BathsenseCPfittingsFaucetsBathsenseEssentialsController.createBathsenseEssentials);
-router.get('/bathsense-c-pfittings-faucets-bathsense-essentials/get', BathsenseCPfittingsFaucetsBathsenseEssentialsController.getAllBathsenseEssentials);
-router.get('/bathsense-c-pfittings-faucets-bathsense-essentials/getOne:id', BathsenseCPfittingsFaucetsBathsenseEssentialsController.getOneBathsenseEssentials);
-router.put('/bathsense-c-pfittings-faucets-bathsense-essentials/update:id', upload.array('photos', 5), BathsenseCPfittingsFaucetsBathsenseEssentialsController.updateBathsenseEssentials);
-router.delete('/bathsense-c-pfittings-faucets-bathsense-essentials/delete:id', BathsenseCPfittingsFaucetsBathsenseEssentialsController.deleteBathsenseEssentials);
+router.post('/bathsense-pfittings-faucets-bathsense-essentials/create', upload.array('photos', 5), BathsenseCPfittingsFaucetsBathsenseEssentialsController.createBathsenseEssentials);
+router.get('/bathsense-pfittings-faucets-bathsense-essentials/get', BathsenseCPfittingsFaucetsBathsenseEssentialsController.getAllBathsenseEssentials);
+router.get('/bathsense-pfittings-faucets-bathsense-essentials/getOne:id', BathsenseCPfittingsFaucetsBathsenseEssentialsController.getOneBathsenseEssentials);
+router.put('/bathsense-pfittings-faucets-bathsense-essentials/update:id', upload.array('photos', 5), BathsenseCPfittingsFaucetsBathsenseEssentialsController.updateBathsenseEssentials);
+router.delete('/bathsense-pfittings-faucets-bathsense-essentials/delete:id', BathsenseCPfittingsFaucetsBathsenseEssentialsController.deleteBathsenseEssentials);
 
-// bathsense-c-pfittings-faucets-bathsense-showers endpoints
-router.post('/bathsense-c-pfittings-faucets-bathsense-showers/create', upload.array('photos', 5), BathsenseCPfittingsFaucetsBathsenseShowersController.createBathsenseShowers);
-router.get('/bathsense-c-pfittings-faucets-bathsense-showers/get', BathsenseCPfittingsFaucetsBathsenseShowersController.getAllBathsenseShowers);
-router.get('/bathsense-c-pfittings-faucets-bathsense-showers/getOne:id', BathsenseCPfittingsFaucetsBathsenseShowersController.getOneBathsenseShowers);
-router.put('/bathsense-c-pfittings-faucets-bathsense-showers/update:id', upload.array('photos', 5), BathsenseCPfittingsFaucetsBathsenseShowersController.updateBathsenseShowers);
-router.delete('/bathsense-c-pfittings-faucets-bathsense-showers/delete:id', BathsenseCPfittingsFaucetsBathsenseShowersController.deleteBathsenseShowers);
+// bathsense-pfittings-faucets-bathsense-showers endpoints
+router.post('/bathsense-pfittings-faucets-bathsense-showers/create', upload.array('photos', 5), BathsenseCPfittingsFaucetsBathsenseShowersController.createBathsenseShowers);
+router.get('/bathsense-pfittings-faucets-bathsense-showers/get', BathsenseCPfittingsFaucetsBathsenseShowersController.getAllBathsenseShowers);
+router.get('/bathsense-pfittings-faucets-bathsense-showers/getOne:id', BathsenseCPfittingsFaucetsBathsenseShowersController.getOneBathsenseShowers);
+router.put('/bathsense-pfittings-faucets-bathsense-showers/update:id', upload.array('photos', 5), BathsenseCPfittingsFaucetsBathsenseShowersController.updateBathsenseShowers);
+router.delete('/bathsense-pfittings-faucets-bathsense-showers/delete:id', BathsenseCPfittingsFaucetsBathsenseShowersController.deleteBathsenseShowers);
 
-// bathsense-c-pfittings-faucets-colossus endpoints
-router.post('/bathsense-c-pfittings-faucets-colossus/create', upload.array('photos', 5), BathsenseCPfittingsFaucetsColossusController.createColossus);
-router.get('/bathsense-c-pfittings-faucets-colossus/get', BathsenseCPfittingsFaucetsColossusController.getAllColossus);
-router.get('/bathsense-c-pfittings-faucets-colossus/getOne:id', BathsenseCPfittingsFaucetsColossusController.getOneColossus);
-router.put('/bathsense-c-pfittings-faucets-colossus/update:id', upload.array('photos', 5), BathsenseCPfittingsFaucetsColossusController.updateColossus);
-router.delete('/bathsense-c-pfittings-faucets-colossus/delete:id', BathsenseCPfittingsFaucetsColossusController.deleteColossus);
+// bathsense-pfittings-faucets-colossus endpoints
+router.post('/bathsense-pfittings-faucets-colossus/create', upload.array('photos', 5), BathsenseCPfittingsFaucetsColossusController.createColossus);
+router.get('/bathsense-pfittings-faucets-colossus/get', BathsenseCPfittingsFaucetsColossusController.getAllColossus);
+router.get('/bathsense-pfittings-faucets-colossus/getOne:id', BathsenseCPfittingsFaucetsColossusController.getOneColossus);
+router.put('/bathsense-pfittings-faucets-colossus/update:id', upload.array('photos', 5), BathsenseCPfittingsFaucetsColossusController.updateColossus);
+router.delete('/bathsense-pfittings-faucets-colossus/delete:id', BathsenseCPfittingsFaucetsColossusController.deleteColossus);
 
-// bathsense-c-pfittings-faucets-invictus endpoints
-router.post('/bathsense-c-pfittings-faucets-invictus/create', upload.array('photos', 5), BathsenseCPfittingsFaucetsInvictusController.createInvictus);
-router.get('/bathsense-c-pfittings-faucets-invictus/get', BathsenseCPfittingsFaucetsInvictusController.getAllInvictus);
-router.get('/bathsense-c-pfittings-faucets-invictus/getOne:id', BathsenseCPfittingsFaucetsInvictusController.getOneInvictus);
-router.put('/bathsense-c-pfittings-faucets-invictus/update:id', upload.array('photos', 5), BathsenseCPfittingsFaucetsInvictusController.updateInvictus);
-router.delete('/bathsense-c-pfittings-faucets-invictus/delete:id', BathsenseCPfittingsFaucetsInvictusController.deleteInvictus);
+// bathsense-pfittings-faucets-invictus endpoints
+router.post('/bathsense-pfittings-faucets-invictus/create', upload.array('photos', 5), BathsenseCPfittingsFaucetsInvictusController.createInvictus);
+router.get('/bathsense-pfittings-faucets-invictus/get', BathsenseCPfittingsFaucetsInvictusController.getAllInvictus);
+router.get('/bathsense-pfittings-faucets-invictus/getOne:id', BathsenseCPfittingsFaucetsInvictusController.getOneInvictus);
+router.put('/bathsense-pfittings-faucets-invictus/update:id', upload.array('photos', 5), BathsenseCPfittingsFaucetsInvictusController.updateInvictus);
+router.delete('/bathsense-pfittings-faucets-invictus/delete:id', BathsenseCPfittingsFaucetsInvictusController.deleteInvictus);
 
-// bathsense-c-pfittings-faucets-maximus endpoints
-router.post('/bathsense-c-pfittings-faucets-maximus/create', upload.array('photos', 5), BathsenseCPfittingsFaucetsMaximusController.createMaximus);
-router.get('/bathsense-c-pfittings-faucets-maximus/get', BathsenseCPfittingsFaucetsMaximusController.getAllMaximus);
-router.get('/bathsense-c-pfittings-faucets-maximus/getOne:id', BathsenseCPfittingsFaucetsMaximusController.getOneMaximus);
-router.put('/bathsense-c-pfittings-faucets-maximus/update:id', upload.array('photos', 5), BathsenseCPfittingsFaucetsMaximusController.updateMaximus);
-router.delete('/bathsense-c-pfittings-faucets-maximus/delete:id', BathsenseCPfittingsFaucetsMaximusController.deleteMaximus);
+// bathsense-pfittings-faucets-maximus endpoints
+router.post('/bathsense-pfittings-faucets-maximus/create', upload.array('photos', 5), BathsenseCPfittingsFaucetsMaximusController.createMaximus);
+router.get('/bathsense-pfittings-faucets-maximus/get', BathsenseCPfittingsFaucetsMaximusController.getAllMaximus);
+router.get('/bathsense-pfittings-faucets-maximus/getOne:id', BathsenseCPfittingsFaucetsMaximusController.getOneMaximus);
+router.put('/bathsense-pfittings-faucets-maximus/update:id', upload.array('photos', 5), BathsenseCPfittingsFaucetsMaximusController.updateMaximus);
+router.delete('/bathsense-pfittings-faucets-maximus/delete:id', BathsenseCPfittingsFaucetsMaximusController.deleteMaximus);
 
-// bathsense-c-pfittings-faucets-spry endpoints
-router.post('/bathsense-c-pfittings-faucets-spry/create', upload.array('photos', 5), BathsenseCPfittingsFaucetsSpryController.createSpry);
-router.get('/bathsense-c-pfittings-faucets-spry/get', BathsenseCPfittingsFaucetsSpryController.getAllSpry);
-router.get('/bathsense-c-pfittings-faucets-spry/getOne:id', BathsenseCPfittingsFaucetsSpryController.getOneSpry);
-router.put('/bathsense-c-pfittings-faucets-spry/update:id', upload.array('photos', 5), BathsenseCPfittingsFaucetsSpryController.updateSpry);
-router.delete('/bathsense-c-pfittings-faucets-spry/delete:id', BathsenseCPfittingsFaucetsSpryController.deleteSpry);
+// bathsense-pfittings-faucets-spry endpoints
+router.post('/bathsense-pfittings-faucets-spry/create', upload.array('photos', 5), BathsenseCPfittingsFaucetsSpryController.createSpry);
+router.get('/bathsense-pfittings-faucets-spry/get', BathsenseCPfittingsFaucetsSpryController.getAllSpry);
+router.get('/bathsense-pfittings-faucets-spry/getOne:id', BathsenseCPfittingsFaucetsSpryController.getOneSpry);
+router.put('/bathsense-pfittings-faucets-spry/update:id', upload.array('photos', 5), BathsenseCPfittingsFaucetsSpryController.updateSpry);
+router.delete('/bathsense-pfittings-faucets-spry/delete:id', BathsenseCPfittingsFaucetsSpryController.deleteSpry);
 
-// bathsense-c-pfittings-faucets-theta endpoints
-router.post('/bathsense-c-pfittings-faucets-theta/create', upload.array('photos', 5), BathsenseCPfittingsFaucetsThetaController.createTheta);
-router.get('/bathsense-c-pfittings-faucets-theta/get', BathsenseCPfittingsFaucetsThetaController.getAllTheta);
-router.get('/bathsense-c-pfittings-faucets-theta/getOne:id', BathsenseCPfittingsFaucetsThetaController.getOneTheta);
-router.put('/bathsense-c-pfittings-faucets-theta/update:id', upload.array('photos', 5), BathsenseCPfittingsFaucetsThetaController.updateTheta);
-router.delete('/bathsense-c-pfittings-faucets-theta/delete:id', BathsenseCPfittingsFaucetsThetaController.deleteTheta);
+// bathsense-pfittings-faucets-theta endpoints
+router.post('/bathsense-pfittings-faucets-theta/create', upload.array('photos', 5), BathsenseCPfittingsFaucetsThetaController.createTheta);
+router.get('/bathsense-pfittings-faucets-theta/get', BathsenseCPfittingsFaucetsThetaController.getAllTheta);
+router.get('/bathsense-pfittings-faucets-theta/getOne:id', BathsenseCPfittingsFaucetsThetaController.getOneTheta);
+router.put('/bathsense-pfittings-faucets-theta/update:id', upload.array('photos', 5), BathsenseCPfittingsFaucetsThetaController.updateTheta);
+router.delete('/bathsense-pfittings-faucets-theta/delete:id', BathsenseCPfittingsFaucetsThetaController.deleteTheta);
 
 // bathsense-sanitaryware-essentials endpoints
 router.post('/bathsense-sanitaryware-essentials/create', upload.array('photos', 5), BathsenseSanitarywareEssentialsController.createEssentials);
@@ -549,75 +549,75 @@ router.get('/corsa-bathroom-faucets-tri/getOne:id', CorsaBathroomFaucetsTriContr
 router.put('/corsa-bathroom-faucets-tri/update:id', upload.array('photos', 5), CorsaBathroomFaucetsTriController.updateTri);
 router.delete('/corsa-bathroom-faucets-tri/delete:id', CorsaBathroomFaucetsTriController.deleteTri);
 
-// corsa-b-a-t-h-r-o-o-m_-a-c-c-e-s-s-o-r-i-e-s-acrylic-accessories endpoints
-router.post('/corsabathroomaccessoriesacrylic-accessories/create', upload.array('photos', 5), CorsaBATHROOMACCESSORIESAcrylicAccessoriesController.createAcrylicAccessories);
-router.get('/corsabathroomaccessoriesacrylic-accessories/get', CorsaBATHROOMACCESSORIESAcrylicAccessoriesController.getAllAcrylicAccessories);
-router.get('/corsabathroomaccessoriesacrylic-accessories/getOne:id', CorsaBATHROOMACCESSORIESAcrylicAccessoriesController.getOneAcrylicAccessories);
-router.put('/corsabathroomaccessoriesacrylic-accessories/update:id', upload.array('photos', 5), CorsaBATHROOMACCESSORIESAcrylicAccessoriesController.updateAcrylicAccessories);
-router.delete('/corsabathroomaccessoriesacrylic-accessories/delete:id', CorsaBATHROOMACCESSORIESAcrylicAccessoriesController.deleteAcrylicAccessories);
+// corsa-b-a-t-h-r-o-o-m_-a-e-s-s-o-r-i-e-s-acrylic-accessories endpoints
+router.post('/corsa-bathroom-accessories-acrylic-accessories/create', upload.array('photos', 5), CorsaBATHROOMACCESSORIESAcrylicAccessoriesController.createAcrylicAccessories);
+router.get('/corsa-bathroom-accessories-acrylic-accessories/get', CorsaBATHROOMACCESSORIESAcrylicAccessoriesController.getAllAcrylicAccessories);
+router.get('/corsa-bathroom-accessories-acrylic-accessories/getOne:id', CorsaBATHROOMACCESSORIESAcrylicAccessoriesController.getOneAcrylicAccessories);
+router.put('/corsa-bathroom-accessories-acrylic-accessories/update:id', upload.array('photos', 5), CorsaBATHROOMACCESSORIESAcrylicAccessoriesController.updateAcrylicAccessories);
+router.delete('/corsa-bathroom-accessories-acrylic-accessories/delete:id', CorsaBATHROOMACCESSORIESAcrylicAccessoriesController.deleteAcrylicAccessories);
 
 // corsabathroomaccessoriesalmond endpoints
-router.post('/corsabathroomaccessoriesalmond/create', upload.array('photos', 5), CorsaBATHROOMACCESSORIESAlmondController.createAlmond);
-router.get('/corsabathroomaccessoriesalmond/get', CorsaBATHROOMACCESSORIESAlmondController.getAllAlmond);
-router.get('/corsabathroomaccessoriesalmond/getOne:id', CorsaBATHROOMACCESSORIESAlmondController.getOneAlmond);
-router.put('/corsabathroomaccessoriesalmond/update:id', upload.array('photos', 5), CorsaBATHROOMACCESSORIESAlmondController.updateAlmond);
-router.delete('/corsabathroomaccessoriesalmond/delete:id', CorsaBATHROOMACCESSORIESAlmondController.deleteAlmond);
+router.post('/corsa-bathroom-accessories-almond/create', upload.array('photos', 5), CorsaBATHROOMACCESSORIESAlmondController.createAlmond);
+router.get('/corsa-bathroom-accessories-almond/get', CorsaBATHROOMACCESSORIESAlmondController.getAllAlmond);
+router.get('/corsa-bathroom-accessories-almond/getOne:id', CorsaBATHROOMACCESSORIESAlmondController.getOneAlmond);
+router.put('/corsa-bathroom-accessories-almond/update:id', upload.array('photos', 5), CorsaBATHROOMACCESSORIESAlmondController.updateAlmond);
+router.delete('/corsa-bathroom-accessories-almond/delete:id', CorsaBATHROOMACCESSORIESAlmondController.deleteAlmond);
 
 // corsabathroomaccessoriesanglo endpoints
-router.post('/corsabathroomaccessoriesanglo/create', upload.array('photos', 5), CorsaBATHROOMACCESSORIESAngloController.createAnglo);
-router.get('/corsabathroomaccessoriesanglo/get', CorsaBATHROOMACCESSORIESAngloController.getAllAnglo);
-router.get('/corsabathroomaccessoriesanglo/getOne:id', CorsaBATHROOMACCESSORIESAngloController.getOneAnglo);
-router.put('/corsabathroomaccessoriesanglo/update:id', upload.array('photos', 5), CorsaBATHROOMACCESSORIESAngloController.updateAnglo);
-router.delete('/corsabathroomaccessoriesanglo/delete:id', CorsaBATHROOMACCESSORIESAngloController.deleteAnglo);
+router.post('/corsa-bathroom-accessories-anglo/create', upload.array('photos', 5), CorsaBATHROOMACCESSORIESAngloController.createAnglo);
+router.get('/corsa-bathroom-accessories-anglo/get', CorsaBATHROOMACCESSORIESAngloController.getAllAnglo);
+router.get('/corsa-bathroom-accessories-anglo/getOne:id', CorsaBATHROOMACCESSORIESAngloController.getOneAnglo);
+router.put('/corsa-bathroom-accessories-anglo/update:id', upload.array('photos', 5), CorsaBATHROOMACCESSORIESAngloController.updateAnglo);
+router.delete('/corsa-bathroom-accessories-anglo/delete:id', CorsaBATHROOMACCESSORIESAngloController.deleteAnglo);
 
 // corsabathroomaccessoriesbudget endpoints
-router.post('/corsabathroomaccessoriesbudget/create', upload.array('photos', 5), CorsaBATHROOMACCESSORIESBudgetController.createBudget);
-router.get('/corsabathroomaccessoriesbudget/get', CorsaBATHROOMACCESSORIESBudgetController.getAllBudget);
-router.get('/corsabathroomaccessoriesbudget/getOne:id', CorsaBATHROOMACCESSORIESBudgetController.getOneBudget);
-router.put('/corsabathroomaccessoriesbudget/update:id', upload.array('photos', 5), CorsaBATHROOMACCESSORIESBudgetController.updateBudget);
-router.delete('/corsabathroomaccessoriesbudget/delete:id', CorsaBATHROOMACCESSORIESBudgetController.deleteBudget);
+router.post('/corsa-bathroom-accessories-budget/create', upload.array('photos', 5), CorsaBATHROOMACCESSORIESBudgetController.createBudget);
+router.get('/corsa-bathroom-accessories-budget/get', CorsaBATHROOMACCESSORIESBudgetController.getAllBudget);
+router.get('/corsa-bathroom-accessories-budget/getOne:id', CorsaBATHROOMACCESSORIESBudgetController.getOneBudget);
+router.put('/corsa-bathroom-accessories-budget/update:id', upload.array('photos', 5), CorsaBATHROOMACCESSORIESBudgetController.updateBudget);
+router.delete('/corsa-bathroom-accessories-budget/delete:id', CorsaBATHROOMACCESSORIESBudgetController.deleteBudget);
 
 // corsabathroomaccessoriesdolphin endpoints
-router.post('/corsabathroomaccessoriesdolphin/create', upload.array('photos', 5), CorsaBATHROOMACCESSORIESDolphinController.createDolphin);
-router.get('/corsabathroomaccessoriesdolphin/get', CorsaBATHROOMACCESSORIESDolphinController.getAllDolphin);
-router.get('/corsabathroomaccessoriesdolphin/getOne:id', CorsaBATHROOMACCESSORIESDolphinController.getOneDolphin);
-router.put('/corsabathroomaccessoriesdolphin/update:id', upload.array('photos', 5), CorsaBATHROOMACCESSORIESDolphinController.updateDolphin);
-router.delete('/corsabathroomaccessoriesdolphin/delete:id', CorsaBATHROOMACCESSORIESDolphinController.deleteDolphin);
+router.post('/corsa-bathroom-accessories-dolphin/create', upload.array('photos', 5), CorsaBATHROOMACCESSORIESDolphinController.createDolphin);
+router.get('/corsa-bathroom-accessories-dolphin/get', CorsaBATHROOMACCESSORIESDolphinController.getAllDolphin);
+router.get('/corsa-bathroom-accessories-dolphin/getOne:id', CorsaBATHROOMACCESSORIESDolphinController.getOneDolphin);
+router.put('/corsa-bathroom-accessories-dolphin/update:id', upload.array('photos', 5), CorsaBATHROOMACCESSORIESDolphinController.updateDolphin);
+router.delete('/corsa-bathroom-accessories-dolphin/delete:id', CorsaBATHROOMACCESSORIESDolphinController.deleteDolphin);
 
 // corsabathroomaccessoriesecco endpoints
-router.post('/corsabathroomaccessoriesecco/create', upload.array('photos', 5), CorsaBATHROOMACCESSORIESEccoController.createEcco);
-router.get('/corsabathroomaccessoriesecco/get', CorsaBATHROOMACCESSORIESEccoController.getAllEcco);
-router.get('/corsabathroomaccessoriesecco/getOne:id', CorsaBATHROOMACCESSORIESEccoController.getOneEcco);
-router.put('/corsabathroomaccessoriesecco/update:id', upload.array('photos', 5), CorsaBATHROOMACCESSORIESEccoController.updateEcco);
-router.delete('/corsabathroomaccessoriesecco/delete:id', CorsaBATHROOMACCESSORIESEccoController.deleteEcco);
+router.post('/corsa-bathroom-accessories-ecco/create', upload.array('photos', 5), CorsaBATHROOMACCESSORIESEccoController.createEcco);
+router.get('/corsa-bathroom-accessories-ecco/get', CorsaBATHROOMACCESSORIESEccoController.getAllEcco);
+router.get('/corsa-bathroom-accessories-ecco/getOne:id', CorsaBATHROOMACCESSORIESEccoController.getOneEcco);
+router.put('/corsa-bathroom-accessories-ecco/update:id', upload.array('photos', 5), CorsaBATHROOMACCESSORIESEccoController.updateEcco);
+router.delete('/corsa-bathroom-accessories-ecco/delete:id', CorsaBATHROOMACCESSORIESEccoController.deleteEcco);
 
 // corsabathroomaccessoriesketi endpoints
-router.post('/corsabathroomaccessoriesketi/create', upload.array('photos', 5), CorsaBATHROOMACCESSORIESKetiController.createKeti);
-router.get('/corsabathroomaccessoriesketi/get', CorsaBATHROOMACCESSORIESKetiController.getAllKeti);
-router.get('/corsabathroomaccessoriesketi/getOne:id', CorsaBATHROOMACCESSORIESKetiController.getOneKeti);
-router.put('/corsabathroomaccessoriesketi/update:id', upload.array('photos', 5), CorsaBATHROOMACCESSORIESKetiController.updateKeti);
-router.delete('/corsabathroomaccessoriesketi/delete:id', CorsaBATHROOMACCESSORIESKetiController.deleteKeti);
+router.post('/corsa-bathroom-accessories-keti/create', upload.array('photos', 5), CorsaBATHROOMACCESSORIESKetiController.createKeti);
+router.get('/corsa-bathroom-accessories-keti/get', CorsaBATHROOMACCESSORIESKetiController.getAllKeti);
+router.get('/corsa-bathroom-accessories-keti/getOne:id', CorsaBATHROOMACCESSORIESKetiController.getOneKeti);
+router.put('/corsa-bathroom-accessories-keti/update:id', upload.array('photos', 5), CorsaBATHROOMACCESSORIESKetiController.updateKeti);
+router.delete('/corsa-bathroom-accessories-keti/delete:id', CorsaBATHROOMACCESSORIESKetiController.deleteKeti);
 
 // corsabathroomaccessoriesqubix endpoints
-router.post('/corsabathroomaccessoriesqubix/create', upload.array('photos', 5), CorsaBATHROOMACCESSORIESQubixController.createQubix);
-router.get('/corsabathroomaccessoriesqubix/get', CorsaBATHROOMACCESSORIESQubixController.getAllQubix);
-router.get('/corsabathroomaccessoriesqubix/getOne:id', CorsaBATHROOMACCESSORIESQubixController.getOneQubix);
-router.put('/corsabathroomaccessoriesqubix/update:id', upload.array('photos', 5), CorsaBATHROOMACCESSORIESQubixController.updateQubix);
-router.delete('/corsabathroomaccessoriesqubix/delete:id', CorsaBATHROOMACCESSORIESQubixController.deleteQubix);
+router.post('/corsa-bathroom-accessories-qubix/create', upload.array('photos', 5), CorsaBATHROOMACCESSORIESQubixController.createQubix);
+router.get('/corsa-bathroom-accessories-qubix/get', CorsaBATHROOMACCESSORIESQubixController.getAllQubix);
+router.get('/corsa-bathroom-accessories-qubix/getOne:id', CorsaBATHROOMACCESSORIESQubixController.getOneQubix);
+router.put('/corsa-bathroom-accessories-qubix/update:id', upload.array('photos', 5), CorsaBATHROOMACCESSORIESQubixController.updateQubix);
+router.delete('/corsa-bathroom-accessories-qubix/delete:id', CorsaBATHROOMACCESSORIESQubixController.deleteQubix);
 
 // corsabathroomaccessoriessquare endpoints
-router.post('/corsabathroomaccessoriessquare/create', upload.array('photos', 5), CorsaBATHROOMACCESSORIESSquareController.createSquare);
-router.get('/corsabathroomaccessoriessquare/get', CorsaBATHROOMACCESSORIESSquareController.getAllSquare);
-router.get('/corsabathroomaccessoriessquare/getOne:id', CorsaBATHROOMACCESSORIESSquareController.getOneSquare);
-router.put('/corsabathroomaccessoriessquare/update:id', upload.array('photos', 5), CorsaBATHROOMACCESSORIESSquareController.updateSquare);
-router.delete('/corsabathroomaccessoriessquare/delete:id', CorsaBATHROOMACCESSORIESSquareController.deleteSquare);
+router.post('/corsa-bathroom-accessories-square/create', upload.array('photos', 5), CorsaBATHROOMACCESSORIESSquareController.createSquare);
+router.get('/corsa-bathroom-accessoriess-quare/get', CorsaBATHROOMACCESSORIESSquareController.getAllSquare);
+router.get('/corsa-bathroom-accessories-square/getOne:id', CorsaBATHROOMACCESSORIESSquareController.getOneSquare);
+router.put('/corsa-bathroom-accessorie-ssquare/update:id', upload.array('photos', 5), CorsaBATHROOMACCESSORIESSquareController.updateSquare);
+router.delete('/corsa-bathroom-accessorie-ssquare/delete:id', CorsaBATHROOMACCESSORIESSquareController.deleteSquare);
 
 // corsabathroomaccessoriessupreme endpoints
-router.post('/corsabathroomaccessoriessupreme/create', upload.array('photos', 5), CorsaBATHROOMACCESSORIESSupremeController.createSupreme);
-router.get('/corsabathroomaccessoriessupreme/get', CorsaBATHROOMACCESSORIESSupremeController.getAllSupreme);
-router.get('/corsabathroomaccessoriessupreme/getOne:id', CorsaBATHROOMACCESSORIESSupremeController.getOneSupreme);
-router.put('/corsabathroomaccessoriessupreme/update:id', upload.array('photos', 5), CorsaBATHROOMACCESSORIESSupremeController.updateSupreme);
-router.delete('/corsabathroomaccessoriessupreme/delete:id', CorsaBATHROOMACCESSORIESSupremeController.deleteSupreme);
+router.post('/corsa-bathroom-accessories-supreme/create', upload.array('photos', 5), CorsaBATHROOMACCESSORIESSupremeController.createSupreme);
+router.get('/corsa-bathroom-accessories-supreme/get', CorsaBATHROOMACCESSORIESSupremeController.getAllSupreme);
+router.get('/corsa-bathroom-accessories-supreme/getOne:id', CorsaBATHROOMACCESSORIESSupremeController.getOneSupreme);
+router.put('/corsa-bathroom-accessories-supreme/update:id', upload.array('photos', 5), CorsaBATHROOMACCESSORIESSupremeController.updateSupreme);
+router.delete('/corsa-bathroom-accessories-supreme/delete:id', CorsaBATHROOMACCESSORIESSupremeController.deleteSupreme);
 
 // corsa-flushing-cistern endpoints
 router.post('/corsa-flushing-cistern/create', upload.array('photos', 5), CorsaFlushingCisternController.createFlushingCistern);
@@ -690,25 +690,25 @@ router.put('/corsashowershealth-faucet/update:id', upload.array('photos', 5), Co
 router.delete('/corsashowershealth-faucet/delete:id', CorsaSHOWERSHealthFaucetController.deleteHealthFaucet);
 
 // corsashowersoverhead-shower endpoints
-router.post('/corsashowersoverhead-shower/create', upload.array('photos', 5), CorsaSHOWERSOverheadShowerController.createOverheadShower);
-router.get('/corsashowersoverhead-shower/get', CorsaSHOWERSOverheadShowerController.getAllOverheadShower);
-router.get('/corsashowersoverhead-shower/getOne:id', CorsaSHOWERSOverheadShowerController.getOneOverheadShower);
-router.put('/corsashowersoverhead-shower/update:id', upload.array('photos', 5), CorsaSHOWERSOverheadShowerController.updateOverheadShower);
-router.delete('/corsashowersoverhead-shower/delete:id', CorsaSHOWERSOverheadShowerController.deleteOverheadShower);
+router.post('/corsa-shower-soverhead-shower/create', upload.array('photos', 5), CorsaSHOWERSOverheadShowerController.createOverheadShower);
+router.get('/corsa-shower-soverhead-shower/get', CorsaSHOWERSOverheadShowerController.getAllOverheadShower);
+router.get('/corsa-shower-soverhead-shower/getOne:id', CorsaSHOWERSOverheadShowerController.getOneOverheadShower);
+router.put('/corsa-shower-soverhead-shower/update:id', upload.array('photos', 5), CorsaSHOWERSOverheadShowerController.updateOverheadShower);
+router.delete('/corsa-shower-soverhead-shower/delete:id', CorsaSHOWERSOverheadShowerController.deleteOverheadShower);
 
 // corsashowersrain-shower endpoints
-router.post('/corsashowersrain-shower/create', upload.array('photos', 5), CorsaSHOWERSRainShowerController.createRainShower);
-router.get('/corsashowersrain-shower/get', CorsaSHOWERSRainShowerController.getAllRainShower);
-router.get('/corsashowersrain-shower/getOne:id', CorsaSHOWERSRainShowerController.getOneRainShower);
-router.put('/corsashowersrain-shower/update:id', upload.array('photos', 5), CorsaSHOWERSRainShowerController.updateRainShower);
-router.delete('/corsashowersrain-shower/delete:id', CorsaSHOWERSRainShowerController.deleteRainShower);
+router.post('/corsa-showers-rain-shower/create', upload.array('photos', 5), CorsaSHOWERSRainShowerController.createRainShower);
+router.get('/corsa-showers-rain-shower/get', CorsaSHOWERSRainShowerController.getAllRainShower);
+router.get('/corsa-showers-rain-shower/getOne:id', CorsaSHOWERSRainShowerController.getOneRainShower);
+router.put('/corsa-showers-rain-shower/update:id', upload.array('photos', 5), CorsaSHOWERSRainShowerController.updateRainShower);
+router.delete('/corsa-showers-rain-shower/delete:id', CorsaSHOWERSRainShowerController.deleteRainShower);
 
 // corsashowerstelephonic-shower endpoints
-router.post('/corsashowerstelephonic-shower/create', upload.array('photos', 5), CorsaSHOWERSTelephonicShowerController.createTelephonicShower);
-router.get('/corsashowerstelephonic-shower/get', CorsaSHOWERSTelephonicShowerController.getAllTelephonicShower);
-router.get('/corsashowerstelephonic-shower/getOne:id', CorsaSHOWERSTelephonicShowerController.getOneTelephonicShower);
-router.put('/corsashowerstelephonic-shower/update:id', upload.array('photos', 5), CorsaSHOWERSTelephonicShowerController.updateTelephonicShower);
-router.delete('/corsashowerstelephonic-shower/delete:id', CorsaSHOWERSTelephonicShowerController.deleteTelephonicShower);
+router.post('/corsa-showers-telephonic-shower/create', upload.array('photos', 5), CorsaSHOWERSTelephonicShowerController.createTelephonicShower);
+router.get('/corsa-showers-telephonic-shower/get', CorsaSHOWERSTelephonicShowerController.getAllTelephonicShower);
+router.get('/corsa-showers-telephonic-shower/getOne:id', CorsaSHOWERSTelephonicShowerController.getOneTelephonicShower);
+router.put('/corsa-showers-telephonic-shower/update:id', upload.array('photos', 5), CorsaSHOWERSTelephonicShowerController.updateTelephonicShower);
+router.delete('/corsa-showers-telephonic-shower/delete:id', CorsaSHOWERSTelephonicShowerController.deleteTelephonicShower);
 
 // essess-accessories-series1-croma endpoints
 router.post('/essess-accessories-series1-croma/create', upload.array('photos', 5), EssessAccessoriesSeries1CromaController.createSeries1Croma);
@@ -753,11 +753,11 @@ router.put('/essess-accessories-series7-deon/update:id', upload.array('photos', 
 router.delete('/essess-accessories-series7-deon/delete:id', EssessAccessoriesSeries7DeonController.deleteSeries7Deon);
 
 // essess-accessories-series8-b-series endpoints
-router.post('/essess-accessories-series8-b-series/create', upload.array('photos', 5), EssessAccessoriesSeries8BSeriesController.createSeries8BSeries);
-router.get('/essess-accessories-series8-b-series/get', EssessAccessoriesSeries8BSeriesController.getAllSeries8BSeries);
-router.get('/essess-accessories-series8-b-series/getOne:id', EssessAccessoriesSeries8BSeriesController.getOneSeries8BSeries);
-router.put('/essess-accessories-series8-b-series/update:id', upload.array('photos', 5), EssessAccessoriesSeries8BSeriesController.updateSeries8BSeries);
-router.delete('/essess-accessories-series8-b-series/delete:id', EssessAccessoriesSeries8BSeriesController.deleteSeries8BSeries);
+router.post('/essess-accessories-series8-series/create', upload.array('photos', 5), EssessAccessoriesSeries8BSeriesController.createSeries8BSeries);
+router.get('/essess-accessories-series8-series/get', EssessAccessoriesSeries8BSeriesController.getAllSeries8BSeries);
+router.get('/essess-accessories-series8-series/getOne:id', EssessAccessoriesSeries8BSeriesController.getOneSeries8BSeries);
+router.put('/essess-accessories-series8-series/update:id', upload.array('photos', 5), EssessAccessoriesSeries8BSeriesController.updateSeries8BSeries);
+router.delete('/essess-accessories-series8-series/delete:id', EssessAccessoriesSeries8BSeriesController.deleteSeries8BSeries);
 
 // essess-auto-close-taps endpoints
 router.post('/essess-auto-close-taps/create', upload.array('photos', 5), EssessAutoCloseTapsController.createAutoCloseTaps);
@@ -795,11 +795,11 @@ router.put('/essess-deon/update:id', upload.array('photos', 5), EssessDeonContro
 router.delete('/essess-deon/delete:id', EssessDeonController.deleteDeon);
 
 // essess-d-series endpoints
-router.post('/essess-d-series/create', upload.array('photos', 5), EssessDSeriesController.createDSeries);
-router.get('/essess-d-series/get', EssessDSeriesController.getAllDSeries);
-router.get('/essess-d-series/getOne:id', EssessDSeriesController.getOneDSeries);
-router.put('/essess-d-series/update:id', upload.array('photos', 5), EssessDSeriesController.updateDSeries);
-router.delete('/essess-d-series/delete:id', EssessDSeriesController.deleteDSeries);
+router.post('/essess-series/create', upload.array('photos', 5), EssessDSeriesController.createDSeries);
+router.get('/essess-series/get', EssessDSeriesController.getAllDSeries);
+router.get('/essess-series/getOne:id', EssessDSeriesController.getOneDSeries);
+router.put('/essess-series/update:id', upload.array('photos', 5), EssessDSeriesController.updateDSeries);
+router.delete('/essess-series/delete:id', EssessDSeriesController.deleteDSeries);
 
 // essess-echo endpoints
 router.post('/essess-echo/create', upload.array('photos', 5), EssessEchoController.createEcho);
@@ -823,11 +823,11 @@ router.put('/essess-hotelier-series/update:id', upload.array('photos', 5), Esses
 router.delete('/essess-hotelier-series/delete:id', EssessHotelierSeriesController.deleteHotelierSeries);
 
 // essess-h-s03 endpoints
-router.post('/essess-h-s03/create', upload.array('photos', 5), EssessHS03Controller.createHS03);
-router.get('/essess-h-s03/get', EssessHS03Controller.getAllHS03);
-router.get('/essess-h-s03/getOne:id', EssessHS03Controller.getOneHS03);
-router.put('/essess-h-s03/update:id', upload.array('photos', 5), EssessHS03Controller.updateHS03);
-router.delete('/essess-h-s03/delete:id', EssessHS03Controller.deleteHS03);
+router.post('/essess-s03/create', upload.array('photos', 5), EssessHS03Controller.createHS03);
+router.get('/essess-s03/get', EssessHS03Controller.getAllHS03);
+router.get('/essess-s03/getOne:id', EssessHS03Controller.getOneHS03);
+router.put('/essess-s03/update:id', upload.array('photos', 5), EssessHS03Controller.updateHS03);
+router.delete('/essess-s03/delete:id', EssessHS03Controller.deleteHS03);
 
 // essess-lab-taps endpoints
 router.post('/essess-lab-taps/create', upload.array('photos', 5), EssessLabTapsController.createLabTaps);
@@ -1201,11 +1201,11 @@ router.put('/parryware-bowl-basins-bowl-basins/update:id', upload.array('photos'
 router.delete('/parryware-bowl-basins-bowl-basins/delete:id', parrywareBowlBasinsBowlBasinsController.deleteBowlBasins);
 
 // parryware-c-l-o-s-e-t-s-closets endpoints
-router.post('/parrywareclosetsclosets/create', upload.array('photos', 5), parrywareCLOSETSClosetsController.createClosets);
-router.get('/parrywareclosetsclosets/get', parrywareCLOSETSClosetsController.getAllClosets);
-router.get('/parrywareclosetsclosets/getOne:id', parrywareCLOSETSClosetsController.getOneClosets);
-router.put('/parrywareclosetsclosets/update:id', upload.array('photos', 5), parrywareCLOSETSClosetsController.updateClosets);
-router.delete('/parrywareclosetsclosets/delete:id', parrywareCLOSETSClosetsController.deleteClosets);
+router.post('/parryware-closets-closets/create', upload.array('photos', 5), parrywareCLOSETSClosetsController.createClosets);
+router.get('/parryware-closets-closets/get', parrywareCLOSETSClosetsController.getAllClosets);
+router.get('/parryware-closets-closets/getOne:id', parrywareCLOSETSClosetsController.getOneClosets);
+router.put('/parryware-closets-closets/update:id', upload.array('photos', 5), parrywareCLOSETSClosetsController.updateClosets);
+router.delete('/parryware-closets-closets/delete:id', parrywareCLOSETSClosetsController.deleteClosets);
 
 // parryware-concealed-cistern-concealed-cistern endpoints
 router.post('/parryware-concealed-cistern-concealed-cistern/create', upload.array('photos', 5), parrywareConcealedCisternConcealedCisternController.createConcealedCistern);
@@ -1222,39 +1222,39 @@ router.put('/parryware-european-water-closet-european-water-closet/update:id', u
 router.delete('/parryware-european-water-closet-european-water-closet/delete:id', parrywareEuropeanWaterClosetEuropeanWaterClosetController.deleteEuropeanWaterCloset);
 
 // parryware-f-a-u-c-e-t-s-flush-cocks endpoints
-router.post('/parrywarefaucetsflush-cocks/create', upload.array('photos', 5), parrywareFAUCETSFlushCocksController.createFlushCocks);
-router.get('/parrywarefaucetsflush-cocks/get', parrywareFAUCETSFlushCocksController.getAllFlushCocks);
-router.get('/parrywarefaucetsflush-cocks/getOne:id', parrywareFAUCETSFlushCocksController.getOneFlushCocks);
-router.put('/parrywarefaucetsflush-cocks/update:id', upload.array('photos', 5), parrywareFAUCETSFlushCocksController.updateFlushCocks);
-router.delete('/parrywarefaucetsflush-cocks/delete:id', parrywareFAUCETSFlushCocksController.deleteFlushCocks);
+router.post('/parryware-faucets-flush-cocks/create', upload.array('photos', 5), parrywareFAUCETSFlushCocksController.createFlushCocks);
+router.get('/parryware-faucets-flush-cocks/get', parrywareFAUCETSFlushCocksController.getAllFlushCocks);
+router.get('/parryware-faucets-flush-cocks/getOne:id', parrywareFAUCETSFlushCocksController.getOneFlushCocks);
+router.put('/parryware-faucets-flush-cocks/update:id', upload.array('photos', 5), parrywareFAUCETSFlushCocksController.updateFlushCocks);
+router.delete('/parryware-faucets-flush-cocks/delete:id', parrywareFAUCETSFlushCocksController.deleteFlushCocks);
 
-// parrywarefaucetsflush-valve endpoints
-router.post('/parrywarefaucetsflush-valve/create', upload.array('photos', 5), parrywareFAUCETSFlushValveController.createFlushValve);
-router.get('/parrywarefaucetsflush-valve/get', parrywareFAUCETSFlushValveController.getAllFlushValve);
-router.get('/parrywarefaucetsflush-valve/getOne:id', parrywareFAUCETSFlushValveController.getOneFlushValve);
-router.put('/parrywarefaucetsflush-valve/update:id', upload.array('photos', 5), parrywareFAUCETSFlushValveController.updateFlushValve);
-router.delete('/parrywarefaucetsflush-valve/delete:id', parrywareFAUCETSFlushValveController.deleteFlushValve);
+// parryware-faucets-flush-valve endpoints
+router.post('/parryware-faucets-flush-valve/create', upload.array('photos', 5), parrywareFAUCETSFlushValveController.createFlushValve);
+router.get('/parryware-faucets-flush-valve/get', parrywareFAUCETSFlushValveController.getAllFlushValve);
+router.get('/parryware-faucets-flush-valve/getOne:id', parrywareFAUCETSFlushValveController.getOneFlushValve);
+router.put('/parryware-faucets-flush-valve/update:id', upload.array('photos', 5), parrywareFAUCETSFlushValveController.updateFlushValve);
+router.delete('/parryware-faucets-flush-valve/delete:id', parrywareFAUCETSFlushValveController.deleteFlushValve);
 
 // parrywarefaucetshealth-faucets endpoints
-router.post('/parrywarefaucetshealth-faucets/create', upload.array('photos', 5), parrywareFAUCETSHealthFaucetsController.createHealthFaucets);
-router.get('/parrywarefaucetshealth-faucets/get', parrywareFAUCETSHealthFaucetsController.getAllHealthFaucets);
-router.get('/parrywarefaucetshealth-faucets/getOne:id', parrywareFAUCETSHealthFaucetsController.getOneHealthFaucets);
-router.put('/parrywarefaucetshealth-faucets/update:id', upload.array('photos', 5), parrywareFAUCETSHealthFaucetsController.updateHealthFaucets);
-router.delete('/parrywarefaucetshealth-faucets/delete:id', parrywareFAUCETSHealthFaucetsController.deleteHealthFaucets);
+router.post('/parryware-faucets-health-faucets/create', upload.array('photos', 5), parrywareFAUCETSHealthFaucetsController.createHealthFaucets);
+router.get('/parryware-faucets-health-faucets/get', parrywareFAUCETSHealthFaucetsController.getAllHealthFaucets);
+router.get('/parryware-faucets-health-faucets/getOne:id', parrywareFAUCETSHealthFaucetsController.getOneHealthFaucets);
+router.put('/parryware-faucets-health-faucets/update:id', upload.array('photos', 5), parrywareFAUCETSHealthFaucetsController.updateHealthFaucets);
+router.delete('/parryware-faucets-health-faucets/delete:id', parrywareFAUCETSHealthFaucetsController.deleteHealthFaucets);
 
 // parrywarefaucetskitchen-sinks endpoints
-router.post('/parrywarefaucetskitchen-sinks/create', upload.array('photos', 5), parrywareFAUCETSKitchenSinksController.createKitchenSinks);
-router.get('/parrywarefaucetskitchen-sinks/get', parrywareFAUCETSKitchenSinksController.getAllKitchenSinks);
-router.get('/parrywarefaucetskitchen-sinks/getOne:id', parrywareFAUCETSKitchenSinksController.getOneKitchenSinks);
-router.put('/parrywarefaucetskitchen-sinks/update:id', upload.array('photos', 5), parrywareFAUCETSKitchenSinksController.updateKitchenSinks);
-router.delete('/parrywarefaucetskitchen-sinks/delete:id', parrywareFAUCETSKitchenSinksController.deleteKitchenSinks);
+router.post('/parryware-faucets-kitchen-sinks/create', upload.array('photos', 5), parrywareFAUCETSKitchenSinksController.createKitchenSinks);
+router.get('/parryware-faucets-kitchen-sinks/get', parrywareFAUCETSKitchenSinksController.getAllKitchenSinks);
+router.get('/parryware-faucets-kitchen-sinks/getOne:id', parrywareFAUCETSKitchenSinksController.getOneKitchenSinks);
+router.put('/parryware-faucets-kitchen-sinks/update:id', upload.array('photos', 5), parrywareFAUCETSKitchenSinksController.updateKitchenSinks);
+router.delete('/parryware-faucets-kitchen-sinks/delete:id', parrywareFAUCETSKitchenSinksController.deleteKitchenSinks);
 
 // parrywarefaucetspedestals endpoints
-router.post('/parrywarefaucetspedestals/create', upload.array('photos', 5), parrywareFAUCETSPedestalsController.createPedestals);
-router.get('/parrywarefaucetspedestals/get', parrywareFAUCETSPedestalsController.getAllPedestals);
-router.get('/parrywarefaucetspedestals/getOne:id', parrywareFAUCETSPedestalsController.getOnePedestals);
-router.put('/parrywarefaucetspedestals/update:id', upload.array('photos', 5), parrywareFAUCETSPedestalsController.updatePedestals);
-router.delete('/parrywarefaucetspedestals/delete:id', parrywareFAUCETSPedestalsController.deletePedestals);
+router.post('/parryware-faucets-pedestals/create', upload.array('photos', 5), parrywareFAUCETSPedestalsController.createPedestals);
+router.get('/parryware-faucets-pedestals/get', parrywareFAUCETSPedestalsController.getAllPedestals);
+router.get('/parryware-faucets-pedestals/getOne:id', parrywareFAUCETSPedestalsController.getOnePedestals);
+router.put('/parryware-faucets-pedestals/update:id', upload.array('photos', 5), parrywareFAUCETSPedestalsController.updatePedestals);
+router.delete('/parryware-faucets-pedestals/delete:id', parrywareFAUCETSPedestalsController.deletePedestals);
 
 // parryware-polymer-cisterns-polymer-cisterns endpoints
 router.post('/parryware-polymer-cisterns-polymer-cisterns/create', upload.array('photos', 5), parrywarePolymerCisternsPolymerCisternsController.createPolymerCisterns);

@@ -45,7 +45,11 @@ const centrePunchesController = require('../controllers/tools/centrePunchesContr
 const carpenterPincerController = require('../controllers/tools/carpenterPincerController');
 const brushController = require('../controllers/tools/brushController');
 const allenKeysController = require('../controllers/tools/allenKeysController');
-const abrasivesController = require('../controllers/tools/abrasivesController');
+const cutOffWheelController = require('../controllers/tools/abrasives/cutOffWheelController');
+const diamondBladesController = require('../controllers/tools/abrasives/diamondBladesController');
+const drillController = require('../controllers/tools/powerTools/drillController');
+const grindersController = require('../controllers/tools/powerTools/grindersController');
+const marbleCutterController = require('../controllers/tools/powerTools/marbleCutterController');
 // ...add imports for any additional controllers or subfolders
 
 // Helper to convert camelCase to kebab-case for route paths
@@ -126,11 +130,25 @@ router.get('/saw/getOne:id', sawController.getOneSaw);
 router.put('/saw/Update:id', upload.array('photos', 5), sawController.updateSaw);
 router.delete('/saw/delete:id', sawController.deleteSaw);
 
-router.post('/powertools/create', upload.array('photos', 5), powertoolsController.createPowertools);
-router.get('/powertools/get', powertoolsController.getAllPowertools);
-router.get('/powertools/getOne:id', powertoolsController.getOnePowertools);
-router.put('/powertools/Update:id', upload.array('photos', 5), powertoolsController.updatePowertools);
-router.delete('/powertools/delete:id', powertoolsController.deletePowertools);
+router.post('/powertools/drill/create', upload.array('photos', 5), drillController.createDrill);
+router.get('/powertools/drill/get', drillController.getAllDrill);
+router.get('/powertools/drill/getOne:id', drillController.getOneDrill);
+router.put('/powertools/drill/Update:id', upload.array('photos', 5), drillController.updateDrill);
+router.delete('/powertools/drill/delete:id', drillController.deleteDrill);
+
+
+router.post('/powertools/grinders/create', upload.array('photos', 5), grindersController.createGrinders);
+router.get('/powertools/grinders/get', grindersController.getAllGrinders);
+router.get('/powertools/grinders/getOne:id', grindersController.getOneGrinders);
+router.put('/powertools/grinders/Update:id', upload.array('photos', 5), grindersController.updateGrinders);
+router.delete('/powertools/grinders/delete:id', grindersController.deleteGrinders);
+
+
+router.post('/powertools/marble-cutter/create', upload.array('photos', 5), marbleCutterController.createMarbleCutter);
+router.get('/powertools/marble-cutter/get', marbleCutterController.getAllMarbleCutter);
+router.get('/powertools/marble-cutter/getOne:id', marbleCutterController.getOneMarbleCutter);
+router.put('/powertools/marble-cutter/Update:id', upload.array('photos', 5), marbleCutterController.updateMarbleCutter);
+router.delete('/powertools/marble-cutter/delete:id', marbleCutterController.deleteMarbleCutter);
 
 router.post('/polishing-accessories/create', upload.array('photos', 5), polishingAccessoriesController.createPolishingAccessories);
 router.get('/polishing-accessories/get', polishingAccessoriesController.getAllPolishingAccessories);
@@ -282,10 +300,16 @@ router.get('/allen-keys/getOne:id', allenKeysController.getOneAllenKeys);
 router.put('/allen-keys/Update:id', upload.array('photos', 5), allenKeysController.updateAllenKeys);
 router.delete('/allen-keys/delete:id', allenKeysController.deleteAllenKeys);
 
-router.post('/abrasives/create', upload.array('photos', 5), abrasivesController.createAbrasives);
-router.get('/abrasives/get', abrasivesController.getAllAbrasives);
-router.get('/abrasives/getOne:id', abrasivesController.getOneAbrasives);
-router.put('/abrasives/Update:id', upload.array('photos', 5), abrasivesController.updateAbrasives);
-router.delete('/abrasives/delete:id', abrasivesController.deleteAbrasives);
+router.post('/abrasives/cutOffWheel/create', upload.array('photos', 5), cutOffWheelController.createCutOffWheel);
+router.get('/abrasives/cutOffWheel/get', cutOffWheelController.getAllCutOffWheel);
+router.get('/abrasives/cutOffWheel/getOne:id', cutOffWheelController.getOneCutOffWheel);
+router.put('/abrasives/cutOffWheel/Update:id', upload.array('photos', 5), cutOffWheelController.updateCutOffWheel);
+router.delete('/abrasives/cutOffWheel/delete:id', cutOffWheelController.deleteCutOffWheel);
+
+router.post('/abrasives/diamondBlades/create', upload.array('photos', 5), diamondBladesController.createDiamondBlades);
+router.get('/abrasives/diamondBlades/get', diamondBladesController.getAllDiamondBlades);
+router.get('/abrasives/diamondBlades/getOne:id', diamondBladesController.getOneDiamondBlades);
+router.put('/abrasives/diamondBlades/Update:id', upload.array('photos', 5), diamondBladesController.updateDiamondBlades);
+router.delete('/abrasives/diamondBlades/delete:id', diamondBladesController.deleteDiamondBlades);
 
 module.exports = router;

@@ -40,9 +40,9 @@ const StainersWoodStainersController = require('../controllers/paint/Stainers/wo
 const stainersThinnersController = require('../controllers/paint/stainersThinnersController.js');
 const stencilsController = require('../controllers/paint/stencilsController.js');
 const tileGuardController = require('../controllers/paint/tileGuardController.js');
-const TopBrandsAgsarPaintsController = require('../controllers/paint/TopBrands/agsarPaintsController.js');
+const TopBrandsDulexPaintsController = require('../controllers/paint/TopBrands/dulexPaintsController.js');
 const TopBrandsAsianPaintsController = require('../controllers/paint/TopBrands/asianPaintsController.js');
-const TopBrandsGemPaintsController = require('../controllers/paint/TopBrands/gemPaintsController.js');
+const TopBrandsNerolocPaintsController = require('../controllers/paint/TopBrands/nerolocPaintsController.js');
 const TopBrandsJkWallPuttyController = require('../controllers/paint/TopBrands/jkWallPuttyController.js');
 const WallPuttyAcrylicWallPuttyController = require('../controllers/paint/WallPutty/acrylicWallPuttyController.js');
 const WallPuttyKpfWallPuttyController = require('../controllers/paint/WallPutty/kpfWallPuttyController.js');
@@ -341,11 +341,11 @@ router.put('/tile-guard/Update:id', tileGuardController.updateTileGuard);
 router.delete('/tile-guard/delete:id', tileGuardController.deleteTileGuard);
 
 // top-brands-agsar-paints endpoints
-router.post('/top-brands-agsar-paints/create', TopBrandsAgsarPaintsController.createAgsarPaints);
-router.get('/top-brands-agsar-paints/get', TopBrandsAgsarPaintsController.getAllAgsarPaints);
-router.get('/top-brands-agsar-paints/getOne:id', TopBrandsAgsarPaintsController.getOneAgsarPaints);
-router.put('/top-brands-agsar-paints/Update:id', TopBrandsAgsarPaintsController.updateAgsarPaints);
-router.delete('/top-brands-agsar-paints/delete:id', TopBrandsAgsarPaintsController.deleteAgsarPaints);
+router.post('/top-brands-dulex-paints/create', TopBrandsDulexPaintsController.createDulexPaints);
+router.get('/top-brands-dulex-paints/get', TopBrandsDulexPaintsController.getAllDulexPaints);
+router.get('/top-brands-dulex-paints/getOne:id', TopBrandsDulexPaintsController.getOneDulexPaints);
+router.put('/top-brands-dulex-paints/Update:id', TopBrandsDulexPaintsController.updateDulexPaints);
+router.delete('/top-brands-dulex-paints/delete:id', TopBrandsDulexPaintsController.deleteDulexPaints);
 
 // top-brands-asian-paints endpoints
 router.post('/top-brands-asian-paints/create', TopBrandsAsianPaintsController.createAsianPaints);
@@ -355,11 +355,11 @@ router.put('/top-brands-asian-paints/Update:id', TopBrandsAsianPaintsController.
 router.delete('/top-brands-asian-paints/delete:id', TopBrandsAsianPaintsController.deleteAsianPaints);
 
 // top-brands-gem-paints endpoints
-router.post('/top-brands-gem-paints/create', TopBrandsGemPaintsController.createGemPaints);
-router.get('/top-brands-gem-paints/get', TopBrandsGemPaintsController.getAllGemPaints);
-router.get('/top-brands-gem-paints/getOne:id', TopBrandsGemPaintsController.getOneGemPaints);
-router.put('/top-brands-gem-paints/Update:id', TopBrandsGemPaintsController.updateGemPaints);
-router.delete('/top-brands-gem-paints/delete:id', TopBrandsGemPaintsController.deleteGemPaints);
+router.post('/top-brands-neroloc-paints/create', TopBrandsNerolocPaintsController.createNerolocPaints);
+router.get('/top-brands-neroloc-paints/get', TopBrandsNerolocPaintsController.getAllNerolocPaints);
+router.get('/top-brands-neroloc-paints/getOne:id', TopBrandsNerolocPaintsController.getOneNerolocPaints);
+router.put('/top-brands-neroloc-paints/Update:id', TopBrandsNerolocPaintsController.updateNerolocPaints);
+router.delete('/top-brands-neroloc-paints/delete:id', TopBrandsNerolocPaintsController.deleteNerolocPaints);
 
 // top-brands-jk-wall-putty endpoints
 router.post('/top-brands-jk-wall-putty/create', TopBrandsJkWallPuttyController.createJkWallPutty);

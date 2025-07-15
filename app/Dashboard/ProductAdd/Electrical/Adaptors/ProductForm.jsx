@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { usePathname } from "next/navigation";
 import API_BASE_URL from "@/lib/apiConfig";
 
 const CATEGORY_OPTIONS = ["Adaptors"];
@@ -17,8 +16,11 @@ const TAG_OPTIONS = [
 ];
 
 export default function ProductForm({ product, onSave }) {
-  const apiUrl = `${API_BASE_URL}/electrical/adaptors/create`;
 
+  const pathname = usePathname();
+  const pathParts = pathname.split("/").filter(Boolean);
+  const resource = pathParts[pathParts.length - 1].toLowerCase();
+  const apiUrl = `${API_BASE_URL}/electrical/${resource}/create`;
   const [form, setForm] = useState(product || {
     name: '',
     productNo: '',

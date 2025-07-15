@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,10 @@ const TAG_OPTIONS = [
 
 export default function ProductForm({ product, onSave }) {
   const [form, setForm] = useState(product || {
+  const pathname = usePathname();
+  const pathParts = pathname.split("/").filter(Boolean);
+  const resource = pathParts[pathParts.length - 1].toLowerCase();
+  const apiUrl = ${API_BASE_URL}/productadd//create;
     name: '',
     price: '',
     discount: '',
@@ -147,7 +151,7 @@ export default function ProductForm({ product, onSave }) {
                     onClick={() => handleRemovePhoto(idx)}
                     className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
                   >
-                    ×
+                    �
                   </button>
                 </div>
               ))}

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,8 @@ export default function ProductForm() {
   const [name, setName] = useState("");
   const pathname = usePathname();
   const pathParts = pathname.split("/").filter(Boolean);
-  const resource = pathParts[pathParts.length - 1];
+  const resource = pathParts[pathParts.length - 1].toLowerCase();
+  const apiUrl = ${API_BASE_URL}/electrical//create;
   const [photos, setPhotos] = useState([]);
   const [preview, setPreview] = useState([]);
   const [description, setDescription] = useState("");
@@ -106,7 +107,7 @@ export default function ProductForm() {
                 <img src={url} alt={`Preview ${idx + 1}`} className="w-24 h-24 object-cover rounded border" />
                 <button type="button" onClick={() => handleRemovePhoto(idx)}
                   className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                  Ã—
+                  ×
                 </button>
               </div>
             ))}

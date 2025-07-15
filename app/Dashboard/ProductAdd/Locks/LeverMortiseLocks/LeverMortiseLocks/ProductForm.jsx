@@ -1,11 +1,7 @@
-﻿"use client";
+"use client";
 import { useState } from "react";
 
 export default function ProductForm() {
-  return (<h2 className="text-xl font-bold mb-2">Add LeverMortiseLocks Product</h2>)
-  const pathname = usePathname();
-  const pathParts = pathname.split("/").filter(Boolean);
-  const resource = pathParts[pathParts.length - 1];
   const [form, setForm] = useState({
     type: "",
     name: "",

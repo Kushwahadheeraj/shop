@@ -1,11 +1,12 @@
-﻿"use client";
+"use client";
 import { useState } from "react";
 
 export default function ProductForm() {
   return (<h2 className="text-xl font-bold mb-2">Add BM04 Product</h2>)
   const pathname = usePathname();
   const pathParts = pathname.split("/").filter(Boolean);
-  const resource = pathParts[pathParts.length - 1];
+  const resource = pathParts[pathParts.length - 1].toLowerCase();
+  const apiUrl = ${API_BASE_URL}/popularmortiseseries//create;
   const [form, setForm] = useState({
     type: "",
     name: "",

@@ -9,10 +9,7 @@ const tagsList = ["Heavy Duty", "Lightweight", "Universal", "Child Safe"];
 
 export default function ProductForm() {
   const [name, setName] = useState("");
-  const pathname = usePathname();
-  const pathParts = pathname.split("/").filter(Boolean);
-  const resource = pathParts[pathParts.length - 1].toLowerCase();
-  const apiUrl = ${API_BASE_URL}/tools//create;
+      
   const [photos, setPhotos] = useState([]);
   const [preview, setPreview] = useState([]);
   const [description, setDescription] = useState("");

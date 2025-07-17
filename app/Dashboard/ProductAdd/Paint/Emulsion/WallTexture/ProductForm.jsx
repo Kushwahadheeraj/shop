@@ -2,9 +2,7 @@
 import { useState } from "react";
 
 export default function ProductForm() {
-  const pathname = usePathname();
-  const pathParts = pathname.split("/").filter(Boolean);
-  const resource = pathParts[pathParts.length - 1].toLowerCase();
+  
   const [form, setForm] = useState({
     type: "",
     name: "",
@@ -42,7 +40,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch(API_BASE_URL + "/electrical/Wall Texture", {
+      const res = await fetch(`${API_BASE_URL}/paint/emulsion-wall-emulsion/create`, {
         method: "POST",
         body: data,
       });

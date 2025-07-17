@@ -2,11 +2,6 @@
 import { useState } from "react";
 
 export default function ProductForm() {
-  return (<h2 className="text-xl font-bold mb-2">Add SoapDispenser Product</h2>)
-  const pathname = usePathname();
-  const pathParts = pathname.split("/").filter(Boolean);
-  const resource = pathParts[pathParts.length - 1].toLowerCase();
-  const apiUrl = ${API_BASE_URL}/otherusefulitems//create;
   const [form, setForm] = useState({
     type: "",
     name: "",
@@ -44,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch(API_BASE_URL + "/electrical/Soap Dispenser", {
+      const res = await fetch(`${API_BASE_URL}/sanitary/corsa-other-useful-items-soap-dispenser/create`, {
         method: "POST",
         body: data,
       });

@@ -2,11 +2,7 @@
 import { useState } from "react";
 
 export default function ProductForm() {
-  return (<h2 className="text-xl font-bold mb-2">Add JemmyProofDoorLock Product</h2>)
-  const pathname = usePathname();
-  const pathParts = pathname.split("/").filter(Boolean);
-  const resource = pathParts[pathParts.length - 1].toLowerCase();
-  const apiUrl = ${API_BASE_URL}/doorlocks//create;
+ 
   const [form, setForm] = useState({
     type: "",
     name: "",
@@ -44,7 +40,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch(API_BASE_URL + "/electrical/Jemmy Proof Door Lock", {
+      const res = await fetch(`${API_BASE_URL}/locks/door-locks/jemmy-proof-door-lock/create`, {
         method: "POST",
         body: data,
       });

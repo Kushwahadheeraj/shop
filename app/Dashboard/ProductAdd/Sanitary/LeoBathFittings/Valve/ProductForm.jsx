@@ -2,11 +2,6 @@
 import { useState } from "react";
 
 export default function ProductForm() {
-  return (<h2 className="text-xl font-bold mb-2">Add Valve Product</h2>)
-  const pathname = usePathname();
-  const pathParts = pathname.split("/").filter(Boolean);
-  const resource = pathParts[pathParts.length - 1].toLowerCase();
-  const apiUrl = ${API_BASE_URL}/leobathfittings//create;
   const [form, setForm] = useState({
     type: "",
     name: "",
@@ -44,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch(API_BASE_URL + "/electrical/Valve", {
+      const res = await fetch(`${API_BASE_URL}/sanitary/leo-bath-fittings-valve/create`, {
         method: "POST",
         body: data,
       });

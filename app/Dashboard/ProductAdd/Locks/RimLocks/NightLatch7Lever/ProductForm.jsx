@@ -2,11 +2,7 @@
 import { useState } from "react";
 
 export default function ProductForm() {
-  return (<h2 className="text-xl font-bold mb-2">Add NightLatch7Lever Product</h2>)
-  const pathname = usePathname();
-  const pathParts = pathname.split("/").filter(Boolean);
-  const resource = pathParts[pathParts.length - 1].toLowerCase();
-  const apiUrl = ${API_BASE_URL}/rimlocks//create;
+  
   const [form, setForm] = useState({
     type: "",
     name: "",
@@ -44,7 +40,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch(API_BASE_URL + "/electrical/Night Latch7 Lever", {
+      const res = await fetch(`${API_BASE_URL}/locks/rim-locks/night-latch-7-lever/create`, {
         method: "POST",
         body: data,
       });

@@ -2,11 +2,6 @@
 import { useState } from "react";
 
 export default function ProductForm() {
-  return (<h2 className="text-xl font-bold mb-2">Add AngularStopCock Product</h2>)
-  const pathname = usePathname();
-  const pathParts = pathname.split("/").filter(Boolean);
-  const resource = pathParts[pathParts.length - 1].toLowerCase();
-  const apiUrl = ${API_BASE_URL}/faucets//create;
   const [form, setForm] = useState({
     type: "",
     name: "",
@@ -16,7 +11,7 @@ export default function ProductForm() {
     discount: 0,
     price: "",
     totalProduct: "",
-    category: "Angular Stop Cock",
+    category: "Sink Cock",
     tag: "",
     photos: [],
   });
@@ -44,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch(API_BASE_URL + "/electrical/Angular Stop Cock", {
+      const res = await fetch(`${API_BASE_URL}/sanitary/hindware-faucets-angular-stop-cock/create`, {
         method: "POST",
         body: data,
       });

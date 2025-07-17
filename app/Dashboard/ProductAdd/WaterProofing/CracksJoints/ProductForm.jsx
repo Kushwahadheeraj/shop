@@ -9,10 +9,6 @@ const tagsList = ["Heavy Duty", "Lightweight", "Universal", "Child Safe"];
 
 export default function ProductForm() {
   const [name, setName] = useState("");
-  const pathname = usePathname();
-  const pathParts = pathname.split("/").filter(Boolean);
-  const resource = pathParts[pathParts.length - 1].toLowerCase();
-  const apiUrl = ${API_BASE_URL}/waterproofing//create;
   const [photos, setPhotos] = useState([]);
   const [preview, setPreview] = useState([]);
   const [description, setDescription] = useState("");
@@ -78,7 +74,7 @@ export default function ProductForm() {
     formData.append("category", category);
     tags.forEach(tag => formData.append("tags", tag));
     photos.forEach(photo => formData.append("photos", photo));
-    const res = await fetch(API_BASE_URL + "/electrical/adaptors-products", {
+    const res = await fetch(`${API_BASE_URL}/waterproofing/creacks-joints/create`, {
       method: "POST",
       body: formData,
     });

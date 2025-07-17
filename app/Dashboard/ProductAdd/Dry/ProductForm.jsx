@@ -108,7 +108,7 @@ export default function ProductForm({
       }
     });
     files.forEach(f => data.append('photos', f));
-    const res = await fetch('/api/dry', { method: product ? 'PUT' : 'POST', body: data });
+    const res = await fetch(`${API_BASE_URL}/dry/create`, { method: product ? 'PUT' : 'POST', body: data });
     if (res.ok) onSave && onSave();
   };
 

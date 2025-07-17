@@ -2,11 +2,6 @@
 import { useState } from "react";
 
 export default function ProductForm() {
-  return (<h2 className="text-xl font-bold mb-2">Add Faucets Product</h2>)
-  const pathname = usePathname();
-  const pathParts = pathname.split("/").filter(Boolean);
-  const resource = pathParts[pathParts.length - 1].toLowerCase();
-  const apiUrl = ${API_BASE_URL}/pamay//create;
   const [form, setForm] = useState({
     type: "",
     name: "",
@@ -44,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch(API_BASE_URL + "/electrical/Faucets", {
+      const res = await fetch(`${API_BASE_URL}/sanitary/pamay-faucets-faucets/create`, {
         method: "POST",
         body: data,
       });

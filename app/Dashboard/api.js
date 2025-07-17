@@ -240,6 +240,8 @@
 `${API_BASE_URL}/paint/primer-and-wall-putty/create`
 `${API_BASE_URL}/paint/sanitizer/create`
 `${API_BASE_URL}/paint/spray-paints/create`
+`${API_BASE_URL}/paint/stainers-universal-stainers/create`
+`${API_BASE_URL}/paint/stainers-wood-stainers/create`
 `${API_BASE_URL}/paint/stainers-thinners/create`
 `${API_BASE_URL}/paint/stencils/create`
 `${API_BASE_URL}/paint/tile-guard/create`
@@ -409,8 +411,8 @@
 `${API_BASE_URL}/sanitary/jaquar/create`
 `${API_BASE_URL}/sanitary/kitchen-sinks/create`
 `${API_BASE_URL}/sanitary/leo-bath-fittings-bathroom-accessories-bathroom-accessories/create`
-`${API_BASE_URL}/sanitary/leo-bath-fittings-faucets-faucets/create`
-`${API_BASE_URL}/sanitary/leo-bath-fittings-valve-valve/create`
+`${API_BASE_URL}/sanitary/leo-bath-fittings-faucets/create`
+`${API_BASE_URL}/sanitary/leo-bath-fittings-valve/create`
 `${API_BASE_URL}/sanitary/pamay-faucets-faucets/create`
 `${API_BASE_URL}/sanitary/pamay-showers-showers/create`
 `${API_BASE_URL}/sanitary/parryware-accessories-accessories/create`
@@ -436,7 +438,7 @@
 `${API_BASE_URL}/sanitary/parryware-wash-basins-wash-basins/create`
 `${API_BASE_URL}/sanitary/parryware-waste-coupling-waste-coupling/create`
 `${API_BASE_URL}/sanitary/parryware-water-heaters-water-heaters/create`
-`${API_BASE_URL}/sanitary//pearl-precious-products-edge-edge/create`
+`${API_BASE_URL}/sanitary/pearl-precious-products-edge-edge/create`
 `${API_BASE_URL}/sanitary/showers/create`
 `${API_BASE_URL}/sanitary/taps/create`
 `${API_BASE_URL}/sanitary/washbasins/create`

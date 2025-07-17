@@ -39,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch(API_BASE_URL + "/electrical/Lever Mortise Locks", {
+      const res = await fetch(`${API_BASE_URL}/locks/lever-mortise-locks/lever-mortise-locks/create`, {
         method: "POST",
         body: data,
       });

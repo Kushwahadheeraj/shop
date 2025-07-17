@@ -2,11 +2,6 @@
 import { useState } from "react";
 
 export default function ProductForm() {
-  return (<h2 className="text-xl font-bold mb-2">Add Series3Tarim Product</h2>)
-  const pathname = usePathname();
-  const pathParts = pathname.split("/").filter(Boolean);
-  const resource = pathParts[pathParts.length - 1].toLowerCase();
-  const apiUrl = ${API_BASE_URL}/accessories//create;
   const [form, setForm] = useState({
     type: "",
     name: "",
@@ -44,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch(API_BASE_URL + "/electrical/Series3 Tarim", {
+      const res = await fetch(`${API_BASE_URL}/sanitary/essess-accessories-series3-tarim/create`, {
         method: "POST",
         body: data,
       });

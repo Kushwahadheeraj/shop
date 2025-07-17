@@ -1145,18 +1145,18 @@ router.put('/leo-bath-fittings-bathroom-accessories-bathroom-accessories/update:
 router.delete('/leo-bath-fittings-bathroom-accessories-bathroom-accessories/delete:id', LeoBathFittingsBathroomAccessoriesBathroomAccessoriesController.deleteBathroomAccessories);
 
 // leo-bath-fittings-faucets-faucets endpoints
-router.post('/leo-bath-fittings-faucets-faucets/create', upload.array('photos', 5), LeoBathFittingsFaucetsFaucetsController.createFaucets);
-router.get('/leo-bath-fittings-faucets-faucets/get', LeoBathFittingsFaucetsFaucetsController.getAllFaucets);
-router.get('/leo-bath-fittings-faucets-faucets/getOne:id', LeoBathFittingsFaucetsFaucetsController.getOneFaucets);
-router.put('/leo-bath-fittings-faucets-faucets/update:id', upload.array('photos', 5), LeoBathFittingsFaucetsFaucetsController.updateFaucets);
-router.delete('/leo-bath-fittings-faucets-faucets/delete:id', LeoBathFittingsFaucetsFaucetsController.deleteFaucets);
+router.post('/leo-bath-fittings-faucets/create', upload.array('photos', 5), LeoBathFittingsFaucetsFaucetsController.createFaucets);
+router.get('/leo-bath-fittings-faucets/get', LeoBathFittingsFaucetsFaucetsController.getAllFaucets);
+router.get('/leo-bath-fittings-faucets/getOne:id', LeoBathFittingsFaucetsFaucetsController.getOneFaucets);
+router.put('/leo-bath-fittings-faucets/update:id', upload.array('photos', 5), LeoBathFittingsFaucetsFaucetsController.updateFaucets);
+router.delete('/leo-bath-fittings-faucets/delete:id', LeoBathFittingsFaucetsFaucetsController.deleteFaucets);
 
 // leo-bath-fittings-valve-valve endpoints
-router.post('/leo-bath-fittings-valve-valve/create', upload.array('photos', 5), LeoBathFittingsValveValveController.createValve);
-router.get('/leo-bath-fittings-valve-valve/get', LeoBathFittingsValveValveController.getAllValve);
-router.get('/leo-bath-fittings-valve-valve/getOne:id', LeoBathFittingsValveValveController.getOneValve);
-router.put('/leo-bath-fittings-valve-valve/update:id', upload.array('photos', 5), LeoBathFittingsValveValveController.updateValve);
-router.delete('/leo-bath-fittings-valve-valve/delete:id', LeoBathFittingsValveValveController.deleteValve);
+router.post('/leo-bath-fittings-valve/create', upload.array('photos', 5), LeoBathFittingsValveValveController.createValve);
+router.get('/leo-bath-fittings-valve/get', LeoBathFittingsValveValveController.getAllValve);
+router.get('/leo-bath-fittings-valve/getOne:id', LeoBathFittingsValveValveController.getOneValve);
+router.put('/leo-bath-fittings-valve/update:id', upload.array('photos', 5), LeoBathFittingsValveValveController.updateValve);
+router.delete('/leo-bath-fittings-valve/delete:id', LeoBathFittingsValveValveController.deleteValve);
 
 // pamay-faucets-faucets endpoints
 router.post('/pamay-faucets-faucets/create', upload.array('photos', 5), PamayFaucetsFaucetsController.createFaucets);

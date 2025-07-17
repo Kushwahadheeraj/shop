@@ -20,7 +20,7 @@ export default function ProductForm({ product, onSave }) {
   const pathname = usePathname();
   const pathParts = pathname.split("/").filter(Boolean);
   const resource = pathParts[pathParts.length - 1].toLowerCase();
-  const apiUrl = `${API_BASE_URL}/electrical/${resource}/create`;
+  const apiUrl = `${API_BASE_URL}/electrical/adaptors/create`;
   const [form, setForm] = useState(product || {
     name: '',
     productNo: '',

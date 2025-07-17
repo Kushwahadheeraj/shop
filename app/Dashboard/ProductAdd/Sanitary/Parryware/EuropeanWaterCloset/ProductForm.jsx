@@ -2,11 +2,6 @@
 import { useState } from "react";
 
 export default function ProductForm() {
-  return (<h2 className="text-xl font-bold mb-2">Add EuropeanWaterCloset Product</h2>)
-  const pathname = usePathname();
-  const pathParts = pathname.split("/").filter(Boolean);
-  const resource = pathParts[pathParts.length - 1].toLowerCase();
-  const apiUrl = ${API_BASE_URL}/parryware//create;
   const [form, setForm] = useState({
     type: "",
     name: "",
@@ -44,7 +39,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch(API_BASE_URL + "/electrical/European Water Closet", {
+      const res = await fetch(API_BASE_URL + "/sanitary/parryware-european-water-closet-european-water-closet/create", {
         method: "POST",
         body: data,
       });

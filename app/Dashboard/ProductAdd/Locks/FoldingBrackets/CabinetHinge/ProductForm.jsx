@@ -3,10 +3,7 @@ import { useState } from "react";
 
 export default function ProductForm() {
 
-  const pathname = usePathname();
-  const pathParts = pathname.split("/").filter(Boolean);
-  const resource = pathParts[pathParts.length - 1].toLowerCase();
-  const apiUrl = ${API_BASE_URL}/foldingbrackets//create;
+
   const [form, setForm] = useState({
     type: "",
     name: "",
@@ -44,7 +41,7 @@ export default function ProductForm() {
       }
     });
     try {
-      const res = await fetch(API_BASE_URL + "/electrical/Cabinet Hinge", {
+      const res = await fetch(`${API_BASE_URL}/locks/folding-brackets/cabinet-hinge/create`, {
         method: "POST",
         body: data,
       });

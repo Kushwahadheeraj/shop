@@ -16,9 +16,9 @@ const tsaPipes = require('../controllers/pipe/tsaPipesControllers');
 function registerCrudRoutes(basePath, controller, name) {
   router.post(`/${basePath}/create`, controller[`create${name}`]);
   router.get(`/${basePath}/get`, controller[`getAll${name}`]);
-  router.get(`/${basePath}/getOne:id`, controller[`getOne${name}`]);
-  router.put(`/${basePath}/Update:id`, controller[`update${name}`]);
-  router.delete(`/${basePath}/delete:id`, controller[`delete${name}`]);
+  router.get(`/${basePath}/getOne/:id`, controller[`getOne${name}`]);
+  router.put(`/${basePath}/Update/:id`, controller[`update${name}`]);
+  router.delete(`/${basePath}/delete/:id`, controller[`delete${name}`]);
 }
 
 registerCrudRoutes('finolex-pipes', finolexPipes, 'FinolexPipes');

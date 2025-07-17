@@ -9,8 +9,8 @@ const adhesivesController = require('../controllers/adhesivesController.js');
 
 router.post('/create', upload.array('photos', 5), adhesivesController.createAdhesives);
 router.get('/get', adhesivesController.getAllAdhesives);
-router.get('/getOne:id', adhesivesController.getOneAdhesives);
-router.put('/Update:id', upload.array('photos', 5), adhesivesController.updateAdhesives);
-router.delete('/delete:id', adhesivesController.deleteAdhesives);
+router.get('/getOne/:id', adhesivesController.getOneAdhesives);
+router.put('/Update/:id', upload.array('photos', 5), adhesivesController.updateAdhesives);
+router.delete('/delete/:id', adhesivesController.deleteAdhesives);
 
 module.exports = router;

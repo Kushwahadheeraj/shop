@@ -9,8 +9,8 @@ const cementsController = require('../controllers/cementsController.js');
 
 router.post('/create', upload.array('photos', 5), cementsController.createCements);
 router.get('/get', cementsController.getAllCements);
-router.get('/getOne:id', cementsController.getOneCements);
-router.put('/Update:id', upload.array('photos', 5), cementsController.updateCements);
-router.delete('/delete:id', cementsController.deleteCements);
+router.get('/getOne/:id', cementsController.getOneCements);
+router.put('/Update/:id', upload.array('photos', 5), cementsController.updateCements);
+router.delete('/delete/:id', cementsController.deleteCements);
 
 module.exports = router;

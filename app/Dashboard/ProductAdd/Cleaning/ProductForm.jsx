@@ -3,16 +3,14 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import API_BASE_URL from "@/lib/apiConfig";
 
 const categories = ["Surface Cleaner", "Toilet Cleaner", "Glass Cleaner"];
 const tagsList = ["Antibacterial", "Eco Friendly", "Fragrant", "Heavy Duty"];
 
 export default function ProductForm() {
   const [name, setName] = useState("");
-  const pathname = usePathname();
-  const pathParts = pathname.split("/").filter(Boolean);
-  const resource = pathParts[pathParts.length - 1].toLowerCase();
-  const apiUrl = ${API_BASE_URL}/productadd//create;
+
   const [photos, setPhotos] = useState([]);
   const [preview, setPreview] = useState([]);
   const [description, setDescription] = useState("");

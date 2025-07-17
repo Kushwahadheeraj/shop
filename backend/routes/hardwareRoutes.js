@@ -9,8 +9,8 @@ const hardwareController = require('../controllers/hardwareController.js');
 
 router.post('/create', upload.array('photos', 5), hardwareController.createHardware);
 router.get('/get', hardwareController.getAllHardware);
-router.get('/getOne:id', hardwareController.getOneHardware);
-router.put('/Update:id', upload.array('photos', 5), hardwareController.updateHardware);
-router.delete('/delete:id', hardwareController.deleteHardware);
+router.get('/getOne/:id', hardwareController.getOneHardware);
+router.put('/Update/:id', upload.array('photos', 5), hardwareController.updateHardware);
+router.delete('/delete/:id', hardwareController.deleteHardware);
 
 module.exports = router;

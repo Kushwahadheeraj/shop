@@ -9,8 +9,8 @@ const homeDecorController = require('../controllers/homeDecorController.js');
 
 router.post('/create', upload.array('photos', 5), homeDecorController.createHomeDecor);
 router.get('/get', homeDecorController.getAllHomeDecor);
-router.get('/getOne:id', homeDecorController.getOneHomeDecor);
-router.put('/Update:id', upload.array('photos', 5), homeDecorController.updateHomeDecor);
-router.delete('/delete:id', homeDecorController.deleteHomeDecor);
+router.get('/getOne/:id', homeDecorController.getOneHomeDecor);
+router.put('/Update/:id', upload.array('photos', 5), homeDecorController.updateHomeDecor);
+router.delete('/delete/:id', homeDecorController.deleteHomeDecor);
 
 module.exports = router;

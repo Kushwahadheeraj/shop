@@ -157,9 +157,9 @@ const discPadlocksController = require('../controllers/locks/padlocks/DiscPadloc
 function crudRoutes(resource, controller, resourceName) {
   router.post(`/${resource}/create`, upload.array('photos', 5), controller[`create${resourceName}`]);
   router.get(`/${resource}/get`, controller[`getAll${resourceName}`]);
-  router.get(`/${resource}/getOne:id`, controller[`getOne${resourceName}`]);
-  router.put(`/${resource}/Update:id`, upload.array('photos', 5), controller[`update${resourceName}`]);
-  router.delete(`/${resource}/delete:id`, controller[`delete${resourceName}`]);
+  router.get(`/${resource}/getOne/:id`, controller[`getOne${resourceName}`]);
+  router.put(`/${resource}/Update/:id`, upload.array('photos', 5), controller[`update${resourceName}`]);
+  router.delete(`/${resource}/delete/:id`, controller[`delete${resourceName}`]);
 }
 
 // Register all routes

@@ -1,4 +1,4 @@
-const Electrical = require('../../../models/electricalModel');
+const Electrical = require('../../../models/ElectricalModels');
 const cloudinary = require('../../../config/cloudinary');
 
 // Create

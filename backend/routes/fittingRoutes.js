@@ -9,8 +9,8 @@ const fittingController = require('../controllers/fittingController.js');
 
 router.post('/create', upload.array('photos', 5), fittingController.createFitting);
 router.get('/get', fittingController.getAllFitting);
-router.get('/getOne:id', fittingController.getOneFitting);
-router.put('/Update:id', upload.array('photos', 5), fittingController.updateFitting);
-router.delete('/delete:id', fittingController.deleteFitting);
+router.get('/getOne/:id', fittingController.getOneFitting);
+router.put('/Update/:id', upload.array('photos', 5), fittingController.updateFitting);
+router.delete('/delete/:id', fittingController.deleteFitting);
 
 module.exports = router;

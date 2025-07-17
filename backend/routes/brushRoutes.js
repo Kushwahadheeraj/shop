@@ -9,8 +9,8 @@ const brushController = require('../controllers/brushController.js');
 
 router.post('/create', upload.array('photos', 5), brushController.createBrush);
 router.get('/get', brushController.getAllBrush);
-router.get('/getOne:id', brushController.getOneBrush);
-router.put('/Update:id', upload.array('photos', 5), brushController.updateBrush);
-router.delete('/delete:id', brushController.deleteBrush);
+router.get('/getOne/:id', brushController.getOneBrush);
+router.put('/Update/:id', upload.array('photos', 5), brushController.updateBrush);
+router.delete('/delete/:id', brushController.deleteBrush);
 
 module.exports = router;

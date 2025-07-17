@@ -9,8 +9,8 @@ const dryController = require('../controllers/dryController.js');
 
 router.post('/create', upload.array('photos', 5), dryController.createDry);
 router.get('/get', dryController.getAllDry);
-router.get('/getOne:id', dryController.getOneDry);
-router.put('/Update:id', upload.array('photos', 5), dryController.updateDry);
-router.delete('/delete:id', dryController.deleteDry);
+router.get('/getOne/:id', dryController.getOneDry);
+router.put('/Update/:id', upload.array('photos', 5), dryController.updateDry);
+router.delete('/delete/:id', dryController.deleteDry);
 
 module.exports = router;

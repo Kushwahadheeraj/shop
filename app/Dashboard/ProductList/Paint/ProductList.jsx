@@ -34,7 +34,7 @@ export default function ProductList() {
   };
 
   const handleView = (product) => {
-    router.push("./ProductView?id=" + product._id);
+    router.push(`/Dashboard/ProductView/paint/${product._id}`);
   };
 
   if (loading) return <div>Loading...</div>;

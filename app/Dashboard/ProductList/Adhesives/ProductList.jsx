@@ -9,7 +9,7 @@ export default function ProductList() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/adhesives-products`;
+  const API_URL = `${API_BASE_URL}/adhesives`;
 
   useEffect(() => {
     fetchProducts();
@@ -35,7 +35,7 @@ export default function ProductList() {
   };
 
   const handleView = (product) => {
-    router.push(`/Dashboard/ProductView?id=${product._id}&api=adhesives-products`);
+    router.push(`/Dashboard/ProductView/adhesives/${product._id}`);
   };
 
   if (loading) return <div>Loading...</div>;

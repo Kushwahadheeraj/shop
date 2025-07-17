@@ -90,11 +90,25 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 function crudRoutes(resource, controller) {
-  router.post(`/${resource}/create`, upload.array('photos', 5), controller[`create${capitalize(resource)}`]);
-  router.get(`/${resource}/get`, controller[`getAll${capitalize(resource)}`]);
-  router.get(`/${resource}/getOne:id`, controller[`getOne${capitalize(resource)}`]);
-  router.put(`/${resource}/Update:id`, upload.array('photos', 5), controller[`update${capitalize(resource)}`]);
-  router.delete(`/${resource}/delete:id`, controller[`delete${capitalize(resource)}`]);
+  const createHandler = controller && controller[`create${capitalize(resource)}`];
+  const getAllHandler = controller && controller[`getAll${capitalize(resource)}`];
+  const getOneHandler = controller && controller[`getOne${capitalize(resource)}`];
+  const updateHandler = controller && controller[`update${capitalize(resource)}`];
+  const deleteHandler = controller && controller[`delete${capitalize(resource)}`];
+
+  if (!createHandler || !getAllHandler || !getOneHandler || !updateHandler || !deleteHandler) {
+    console.error(
+      `Missing handler for resource: ${resource}\n` +
+      `create: ${!!createHandler}, getAll: ${!!getAllHandler}, getOne: ${!!getOneHandler}, update: ${!!updateHandler}, delete: ${!!deleteHandler}`
+    );
+    return;
+  }
+
+  router.post(`/${resource}/create`, upload.array('photos', 5), createHandler);
+  router.get(`/${resource}/get`, getAllHandler);
+  router.get(`/${resource}/getOne/:id`, getOneHandler);
+  router.put(`/${resource}/Update/:id`, upload.array('photos', 5), updateHandler);
+  router.delete(`/${resource}/delete/:id`, deleteHandler);
 }
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);

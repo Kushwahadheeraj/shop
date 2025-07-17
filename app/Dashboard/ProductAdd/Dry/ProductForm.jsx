@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import API_BASE_URL from "@/lib/apiConfig";
 
 const CATEGORY_OPTIONS = [
   "Fine Thread Screws",
@@ -24,11 +25,7 @@ const TAG_OPTIONS = [
 ];
 
 export default function ProductForm({
-  return (<h2 className="text-xl font-bold mb-2">Add Dry Product</h2>) product, onSave }) {
-  const pathname = usePathname();
-  const pathParts = pathname.split("/").filter(Boolean);
-  const resource = pathParts[pathParts.length - 1].toLowerCase();
-  const apiUrl = ${API_BASE_URL}/productadd//create;
+ 
   const [form, setForm] = useState(product || {
     name: '',
     price: '',

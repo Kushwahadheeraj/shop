@@ -1,9 +1,9 @@
 "use client";
-import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+
 
 const categories = ["Adaptor Type 1", "Adaptor Type 2"];
 const tagsList = ["Heavy Duty", "Lightweight", "Universal", "Child Safe"];

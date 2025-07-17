@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import API_BASE_URL from "@/lib/apiConfig";
 
 const categories = ["OPC Cement", "PPC Cement", "White Cement"];
 const tagsList = ["High Strength", "Fast Setting", "Waterproof", "Eco Friendly"];

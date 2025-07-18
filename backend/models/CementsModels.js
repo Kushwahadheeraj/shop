@@ -1,22 +1,23 @@
 const mongoose = require('mongoose');
 
+const weightSchema = new mongoose.Schema({
+  weight: String,
+  price: Number,
+  discountPrice: Number
+}, { _id: false });
+
 const CementsProductSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  photos: [String],
-  description: String,
+  sku: { type: String, default: 'N/A' },
+  minPrice: { type: Number, required: true },
+  maxPrice: { type: Number, required: true },
   discount: { type: Number, default: 0 },
-  fixPrice: { type: Number, required: true },
-  discountPrice: { type: Number },
+  description: String,
   totalProduct: { type: Number, required: true },
-  category: { type: String, required: true },
-  tags: [String],
+  category: { type: String, default: 'Cements' },
+  tag: [String],
+  weights: [weightSchema],
+  photos: [String],
 }, { timestamps: true });
-
-CementsProductSchema.pre('save', function(next) {
-  if (this.fixPrice && this.discount) {
-    this.discountPrice = Math.max(this.fixPrice - this.discount, 0);
-  }
-  next();
-});
 
 module.exports = mongoose.model('CementsModels', CementsProductSchema); 

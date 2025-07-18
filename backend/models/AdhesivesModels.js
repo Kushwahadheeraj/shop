@@ -1,19 +1,23 @@
 const mongoose = require('mongoose');
+
+const weightSchema = new mongoose.Schema({
+  weight: String,
+  price: Number,
+  discountPrice: Number
+}, { _id: false });
+
 const adhesivesProductSchema = new mongoose.Schema({
   name: String,
-  price: Number,
+  sku: String,
+  minPrice: Number,
+  maxPrice: Number,
   discount: Number,
-  discountPrice: Number,
   description: String,
   totalProduct: Number,
   category: String,
-  tag: String,
+  tag: [String],
+  weights: [weightSchema],
   photos: [String],
 }, { timestamps: true });
-
-adhesivesProductSchema.pre('save', function(next) {
-  this.discountPrice = this.price - (this.price * (this.discount || 0) / 100);
-  next();
-});
 
 module.exports = mongoose.model('AdhesivesModels', adhesivesProductSchema);

@@ -30,7 +30,28 @@ exports.createAdhesives = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new AdhesivesModels({ ...req.body, photos: photoUrls, category: 'adhesives' });
+
+    // Parse weights and tag if sent as JSON string
+    let { weights, tag, ...rest } = req.body;
+    if (typeof weights === 'string') {
+      weights = JSON.parse(weights);
+    }
+    if (typeof tag === 'string') {
+      // If tag is a single string, wrap in array
+      try {
+        tag = JSON.parse(tag);
+      } catch {
+        tag = [tag];
+      }
+    }
+
+    const product = new AdhesivesModels({
+      ...rest,
+      weights,
+      tag,
+      photos: photoUrls,
+      category: 'adhesives'
+    });
     await product.save();
     res.status(201).json(product);
   } catch (err) {

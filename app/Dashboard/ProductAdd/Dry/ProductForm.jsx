@@ -5,14 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import API_BASE_URL from "@/lib/apiConfig";
 
-const CATEGORY_OPTIONS = [
-  "Fine Thread Screws",
-  "Coarse Thread Screws",
-  "Collated Screws",
-  "Self-Drilling Screws",
-  "Bugle Head Screws"
-];
-
 const TAG_OPTIONS = [
   "Black Phosphate",
   "Zinc Coated",
@@ -24,34 +16,85 @@ const TAG_OPTIONS = [
   "High Strength"
 ];
 
-export default function ProductForm({
- 
+export default function ProductForm({ product, onSave }) {
   const [form, setForm] = useState(product || {
     name: '',
-    price: '',
+    sku: 'N/A', // Default SKU
+    minPrice: '',
+    maxPrice: '',
     discount: '',
-    discountPrice: '',
     description: '',
     totalProduct: '',
-    category: '',
+    category: 'Dry', // Default category
     tag: [],
+    sizes: [], // array of { size: '', price: '', discountPrice: '' }
     photos: []
   });
   const [files, setFiles] = useState([]);
   const [preview, setPreview] = useState([]);
   const [photoError, setPhotoError] = useState("");
 
+  // Add state for weights if not present in product
+  const [sizes, setSizes] = useState(product?.sizes || []);
+
+  // Check if all required fields are filled
+  const isFormValid = () => {
+    if (!form.name.trim()) return false;
+    if (!form.minPrice || isNaN(Number(form.minPrice))) return false;
+    if (!form.maxPrice || isNaN(Number(form.maxPrice))) return false;
+    if (form.discount === '' || isNaN(Number(form.discount))) return false;
+    if (!form.totalProduct || isNaN(Number(form.totalProduct))) return false;
+    if (!form.tag || !Array.isArray(form.tag) || form.tag.length === 0) return false;
+    if (!sizes || !Array.isArray(sizes) || sizes.length === 0) return false;
+    for (const s of sizes) {
+      if (!s.size || !s.price || isNaN(Number(s.price))) return false;
+    }
+    if (!files || files.length === 0) return false;
+    return true;
+  };
+
   const handleChange = e => {
     const { name, value } = e.target;
     let updatedForm = { ...form, [name]: value };
-    if ((name === 'price' || name === 'discount') && updatedForm.price && updatedForm.discount) {
-      const price = parseFloat(updatedForm.price);
-      const discount = parseFloat(updatedForm.discount);
-      if (!isNaN(price) && !isNaN(discount)) {
-        updatedForm.discountPrice = (price - (price * discount / 100)).toFixed(2);
-      }
-    }
+    // No auto-calculation for min/max price
     setForm(updatedForm);
+    // If discount changes, update all sizes' discountPrice
+    if (name === 'discount') {
+      const discount = parseFloat(value);
+      setSizes((prev) => prev.map(s => {
+        const price = parseFloat(s.price);
+        return {
+          ...s,
+          discountPrice: (!isNaN(price) && !isNaN(discount)) ? (price - (price * discount / 100)).toFixed(2) : ''
+        };
+      }));
+    }
+  };
+
+  // Handle size row change
+  const handleSizeChange = (idx, field, value) => {
+    setSizes(prev => {
+      const updated = [...prev];
+      updated[idx] = {
+        ...updated[idx],
+        [field]: value,
+      };
+      // Update discountPrice if price or discount changes
+      const price = parseFloat(updated[idx].price);
+      const discount = parseFloat(form.discount);
+      updated[idx].discountPrice = (!isNaN(price) && !isNaN(discount)) ? (price - (price * discount / 100)).toFixed(2) : '';
+      return updated;
+    });
+  };
+
+  // Add new size row
+  const handleAddSize = () => {
+    setSizes(prev => [...prev, { size: '', price: '', discountPrice: '' }]);
+  };
+
+  // Remove size row
+  const handleRemoveSize = (idx) => {
+    setSizes(prev => prev.filter((_, i) => i !== idx));
   };
 
   const handleFiles = e => {
@@ -96,14 +139,18 @@ export default function ProductForm({
       return;
     }
     setPhotoError("");
+    // Use whatever is in the form for SKU and category
+    const formToSubmit = { ...form };
     const data = new FormData();
-    Object.entries(form).forEach(([k, v]) => {
+    Object.entries(formToSubmit).forEach(([k, v]) => {
       if (k === 'tag') {
         v.forEach(val => data.append('tag', val));
       } else {
         data.append(k, v);
       }
     });
+    // Add sizes as JSON string
+    data.append('sizes', JSON.stringify(sizes));
     files.forEach(f => data.append('photos', f));
     const res = await fetch(`${API_BASE_URL}/dry/create`, { method: product ? 'PUT' : 'POST', body: data });
     if (res.ok) onSave && onSave();
@@ -111,27 +158,27 @@ export default function ProductForm({
 
   return (
     <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-6 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
-      <h2 className="text-2xl font-bold mb-2 text-center">Add / Update Dry Wall Gypsum Screws Product</h2>
+      <h2 className="text-2xl font-bold mb-2 text-center">Add Dry Wall Gypsum Screws Product</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium mb-1">Product Name</label>
           <Input name="name" value={form.name} onChange={handleChange} placeholder="Product Name" required />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Fix Price</label>
-          <Input name="price" type="number" value={form.price} onChange={handleChange} placeholder="Fix Price" required />
+          <label className="block text-sm font-medium mb-1">SKU</label>
+          <Input name="sku" value={form.sku} onChange={handleChange} placeholder="SKU" required />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Min Price</label>
+          <Input name="minPrice" type="number" value={form.minPrice} onChange={handleChange} placeholder="Min Price" required />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Max Price</label>
+          <Input name="maxPrice" type="number" value={form.maxPrice} onChange={handleChange} placeholder="Max Price" required />
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Discount (%)</label>
           <Input name="discount" type="number" value={form.discount} onChange={handleChange} placeholder="Discount (%)" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Discount Price (auto)</label>
-          <Input name="discountPrice" type="number" value={form.discountPrice} readOnly placeholder="Discount Price (auto)" />
-        </div>
-        <div className="md:col-span-2">
-          <label className="block text-sm font-medium mb-1">Description</label>
-          <Textarea name="description" value={form.description} onChange={handleChange} placeholder="Description" />
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Total Product</label>
@@ -139,18 +186,44 @@ export default function ProductForm({
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Category</label>
-          <select
-            name="category"
-            value={form.category}
-            onChange={handleChange}
-            className="w-full border rounded p-2"
-            required
-          >
-            <option value="">Select Category</option>
-            {CATEGORY_OPTIONS.map(opt => (
-              <option key={opt} value={opt}>{opt}</option>
+          <Input name="category" value={form.category} onChange={handleChange} placeholder="Category" />
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium mb-1">Sizes (Add multiple sizes and prices)</label>
+          <div className="space-y-2">
+            {sizes.map((s, idx) => (
+              <div key={idx} className="flex gap-2 items-center">
+                <Input
+                  className="w-1/3"
+                  placeholder="Size (e.g. Small, Medium, Large)"
+                  value={s.size}
+                  onChange={e => handleSizeChange(idx, 'size', e.target.value)}
+                  required
+                />
+                <Input
+                  className="w-1/3"
+                  type="number"
+                  placeholder="Price"
+                  value={s.price}
+                  onChange={e => handleSizeChange(idx, 'price', e.target.value)}
+                  required
+                />
+                <Input
+                  className="w-1/3"
+                  type="number"
+                  placeholder="Discounted Price (auto)"
+                  value={s.discountPrice}
+                  readOnly
+                />
+                <Button type="button" onClick={() => handleRemoveSize(idx)} className="bg-red-500 hover:bg-red-600 text-white px-2 py-1">Remove</Button>
+              </div>
             ))}
-          </select>
+            <Button type="button" onClick={handleAddSize} className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 mt-2">Add Size</Button>
+          </div>
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium mb-1">Description</label>
+          <Textarea name="description" value={form.description} onChange={handleChange} placeholder="Description" />
         </div>
         <div className="md:col-span-2">
           <label className="block text-sm font-medium mb-1">Photos <span className="text-xs text-gray-400">(1-5 allowed)</span></label>
@@ -170,7 +243,7 @@ export default function ProductForm({
                     onClick={() => handleRemovePhoto(idx)}
                     className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
                   >
-                    ×
+                    �
                   </button>
                 </div>
               ))}
@@ -199,8 +272,9 @@ export default function ProductForm({
           </div>
         </div>
       </div>
-      <Button type="submit" className="w-full mt-4">{product ? 'Update' : 'Create'} Product</Button>
+      <Button type="submit" className="w-full mt-4"
+        disabled={!isFormValid()}
+      >{product ? 'Update' : 'Create'} Product</Button>
     </form>
   );
 } 
-

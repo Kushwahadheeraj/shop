@@ -2,21 +2,15 @@ const mongoose = require('mongoose');
 
 const CleaningProductSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  photos: [String],
-  description: String,
+  price: { type: Number, required: true },
   discount: { type: Number, default: 0 },
   fixPrice: { type: Number, required: true },
-  discountPrice: { type: Number },
   totalProduct: { type: Number, required: true },
-  category: { type: String, required: true },
-  tags: [String],
+  sku: { type: String, default: 'N/A' },
+  category: { type: String, default: 'Cleaning' },
+  tag: [String],
+  description: String,
+  photos: [String],
 }, { timestamps: true });
-
-CleaningProductSchema.pre('save', function(next) {
-  if (this.fixPrice && this.discount) {
-    this.discountPrice = Math.max(this.fixPrice - this.discount, 0);
-  }
-  next();
-});
 
 module.exports = mongoose.model('CleaningModels', CleaningProductSchema); 

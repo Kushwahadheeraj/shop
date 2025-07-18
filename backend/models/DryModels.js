@@ -1,22 +1,23 @@
 const mongoose = require('mongoose');
 
+const sizeSchema = new mongoose.Schema({
+  size: String,
+  price: Number,
+  discountPrice: Number
+}, { _id: false });
+
 const DryProductSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  photos: [String],
-  description: String,
+  sku: { type: String, default: 'N/A' },
+  minPrice: { type: Number, required: true },
+  maxPrice: { type: Number, required: true },
   discount: { type: Number, default: 0 },
-  fixPrice: { type: Number, required: true },
-  discountPrice: { type: Number },
+  description: String,
   totalProduct: { type: Number, required: true },
-  category: { type: String, required: true },
-  tags: [String],
+  category: { type: String, default: 'Dry' },
+  tag: [String],
+  sizes: [sizeSchema],
+  photos: [String],
 }, { timestamps: true });
-
-DryProductSchema.pre('save', function(next) {
-  if (this.fixPrice && this.discount) {
-    this.discountPrice = Math.max(this.fixPrice - this.discount, 0);
-  }
-  next();
-});
 
 module.exports = mongoose.model('DryModels', DryProductSchema); 

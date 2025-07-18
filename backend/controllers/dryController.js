@@ -30,7 +30,27 @@ exports.createDry = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new DryModels({ ...req.body, photos: photoUrls, category: 'dry' });
+
+    // Parse sizes and tag if sent as JSON string
+    let { sizes, tag, ...rest } = req.body;
+    if (typeof sizes === 'string') {
+      sizes = JSON.parse(sizes);
+    }
+    if (typeof tag === 'string') {
+      try {
+        tag = JSON.parse(tag);
+      } catch {
+        tag = [tag];
+      }
+    }
+
+    const product = new DryModels({
+      ...rest,
+      sizes,
+      tag,
+      photos: photoUrls,
+      category: rest.category || 'Dry'
+    });
     await product.save();
     res.status(201).json(product);
   } catch (err) {

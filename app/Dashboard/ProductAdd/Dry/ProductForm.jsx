@@ -1,106 +1,56 @@
 "use client";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import API_BASE_URL from "@/lib/apiConfig";
 
-const TAG_OPTIONS = [
-  "Black Phosphate",
-  "Zinc Coated",
-  "Corrosion Resistant",
-  "For Metal Studs",
-  "For Wood Studs",
-  "Sharp Point",
-  "Phillips Head",
-  "High Strength"
-];
+const tagsList = ["Heavy Duty", "Lightweight", "Universal", "Child Safe"];
 
-export default function ProductForm({ product, onSave }) {
-  const [form, setForm] = useState(product || {
-    name: '',
-    sku: 'N/A', // Default SKU
-    minPrice: '',
-    maxPrice: '',
-    discount: '',
-    description: '',
-    totalProduct: '',
-    category: 'Dry', // Default category
-    tag: [],
-    sizes: [], // array of { size: '', price: '', discountPrice: '' }
-    photos: []
-  });
-  const [files, setFiles] = useState([]);
+export default function ProductForm() {
+  const [name, setName] = useState("");
+  const [photos, setPhotos] = useState([]);
   const [preview, setPreview] = useState([]);
+  const [description, setDescription] = useState("");
+  const [fixPrice, setFixPrice] = useState("");
+  const [discount, setDiscount] = useState("");
+  const [discountPrice, setDiscountPrice] = useState("");
+  const [totalProduct, setTotalProduct] = useState("");
+  const [category, setCategory] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [tags, setTags] = useState([]);
   const [photoError, setPhotoError] = useState("");
+  const [isFormValid, setIsFormValid] = useState(false);
 
-  // Add state for weights if not present in product
-  const [sizes, setSizes] = useState(product?.sizes || []);
+  useEffect(() => {
+    fetch("/api/get-categories?dir=Dry")
+      .then(res => res.json())
+      .then(data => setCategories(data.categories || []));
+  }, []);
 
-  // Check if all required fields are filled
-  const isFormValid = () => {
-    if (!form.name.trim()) return false;
-    if (!form.minPrice || isNaN(Number(form.minPrice))) return false;
-    if (!form.maxPrice || isNaN(Number(form.maxPrice))) return false;
-    if (form.discount === '' || isNaN(Number(form.discount))) return false;
-    if (!form.totalProduct || isNaN(Number(form.totalProduct))) return false;
-    if (!form.tag || !Array.isArray(form.tag) || form.tag.length === 0) return false;
-    if (!sizes || !Array.isArray(sizes) || sizes.length === 0) return false;
-    for (const s of sizes) {
-      if (!s.size || !s.price || isNaN(Number(s.price))) return false;
+  useEffect(() => {
+    const valid =
+      name.trim() &&
+      fixPrice &&
+      description.trim() &&
+      category &&
+      photos.length >= 1 &&
+      photos.length <= 5 &&
+      totalProduct;
+    setIsFormValid(!!valid);
+  }, [name, fixPrice, description, category, photos, totalProduct]);
+
+  useEffect(() => {
+    if (fixPrice && discount) {
+      const dp = Math.max(Number(fixPrice) - Number(discount), 0);
+      setDiscountPrice(dp);
+    } else {
+      setDiscountPrice("");
     }
-    if (!files || files.length === 0) return false;
-    return true;
-  };
-
-  const handleChange = e => {
-    const { name, value } = e.target;
-    let updatedForm = { ...form, [name]: value };
-    // No auto-calculation for min/max price
-    setForm(updatedForm);
-    // If discount changes, update all sizes' discountPrice
-    if (name === 'discount') {
-      const discount = parseFloat(value);
-      setSizes((prev) => prev.map(s => {
-        const price = parseFloat(s.price);
-        return {
-          ...s,
-          discountPrice: (!isNaN(price) && !isNaN(discount)) ? (price - (price * discount / 100)).toFixed(2) : ''
-        };
-      }));
-    }
-  };
-
-  // Handle size row change
-  const handleSizeChange = (idx, field, value) => {
-    setSizes(prev => {
-      const updated = [...prev];
-      updated[idx] = {
-        ...updated[idx],
-        [field]: value,
-      };
-      // Update discountPrice if price or discount changes
-      const price = parseFloat(updated[idx].price);
-      const discount = parseFloat(form.discount);
-      updated[idx].discountPrice = (!isNaN(price) && !isNaN(discount)) ? (price - (price * discount / 100)).toFixed(2) : '';
-      return updated;
-    });
-  };
-
-  // Add new size row
-  const handleAddSize = () => {
-    setSizes(prev => [...prev, { size: '', price: '', discountPrice: '' }]);
-  };
-
-  // Remove size row
-  const handleRemoveSize = (idx) => {
-    setSizes(prev => prev.filter((_, i) => i !== idx));
-  };
+  }, [fixPrice, discount]);
 
   const handleFiles = e => {
     let selected = Array.from(e.target.files);
-    let newFiles = [...files, ...selected];
-    // Remove duplicates by name+size
+    let newFiles = [...photos, ...selected];
     newFiles = newFiles.filter(
       (file, idx, arr) =>
         arr.findIndex(f => f.name === file.name && f.size === file.size) === idx
@@ -111,170 +61,93 @@ export default function ProductForm({ product, onSave }) {
     } else {
       setPhotoError("");
     }
-    setFiles(newFiles);
+    setPhotos(newFiles);
     setPreview(newFiles.map(file => URL.createObjectURL(file)));
   };
 
-  const handleTagChange = (option) => {
-    setForm((prev) => {
-      const already = prev.tag.includes(option);
-      return {
-        ...prev,
-        tag: already ? prev.tag.filter(t => t !== option) : [...prev.tag, option]
-      };
-    });
+  const handleRemovePhoto = idx => {
+    const newFiles = photos.filter((_, i) => i !== idx);
+    setPhotos(newFiles);
+    setPreview(newFiles.map(file => URL.createObjectURL(file)));
   };
 
-  const handleRemovePhoto = (index) => {
-    const newFiles = files.filter((_, i) => i !== index);
-    const newPreview = preview.filter((_, i) => i !== index);
-    setFiles(newFiles);
-    setPreview(newPreview);
+  const handleTag = tag => {
+    setTags(tags =>
+      tags.includes(tag) ? tags.filter(t => t !== tag) : [...tags, tag]
+    );
   };
 
   const handleSubmit = async e => {
     e.preventDefault();
-    if (files.length === 0) {
-      setPhotoError("Please upload at least 1 photo.");
+    if (photos.length === 0) {
+      setPhotoError("At least one photo is required.");
       return;
     }
-    setPhotoError("");
-    // Use whatever is in the form for SKU and category
-    const formToSubmit = { ...form };
-    const data = new FormData();
-    Object.entries(formToSubmit).forEach(([k, v]) => {
-      if (k === 'tag') {
-        v.forEach(val => data.append('tag', val));
-      } else {
-        data.append(k, v);
-      }
-    });
-    // Add sizes as JSON string
-    data.append('sizes', JSON.stringify(sizes));
-    files.forEach(f => data.append('photos', f));
-    const res = await fetch(`${API_BASE_URL}/dry/create`, { method: product ? 'PUT' : 'POST', body: data });
-    if (res.ok) onSave && onSave();
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("description", description);
+    formData.append("fixPrice", fixPrice);
+    formData.append("discount", discount);
+    formData.append("discountPrice", discountPrice);
+    formData.append("totalProduct", totalProduct);
+    formData.append("category", category);
+    tags.forEach(tag => formData.append("tags", tag));
+    photos.forEach(photo => formData.append("photos", photo));
+    // TODO: Update API endpoint for each product type
+    // const res = await fetch(`/api/your-endpoint`, { method: "POST", body: formData });
+    // if (res.ok) { ... }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-6 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
-      <h2 className="text-2xl font-bold mb-2 text-center">Add Dry Wall Gypsum Screws Product</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Product Name</label>
-          <Input name="name" value={form.name} onChange={handleChange} placeholder="Product Name" required />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">SKU</label>
-          <Input name="sku" value={form.sku} onChange={handleChange} placeholder="SKU" required />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Min Price</label>
-          <Input name="minPrice" type="number" value={form.minPrice} onChange={handleChange} placeholder="Min Price" required />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Max Price</label>
-          <Input name="maxPrice" type="number" value={form.maxPrice} onChange={handleChange} placeholder="Max Price" required />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Discount (%)</label>
-          <Input name="discount" type="number" value={form.discount} onChange={handleChange} placeholder="Discount (%)" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Total Product</label>
-          <Input name="totalProduct" type="number" value={form.totalProduct} onChange={handleChange} placeholder="Total Product" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Category</label>
-          <Input name="category" value={form.category} onChange={handleChange} placeholder="Category" />
-        </div>
-        <div className="md:col-span-2">
-          <label className="block text-sm font-medium mb-1">Sizes (Add multiple sizes and prices)</label>
-          <div className="space-y-2">
-            {sizes.map((s, idx) => (
-              <div key={idx} className="flex gap-2 items-center">
-                <Input
-                  className="w-1/3"
-                  placeholder="Size (e.g. Small, Medium, Large)"
-                  value={s.size}
-                  onChange={e => handleSizeChange(idx, 'size', e.target.value)}
-                  required
-                />
-                <Input
-                  className="w-1/3"
-                  type="number"
-                  placeholder="Price"
-                  value={s.price}
-                  onChange={e => handleSizeChange(idx, 'price', e.target.value)}
-                  required
-                />
-                <Input
-                  className="w-1/3"
-                  type="number"
-                  placeholder="Discounted Price (auto)"
-                  value={s.discountPrice}
-                  readOnly
-                />
-                <Button type="button" onClick={() => handleRemoveSize(idx)} className="bg-red-500 hover:bg-red-600 text-white px-2 py-1">Remove</Button>
+    <form onSubmit={handleSubmit} className="space-y-6 max-w-xl mx-auto p-4 bg-white rounded shadow">
+      <h2 className="text-xl font-bold mb-2">Add Product</h2>
+      <Input placeholder="Product Name" value={name} onChange={e => setName(e.target.value)} required />
+      <div>
+        <Input name="photos" type="file" multiple onChange={handleFiles} accept="image/*" />
+        {photoError && <div className="text-red-500 text-xs mt-1">{photoError}</div>}
+        {preview.length > 0 && (
+          <div className="flex flex-row gap-3 mt-2 flex-wrap">
+            {preview.map((url, idx) => (
+              <div key={idx} className="relative">
+                <img src={url} alt={'Preview ' + (idx + 1)} className="w-24 h-24 object-cover rounded border" />
+                <button type="button" onClick={() => handleRemovePhoto(idx)}
+                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                  ×
+                </button>
               </div>
             ))}
-            <Button type="button" onClick={handleAddSize} className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 mt-2">Add Size</Button>
           </div>
+        )}
+      </div>
+      <Textarea placeholder="Description" value={description} onChange={e => setDescription(e.target.value)} />
+      <div className="flex gap-2">
+        <Input type="number" placeholder="Fix Price" value={fixPrice} onChange={e => setFixPrice(e.target.value)} required />
+        <Input type="number" placeholder="Discount" value={discount} onChange={e => setDiscount(e.target.value)} />
+        <Input type="number" placeholder="Discount Price" value={discountPrice} readOnly />
+      </div>
+      <Input type="number" placeholder="Total Product" value={totalProduct} onChange={e => setTotalProduct(e.target.value)} required />
+      <select className="w-full border rounded p-2" value={category} onChange={e => setCategory(e.target.value)} required>
+        <option value="">Select Category</option>
+        {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+      </select>
+      <div>
+        <div className="mb-1">Tags:</div>
+        <div className="flex flex-wrap gap-2">
+          {tagsList.map(tag => (
+            <button type="button" key={tag}
+              className={`px-2 py-1 rounded-full border ${tags.includes(tag) ? 'bg-blue-500 text-white' : 'bg-gray-100'}`}
+              onClick={() => handleTag(tag)}>
+              {tag}
+            </button>
+          ))}
         </div>
-        <div className="md:col-span-2">
-          <label className="block text-sm font-medium mb-1">Description</label>
-          <Textarea name="description" value={form.description} onChange={handleChange} placeholder="Description" />
-        </div>
-        <div className="md:col-span-2">
-          <label className="block text-sm font-medium mb-1">Photos <span className="text-xs text-gray-400">(1-5 allowed)</span></label>
-          <Input name="photos" type="file" multiple onChange={handleFiles} accept="image/*" />
-          {photoError && <div className="text-red-500 text-xs mt-1">{photoError}</div>}
-          {preview.length > 0 && (
-            <div className="flex flex-row gap-3 mt-2 flex-wrap">
-              {preview.map((url, idx) => (
-                <div key={idx} className="relative">
-                  <img
-                    src={url}
-                    alt={`Preview ${idx + 1}`}
-                    className="w-24 h-24 object-cover rounded border"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => handleRemovePhoto(idx)}
-                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                  >
-                    �
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-        <div className="md:col-span-2">
-          <label className="block text-sm font-medium mb-1">Tags (Select multiple)</label>
-          <div className="flex flex-wrap gap-2 mb-2">
-            {form.tag.map((t) => (
-              <span key={t} className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">{t}</span>
-            ))}
-            {form.tag.length === 0 && <span className="text-gray-400 text-xs">No tag selected</span>}
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {TAG_OPTIONS.map(option => (
-              <button
-                type="button"
-                key={option}
-                className={`px-3 py-1 rounded-full border text-xs font-medium transition ${form.tag.includes(option) ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-blue-50'}`}
-                onClick={() => handleTagChange(option)}
-              >
-                {option}
-              </button>
-            ))}
-          </div>
+        <div className="flex flex-wrap gap-2 mt-2">
+          {tags.map(tag => (
+            <span key={tag} className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">{tag}</span>
+          ))}
         </div>
       </div>
-      <Button type="submit" className="w-full mt-4"
-        disabled={!isFormValid()}
-      >{product ? 'Update' : 'Create'} Product</Button>
+      <Button type="submit" className="w-full" disabled={!isFormValid}>Create Product</Button>
     </form>
   );
 } 

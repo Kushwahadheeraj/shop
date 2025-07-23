@@ -21,7 +21,27 @@ exports.createDPswitch = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new ElectricalModels({ ...req.body, photos: photoUrls, category: 'dPswitch' });
+
+    // Parse tag and amps if sent as JSON string
+    let { tag, amps, ...rest } = req.body;
+    if (typeof tag === 'string') {
+      try {
+        tag = JSON.parse(tag);
+      } catch {
+        tag = [tag];
+      }
+    }
+    if (typeof amps === 'string') {
+      amps = JSON.parse(amps);
+    }
+
+    const product = new ElectricalModels({
+      ...rest,
+      tag,
+      amps,
+      photos: photoUrls,
+      category: rest.category || 'dPswitch'
+    });
     await product.save();
     res.status(201).json(product);
   } catch (err) {

@@ -1,25 +1,30 @@
 const mongoose = require('mongoose');
 
+const ampsSchema = new mongoose.Schema({
+  amps: String,
+  price: Number,
+  discountPrice: Number
+}, { _id: false });
+
 const electricalProductSchema = new mongoose.Schema({
-  type: { type: String, required: true }, // e.g., Adaptors, CeilingRoses, etc.
   name: { type: String, required: true },
-  productNo: { type: String, required: true },
-  productQualityName: { type: String, required: true },
-  photos: [String],
-  description: String,
+  price: { type: Number }, // keep for compatibility
+  minPrice: { type: Number }, // NEW
+  maxPrice: { type: Number }, // NEW
   discount: { type: Number, default: 0 },
-  price: { type: Number, required: true },
+  fixPrice: { type: Number },
   discountPrice: { type: Number },
   totalProduct: { type: Number, required: true },
-  category: { type: String, required: true },
+  sku: { type: String, default: 'N/A' },
+  category: { type: String, default: 'Adaptors' },
   tag: [String],
+  colour: [String],
+  brand: { type: String },
+  way: { type: String },
+  packageContents: { type: String },
+  amps: [ampsSchema], // NEW
+  description: String,
+  photos: [String],
 }, { timestamps: true });
-
-electricalProductSchema.pre('save', function(next) {
-  if (this.price && this.discount) {
-    this.discountPrice = Math.max(this.price - this.discount, 0);
-  }
-  next();
-});
 
 module.exports = mongoose.model('ElectricalModels', electricalProductSchema); 

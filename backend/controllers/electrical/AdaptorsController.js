@@ -21,7 +21,23 @@ exports.createAdaptors = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new ElectricalModels({ ...req.body, photos: photoUrls, category: 'adaptors' });
+
+    // Parse tag if sent as JSON string
+    let { tag, ...rest } = req.body;
+    if (typeof tag === 'string') {
+      try {
+        tag = JSON.parse(tag);
+      } catch {
+        tag = [tag];
+      }
+    }
+
+    const product = new ElectricalModels({
+      ...rest,
+      tag,
+      photos: photoUrls,
+      category: rest.category || 'Adaptors'
+    });
     await product.save();
     res.status(201).json(product);
   } catch (err) {

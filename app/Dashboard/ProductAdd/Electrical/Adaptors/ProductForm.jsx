@@ -1,57 +1,52 @@
-﻿"use client";
-import React, { useState } from "react";
+"use client";
+import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import API_BASE_URL from "@/lib/apiConfig";
 
-const CATEGORY_OPTIONS = ["Adaptors"];
-const TAG_OPTIONS = [
-  "3 Pin Multi Plug Adaptor",
-  "Adaptor",
-  "Fybros",
-  "Fybros 3 Pin Multi Plug Adaptor",
-  "Fybros Plug",
-  "Multi Plug Adaptor"
-];
+const tagsList = ["Heavy Duty", "Lightweight", "Universal", "Child Safe"];
 
-export default function ProductForm({ product, onSave }) {
-
-  const pathname = usePathname();
-  const pathParts = pathname.split("/").filter(Boolean);
-  const resource = pathParts[pathParts.length - 1].toLowerCase();
-  const apiUrl = `${API_BASE_URL}/electrical/adaptors/create`;
-  const [form, setForm] = useState(product || {
-    name: '',
-    productNo: '',
-    productQualityName: '',
-    price: '',
-    discount: '',
-    discountPrice: '',
-    description: '',
-    totalProduct: '',
-    category: CATEGORY_OPTIONS[0],
-    tag: [],
-    photos: [],
-    type: 'Adaptors'
-  });
+export default function ProductForm() {
+  const [name, setName] = useState("");
   const [photos, setPhotos] = useState([]);
   const [preview, setPreview] = useState([]);
+  const [description, setDescription] = useState("");
+  const [fixPrice, setFixPrice] = useState("");
+  const [discount, setDiscount] = useState("");
+  const [discountPrice, setDiscountPrice] = useState("");
+  const [totalProduct, setTotalProduct] = useState("");
+  const [category, setCategory] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [tags, setTags] = useState([]);
   const [photoError, setPhotoError] = useState("");
+  const [isFormValid, setIsFormValid] = useState(false);
 
-  React.useEffect(() => {
-    if (form.price && form.discount) {
-      const dp = Math.max(Number(form.price) - Number(form.discount), 0);
-      setForm(prev => ({ ...prev, discountPrice: dp }));
+  useEffect(() => {
+    fetch("/api/get-categories?dir=Electrical%5CAdaptors")
+      .then(res => res.json())
+      .then(data => setCategories(data.categories || []));
+  }, []);
+
+  useEffect(() => {
+    const valid =
+      name.trim() &&
+      fixPrice &&
+      description.trim() &&
+      category &&
+      photos.length >= 1 &&
+      photos.length <= 5 &&
+      totalProduct;
+    setIsFormValid(!!valid);
+  }, [name, fixPrice, description, category, photos, totalProduct]);
+
+  useEffect(() => {
+    if (fixPrice && discount) {
+      const dp = Math.max(Number(fixPrice) - Number(discount), 0);
+      setDiscountPrice(dp);
     } else {
-      setForm(prev => ({ ...prev, discountPrice: '' }));
+      setDiscountPrice("");
     }
-  }, [form.price, form.discount]);
-
-  const handleChange = e => {
-    const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
-  };
+  }, [fixPrice, discount]);
 
   const handleFiles = e => {
     let selected = Array.from(e.target.files);
@@ -76,58 +71,37 @@ export default function ProductForm({ product, onSave }) {
     setPreview(newFiles.map(file => URL.createObjectURL(file)));
   };
 
-  const handleTagChange = tag => {
-    setForm(prev => ({
-      ...prev,
-      tag: prev.tag.includes(tag) ? prev.tag.filter(t => t !== tag) : [...prev.tag, tag]
-    }));
+  const handleTag = tag => {
+    setTags(tags =>
+      tags.includes(tag) ? tags.filter(t => t !== tag) : [...tags, tag]
+    );
   };
 
   const handleSubmit = async e => {
     e.preventDefault();
     if (photos.length === 0) {
-      setPhotoError("Please upload at least 1 photo.");
+      setPhotoError("At least one photo is required.");
       return;
     }
-    setPhotoError("");
-    const data = new FormData();
-    Object.entries(form).forEach(([k, v]) => {
-      if (k === 'tag') {
-        v.forEach(val => data.append('tag', val));
-      } else {
-        data.append(k, v);
-      }
-    });
-    
-    photos.forEach(f => data.append('photos', f));
-    const res = await fetch(apiUrl, { method: product ? 'PUT' : 'POST', body: data });
-    if (res.ok) {
-      onSave && onSave();
-      setForm({
-        name: '',
-        productNo: '',
-        productQualityName: '',
-        price: '',
-        discount: '',
-        discountPrice: '',
-        description: '',
-        totalProduct: '',
-        category: CATEGORY_OPTIONS[0],
-        tag: [],
-        photos: [],
-        type: 'Adaptors'
-      });
-      setPhotos([]);
-      setPreview([]);
-    } else {
-      alert("Error creating product");
-    }
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("description", description);
+    formData.append("fixPrice", fixPrice);
+    formData.append("discount", discount);
+    formData.append("discountPrice", discountPrice);
+    formData.append("totalProduct", totalProduct);
+    formData.append("category", category);
+    tags.forEach(tag => formData.append("tags", tag));
+    photos.forEach(photo => formData.append("photos", photo));
+    // TODO: Update API endpoint for each product type
+    // const res = await fetch(`/api/your-endpoint`, { method: "POST", body: formData });
+    // if (res.ok) { ... }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-xl mx-auto p-4 bg-white rounded shadow">
-      <h2 className="text-xl font-bold mb-2">Add {resource.charAt(0).toUpperCase() + resource.slice(1)} Product</h2>
-      <Input name="name" placeholder="Product Name" value={form.name} onChange={handleChange} required />
+      <h2 className="text-xl font-bold mb-2">Add Product</h2>
+      <Input placeholder="Product Name" value={name} onChange={e => setName(e.target.value)} required />
       <div>
         <Input name="photos" type="file" multiple onChange={handleFiles} accept="image/*" />
         {photoError && <div className="text-red-500 text-xs mt-1">{photoError}</div>}
@@ -135,67 +109,45 @@ export default function ProductForm({ product, onSave }) {
           <div className="flex flex-row gap-3 mt-2 flex-wrap">
             {preview.map((url, idx) => (
               <div key={idx} className="relative">
-                <img src={url} alt={`Preview ${idx + 1}`} className="w-24 h-24 object-cover rounded border" />
+                <img src={url} alt={'Preview ' + (idx + 1)} className="w-24 h-24 object-cover rounded border" />
                 <button type="button" onClick={() => handleRemovePhoto(idx)}
                   className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                  Ã—
+                  ×
                 </button>
               </div>
             ))}
           </div>
         )}
       </div>
-      <Textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} />
+      <Textarea placeholder="Description" value={description} onChange={e => setDescription(e.target.value)} />
       <div className="flex gap-2">
-        <Input name="price" type="number" placeholder="Price" value={form.price} onChange={handleChange} required />
-        <Input name="discount" type="number" placeholder="Discount" value={form.discount} onChange={handleChange} />
-        <Input name="discountPrice" type="number" placeholder="Discount Price" value={form.discountPrice} readOnly />
+        <Input type="number" placeholder="Fix Price" value={fixPrice} onChange={e => setFixPrice(e.target.value)} required />
+        <Input type="number" placeholder="Discount" value={discount} onChange={e => setDiscount(e.target.value)} />
+        <Input type="number" placeholder="Discount Price" value={discountPrice} readOnly />
       </div>
-      <Input name="totalProduct" type="number" placeholder="Total Product" value={form.totalProduct} onChange={handleChange} required />
-      <div>
-        <label className="block text-sm font-medium mb-1">Category</label>
-        <select
-          name="category"
-          value={form.category}
-          onChange={handleChange}
-          className="w-full border rounded p-2"
-          required
-          disabled
-        >
-          <option value="Adaptors">Adaptors</option>
-        </select>
-      </div>
-      <div>
-        <label className="block text-sm font-medium mb-1">Product No</label>
-        <Input name="productNo" value={form.productNo} onChange={handleChange} placeholder="Product No" required />
-      </div>
-      <div>
-        <label className="block text-sm font-medium mb-1">Product Quality Name</label>
-        <Input name="productQualityName" value={form.productQualityName} onChange={handleChange} placeholder="Product Quality Name" required />
-      </div>
+      <Input type="number" placeholder="Total Product" value={totalProduct} onChange={e => setTotalProduct(e.target.value)} required />
+      <select className="w-full border rounded p-2" value={category} onChange={e => setCategory(e.target.value)} required>
+        <option value="">Select Category</option>
+        {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+      </select>
       <div>
         <div className="mb-1">Tags:</div>
         <div className="flex flex-wrap gap-2">
-          {TAG_OPTIONS.map(option => (
-            <button
-              type="button"
-              key={option}
-              className={`px-3 py-1 rounded-full border text-xs font-medium transition ${form.tag.includes(option) ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-blue-50'}`}
-              onClick={() => handleTagChange(option)}
-            >
-              {option}
+          {tagsList.map(tag => (
+            <button type="button" key={tag}
+              className={`px-2 py-1 rounded-full border ${tags.includes(tag) ? 'bg-blue-500 text-white' : 'bg-gray-100'}`}
+              onClick={() => handleTag(tag)}>
+              {tag}
             </button>
           ))}
         </div>
         <div className="flex flex-wrap gap-2 mt-2">
-          {form.tag.map(tag => (
+          {tags.map(tag => (
             <span key={tag} className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">{tag}</span>
           ))}
         </div>
       </div>
-      <Button type="submit" className="w-full">Create Product</Button>
+      <Button type="submit" className="w-full" disabled={!isFormValid}>Create Product</Button>
     </form>
   );
 } 
-
-

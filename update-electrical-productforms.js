@@ -1,10 +1,44 @@
-"use client";
+const fs = require('fs');
+const path = require('path');
+
+// Recursively get all ProductForm.jsx files under Electrical
+function getAllProductForms(dir, fileList = []) {
+  const files = fs.readdirSync(dir);
+  files.forEach(file => {
+    const filePath = path.join(dir, file);
+    if (fs.statSync(filePath).isDirectory()) {
+      getAllProductForms(filePath, fileList);
+    } else if (file === 'ProductForm.jsx') {
+      fileList.push(filePath);
+    }
+  });
+  return fileList;
+}
+
+function toTitleCase(str) {
+  return str.replace(/([A-Z])/g, ' $1')
+    .replace(/^./, function(s) { return s.toUpperCase(); })
+    .replace(/-/g, ' ')
+    .replace(/_/g, ' ');
+}
+
+const baseDir = path.join(__dirname, 'app', 'Dashboard', 'ProductAdd', 'Electrical');
+const productForms = getAllProductForms(baseDir);
+
+productForms.forEach(filePath => {
+  const folderName = path.basename(path.dirname(filePath));
+  const heading = `Add ${toTitleCase(folderName)} Product`;
+  const category = toTitleCase(folderName);
+  const apiEndpoint = `/api/electrical/${folderName.toLowerCase()}/create`;
+  const tagsList = [toTitleCase(folderName)];
+
+  const template = `"use client";
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
-const tagsList = [" Rotary Switch"];
+const tagsList = ${JSON.stringify(tagsList)};
 
 export default function ProductForm() {
   const [name, setName] = useState("");
@@ -13,7 +47,7 @@ export default function ProductForm() {
   const [discountPrice, setDiscountPrice] = useState("");
   const [totalProduct, setTotalProduct] = useState("");
   const [sku, setSku] = useState("N/A");
-  const [categoryValue] = useState(" Rotary Switch");
+  const [categoryValue] = useState("${category}");
   const [photos, setPhotos] = useState([]);
   const [preview, setPreview] = useState([]);
   const [description, setDescription] = useState("");
@@ -89,13 +123,13 @@ export default function ProductForm() {
     tags.forEach(tag => formData.append("tags", tag));
     photos.forEach(photo => formData.append("photos", photo));
     // API endpoint for this product type:
-    // const res = await fetch("/api/electrical/rotaryswitch/create", { method: "POST", body: formData });
+    // const res = await fetch("${apiEndpoint}", { method: "POST", body: formData });
     // if (res.ok) { ... }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-xl mx-auto p-4 bg-white rounded shadow">
-      <h2 className="text-2xl font-bold mb-4 text-center">Add  Rotary Switch Product</h2>
+      <h2 className="text-2xl font-bold mb-4 text-center">${heading}</h2>
       <div className="grid grid-cols-2 gap-4">
         <Input placeholder="Product Name" value={name} onChange={e => setName(e.target.value)} required />
         <Input placeholder="Price" value={fixPrice} onChange={e => setFixPrice(e.target.value)} required />
@@ -145,3 +179,10 @@ export default function ProductForm() {
     </form>
   );
 }
+`;
+
+  fs.writeFileSync(filePath, template, 'utf8');
+  console.log('Updated:', filePath);
+});
+
+console.log(`\nTotal ProductForm.jsx files updated: ${productForms.length}`); 

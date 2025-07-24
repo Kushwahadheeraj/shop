@@ -4,44 +4,38 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
-const tagsList = ["Heavy Duty", "Lightweight", "Universal", "Child Safe"];
+const tagsList = [" M C B"];
 
 export default function ProductForm() {
   const [name, setName] = useState("");
-  const [photos, setPhotos] = useState([]);
-  const [preview, setPreview] = useState([]);
-  const [description, setDescription] = useState("");
   const [fixPrice, setFixPrice] = useState("");
   const [discount, setDiscount] = useState("");
   const [discountPrice, setDiscountPrice] = useState("");
   const [totalProduct, setTotalProduct] = useState("");
-  const [category, setCategory] = useState("");
-  const [categories, setCategories] = useState([]);
+  const [sku, setSku] = useState("N/A");
+  const [categoryValue] = useState(" M C B");
+  const [photos, setPhotos] = useState([]);
+  const [preview, setPreview] = useState([]);
+  const [description, setDescription] = useState("");
   const [tags, setTags] = useState([]);
   const [photoError, setPhotoError] = useState("");
   const [isFormValid, setIsFormValid] = useState(false);
 
   useEffect(() => {
-    fetch("/api/get-categories?dir=Electrical%5CMCB")
-      .then(res => res.json())
-      .then(data => setCategories(data.categories || []));
-  }, []);
-
-  useEffect(() => {
     const valid =
       name.trim() &&
       fixPrice &&
+      discount &&
+      totalProduct &&
       description.trim() &&
-      category &&
       photos.length >= 1 &&
-      photos.length <= 5 &&
-      totalProduct;
+      photos.length <= 5;
     setIsFormValid(!!valid);
-  }, [name, fixPrice, description, category, photos, totalProduct]);
+  }, [name, fixPrice, discount, totalProduct, description, photos]);
 
   useEffect(() => {
     if (fixPrice && discount) {
-      const dp = Math.max(Number(fixPrice) - Number(discount), 0);
+      const dp = Math.max(Number(fixPrice) - (Number(fixPrice) * Number(discount) / 100), 0);
       setDiscountPrice(dp);
     } else {
       setDiscountPrice("");
@@ -85,24 +79,34 @@ export default function ProductForm() {
     }
     const formData = new FormData();
     formData.append("name", name);
-    formData.append("description", description);
     formData.append("fixPrice", fixPrice);
     formData.append("discount", discount);
     formData.append("discountPrice", discountPrice);
     formData.append("totalProduct", totalProduct);
-    formData.append("category", category);
+    formData.append("sku", sku);
+    formData.append("category", categoryValue);
+    formData.append("description", description);
     tags.forEach(tag => formData.append("tags", tag));
     photos.forEach(photo => formData.append("photos", photo));
-    // TODO: Update API endpoint for each product type
-    // const res = await fetch(`/api/your-endpoint`, { method: "POST", body: formData });
+    // API endpoint for this product type:
+    // const res = await fetch("/api/electrical/mcb/create", { method: "POST", body: formData });
     // if (res.ok) { ... }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-xl mx-auto p-4 bg-white rounded shadow">
-      <h2 className="text-xl font-bold mb-2">Add Product</h2>
-      <Input placeholder="Product Name" value={name} onChange={e => setName(e.target.value)} required />
+      <h2 className="text-2xl font-bold mb-4 text-center">Add  M C B Product</h2>
+      <div className="grid grid-cols-2 gap-4">
+        <Input placeholder="Product Name" value={name} onChange={e => setName(e.target.value)} required />
+        <Input placeholder="Price" value={fixPrice} onChange={e => setFixPrice(e.target.value)} required />
+        <Input placeholder="Discount (%)" value={discount} onChange={e => setDiscount(e.target.value)} required />
+        <Input placeholder="Fix Price (auto)" value={discountPrice} readOnly />
+        <Input placeholder="Total Product" value={totalProduct} onChange={e => setTotalProduct(e.target.value)} required />
+        <Input placeholder="SKU" value={sku} onChange={e => setSku(e.target.value)} />
+        <Input placeholder="Category" value={categoryValue} readOnly />
+      </div>
       <div>
+        <label className="block text-sm font-medium mb-1">Photos <span className="text-xs">(1-5 allowed)</span></label>
         <Input name="photos" type="file" multiple onChange={handleFiles} accept="image/*" />
         {photoError && <div className="text-red-500 text-xs mt-1">{photoError}</div>}
         {preview.length > 0 && (
@@ -120,22 +124,12 @@ export default function ProductForm() {
         )}
       </div>
       <Textarea placeholder="Description" value={description} onChange={e => setDescription(e.target.value)} />
-      <div className="flex gap-2">
-        <Input type="number" placeholder="Fix Price" value={fixPrice} onChange={e => setFixPrice(e.target.value)} required />
-        <Input type="number" placeholder="Discount" value={discount} onChange={e => setDiscount(e.target.value)} />
-        <Input type="number" placeholder="Discount Price" value={discountPrice} readOnly />
-      </div>
-      <Input type="number" placeholder="Total Product" value={totalProduct} onChange={e => setTotalProduct(e.target.value)} required />
-      <select className="w-full border rounded p-2" value={category} onChange={e => setCategory(e.target.value)} required>
-        <option value="">Select Category</option>
-        {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
-      </select>
       <div>
-        <div className="mb-1">Tags:</div>
+        <div className="mb-1">Tags (Select multiple)</div>
         <div className="flex flex-wrap gap-2">
           {tagsList.map(tag => (
             <button type="button" key={tag}
-              className={`px-2 py-1 rounded-full border ${tags.includes(tag) ? 'bg-blue-500 text-white' : 'bg-gray-100'}`}
+              className={'px-2 py-1 rounded-full border ' + (tags.includes(tag) ? 'bg-blue-500 text-white' : 'bg-gray-100')}
               onClick={() => handleTag(tag)}>
               {tag}
             </button>
@@ -150,4 +144,4 @@ export default function ProductForm() {
       <Button type="submit" className="w-full" disabled={!isFormValid}>Create Product</Button>
     </form>
   );
-} 
+}

@@ -95,7 +95,7 @@ export default function ProductForm() {
     photos.forEach(photo => formData.append("photos", photo));
     // TODO: Update API endpoint for each product type
     // const res = await fetch(`/api/your-endpoint`, { method: "POST", body: formData });
-    // if (res.ok) { ... }
+    if (res.ok) onSave && onSave();
   };
 
   return (

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const serviceController = require('../home/serviceController');
+const serviceController = require('../../controllers/home/serviceController');
 
 // Service routes
 router.post('/create', serviceController.createService);

@@ -3,7 +3,7 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 const router = express.Router();
-const cardController = require('../home/cardController');
+const cardController = require('../../controllers/home/cardController');
 
 // Card routes
 router.post('/create', upload.single('image'), cardController.createCard);

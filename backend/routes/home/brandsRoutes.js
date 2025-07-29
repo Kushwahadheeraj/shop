@@ -3,7 +3,7 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 const router = express.Router();
-const brandsController = require('../home/brandsController');
+const brandsController = require('../../controllers/home/brandsController');
 
 // Brands routes
 router.post('/create', upload.single('logo'), brandsController.createBrand);

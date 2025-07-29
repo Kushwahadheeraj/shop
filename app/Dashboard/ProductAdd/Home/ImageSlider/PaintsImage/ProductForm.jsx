@@ -78,7 +78,7 @@ export default function ProductForm() {
 
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-6 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
-      <h2 className="text-2xl font-bold mb-6 text-center">Add PaintsImage Image Slider</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">Add Paints Image Slider</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Main Text */}

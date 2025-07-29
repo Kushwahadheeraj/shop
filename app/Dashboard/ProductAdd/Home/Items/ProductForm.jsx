@@ -112,19 +112,6 @@ export default function ProductForm() {
       <h2 className="text-2xl font-bold mb-6 text-center">Add Items Product</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* ID */}
-        <div>
-          <label className="block text-sm font-medium mb-2">ID *</label>
-          <Input 
-            name="id" 
-            value={form.id} 
-            onChange={handleChange} 
-            placeholder="Enter ID" 
-            required 
-            className="w-full"
-          />
-        </div>
-
         {/* Image Path */}
         <div>
           <label className="block text-sm font-medium mb-2">Image Path</label>
@@ -196,21 +183,6 @@ export default function ProductForm() {
             rows={3}
           />
         </div>
-
-        {/* Button Text */}
-        <div>
-          <label className="block text-sm font-medium mb-2">Button Text</label>
-          <Input 
-            name="buttonText" 
-            value={form.buttonText} 
-            onChange={handleChange} 
-            placeholder="SHOP NOW" 
-            className="w-full"
-          />
-        </div>
-
-       
-
         {/* Text Color */}
         <div>
           <label className="block text-sm font-medium mb-2">Text Color</label>
@@ -227,21 +199,6 @@ export default function ProductForm() {
             </SelectContent>
           </Select>
         </div>
-
-      
-      {/* Content */}
-      <div>
-        <label className="block text-sm font-medium mb-2">Custom Content (HTML/JSX)</label>
-        <Textarea 
-          name="content" 
-          value={form.content} 
-          onChange={handleChange} 
-          placeholder="Enter custom content (optional)" 
-          className="w-full"
-          rows={4}
-        />
-      </div>
-
       {/* Image Upload */}
       <div>
         <label className="block text-sm font-medium mb-2">Upload Image *</label>
@@ -282,6 +239,7 @@ export default function ProductForm() {
       >
         Create Item
       </Button>
+      </div>
     </form>
   );
 }

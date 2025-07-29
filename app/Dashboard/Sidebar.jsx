@@ -319,80 +319,80 @@ const sections = [
       { name: 'Electrical Fitting', path: '/Dashboard/ProductAdd/Fitting' },
       { name: 'Fiber Sheet', path: '/Dashboard/ProductAdd/Fiber' },
       { name: 'Hardware', path: '/Dashboard/ProductAdd/Hardware' },
-      { name: 'Home',
-        subItemsName:[
-           {
-                name: 'Brands',
-                path: '/Dashboard/ProductAdd/Home/Brands',
+      {
+        name: 'Home',
+        subItemsName: [
+          {
+            name: 'Brands',
+            path: '/Dashboard/ProductAdd/Home/Brands',
+          },
+          {
+            name: 'Card',
+            path: '/Dashboard/ProductAdd/Home/Card',
+          },
+          {
+            name: 'Card Slider',
+            path: '/Dashboard/ProductAdd/Home/CardSlider',
+          },
+          {
+            name: 'Categories',
+            path: '/Dashboard/ProductAdd/Home/Categories',
+          },
+          {
+            name: 'Electrical',
+            path: '/Dashboard/ProductAdd/Home/Electrical',
+          },
+          {
+            name: 'Image Slider',
+            subItemsNameComponent: [
+              {
+                name: 'Electrical Image',
+                path: '/Dashboard/ProductAdd/Home/ImageSlider/ElectricImage',
               },
               {
-                name: 'Card',
-                path: '/Dashboard/ProductAdd/Home/Card',
-              },
-              {
-                name: 'Card Slider',
-                path: '/Dashboard/ProductAdd/Home/CardSlider',
-              },
-               {
-                name: 'Categories',
-                path: '/Dashboard/ProductAdd/Home/Categories',
-              },
-              {
-                name: 'Electrical',
-                path: '/Dashboard/ProductAdd/Home/Electrical',
-              },
-              {
-                name: 'Image Slider',
-                subItemsNameComponent: [
-                  {
-                    name: 'Electrical Image',
-                path: '/Dashboard/ProductAdd/Home/ImageSlider/ElectricalImage',
-                  },
-                  {
-                    name: 'Faucet Image',
+                name: 'Faucet Image',
                 path: '/Dashboard/ProductAdd/Home/ImageSlider/FaucetImage',
-                  },
-                  {
-                    name: 'Paints Image',
+              },
+              {
+                name: 'Paints Image',
                 path: '/Dashboard/ProductAdd/Home/ImageSlider/PaintsImage',
-                  },
-                  {
-                    name: 'Sanitary Image',
+              },
+              {
+                name: 'Sanitary Image',
                 path: '/Dashboard/ProductAdd/Home/ImageSlider/SanitaryImage',
-                  },
-                  {
-                    name: 'Tools Image',
+              },
+              {
+                name: 'Tools Image',
                 path: '/Dashboard/ProductAdd/Home/ImageSlider/ToolsImage',
-                  },
-                ]
               },
-            {
-                name: 'Items',
-                path: '/Dashboard/ProductAdd/Home/Items',
-              },
-              {
-                name: 'Paints',
-                path: '/Dashboard/ProductAdd/Home/Paints',
-              },
-              {
-                name: 'Popular Products',
-                path: '/Dashboard/ProductAdd/Home/PopularProducts',
-              },
-               {
-                name: 'Product Tools',
-                path: '/Dashboard/ProductAdd/Home/ProductTools',
-              },
-              {
-                name: 'Service',
-                path: '/Dashboard/ProductAdd/Home/Service',
-              },
-              {
-                name: 'Tools',
-                path: '/Dashboard/ProductAdd/Home/Tools',
-              },
-            ]
-        
-        },
+            ],
+          },
+          {
+            name: 'Items',
+            path: '/Dashboard/ProductAdd/Home/Items',
+          },
+          {
+            name: 'Paints',
+            path: '/Dashboard/ProductAdd/Home/Paints',
+          },
+          {
+            name: 'Popular Products',
+            path: '/Dashboard/ProductAdd/Home/PopularProducts',
+          },
+          {
+            name: 'Product Tools',
+            path: '/Dashboard/ProductAdd/Home/ProductTools',
+          },
+          {
+            name: 'Service',
+            path: '/Dashboard/ProductAdd/Home/Service',
+          },
+          {
+            name: 'Tools',
+            path: '/Dashboard/ProductAdd/Home/Tools',
+          },
+        ],
+      },
       { name: 'Home Decor', path: '/Dashboard/ProductAdd/HomeDecor' },
       { name: 'House Hold Ladder', path: '/Dashboard/ProductAdd/HouseHold' },
       { name: 'Lighting', path: '/Dashboard/ProductAdd/Lighting' },
@@ -1770,29 +1770,95 @@ const sections = [
               {
                 name: 'Faucets',
                 subItemsNameComponentName: [
-                  { name: 'Angular Stop Cock', path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/AngularStopCock' },
-                  { name: 'Bath Spout', path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/BathSpout' },
-                  { name: 'Bib Cock', path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/BibCock' },
-                  { name: 'Chbm', path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/Chbm' },
-                  { name: 'Concealed Stop Cock', path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/ConcealedStopCock' },
-                  { name: 'Csc Exp Kit', path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/CscExpKit' },
-                  { name: 'Deusch Mixer', path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/DeuschMixer' },
-                  { name: 'Exposed Mixers', path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/ExposedMixers' },
-                  { name: 'Flush Cock', path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/FlushCock' },
-                  { name: 'Medical Series', path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/MedicalSeries' },
-                  { name: 'Mixer Faucet', path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/MixerFaucet' },
-                  { name: 'Pillar Cock', path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/PillarCock' },
-                  { name: 'Pillar Cock Tall', path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/PillarCockTall' },
-                  { name: 'Pillar Faucet', path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/PillarFaucet' },
-                  { name: 'Pressmatic', path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/Pressmatic' },
-                  { name: 'Recessed', path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/Recessed' },
-                  { name: 'Sink Cock', path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/SinkCock' },
-                  { name: 'Sink Mixer', path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/SinkMixer' },
-                  { name: 'Single Lever Divertor', path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/SingleLeverDivertor' },
-                  { name: 'Slbm Faucet', path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/SlbmFaucet' },
-                  { name: 'Slbm Faucet Tall', path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/SlbmFaucetTall' },
-                  { name: 'Wall Mixer', path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/WallMixer' },
-                ]
+                  {
+                    name: 'Angular Stop Cock',
+                    path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/AngularStopCock',
+                  },
+                  {
+                    name: 'Bath Spout',
+                    path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/BathSpout',
+                  },
+                  {
+                    name: 'Bib Cock',
+                    path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/BibCock',
+                  },
+                  {
+                    name: 'Chbm',
+                    path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/Chbm',
+                  },
+                  {
+                    name: 'Concealed Stop Cock',
+                    path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/ConcealedStopCock',
+                  },
+                  {
+                    name: 'Csc Exp Kit',
+                    path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/CscExpKit',
+                  },
+                  {
+                    name: 'Deusch Mixer',
+                    path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/DeuschMixer',
+                  },
+                  {
+                    name: 'Exposed Mixers',
+                    path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/ExposedMixers',
+                  },
+                  {
+                    name: 'Flush Cock',
+                    path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/FlushCock',
+                  },
+                  {
+                    name: 'Medical Series',
+                    path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/MedicalSeries',
+                  },
+                  {
+                    name: 'Mixer Faucet',
+                    path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/MixerFaucet',
+                  },
+                  {
+                    name: 'Pillar Cock',
+                    path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/PillarCock',
+                  },
+                  {
+                    name: 'Pillar Cock Tall',
+                    path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/PillarCockTall',
+                  },
+                  {
+                    name: 'Pillar Faucet',
+                    path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/PillarFaucet',
+                  },
+                  {
+                    name: 'Pressmatic',
+                    path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/Pressmatic',
+                  },
+                  {
+                    name: 'Recessed',
+                    path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/Recessed',
+                  },
+                  {
+                    name: 'Sink Cock',
+                    path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/SinkCock',
+                  },
+                  {
+                    name: 'Sink Mixer',
+                    path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/SinkMixer',
+                  },
+                  {
+                    name: 'Single Lever Divertor',
+                    path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/SingleLeverDivertor',
+                  },
+                  {
+                    name: 'Slbm Faucet',
+                    path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/SlbmFaucet',
+                  },
+                  {
+                    name: 'Slbm Faucet Tall',
+                    path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/SlbmFaucetTall',
+                  },
+                  {
+                    name: 'Wall Mixer',
+                    path: '/Dashboard/ProductAdd/Sanitary/Hindware/Faucets/WallMixer',
+                  },
+                ],
               },
             ],
           },
@@ -2089,9 +2155,6 @@ const sections = [
               },
             ],
           },
-          
-          
-          
         ],
       },
       {
@@ -4029,29 +4092,95 @@ const sections = [
               {
                 name: 'Faucets',
                 subItemsNameComponentName: [
-                  { name: 'Angular Stop Cock', path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/AngularStopCock' },
-                  { name: 'Bath Spout', path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/BathSpout' },
-                  { name: 'Bib Cock', path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/BibCock' },
-                  { name: 'Chbm', path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/Chbm' },
-                  { name: 'Concealed Stop Cock', path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/ConcealedStopCock' },
-                  { name: 'Csc Exp Kit', path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/CscExpKit' },
-                  { name: 'Deusch Mixer', path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/DeuschMixer' },
-                  { name: 'Exposed Mixers', path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/ExposedMixers' },
-                  { name: 'Flush Cock', path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/FlushCock' },
-                  { name: 'Medical Series', path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/MedicalSeries' },
-                  { name: 'Mixer Faucet', path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/MixerFaucet' },
-                  { name: 'Pillar Cock', path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/PillarCock' },
-                  { name: 'Pillar Cock Tall', path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/PillarCockTall' },
-                  { name: 'Pillar Faucet', path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/PillarFaucet' },
-                  { name: 'Pressmatic', path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/Pressmatic' },
-                  { name: 'Recessed', path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/Recessed' },
-                  { name: 'Sink Cock', path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/SinkCock' },
-                  { name: 'Sink Mixer', path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/SinkMixer' },
-                  { name: 'Single Lever Divertor', path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/SingleLeverDivertor' },
-                  { name: 'Slbm Faucet', path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/SlbmFaucet' },
-                  { name: 'Slbm Faucet Tall', path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/SlbmFaucetTall' },
-                  { name: 'Wall Mixer', path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/WallMixer' },
-                ]
+                  {
+                    name: 'Angular Stop Cock',
+                    path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/AngularStopCock',
+                  },
+                  {
+                    name: 'Bath Spout',
+                    path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/BathSpout',
+                  },
+                  {
+                    name: 'Bib Cock',
+                    path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/BibCock',
+                  },
+                  {
+                    name: 'Chbm',
+                    path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/Chbm',
+                  },
+                  {
+                    name: 'Concealed Stop Cock',
+                    path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/ConcealedStopCock',
+                  },
+                  {
+                    name: 'Csc Exp Kit',
+                    path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/CscExpKit',
+                  },
+                  {
+                    name: 'Deusch Mixer',
+                    path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/DeuschMixer',
+                  },
+                  {
+                    name: 'Exposed Mixers',
+                    path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/ExposedMixers',
+                  },
+                  {
+                    name: 'Flush Cock',
+                    path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/FlushCock',
+                  },
+                  {
+                    name: 'Medical Series',
+                    path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/MedicalSeries',
+                  },
+                  {
+                    name: 'Mixer Faucet',
+                    path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/MixerFaucet',
+                  },
+                  {
+                    name: 'Pillar Cock',
+                    path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/PillarCock',
+                  },
+                  {
+                    name: 'Pillar Cock Tall',
+                    path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/PillarCockTall',
+                  },
+                  {
+                    name: 'Pillar Faucet',
+                    path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/PillarFaucet',
+                  },
+                  {
+                    name: 'Pressmatic',
+                    path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/Pressmatic',
+                  },
+                  {
+                    name: 'Recessed',
+                    path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/Recessed',
+                  },
+                  {
+                    name: 'Sink Cock',
+                    path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/SinkCock',
+                  },
+                  {
+                    name: 'Sink Mixer',
+                    path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/SinkMixer',
+                  },
+                  {
+                    name: 'Single Lever Divertor',
+                    path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/SingleLeverDivertor',
+                  },
+                  {
+                    name: 'Slbm Faucet',
+                    path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/SlbmFaucet',
+                  },
+                  {
+                    name: 'Slbm Faucet Tall',
+                    path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/SlbmFaucetTall',
+                  },
+                  {
+                    name: 'Wall Mixer',
+                    path: '/Dashboard/ProductList/Sanitary/Hindware/Faucets/WallMixer',
+                  },
+                ],
               },
             ],
           },
@@ -4348,9 +4477,6 @@ const sections = [
               },
             ],
           },
-          
-          
-          
         ],
       },
       {
@@ -4605,7 +4731,6 @@ const sections = [
   { name: 'Coupon List', path: '/Dashboard/CouponList' },
 ];
 
-
 // Add this helper function at the top (after imports):
 function sortSidebarItems(items) {
   if (!Array.isArray(items)) return items;
@@ -4713,7 +4838,7 @@ export default function Sidebar({ onSetting, onLogout, open, onClose }) {
                       )}
                     </button>
                   )}
-                  {section.subItemsNameComponentName &&
+                {section.subItemsNameComponentName &&
                   section.subItemsNameComponentName.length > 0 && (
                     <button
                       className='ml-2'
@@ -4763,7 +4888,7 @@ export default function Sidebar({ onSetting, onLogout, open, onClose }) {
                           setOpenSubSection={setOpenSubSection}
                         />
                       ))}
-                       {Array.isArray(section.subItemsNameComponentName) &&
+                    {Array.isArray(section.subItemsNameComponentName) &&
                       section.subItemsNameComponentName.map((item) => (
                         <SidebarItem
                           key={item.name}
@@ -4800,15 +4925,25 @@ export default function Sidebar({ onSetting, onLogout, open, onClose }) {
 
 function SidebarItem({ item }) {
   const hasSubItems = Array.isArray(item.subItems) && item.subItems.length > 0;
-  const hasSubItemsName = Array.isArray(item.subItemsName) && item.subItemsName.length > 0;
-  const hasSubItemsNameComponent = Array.isArray(item.subItemsNameComponent) && item.subItemsNameComponent.length > 0;
-  const hasSubItemsNameComponentName = Array.isArray(item.subItemsNameComponentName) && item.subItemsNameComponentName.length > 0;
+  const hasSubItemsName =
+    Array.isArray(item.subItemsName) && item.subItemsName.length > 0;
+  const hasSubItemsNameComponent =
+    Array.isArray(item.subItemsNameComponent) &&
+    item.subItemsNameComponent.length > 0;
+  const hasSubItemsNameComponentName =
+    Array.isArray(item.subItemsNameComponentName) &&
+    item.subItemsNameComponentName.length > 0;
 
   // Local state for this item's expand/collapse
   const [isOpen, setIsOpen] = useState(false);
 
   const handleRowClick = () => {
-    if (hasSubItems || hasSubItemsName || hasSubItemsNameComponent || hasSubItemsNameComponentName) {
+    if (
+      hasSubItems ||
+      hasSubItemsName ||
+      hasSubItemsNameComponent ||
+      hasSubItemsNameComponentName
+    ) {
       setIsOpen((prev) => !prev);
     }
   };
@@ -4817,11 +4952,22 @@ function SidebarItem({ item }) {
     <li>
       <div
         className={`flex items-center cursor-pointer ${
-          (hasSubItems || hasSubItemsName || hasSubItemsNameComponent || hasSubItemsNameComponentName) ? 'hover:bg-zinc-100' : ''
+          hasSubItems ||
+          hasSubItemsName ||
+          hasSubItemsNameComponent ||
+          hasSubItemsNameComponentName
+            ? 'hover:bg-zinc-100'
+            : ''
         }`}
         onClick={handleRowClick}
       >
-        {item.path && !(hasSubItems || hasSubItemsName || hasSubItemsNameComponent || hasSubItemsNameComponentName) ? (
+        {item.path &&
+        !(
+          hasSubItems ||
+          hasSubItemsName ||
+          hasSubItemsNameComponent ||
+          hasSubItemsNameComponentName
+        ) ? (
           <Link
             href={item.path}
             className='block px-2 py-2 rounded text-sm hover:bg-zinc-700 transition flex-1'
@@ -4833,7 +4979,10 @@ function SidebarItem({ item }) {
             <span className='align-middle'>{item.name}</span>
           </span>
         )}
-        {(hasSubItems || hasSubItemsName || hasSubItemsNameComponent || hasSubItemsNameComponentName) && (
+        {(hasSubItems ||
+          hasSubItemsName ||
+          hasSubItemsNameComponent ||
+          hasSubItemsNameComponentName) && (
           <span className='ml-2'>
             {isOpen ? <FiChevronUp /> : <FiChevronDown />}
           </span>

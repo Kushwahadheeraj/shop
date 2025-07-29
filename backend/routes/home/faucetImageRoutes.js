@@ -3,7 +3,7 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 const router = express.Router();
-const faucetImageController = require('../home/faucetImageController');
+const faucetImageController = require('../../controllers/home/faucetImageController');
 
 // FaucetImage routes
 router.post('/create', upload.single('uploadedImage'), faucetImageController.createFaucetImage);

@@ -3,7 +3,7 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 const router = express.Router();
-const toolsImageController = require('../home/toolsImageController');
+const toolsImageController = require('../../controllers/home/toolsImageController');
 
 // ToolsImage routes
 router.post('/create', upload.single('uploadedImage'), toolsImageController.createToolsImage);

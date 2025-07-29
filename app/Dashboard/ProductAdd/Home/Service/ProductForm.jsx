@@ -150,6 +150,7 @@ export default function ProductForm() {
       >
         Create Service
       </Button>
+      </div>
     </form>
   );
 }

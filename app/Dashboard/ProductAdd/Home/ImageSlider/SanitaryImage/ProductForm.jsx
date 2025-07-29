@@ -47,13 +47,9 @@ export default function ProductForm() {
     }
 
     const data = new FormData();
-    data.append('image', form.image);
     data.append('mainText', form.mainText);
     data.append('subtext', form.subtext);
-    data.append('descrText', form.descrText);
     data.append('descText', form.descText);
-    data.append('offer', form.offer);
-    data.append('category', form.category);
     data.append('uploadedImage', file);
 
     try {
@@ -65,13 +61,11 @@ export default function ProductForm() {
       if (res.ok) {
         alert('Image Slider item created successfully!');
         setForm({
-          image: '',
           mainText: '',
           subtext: '',
           descrText: '',
           descText: '',
           offer: '',
-          category: 'SanitaryImage',
         });
         setFile(null);
         setPreview(null);
@@ -86,12 +80,12 @@ export default function ProductForm() {
 
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-6 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
-      <h2 className="text-2xl font-bold mb-6 text-center">Add SanitaryImage Image Slider</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">Add Sanitary Image Slider</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Main Text */}
         <div>
-          <label className="block text-sm font-medium mb-2">Main Text *</label>
+          <label className="block text-sm font-medium mb-2">Main Text</label>
           <Input 
             name="mainText" 
             value={form.mainText} 
@@ -104,7 +98,7 @@ export default function ProductForm() {
 
         {/* Sub Text */}
         <div>
-          <label className="block text-sm font-medium mb-2">Sub Text *</label>
+          <label className="block text-sm font-medium mb-2">Sub Text </label>
           <Input 
             name="subtext" 
             value={form.subtext} 
@@ -115,17 +109,7 @@ export default function ProductForm() {
           />
         </div>
 
-        {/* Image Path */}
-        <div>
-          <label className="block text-sm font-medium mb-2">Image Path</label>
-          <Input 
-            name="image" 
-            value={form.image} 
-            onChange={handleChange} 
-            placeholder="/images/slider1.jpg" 
-            className="w-full"
-          />
-        </div>
+       
 
         {/* Offer */}
         <div>
@@ -139,24 +123,15 @@ export default function ProductForm() {
           />
         </div>
 
-        {/* Category */}
-        <div>
-          <label className="block text-sm font-medium mb-2">Category</label>
-          <Input 
-            name="category" 
-            value={form.category} 
-            readOnly 
-            className="w-full bg-gray-50"
-          />
-        </div>
+       
       </div>
 
       {/* Description Text */}
       <div>
-        <label className="block text-sm font-medium mb-2">Description Text *</label>
+        <label className="block text-sm font-medium mb-2">Description Text </label>
         <Textarea 
           name="descrText" 
-          value={form.descrText} 
+          value={form.descText} 
           onChange={handleChange} 
           placeholder="Enter description text" 
           required 
@@ -165,22 +140,10 @@ export default function ProductForm() {
         />
       </div>
 
-      {/* Desc Text */}
-      <div>
-        <label className="block text-sm font-medium mb-2">Additional Description</label>
-        <Textarea 
-          name="descText" 
-          value={form.descText} 
-          onChange={handleChange} 
-          placeholder="Enter additional description" 
-          className="w-full"
-          rows={3}
-        />
-      </div>
 
       {/* Image Upload */}
       <div>
-        <label className="block text-sm font-medium mb-2">Upload Image *</label>
+        <label className="block text-sm font-medium mb-2">Upload Image</label>
         <Input 
           name="uploadedImage" 
           type="file" 

@@ -3,7 +3,7 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 const router = express.Router();
-const categoriesController = require('../home/categoriesController');
+const categoriesController = require('../../controllers/home/categoriesController');
 
 // Categories routes
 router.post('/create', upload.single('image'), categoriesController.createCategory);

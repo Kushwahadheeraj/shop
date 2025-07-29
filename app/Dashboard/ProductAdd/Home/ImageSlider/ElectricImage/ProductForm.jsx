@@ -168,6 +168,7 @@ export default function ProductForm() {
       >
         Create Image Slider Item
       </Button>
+      </div>
     </form>
   );
 }

@@ -3,7 +3,7 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 const router = express.Router();
-const homePaintsController = require('../home/homePaintsController');
+const homePaintsController = require('../../controllers/home/homePaintsController');
 
 // HomePaints routes
 router.post('/create', upload.single('image'), homePaintsController.createHomePaint);

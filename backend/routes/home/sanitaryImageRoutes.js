@@ -3,7 +3,7 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 const router = express.Router();
-const sanitaryImageController = require('../home/sanitaryImageController');
+const sanitaryImageController = require('../../controllers/home/sanitaryImageController');
 
 // SanitaryImage routes
 router.post('/create', upload.single('uploadedImage'), sanitaryImageController.createSanitaryImage);

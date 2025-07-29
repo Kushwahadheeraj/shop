@@ -3,7 +3,7 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 const router = express.Router();
-const homeElectricalController = require('../home/homeElectricalController');
+const homeElectricalController = require('../../controllers/home/homeElectricalController');
 
 // HomeElectrical routes
 router.post('/create', upload.single('image'), homeElectricalController.createHomeElectrical);

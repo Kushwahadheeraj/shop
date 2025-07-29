@@ -1,206 +1,142 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import API_BASE_URL from "@/lib/apiConfig";
 
-const categories = ["Surface Cleaner", "Toilet Cleaner", "Glass Cleaner"];
-const tagsList = ["Antibacterial", "Eco Friendly", "Fragrant", "Heavy Duty"];
-const TAG_OPTIONS = [
-  "Antibacterial",
-  "Eco Friendly",
-  "Fragrant",
-  "Heavy Duty"
-];
-
-export default function ProductForm({ product, onSave }) {
-  const [form, setForm] = useState(product || {
+export default function ProductForm() {
+  const [form, setForm] = useState({
     name: '',
-    price: '',
-    discount: '',
-    fixPrice: '',
-    totalProduct: '',
-    sku: 'N/A',
     category: 'Cleaning',
-    tag: [],
-    description: '',
   });
-  const [files, setFiles] = useState([]);
-  const [preview, setPreview] = useState([]);
+  const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState(null);
   const [photoError, setPhotoError] = useState("");
 
   const handleChange = e => {
     const { name, value } = e.target;
-    let updatedForm = { ...form, [name]: value };
-    if ((name === 'price' || name === 'discount') && updatedForm.price && updatedForm.discount) {
-      const price = parseFloat(updatedForm.price);
-      const discount = parseFloat(updatedForm.discount);
-      if (!isNaN(price) && !isNaN(discount)) {
-        updatedForm.fixPrice = (price - (price * discount / 100)).toFixed(2);
-      } else {
-        updatedForm.fixPrice = '';
-      }
-    }
-    setForm(updatedForm);
+    setForm(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleFiles = e => {
-    let selected = Array.from(e.target.files);
-    let newFiles = [...files, ...selected];
-    // Remove duplicates by name+size
-    newFiles = newFiles.filter(
-      (file, idx, arr) =>
-        arr.findIndex(f => f.name === file.name && f.size === file.size) === idx
-    );
-    if (newFiles.length > 5) {
-      setPhotoError("You can upload up to 5 photos only.");
-      newFiles = newFiles.slice(0, 5);
-    } else {
+  // Image handling - only 1 image
+  const handleFile = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setPreview(URL.createObjectURL(selectedFile));
       setPhotoError("");
     }
-    setFiles(newFiles);
-    setPreview(newFiles.map(file => URL.createObjectURL(file)));
   };
 
-  const handleRemovePhoto = (index) => {
-    const newFiles = files.filter((_, i) => i !== index);
-    const newPreview = preview.filter((_, i) => i !== index);
-    setFiles(newFiles);
-    setPreview(newPreview);
+  const handleRemovePhoto = () => {
+    setFile(null);
+    setPreview(null);
   };
 
-  const handleTagChange = (option) => {
-    setForm((prev) => {
-      const already = prev.tag.includes(option);
-      return {
-        ...prev,
-        tag: already ? prev.tag.filter(t => t !== option) : [...prev.tag, option]
-      };
-    });
+  const isFormValid = () => {
+    return form.name && file;
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (files.length === 0) {
-      setPhotoError("Please upload at least 1 photo.");
+    if (!isFormValid()) {
+      setPhotoError("Please fill all required fields and upload an image");
       return;
     }
-    setPhotoError("");
-    const formToSubmit = { ...form };
-    const data = new FormData();
-    Object.entries(formToSubmit).forEach(([k, v]) => {
-      if (k === 'tag') {
-        v.forEach(val => data.append('tag', val));
-      } else {
-        data.append(k, v);
-      }
-    });
-    files.forEach(f => data.append('photos', f));
-    const res = await fetch(`${API_BASE_URL}/cleaning/create`, { method: 'POST', body: data });
-    if (res.ok) {
-      if (onSave) onSave();
-    }
-  };
 
-  // Check if all required fields (except SKU and Category) are filled
-  const isFormValid = () => {
-    if (!form.name.trim()) return false;
-    if (!form.price || isNaN(Number(form.price))) return false;
-    if (form.discount === '' || isNaN(Number(form.discount))) return false;
-    if (form.fixPrice === '' || isNaN(Number(form.fixPrice))) return false;
-    if (!form.totalProduct || isNaN(Number(form.totalProduct))) return false;
-    if (!form.tag || !Array.isArray(form.tag) || form.tag.length === 0) return false;
-    if (!form.description.trim()) return false;
-    if (!files || files.length === 0) return false;
-    return true;
+    const data = new FormData();
+    data.append('name', form.name);
+    data.append('category', form.category);
+    data.append('image', file);
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/cleaning/product-form.jsx/create`, { 
+        method: 'POST', 
+        body: data 
+      });
+      
+      if (res.ok) {
+        alert('Product created successfully!');
+        setForm({ name: '', category: 'Cleaning' });
+        setFile(null);
+        setPreview(null);
+      } else {
+        alert('Error creating product');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error creating product');
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-6 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
-      <h2 className="text-2xl font-bold mb-2 text-center">Add Cleaning Product</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Product Name</label>
-          <Input name="name" value={form.name} onChange={handleChange} placeholder="Product Name" required />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Price</label>
-          <Input name="price" type="number" value={form.price} onChange={handleChange} placeholder="Price" required />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Discount (%)</label>
-          <Input name="discount" type="number" value={form.discount} onChange={handleChange} placeholder="Discount (%)" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Fix Price (auto)</label>
-          <Input name="fixPrice" type="number" value={form.fixPrice} readOnly placeholder="Fix Price (auto)" className="bg-gray-100" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Total Product</label>
-          <Input name="totalProduct" type="number" value={form.totalProduct} onChange={handleChange} placeholder="Total Product" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">SKU</label>
-          <Input name="sku" value={form.sku} onChange={handleChange} placeholder="SKU" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Category</label>
-          <Input name="category" value={form.category} onChange={handleChange} placeholder="Category" />
-        </div>
-        <div className="md:col-span-2">
-          <label className="block text-sm font-medium mb-1">Photos <span className="text-xs text-gray-400">(1-5 allowed)</span></label>
-          <Input name="photos" type="file" multiple onChange={handleFiles} accept="image/*" />
-          {photoError && <div className="text-red-500 text-xs mt-1">{photoError}</div>}
-          {preview.length > 0 && (
-            <div className="flex flex-row gap-3 mt-2 flex-wrap">
-              {preview.map((url, idx) => (
-                <div key={idx} className="relative">
-                  <img
-                    src={url}
-                    alt={`Preview ${idx + 1}`}
-                    className="w-24 h-24 object-cover rounded border"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => handleRemovePhoto(idx)}
-                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-        <div className="md:col-span-2">
-          <label className="block text-sm font-medium mb-1">Description</label>
-          <Textarea name="description" value={form.description} onChange={handleChange} placeholder="Description" />
-        </div>
-        <div className="md:col-span-2">
-          <label className="block text-sm font-medium mb-1">Tags (Select multiple)</label>
-          <div className="flex flex-wrap gap-2 mb-2">
-            {form.tag.map((t) => (
-              <span key={t} className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">{t}</span>
-            ))}
-            {form.tag.length === 0 && <span className="text-gray-400 text-xs">No tag selected</span>}
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {TAG_OPTIONS.map(option => (
-              <button
-                type="button"
-                key={option}
-                className={`px-3 py-1 rounded-full border text-xs font-medium transition ${form.tag.includes(option) ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-blue-50'}`}
-                onClick={() => handleTagChange(option)}
-              >
-                {option}
-              </button>
-            ))}
-          </div>
-        </div>
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-6 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
+      <h2 className="text-2xl font-bold mb-6 text-center">Add Cleaning Product</h2>
+      
+      {/* Product Name */}
+      <div>
+        <label className="block text-sm font-medium mb-2">Product Name</label>
+        <Input 
+          name="name" 
+          value={form.name} 
+          onChange={handleChange} 
+          placeholder="Enter product name" 
+          required 
+          className="w-full"
+        />
       </div>
-      <Button type="submit" className="w-full mt-4" disabled={!isFormValid()}>Create Product</Button>
+
+      {/* Category */}
+      <div>
+        <label className="block text-sm font-medium mb-2">Category</label>
+        <Input 
+          name="category" 
+          value={form.category} 
+          readOnly 
+          className="w-full bg-gray-50"
+        />
+      </div>
+
+      {/* Image Upload */}
+      <div>
+        <label className="block text-sm font-medium mb-2">Product Image</label>
+        <Input 
+          name="image" 
+          type="file" 
+          onChange={handleFile} 
+          accept="image/*" 
+          required 
+          className="w-full"
+        />
+        {photoError && <div className="text-red-500 text-xs mt-1">{photoError}</div>}
+        
+        {/* Image Preview */}
+        {preview && (
+          <div className="mt-4 relative">
+            <img 
+              src={preview} 
+              alt="Preview" 
+              className="w-32 h-32 object-cover rounded border"
+            />
+            <button 
+              type="button" 
+              onClick={handleRemovePhoto} 
+              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+            >
+              ×
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Submit Button */}
+      <Button 
+        type="submit" 
+        className="w-full" 
+        disabled={!isFormValid()}
+      >
+        Create Product
+      </Button>
     </form>
   );
-} 
-
+}

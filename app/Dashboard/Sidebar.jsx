@@ -319,7 +319,80 @@ const sections = [
       { name: 'Electrical Fitting', path: '/Dashboard/ProductAdd/Fitting' },
       { name: 'Fiber Sheet', path: '/Dashboard/ProductAdd/Fiber' },
       { name: 'Hardware', path: '/Dashboard/ProductAdd/Hardware' },
-      { name: 'Home', path: '/Dashboard/ProductAdd/Home' },
+      { name: 'Home',
+        subItemsName:[
+           {
+                name: 'Brands',
+                path: '/Dashboard/ProductAdd/Home/Brands',
+              },
+              {
+                name: 'Card',
+                path: '/Dashboard/ProductAdd/Home/Card',
+              },
+              {
+                name: 'Card Slider',
+                path: '/Dashboard/ProductAdd/Home/CardSlider',
+              },
+               {
+                name: 'Categories',
+                path: '/Dashboard/ProductAdd/Home/Categories',
+              },
+              {
+                name: 'Electrical',
+                path: '/Dashboard/ProductAdd/Home/Electrical',
+              },
+              {
+                name: 'Image Slider',
+                subItemsNameComponent: [
+                  {
+                    name: 'Electrical Image',
+                path: '/Dashboard/ProductAdd/Home/ImageSlider/ElectricalImage',
+                  },
+                  {
+                    name: 'Faucet Image',
+                path: '/Dashboard/ProductAdd/Home/ImageSlider/FaucetImage',
+                  },
+                  {
+                    name: 'Paints Image',
+                path: '/Dashboard/ProductAdd/Home/ImageSlider/PaintsImage',
+                  },
+                  {
+                    name: 'Sanitary Image',
+                path: '/Dashboard/ProductAdd/Home/ImageSlider/SanitaryImage',
+                  },
+                  {
+                    name: 'Tools Image',
+                path: '/Dashboard/ProductAdd/Home/ImageSlider/ToolsImage',
+                  },
+                ]
+              },
+            {
+                name: 'Items',
+                path: '/Dashboard/ProductAdd/Home/Items',
+              },
+              {
+                name: 'Paints',
+                path: '/Dashboard/ProductAdd/Home/Paints',
+              },
+              {
+                name: 'Popular Products',
+                path: '/Dashboard/ProductAdd/Home/PopularProducts',
+              },
+               {
+                name: 'Product Tools',
+                path: '/Dashboard/ProductAdd/Home/ProductTools',
+              },
+              {
+                name: 'Service',
+                path: '/Dashboard/ProductAdd/Home/Service',
+              },
+              {
+                name: 'Tools',
+                path: '/Dashboard/ProductAdd/Home/Tools',
+              },
+            ]
+        
+        },
       { name: 'Home Decor', path: '/Dashboard/ProductAdd/HomeDecor' },
       { name: 'House Hold Ladder', path: '/Dashboard/ProductAdd/HouseHold' },
       { name: 'Lighting', path: '/Dashboard/ProductAdd/Lighting' },

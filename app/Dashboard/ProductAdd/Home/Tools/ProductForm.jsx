@@ -7,7 +7,7 @@ import API_BASE_URL from "@/lib/apiConfig";
 export default function ProductForm() {
   const [form, setForm] = useState({
     name: '',
-    category: 'Tools',
+    offer: 'Tools',
   });
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -46,7 +46,7 @@ export default function ProductForm() {
 
     const data = new FormData();
     data.append('name', form.name);
-    data.append('category', form.category);
+    data.append('offer', form.offer);
     data.append('image', file);
 
     try {
@@ -57,7 +57,7 @@ export default function ProductForm() {
       
       if (res.ok) {
         alert('Product created successfully!');
-        setForm({ name: '', category: 'Tools' });
+        setForm({ name: '', offer: 'Tools' });
         setFile(null);
         setPreview(null);
       } else {
@@ -88,10 +88,10 @@ export default function ProductForm() {
 
       {/* Category */}
       <div>
-        <label className="block text-sm font-medium mb-2">Category</label>
+        <label className="block text-sm font-medium mb-2">Offer</label>
         <Input 
-          name="category" 
-          value={form.category} 
+          name="offer" 
+          value={form.offer} 
           readOnly 
           className="w-full bg-gray-50"
         />

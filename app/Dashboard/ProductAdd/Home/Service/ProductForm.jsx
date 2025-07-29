@@ -2,39 +2,33 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import API_BASE_URL from "@/lib/apiConfig";
 
 export default function ProductForm() {
   const [form, setForm] = useState({
-    name: '',
-    category: 'Service',
+    icon: 'ShieldCheck',
+    title: '',
+    description: '',
   });
   const [file, setFile] = useState(null);
-  const [preview, setPreview] = useState(null);
-  const [photoError, setPhotoError] = useState("");
 
   const handleChange = e => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
   };
 
-  // Image handling - only 1 image
-  const handleFile = (e) => {
-    const selectedFile = e.target.files[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      setPreview(URL.createObjectURL(selectedFile));
-      setPhotoError("");
-    }
+  const handleSelectChange = (value) => {
+    setForm(prev => ({ ...prev, icon: value }));
   };
 
-  const handleRemovePhoto = () => {
-    setFile(null);
-    setPreview(null);
-  };
+  
+
+ 
 
   const isFormValid = () => {
-    return form.name && file;
+    return form.title && form.description && file;
   };
 
   const handleSubmit = async (e) => {
@@ -45,9 +39,9 @@ export default function ProductForm() {
     }
 
     const data = new FormData();
-    data.append('name', form.name);
-    data.append('category', form.category);
-    data.append('image', file);
+    data.append('icon', form.icon);
+    data.append('title', form.title);
+    data.append('description', form.description);
 
     try {
       const res = await fetch(`${API_BASE_URL}/home/service/create`, { 
@@ -56,77 +50,96 @@ export default function ProductForm() {
       });
       
       if (res.ok) {
-        alert('Product created successfully!');
-        setForm({ name: '', category: 'Service' });
+        alert('Service created successfully!');
+        setForm({
+          icon: 'ShieldCheck',
+          title: '',
+          description: '',
+        });
         setFile(null);
         setPreview(null);
       } else {
-        alert('Error creating product');
+        alert('Error creating service');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error creating product');
+      alert('Error creating service');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-6 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
+    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-6 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
       <h2 className="text-2xl font-bold mb-6 text-center">Add Service Product</h2>
       
-      {/* Product Name */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Icon Selection */}
+        <div>
+          <label className="block text-sm font-medium mb-2">Icon</label>
+          <Select value={form.icon} onValueChange={handleSelectChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select an icon" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ShieldCheck">Shield Check (Secure Payment)</SelectItem>
+              <SelectItem value="Headphones">Headphones (Customer Support)</SelectItem>
+              <SelectItem value="Truck">Truck (Fast Delivery)</SelectItem>
+              <SelectItem value="CreditCard">Credit Card</SelectItem>
+              <SelectItem value="Phone">Phone</SelectItem>
+              <SelectItem value="Mail">Mail</SelectItem>
+              <SelectItem value="Clock">Clock</SelectItem>
+              <SelectItem value="Star">Star</SelectItem>
+              <SelectItem value="Heart">Heart</SelectItem>
+              <SelectItem value="CheckCircle">Check Circle</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Title */}
+        <div>
+          <label className="block text-sm font-medium mb-2">Title </label>
+          <Input 
+            name="title" 
+            value={form.title} 
+            onChange={handleChange} 
+            placeholder="e.g., SECURE PAYMENT" 
+            required 
+            className="w-full"
+          />
+        </div>
+
+
+      {/* Description */}
       <div>
-        <label className="block text-sm font-medium mb-2">Product Name</label>
-        <Input 
-          name="name" 
-          value={form.name} 
+        <label className="block text-sm font-medium mb-2">Description </label>
+        <Textarea 
+          name="description" 
+          value={form.description} 
           onChange={handleChange} 
-          placeholder="Enter product name" 
+          placeholder="Enter service description..." 
           required 
           className="w-full"
+          rows={4}
         />
+       
       </div>
 
-      {/* Category */}
-      <div>
-        <label className="block text-sm font-medium mb-2">Category</label>
-        <Input 
-          name="category" 
-          value={form.category} 
-          readOnly 
-          className="w-full bg-gray-50"
-        />
-      </div>
+      
 
-      {/* Image Upload */}
-      <div>
-        <label className="block text-sm font-medium mb-2">Product Image</label>
-        <Input 
-          name="image" 
-          type="file" 
-          onChange={handleFile} 
-          accept="image/*" 
-          required 
-          className="w-full"
-        />
-        {photoError && <div className="text-red-500 text-xs mt-1">{photoError}</div>}
-        
-        {/* Image Preview */}
-        {preview && (
-          <div className="mt-4 relative">
-            <img 
-              src={preview} 
-              alt="Preview" 
-              className="w-32 h-32 object-cover rounded border"
-            />
-            <button 
-              type="button" 
-              onClick={handleRemovePhoto} 
-              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
-            >
-              ×
-            </button>
+      {/* Preview Section */}
+      <div className="border-t pt-4">
+        <h3 className="text-lg font-semibold mb-3">Preview</h3>
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="text-center">
+            <div className="mb-2">
+              {/* Icon preview - you can add actual icon rendering here */}
+              <div className="w-10 h-10 mx-auto mb-4 bg-blue-500 rounded-full flex items-center justify-center text-white">
+                {form.icon.charAt(0)}
+              </div>
+            </div>
+            <h3 className="text-xl font-extrabold mb-2">{form.title || 'Service Title'}</h3>
+            <p className="text-gray-600 text-sm">{form.description || 'Service description will appear here...'}</p>
           </div>
-        )}
+        </div>
       </div>
 
       {/* Submit Button */}
@@ -135,7 +148,7 @@ export default function ProductForm() {
         className="w-full" 
         disabled={!isFormValid()}
       >
-        Create Product
+        Create Service
       </Button>
     </form>
   );

@@ -6,17 +6,13 @@ import API_BASE_URL from "@/lib/apiConfig";
 
 export default function ProductForm() {
   const [form, setForm] = useState({
-    name: '',
-    category: 'Card',
+    mainText: '',
   });
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [photoError, setPhotoError] = useState("");
 
-  const handleChange = e => {
-    const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
-  };
+ 
 
   // Image handling - only 1 image
   const handleFile = (e) => {
@@ -45,8 +41,7 @@ export default function ProductForm() {
     }
 
     const data = new FormData();
-    data.append('name', form.name);
-    data.append('category', form.category);
+    data.append('mainText', form.mainText);
     data.append('image', file);
 
     try {
@@ -57,7 +52,7 @@ export default function ProductForm() {
       
       if (res.ok) {
         alert('Product created successfully!');
-        setForm({ name: '', category: 'Card' });
+        setForm({ mainText: '' });
         setFile(null);
         setPreview(null);
       } else {
@@ -72,26 +67,13 @@ export default function ProductForm() {
   return (
     <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-6 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
       <h2 className="text-2xl font-bold mb-6 text-center">Add Card Product</h2>
-      
-      {/* Product Name */}
-      <div>
-        <label className="block text-sm font-medium mb-2">Product Name</label>
-        <Input 
-          name="name" 
-          value={form.name} 
-          onChange={handleChange} 
-          placeholder="Enter product name" 
-          required 
-          className="w-full"
-        />
-      </div>
 
-      {/* Category */}
+      {/* mainText */}
       <div>
-        <label className="block text-sm font-medium mb-2">Category</label>
+        <label className="block text-sm font-medium mb-2">Main Text</label>
         <Input 
-          name="category" 
-          value={form.category} 
+          name="mainText" 
+          value={form.mainText} 
           readOnly 
           className="w-full bg-gray-50"
         />

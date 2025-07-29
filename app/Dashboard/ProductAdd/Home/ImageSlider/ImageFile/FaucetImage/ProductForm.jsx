@@ -2,12 +2,14 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import API_BASE_URL from "@/lib/apiConfig";
 
 export default function ProductForm() {
   const [form, setForm] = useState({
-    name: '',
-    category: 'FaucetImage',
+    mainText: '',
+    subtext: '',
+    descText: '',
   });
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -34,7 +36,7 @@ export default function ProductForm() {
   };
 
   const isFormValid = () => {
-    return form.name && file;
+    return form.mainText && form.subtext && form.descrText && file;
   };
 
   const handleSubmit = async (e) => {
@@ -45,63 +47,86 @@ export default function ProductForm() {
     }
 
     const data = new FormData();
-    data.append('name', form.name);
-    data.append('category', form.category);
-    data.append('image', file);
+    data.append('mainText', form.mainText);
+    data.append('subtext', form.subtext);
+    data.append('descText', form.descText);
+    data.append('uploadedImage', file);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/home/image-slider/create`, { 
+      const res = await fetch(`${API_BASE_URL}/home/imageslider/faucetimage/create`, { 
         method: 'POST', 
         body: data 
       });
       
       if (res.ok) {
-        alert('Product created successfully!');
-        setForm({ name: '', category: 'FaucetImage' });
+        alert('Image Slider item created successfully!');
+        setForm({
+          mainText: '',
+          subtext: '',
+          descText: '',
+        });
         setFile(null);
         setPreview(null);
       } else {
-        alert('Error creating product');
+        alert('Error creating image slider item');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error creating product');
+      alert('Error creating image slider item');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-6 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
-      <h2 className="text-2xl font-bold mb-6 text-center">Add FaucetImage Product</h2>
+    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-6 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
+      <h2 className="text-2xl font-bold mb-6 text-center">Add FaucetImage Image Slider</h2>
       
-      {/* Product Name */}
-      <div>
-        <label className="block text-sm font-medium mb-2">Product Name</label>
-        <Input 
-          name="name" 
-          value={form.name} 
-          onChange={handleChange} 
-          placeholder="Enter product name" 
-          required 
-          className="w-full"
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Main Text */}
+        <div>
+          <label className="block text-sm font-medium mb-2">Main Text </label>
+          <Input 
+            name="mainText" 
+            value={form.mainText} 
+            onChange={handleChange} 
+            placeholder="Enter main text" 
+            required 
+            className="w-full"
+          />
+        </div>
+
+        {/* Sub Text */}
+        <div>
+          <label className="block text-sm font-medium mb-2">Sub Text</label>
+          <Input 
+            name="subtext" 
+            value={form.subtext} 
+            onChange={handleChange} 
+            placeholder="Enter sub text" 
+            required 
+            className="w-full"
+          />
+        </div>
+
       </div>
 
-      {/* Category */}
+      {/* Desc Text */}
       <div>
-        <label className="block text-sm font-medium mb-2">Category</label>
-        <Input 
-          name="category" 
-          value={form.category} 
-          readOnly 
-          className="w-full bg-gray-50"
+        <label className="block text-sm font-medium mb-2">Additional Description</label>
+        <Textarea 
+          name="descText" 
+          value={form.descText} 
+          onChange={handleChange} 
+          placeholder="Enter additional description" 
+          className="w-full"
+          rows={3}
         />
       </div>
 
       {/* Image Upload */}
       <div>
-        <label className="block text-sm font-medium mb-2">Product Image</label>
+        <label className="block text-sm font-medium mb-2">Upload Image</label>
         <Input 
-          name="image" 
+          name="uploadedImage" 
           type="file" 
           onChange={handleFile} 
           accept="image/*" 
@@ -129,13 +154,34 @@ export default function ProductForm() {
         )}
       </div>
 
+      {/* Preview Section */}
+      <div className="border-t pt-4">
+        <h3 className="text-lg font-semibold mb-3">Preview</h3>
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="text-center">
+            {preview && (
+              <img 
+                src={preview} 
+                alt="Preview" 
+                className="w-full h-48 object-cover rounded mb-4"
+              />
+            )}
+            <h3 className="text-xl font-bold mb-2">{form.mainText || 'Main Text'}</h3>
+            <p className="text-lg mb-2">{form.subtext || 'Sub Text'}</p>
+            <p className="text-sm text-gray-600 mb-2">{form.descrText || 'Description Text'}</p>
+            {form.descText && <p className="text-xs text-gray-500">{form.descText}</p>}
+            {form.offer && <p className="text-sm font-semibold text-red-600 mt-2">{form.offer}</p>}
+          </div>
+        </div>
+      </div>
+
       {/* Submit Button */}
       <Button 
         type="submit" 
         className="w-full" 
         disabled={!isFormValid()}
       >
-        Create Product
+        Create Image Slider Item
       </Button>
     </form>
   );

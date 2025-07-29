@@ -7,7 +7,6 @@ import API_BASE_URL from "@/lib/apiConfig";
 export default function ProductForm() {
   const [form, setForm] = useState({
     name: '',
-    category: 'CardSlider',
   });
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -46,18 +45,17 @@ export default function ProductForm() {
 
     const data = new FormData();
     data.append('name', form.name);
-    data.append('category', form.category);
     data.append('image', file);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/home/card-slider/create`, { 
+      const res = await fetch(`${API_BASE_URL}/home/cardslider/create`, { 
         method: 'POST', 
         body: data 
       });
       
       if (res.ok) {
         alert('Product created successfully!');
-        setForm({ name: '', category: 'CardSlider' });
+        setForm({ name: '' });
         setFile(null);
         setPreview(null);
       } else {
@@ -75,7 +73,7 @@ export default function ProductForm() {
       
       {/* Product Name */}
       <div>
-        <label className="block text-sm font-medium mb-2">Product Name</label>
+        <label className="block text-sm font-medium mb-2">Product Tittle</label>
         <Input 
           name="name" 
           value={form.name} 
@@ -83,17 +81,6 @@ export default function ProductForm() {
           placeholder="Enter product name" 
           required 
           className="w-full"
-        />
-      </div>
-
-      {/* Category */}
-      <div>
-        <label className="block text-sm font-medium mb-2">Category</label>
-        <Input 
-          name="category" 
-          value={form.category} 
-          readOnly 
-          className="w-full bg-gray-50"
         />
       </div>
 

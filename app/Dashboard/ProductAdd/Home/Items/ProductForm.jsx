@@ -2,12 +2,23 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import API_BASE_URL from "@/lib/apiConfig";
 
 export default function ProductForm() {
   const [form, setForm] = useState({
-    name: '',
-    category: 'Items',
+    id: '',
+    image: '',
+    alt: '',
+    overlay: false,
+    title: '',
+    subtitle: '',
+    description: '',
+    buttonText: '',
+    textColor: 'text-white',
+    content: '',
   });
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -16,6 +27,14 @@ export default function ProductForm() {
   const handleChange = e => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSwitchChange = (checked) => {
+    setForm(prev => ({ ...prev, overlay: checked }));
+  };
+
+  const handleSelectChange = (value) => {
+    setForm(prev => ({ ...prev, textColor: value }));
   };
 
   // Image handling - only 1 image
@@ -34,7 +53,7 @@ export default function ProductForm() {
   };
 
   const isFormValid = () => {
-    return form.name && file;
+    return form.id && form.title && form.description && file;
   };
 
   const handleSubmit = async (e) => {
@@ -45,9 +64,17 @@ export default function ProductForm() {
     }
 
     const data = new FormData();
-    data.append('name', form.name);
-    data.append('category', form.category);
-    data.append('image', file);
+    data.append('id', form.id);
+    data.append('image', form.image);
+    data.append('alt', form.alt);
+    data.append('overlay', form.overlay);
+    data.append('title', form.title);
+    data.append('subtitle', form.subtitle);
+    data.append('description', form.description);
+    data.append('buttonText', form.buttonText);
+    data.append('textColor', form.textColor);
+    data.append('content', form.content);
+    data.append('uploadedImage', file);
 
     try {
       const res = await fetch(`${API_BASE_URL}/home/items/create`, { 
@@ -56,52 +83,170 @@ export default function ProductForm() {
       });
       
       if (res.ok) {
-        alert('Product created successfully!');
-        setForm({ name: '', category: 'Items' });
+        alert('Item created successfully!');
+        setForm({
+          id: '',
+          image: '',
+          alt: '',
+          overlay: false,
+          title: '',
+          subtitle: '',
+          description: '',
+          buttonText: '',
+          textColor: 'text-white',
+          content: '',
+        });
         setFile(null);
         setPreview(null);
       } else {
-        alert('Error creating product');
+        alert('Error creating item');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error creating product');
+      alert('Error creating item');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-6 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
+    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-6 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
       <h2 className="text-2xl font-bold mb-6 text-center">Add Items Product</h2>
       
-      {/* Product Name */}
-      <div>
-        <label className="block text-sm font-medium mb-2">Product Name</label>
-        <Input 
-          name="name" 
-          value={form.name} 
-          onChange={handleChange} 
-          placeholder="Enter product name" 
-          required 
-          className="w-full"
-        />
-      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* ID */}
+        <div>
+          <label className="block text-sm font-medium mb-2">ID *</label>
+          <Input 
+            name="id" 
+            value={form.id} 
+            onChange={handleChange} 
+            placeholder="Enter ID" 
+            required 
+            className="w-full"
+          />
+        </div>
 
-      {/* Category */}
+        {/* Image Path */}
+        <div>
+          <label className="block text-sm font-medium mb-2">Image Path</label>
+          <Input 
+            name="image" 
+            value={form.image} 
+            onChange={handleChange} 
+            placeholder="/images/banner1.jpg" 
+            className="w-full"
+          />
+        </div>
+
+        {/* Alt Text */}
+        <div>
+          <label className="block text-sm font-medium mb-2">Alt Text</label>
+          <Input 
+            name="alt" 
+            value={form.alt} 
+            onChange={handleChange} 
+            placeholder="Enter alt text" 
+            className="w-full"
+          />
+        </div>
+
+        {/* Overlay */}
+        <div className="flex items-center space-x-2">
+          <Switch 
+            checked={form.overlay} 
+            onCheckedChange={handleSwitchChange}
+          />
+          <label className="text-sm font-medium">Has Overlay</label>
+        </div>
+
+        {/* Title */}
+        <div>
+          <label className="block text-sm font-medium mb-2">Title *</label>
+          <Input 
+            name="title" 
+            value={form.title} 
+            onChange={handleChange} 
+            placeholder="Enter title" 
+            required 
+            className="w-full"
+          />
+        </div>
+
+        {/* Subtitle */}
+        <div>
+          <label className="block text-sm font-medium mb-2">Subtitle</label>
+          <Input 
+            name="subtitle" 
+            value={form.subtitle} 
+            onChange={handleChange} 
+            placeholder="Enter subtitle" 
+            className="w-full"
+          />
+        </div>
+
+        {/* Description */}
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium mb-2">Description </label>
+          <Textarea 
+            name="description" 
+            value={form.description} 
+            onChange={handleChange} 
+            placeholder="Enter description" 
+            required 
+            className="w-full"
+            rows={3}
+          />
+        </div>
+
+        {/* Button Text */}
+        <div>
+          <label className="block text-sm font-medium mb-2">Button Text</label>
+          <Input 
+            name="buttonText" 
+            value={form.buttonText} 
+            onChange={handleChange} 
+            placeholder="SHOP NOW" 
+            className="w-full"
+          />
+        </div>
+
+       
+
+        {/* Text Color */}
+        <div>
+          <label className="block text-sm font-medium mb-2">Text Color</label>
+          <Select value={form.textColor} onValueChange={handleSelectChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select text color" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="text-white">White</SelectItem>
+              <SelectItem value="text-black">Black</SelectItem>
+              <SelectItem value="text-gray-800">Dark Gray</SelectItem>
+              <SelectItem value="text-blue-600">Blue</SelectItem>
+              <SelectItem value="text-red-600">Red</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+      
+      {/* Content */}
       <div>
-        <label className="block text-sm font-medium mb-2">Category</label>
-        <Input 
-          name="category" 
-          value={form.category} 
-          readOnly 
-          className="w-full bg-gray-50"
+        <label className="block text-sm font-medium mb-2">Custom Content (HTML/JSX)</label>
+        <Textarea 
+          name="content" 
+          value={form.content} 
+          onChange={handleChange} 
+          placeholder="Enter custom content (optional)" 
+          className="w-full"
+          rows={4}
         />
       </div>
 
       {/* Image Upload */}
       <div>
-        <label className="block text-sm font-medium mb-2">Product Image</label>
+        <label className="block text-sm font-medium mb-2">Upload Image *</label>
         <Input 
-          name="image" 
+          name="uploadedImage" 
           type="file" 
           onChange={handleFile} 
           accept="image/*" 
@@ -135,7 +280,7 @@ export default function ProductForm() {
         className="w-full" 
         disabled={!isFormValid()}
       >
-        Create Product
+        Create Item
       </Button>
     </form>
   );

@@ -1,4 +1,20 @@
-"use client";
+const fs = require('fs');
+const path = require('path');
+
+const HOME_PATH = path.join(__dirname, 'app', 'Dashboard', 'ProductAdd', 'Home');
+
+// List of folders that need ProductForm.jsx files
+const FOLDERS_TO_CREATE = [
+  'Brands',
+  'Card', 
+  'CardSlider',
+  'Categories',
+  'Electrical',
+  'PopularProducts',
+  'ProductTools'
+];
+
+const template = (category) => `"use client";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -7,7 +23,7 @@ import API_BASE_URL from "@/lib/apiConfig";
 export default function ProductForm() {
   const [form, setForm] = useState({
     name: '',
-    category: 'Home',
+    category: '${category}',
   });
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -50,14 +66,14 @@ export default function ProductForm() {
     data.append('image', file);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/home/product-form.jsx/create`, { 
+      const res = await fetch(\`\${API_BASE_URL}/home/${category.toLowerCase()}/create\`, { 
         method: 'POST', 
         body: data 
       });
       
       if (res.ok) {
         alert('Product created successfully!');
-        setForm({ name: '', category: 'Home' });
+        setForm({ name: '', category: '${category}' });
         setFile(null);
         setPreview(null);
       } else {
@@ -71,7 +87,7 @@ export default function ProductForm() {
 
   return (
     <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-6 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
-      <h2 className="text-2xl font-bold mb-6 text-center">Add Home Product</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">Add ${category} Product</h2>
       
       {/* Product Name */}
       <div>
@@ -140,3 +156,50 @@ export default function ProductForm() {
     </form>
   );
 }
+`;
+
+function main() {
+  let created = 0;
+  let skipped = [];
+  
+  console.log('Creating ProductForm.jsx files for Home subfolders...\n');
+  
+  for (const folder of FOLDERS_TO_CREATE) {
+    const folderPath = path.join(HOME_PATH, folder);
+    const productFormPath = path.join(folderPath, 'ProductForm.jsx');
+    
+    try {
+      // Check if folder exists
+      if (!fs.existsSync(folderPath)) {
+        console.log(`Skipped: ${folder} (folder doesn't exist)`);
+        skipped.push(folder);
+        continue;
+      }
+      
+      // Check if ProductForm.jsx already exists
+      if (fs.existsSync(productFormPath)) {
+        console.log(`Skipped: ${folder}/ProductForm.jsx (already exists)`);
+        skipped.push(folder);
+        continue;
+      }
+      
+      // Create ProductForm.jsx
+      fs.writeFileSync(productFormPath, template(folder), 'utf8');
+      console.log(`Created: ${folder}/ProductForm.jsx`);
+      created++;
+      
+    } catch (err) {
+      console.error(`Error creating ${folder}/ProductForm.jsx:`, err.message);
+      skipped.push(folder);
+    }
+  }
+  
+  console.log(`\n=== SUMMARY ===`);
+  console.log(`Total ProductForm.jsx files created: ${created}`);
+  if (skipped.length > 0) {
+    console.log('Skipped folders:');
+    skipped.forEach(f => console.log(`- ${f}`));
+  }
+}
+
+main(); 

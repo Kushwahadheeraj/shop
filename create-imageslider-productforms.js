@@ -1,4 +1,18 @@
-"use client";
+const fs = require('fs');
+const path = require('path');
+
+const IMAGE_SLIDER_PATH = path.join(__dirname, 'app', 'Dashboard', 'ProductAdd', 'Home', 'ImageSlider', 'ImageFile');
+
+// List of folders that need ProductForm.jsx files
+const FOLDERS_TO_CREATE = [
+  'FaucetImage',
+  'ElectricImage', 
+  'ToolsImage',
+  'SanitaryImage',
+  'PaintsImage'
+];
+
+const template = (category) => `"use client";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -7,9 +21,13 @@ import API_BASE_URL from "@/lib/apiConfig";
 
 export default function ProductForm() {
   const [form, setForm] = useState({
+    image: '',
     mainText: '',
     subtext: '',
+    descrText: '',
     descText: '',
+    offer: '',
+    category: '${category}',
   });
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -57,7 +75,7 @@ export default function ProductForm() {
     data.append('uploadedImage', file);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/home/imageslider/sanitaryimage/create`, { 
+      const res = await fetch(\`\${API_BASE_URL}/home/imageslider/${category.toLowerCase()}/create\`, { 
         method: 'POST', 
         body: data 
       });
@@ -71,7 +89,7 @@ export default function ProductForm() {
           descrText: '',
           descText: '',
           offer: '',
-          category: 'SanitaryImage',
+          category: '${category}',
         });
         setFile(null);
         setPreview(null);
@@ -86,7 +104,7 @@ export default function ProductForm() {
 
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-6 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
-      <h2 className="text-2xl font-bold mb-6 text-center">Add SanitaryImage Image Slider</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">Add ${category} Image Slider</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Main Text */}
@@ -242,3 +260,50 @@ export default function ProductForm() {
     </form>
   );
 }
+`;
+
+function main() {
+  let created = 0;
+  let skipped = [];
+  
+  console.log('Creating ProductForm.jsx files for ImageSlider subfolders...\n');
+  
+  for (const folder of FOLDERS_TO_CREATE) {
+    const folderPath = path.join(IMAGE_SLIDER_PATH, folder);
+    const productFormPath = path.join(folderPath, 'ProductForm.jsx');
+    
+    try {
+      // Check if folder exists
+      if (!fs.existsSync(folderPath)) {
+        console.log(`Skipped: ${folder} (folder doesn't exist)`);
+        skipped.push(folder);
+        continue;
+      }
+      
+      // Check if ProductForm.jsx already exists
+      if (fs.existsSync(productFormPath)) {
+        console.log(`Skipped: ${folder}/ProductForm.jsx (already exists)`);
+        skipped.push(folder);
+        continue;
+      }
+      
+      // Create ProductForm.jsx
+      fs.writeFileSync(productFormPath, template(folder), 'utf8');
+      console.log(`Created: ${folder}/ProductForm.jsx`);
+      created++;
+      
+    } catch (err) {
+      console.error(`Error creating ${folder}/ProductForm.jsx:`, err.message);
+      skipped.push(folder);
+    }
+  }
+  
+  console.log(`\n=== SUMMARY ===`);
+  console.log(`Total ProductForm.jsx files created: ${created}`);
+  if (skipped.length > 0) {
+    console.log('Skipped folders:');
+    skipped.forEach(f => console.log(`- ${f}`));
+  }
+}
+
+main(); 

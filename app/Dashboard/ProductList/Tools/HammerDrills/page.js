@@ -1,4 +1,9 @@
 import ProductList from './ProductList';
-export default function Page() {
-  return <ProductList />;
+
+export default function HammerDrillsPage() {
+  return (
+    <div>
+      <ProductList />
+    </div>
+  );
 }

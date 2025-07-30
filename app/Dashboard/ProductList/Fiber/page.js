@@ -1,4 +1,9 @@
 import ProductList from './ProductList';
-export default function Page() {
-  return <ProductList />;
+
+export default function FiberPage() {
+  return (
+    <div>
+      <ProductList />
+    </div>
+  );
 }

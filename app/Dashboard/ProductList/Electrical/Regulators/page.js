@@ -1,4 +1,9 @@
 import ProductList from './ProductList';
-export default function Page() {
-  return <ProductList />;
+
+export default function RegulatorsPage() {
+  return (
+    <div>
+      <ProductList />
+    </div>
+  );
 }

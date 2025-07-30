@@ -1,4 +1,9 @@
 import ProductList from './ProductList';
-export default function Page() {
-  return <ProductList />;
+
+export default function TapsPage() {
+  return (
+    <div>
+      <ProductList />
+    </div>
+  );
 }

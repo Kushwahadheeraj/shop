@@ -131,7 +131,7 @@ export default function ProductList() {
             onEdit={handleEdit}
             onDelete={handleDelete}
             onView={handleView}
-            category="Sanitary - BathroomAccessories Products"
+            category="Sanitary - BathroomAccessories Products "
           />
         </CardContent>
       </Card>

@@ -4802,7 +4802,6 @@ const sections = [
   { name: 'User List', path: '/Dashboard/UserList' },
   { name: 'Category List', path: '/Dashboard/CategoryList' },
   { name: 'Brand List', path: '/Dashboard/BrandList' },
-  { name: 'Banner List', path: '/Dashboard/BannerList' },
   { name: 'Coupon List', path: '/Dashboard/CouponList' },
 ];
 

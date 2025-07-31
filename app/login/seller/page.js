@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import API_BASE_URL from "@/lib/apiConfig";
 import { useAuth } from "@/components/AuthContext";
@@ -12,7 +12,14 @@ export default function SellerLoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const { login } = useAuth();
+  const { login, isAuthenticated, loading: authLoading } = useAuth();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (!authLoading && isAuthenticated()) {
+      router.push("/Dashboard");
+    }
+  }, [authLoading, isAuthenticated, router]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -25,12 +32,12 @@ export default function SellerLoginPage() {
     setSuccess("");
     try {
       if (mode === "login") {
-        const loggedIn = await login(form.email, form.password);
-        if (loggedIn) {
+        const result = await login(form.email, form.password);
+        if (result.success) {
           setSuccess("Login successful! Redirecting...");
           router.push("/Dashboard");
         } else {
-          throw new Error("Invalid credentials");
+          throw new Error(result.error || "Invalid credentials");
         }
       } else {
         const res = await fetch(`${API_BASE_URL}/seller/register`, {
@@ -49,6 +56,23 @@ export default function SellerLoginPage() {
       setLoading(false);
     }
   };
+
+  // Show loading while checking authentication
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#f8f8f8]">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't show login page if already authenticated
+  if (isAuthenticated()) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f8f8f8]">

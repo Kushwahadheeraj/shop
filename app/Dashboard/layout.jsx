@@ -1,15 +1,47 @@
 "use client";
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '../../components/AuthContext';
 import Sidebar from './Sidebar';
 import Navbar from '@/app/Dashboard/Navbar';
 
 export default function DashboardLayout({ children }) {
-  const { user, logout } = useAuth();
+  const { user, loading, logout, isAuthenticated } = useAuth();
+  const router = useRouter();
 
   const handleSetting = () => {
     // Implement settings logic here
   };
+
+  // Protect dashboard routes
+  useEffect(() => {
+    if (!loading && !isAuthenticated()) {
+      router.replace('/login/seller');
+    }
+  }, [loading, isAuthenticated, router]);
+
+  // Show loading while checking authentication
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render dashboard if not authenticated
+  if (!isAuthenticated()) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <p className="text-gray-600">Redirecting to login...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen m-0 p-0">

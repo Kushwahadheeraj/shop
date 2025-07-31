@@ -38,7 +38,7 @@ export default function ProductList() {
   };
 
   const handleEdit = (product) => {
-    router.push("/Dashboard/ProductAdd/Cleaning?id=" + product._id);
+    router.push(`/Dashboard/ProductAdd/Cleaning?id=${product._id}`);
   };
 
   const handleDelete = async (id) => {

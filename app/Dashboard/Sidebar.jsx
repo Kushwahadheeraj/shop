@@ -4843,7 +4843,7 @@ export default function Sidebar({ onSetting, onLogout, open, onClose }) {
     setOpenSection(openSection === name ? null : name);
   };
   return (
-    <aside className='w-64 h-screen bg-white rounded-2xl shadow-lg p-2 flex flex-col text-zinc-800 border border-zinc-100'>
+    <aside className='w-64 h-screen bg-white shadow-lg p-2 flex flex-col text-zinc-800 border border-zinc-100'>
       <div className='p-2 font-bold text-xl'>LOGO</div>
       <nav className='flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900'>
         <ul className='p-2 space-y-2'>

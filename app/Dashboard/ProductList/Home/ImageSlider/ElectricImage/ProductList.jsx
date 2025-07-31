@@ -13,7 +13,7 @@ export default function ProductList() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/adhesives`;
+  const API_URL = `${API_BASE_URL}/home/imageSlider/electricImage`;
 
   useEffect(() => {
     fetchProducts();
@@ -28,22 +28,25 @@ export default function ProductList() {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
       const data = await res.json();
-      setProducts(data);
+      // Ensure products is always an array
+      const productsArray = Array.isArray(data) ? data : (data.products || data.data || []);
+      setProducts(productsArray);
     } catch (err) {
       setError(err.message);
       console.error('Error fetching products:', err);
+      setProducts([]); // Set empty array on error
     } finally {
       setLoading(false);
     }
   };
 
   const handleEdit = (product) => {
-    router.push("/Dashboard/ProductAdd/Adhesives?id=" + product._id);
+    router.push("/Dashboard/ProductAdd/Home/ImageSlider/ElectricImage?id=" + product._id);
   };
 
   const handleDelete = async (id) => {
     try {
-      const res = await fetch(API_URL + '/delete/' + id, { method: "DELETE" });
+      const res = await fetch(API_URL + '/delete:' + id, { method: "DELETE" });
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
@@ -55,14 +58,12 @@ export default function ProductList() {
   };
 
   const handleView = (product) => {
-    router.push(`/Dashboard/ProductView/adhesives/${product._id}`);
+    router.push(`/Dashboard/ProductView/home/imageSlider/electricImage/${product._id}`);
   };
 
   const handleAddNew = () => {
-    router.push("/Dashboard/ProductAdd/Adhesives");
+    router.push("/Dashboard/ProductAdd/Home/ImageSlider/ElectricImage");
   };
-
-  
 
   if (loading && products.length === 0) {
     return (
@@ -81,8 +82,7 @@ export default function ProductList() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              
-              <CardTitle>Adhesives Products</CardTitle>
+              <CardTitle>Home Image Slider Electric Image Products</CardTitle>
             </div>
             <div className="flex gap-2">
               <Button 
@@ -120,10 +120,10 @@ export default function ProductList() {
             onEdit={handleEdit}
             onDelete={handleDelete}
             onView={handleView}
-            category="Adhesives Products"
+            category="Home Image Slider Electric Image Products"
           />
         </CardContent>
       </Card>
     </div>
   );
-}
+} 

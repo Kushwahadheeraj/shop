@@ -64,13 +64,47 @@ exports.createAdhesives = async (req, res) => {
  */
 exports.updateAdhesives = async (req, res) => {
   try {
+    console.log('Update request received:', req.params.id);
+    console.log('Request body:', req.body);
+    console.log('Request files:', req.files);
+    
     let update = { ...req.body };
+    
+    // Parse weights and tag if sent as JSON string
+    if (update.weights && typeof update.weights === 'string') {
+      update.weights = JSON.parse(update.weights);
+    }
+    
+    // Filter out invalid weight entries
+    if (update.weights && Array.isArray(update.weights)) {
+      update.weights = update.weights.filter(weight => 
+        weight && 
+        typeof weight === 'object' && 
+        weight.weight && 
+        weight.price && 
+        weight.weight.trim() !== '' && 
+        !isNaN(Number(weight.price))
+      );
+    }
+    
+    if (update.tag && typeof update.tag === 'string') {
+      // If tag is a single string, wrap in array
+      try {
+        update.tag = JSON.parse(update.tag);
+      } catch {
+        update.tag = [update.tag];
+      }
+    }
+    
     if (req.files && req.files.length > 0) {
       if (req.files.length > 5) {
         return res.status(400).json({ error: 'No more than 5 images allowed.' });
       }
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
+    
+    console.log('Final update object:', update);
+    
     const product = await AdhesivesModels.findOneAndUpdate(
       { _id: req.params.id, category: 'adhesives' },
       update,
@@ -79,6 +113,7 @@ exports.updateAdhesives = async (req, res) => {
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
+    console.error('Error in updateAdhesives:', err);
     res.status(500).json({ error: err.message });
   }
 };

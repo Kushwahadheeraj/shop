@@ -11,6 +11,34 @@ import { Separator } from "@/components/ui/separator";
 import { Edit, Save, X, Plus, Trash2 } from "lucide-react";
 import API_BASE_URL from "@/lib/apiConfig";
 
+// Function to map category display names to API endpoints
+const getCategoryEndpoint = (category) => {
+  const categoryMap = {
+    'Adhesives Products': 'adhesives',
+    'Brush Products': 'brush',
+    'Cements Products': 'cements',
+    'Cleaning Products': 'cleaning',
+    'Dry Products': 'dry',
+    'Electrical Products': 'electrical',
+    'Fiber Products': 'fiber',
+    'Fitting Products': 'fitting',
+    'Hardware Products': 'hardware',
+    'Home Products': 'home',
+    'Home Decor Products': 'homedecor',
+    'Locks Products': 'locks',
+    'Paint Products': 'paint',
+    'Pipe Products': 'pipe',
+    'PVC Mats Products': 'pvcmats',
+    'Roofer Products': 'roofer',
+    'Sanitary Products': 'sanitary',
+    'Tools Products': 'tools',
+    'Uncategorized Products': 'uncategorized',
+    'Water Proofing Products': 'waterproofing'
+  };
+  
+  return categoryMap[category] || category.toLowerCase().replace(/\s+/g, '');
+};
+
 export default function ProductUpdateForm({ product, category, onUpdate, onClose }) {
   const [form, setForm] = useState({
     name: '',
@@ -53,19 +81,19 @@ export default function ProductUpdateForm({ product, category, onUpdate, onClose
   }, [product, category]);
 
   // Check if all required fields are filled
-  const isFormValid = () => {
-    if (!form.name.trim()) return false;
-    if (!form.minPrice || isNaN(Number(form.minPrice))) return false;
-    if (!form.maxPrice || isNaN(Number(form.maxPrice))) return false;
-    if (form.discount === '' || isNaN(Number(form.discount))) return false;
-    if (!form.totalProduct || isNaN(Number(form.totalProduct))) return false;
-    if (!form.tag || !Array.isArray(form.tag) || form.tag.length === 0) return false;
-    if (!form.weights || !Array.isArray(form.weights) || form.weights.length === 0) return false;
-    for (const w of form.weights) {
-      if (!w.weight || !w.price || isNaN(Number(w.price))) return false;
-    }
-    return true;
-  };
+  // const isFormValid = () => {
+  //   if (!form.name.trim()) return false;
+  //   if (!form.minPrice || isNaN(Number(form.minPrice))) return false;
+  //   if (!form.maxPrice || isNaN(Number(form.maxPrice))) return false;
+  //   if (form.discount === '' || isNaN(Number(form.discount))) return false;
+  //   if (!form.totalProduct || isNaN(Number(form.totalProduct))) return false;
+  //   if (!form.tag || !Array.isArray(form.tag) || form.tag.length === 0) return false;
+  //   if (!form.weights || !Array.isArray(form.weights) || form.weights.length === 0) return false;
+  //   for (const w of form.weights) {
+  //     if (!w.weight || !w.price || isNaN(Number(w.price))) return false;
+  //   }
+  //   return true;
+  // };
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -178,13 +206,20 @@ export default function ProductUpdateForm({ product, category, onUpdate, onClose
         }
       });
       
-      // Add weights as JSON string
-      data.append('weights', JSON.stringify(form.weights));
+      // Filter out invalid weights and add as JSON string
+      const validWeights = form.weights.filter(weight => 
+        weight && 
+        weight.weight && 
+        weight.price && 
+        weight.weight.trim() !== '' && 
+        !isNaN(Number(weight.price))
+      );
+      data.append('weights', JSON.stringify(validWeights));
       
       // Add new files
       files.forEach(f => data.append('photos', f));
       
-      const res = await fetch(`${API_BASE_URL}/${category.toLowerCase()}/update:${product._id}`, { 
+      const res = await fetch(`${API_BASE_URL}/${getCategoryEndpoint(category)}/update/${product._id}`, { 
         method: 'PUT', 
         body: data 
       });
@@ -490,7 +525,7 @@ export default function ProductUpdateForm({ product, category, onUpdate, onClose
             <Button type="button" variant="outline" onClick={handleClose}>
               Cancel
             </Button>
-            <Button type="submit" disabled={!isFormValid() || loading}>
+            <Button type="submit" >
               {loading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />

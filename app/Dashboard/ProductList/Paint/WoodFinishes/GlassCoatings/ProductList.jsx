@@ -13,7 +13,7 @@ export default function ProductList() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/paint/woodfinishes/glasscoatings`;
+  const API_URL = `${API_BASE_URL}/paint/wood-finishes-glass-coatings`;
 
   useEffect(() => {
     fetchProducts();

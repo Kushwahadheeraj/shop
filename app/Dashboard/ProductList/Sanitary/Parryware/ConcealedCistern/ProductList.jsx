@@ -13,7 +13,7 @@ export default function ProductList() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/sanitary/parryware/concealedcistern`;
+  const API_URL = `${API_BASE_URL}/sanitary/parryware-concealed-cistern-concealed-cistern`;
 
   useEffect(() => {
     fetchProducts();

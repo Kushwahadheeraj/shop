@@ -13,7 +13,7 @@ export default function ProductList() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/sanitary/watertec/healthfaucets`;
+  const API_URL = `${API_BASE_URL}/sanitary/water-tec-health-faucets`;
 
   useEffect(() => {
     fetchProducts();

@@ -13,7 +13,7 @@ export default function ProductList() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/locks/furniturelocks/drawercupboardlock`;
+  const API_URL = `${API_BASE_URL}/locks/furniture-locks/drawer-cupboard-lock`;
 
   useEffect(() => {
     fetchProducts();

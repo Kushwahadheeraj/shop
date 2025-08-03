@@ -13,7 +13,7 @@ export default function ProductList() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/electrical/lights/ledstrips`;
+  const API_URL = `${API_BASE_URL}/electrical/ledstrips`;
 
   useEffect(() => {
     fetchProducts();

@@ -13,7 +13,7 @@ export default function ProductList() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/locks/premiummortiseseries/europrofilebrasshandleset`;
+  const API_URL = `${API_BASE_URL}/locks/premium-mortise-series/europrofile-brass-handle-set-240mm`;
 
   useEffect(() => {
     fetchProducts();

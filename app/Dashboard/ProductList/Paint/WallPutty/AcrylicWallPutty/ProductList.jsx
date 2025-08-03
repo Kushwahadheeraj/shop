@@ -13,7 +13,7 @@ export default function ProductList() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/paint/wallputty/acrylicwallputty`;
+  const API_URL = `${API_BASE_URL}/paint/wall-putty-acrylic-wall-putty`;
 
   useEffect(() => {
     fetchProducts();

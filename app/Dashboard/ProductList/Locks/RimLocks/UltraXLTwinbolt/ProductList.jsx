@@ -13,7 +13,7 @@ export default function ProductList() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/locks/rimlocks/ultraxltwinbolt`;
+  const API_URL = `${API_BASE_URL}/locks/rim-locks/ultra-xl-twinbolt`;
 
   useEffect(() => {
     fetchProducts();

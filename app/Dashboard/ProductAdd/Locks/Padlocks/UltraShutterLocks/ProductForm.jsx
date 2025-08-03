@@ -152,7 +152,7 @@ export default function ProductForm() {
       f.fieldValues.forEach(val => data.append('customFieldValue' + (idx+1), val));
     });
     files.forEach(f => data.append('photos', f));
-    const res = await fetch(`${API_BASE_URL}/locks/ultra-shutter-locks/create`, { method: 'POST', body: data });
+    const res = await fetch(`${API_BASE_URL}/locks/Padlocks/UltraShutterLocks/create`, { method: 'POST', body: data });
     if (res.ok) onSave && onSave();
   };
 

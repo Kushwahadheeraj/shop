@@ -13,7 +13,7 @@ export default function ProductList() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/locks/dooraccessories/ballbearingdoorhinges`;
+  const API_URL = `${API_BASE_URL}/locks/door-accessories/ball-bearing-door-hinges`;
 
   useEffect(() => {
     fetchProducts();

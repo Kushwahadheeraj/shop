@@ -13,7 +13,7 @@ export default function ProductList() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/locks/levermortiselocks/europrofilemortisepincylinderwithmasterkey`;
+  const API_URL = `${API_BASE_URL}/locks/lever-mortise-locks/europrofile-mortise-pin-cylinder-with-master-key`;
 
   useEffect(() => {
     fetchProducts();

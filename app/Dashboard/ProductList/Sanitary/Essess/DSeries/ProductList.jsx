@@ -13,7 +13,7 @@ export default function ProductList() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/sanitary/essess/dseries`;
+  const API_URL = `${API_BASE_URL}/sanitary/essess-series`;
 
   useEffect(() => {
     fetchProducts();

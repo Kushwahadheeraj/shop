@@ -13,7 +13,7 @@ export default function ProductList() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/locks/doorlocks/deadlocks`;
+  const API_URL = `${API_BASE_URL}/locks/door-locks/dead-locks`;
 
   useEffect(() => {
     fetchProducts();

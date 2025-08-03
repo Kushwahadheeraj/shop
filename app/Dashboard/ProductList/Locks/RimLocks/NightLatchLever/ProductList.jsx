@@ -13,7 +13,7 @@ export default function ProductList() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/locks/rimlocks/nightlatchlever`;
+  const API_URL = `${API_BASE_URL}/locks/rim-locks/night-latch-7-lever`;
 
   useEffect(() => {
     fetchProducts();

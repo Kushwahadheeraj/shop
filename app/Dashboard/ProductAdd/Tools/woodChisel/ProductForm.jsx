@@ -157,7 +157,7 @@ export default function ProductForm() {
       f.fieldValues.forEach(val => data.append('customFieldValue' + (idx+1), val));
     });
     files.forEach(f => data.append('photos', f));
-    const res = await fetch(`${API_BASE_URL}/electrical/woodChisel/create`, { method: 'POST', body: data });
+    const res = await fetch(`${API_BASE_URL}/tools/wood-chisel/create`, { method: 'POST', body: data });
     if (res.ok) onSave && onSave();
   };
 

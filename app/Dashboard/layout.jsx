@@ -6,19 +6,24 @@ import Sidebar from './Sidebar';
 import Navbar from '@/app/Dashboard/Navbar';
 
 export default function DashboardLayout({ children }) {
-  const { user, loading, logout, isAuthenticated } = useAuth();
+  const { user, loading, logout, isAuthenticated, isSeller } = useAuth();
   const router = useRouter();
 
   const handleSetting = () => {
     // Implement settings logic here
   };
 
-  // Protect dashboard routes
+  // Protect dashboard routes - only sellers can access
   useEffect(() => {
-    if (!loading && !isAuthenticated()) {
-      router.replace('/login/seller');
+    if (!loading) {
+      if (!isAuthenticated()) {
+        router.replace('/login/seller');
+      } else if (!isSeller()) {
+        // If authenticated but not a seller, redirect to home
+        router.replace('/');
+      }
     }
-  }, [loading, isAuthenticated, router]);
+  }, [loading, isAuthenticated, isSeller, router]);
 
   // Show loading while checking authentication
   if (loading) {
@@ -32,12 +37,12 @@ export default function DashboardLayout({ children }) {
     );
   }
 
-  // Don't render dashboard if not authenticated
-  if (!isAuthenticated()) {
+  // Don't render dashboard if not authenticated or not a seller
+  if (!isAuthenticated() || !isSeller()) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <p className="text-gray-600">Redirecting to login...</p>
+          <p className="text-gray-600">Access denied. Redirecting...</p>
         </div>
       </div>
     );

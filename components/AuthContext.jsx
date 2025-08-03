@@ -19,8 +19,8 @@ export function AuthProvider({ children }) {
     const token = localStorage.getItem('token');
     if (token) {
       try {
-        // Try to get user data using existing endpoint
-        const response = await fetch(`${API_BASE_URL}/seller/register`, {
+        // Get current seller profile
+        const response = await fetch(`${API_BASE_URL}/seller/profile/me`, {
           headers: { 
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -29,10 +29,25 @@ export function AuthProvider({ children }) {
         
         if (response.ok) {
           const data = await response.json();
+          
+          // Handle local file URLs by prepending the correct base URL
+          let avatarUrl = data.avatar;
+          if (avatarUrl && avatarUrl.startsWith('/uploads/')) {
+            // Remove /api from the base URL for static file serving
+            const baseUrl = API_BASE_URL.replace('/api', '');
+            avatarUrl = `${baseUrl}${avatarUrl}`;
+          }
+          
           setUser({ 
-            username: data.username || data.name, 
+            id: data.id,
+            username: data.username, 
             email: data.email,
-            role: data.role || 'User'
+            mobile: data.mobile,
+            shopName: data.shopName,
+            gstNumber: data.gstNumber,
+            role: data.role || 'seller',
+            status: data.status || 'active',
+            avatar: avatarUrl
           });
         } else if (response.status === 401) {
           // Only remove token on 401 (Unauthorized)
@@ -65,10 +80,25 @@ export function AuthProvider({ children }) {
       
       if (data.token) {
         localStorage.setItem('token', data.token);
+        
+        // Handle local file URLs by prepending the correct base URL
+        let avatarUrl = data.seller.avatar;
+        if (avatarUrl && avatarUrl.startsWith('/uploads/')) {
+          // Remove /api from the base URL for static file serving
+          const baseUrl = API_BASE_URL.replace('/api', '');
+          avatarUrl = `${baseUrl}${avatarUrl}`;
+        }
+        
         setUser({ 
-          username: data.username || data.name, 
-          email: data.email,
-          role: data.role || 'User'
+          id: data.seller.id,
+          username: data.seller.username, 
+          email: data.seller.email,
+          mobile: data.seller.mobile,
+          shopName: data.seller.shopName,
+          gstNumber: data.seller.gstNumber,
+          role: data.seller.role || 'seller',
+          status: data.seller.status || 'active',
+          avatar: avatarUrl
         });
         return { success: true };
       } else {
@@ -88,8 +118,102 @@ export function AuthProvider({ children }) {
 
   const isAuthenticated = () => {
     const token = localStorage.getItem('token');
-    // If we have a token, user is authenticated (don't check user object during loading)
-    return token !== null;
+    return token !== null && user !== null;
+  };
+
+  const isSeller = () => {
+    return user && (user.role === 'seller' || user.role === 'admin');
+  };
+
+  const isAdmin = () => {
+    return user && user.role === 'admin';
+  };
+
+  const isUser = () => {
+    return user && user.role === 'user';
+  };
+
+  const isActive = () => {
+    return user && user.status === 'active';
+  };
+
+  const updateProfile = async (profileData) => {
+    try {
+      const token = localStorage.getItem('token');
+      
+      // Check if profileData is FormData (for file uploads) or regular object
+      const isFormData = profileData instanceof FormData;
+      
+      const headers = {
+        'Authorization': `Bearer ${token}`
+      };
+      
+      // Don't set Content-Type for FormData, let the browser set it with boundary
+      if (!isFormData) {
+        headers['Content-Type'] = 'application/json';
+      }
+
+      const response = await fetch(`${API_BASE_URL}/seller/profile/me`, {
+        method: 'PUT',
+        headers,
+        body: isFormData ? profileData : JSON.stringify(profileData)
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        
+        // Handle local file URLs by prepending the correct base URL
+        let avatarUrl = data.seller.avatar;
+        if (avatarUrl && avatarUrl.startsWith('/uploads/')) {
+          // Remove /api from the base URL for static file serving
+          const baseUrl = API_BASE_URL.replace('/api', '');
+          avatarUrl = `${baseUrl}${avatarUrl}`;
+        }
+        
+        setUser({
+          ...user,
+          username: data.seller.username,
+          email: data.seller.email,
+          mobile: data.seller.mobile,
+          shopName: data.seller.shopName,
+          gstNumber: data.seller.gstNumber,
+          status: data.seller.status || user.status,
+          avatar: avatarUrl
+        });
+        return { success: true, message: data.message };
+      } else {
+        const errorData = await response.json();
+        return { success: false, error: errorData.message };
+      }
+    } catch (error) {
+      console.error('Profile update error:', error);
+      return { success: false, error: 'Network error' };
+    }
+  };
+
+  const changePassword = async (currentPassword, newPassword) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE_URL}/seller/profile/password`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ currentPassword, newPassword })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return { success: true, message: data.message };
+      } else {
+        const errorData = await response.json();
+        return { success: false, error: errorData.message };
+      }
+    } catch (error) {
+      console.error('Password change error:', error);
+      return { success: false, error: 'Network error' };
+    }
   };
 
   return (
@@ -99,7 +223,13 @@ export function AuthProvider({ children }) {
       logout, 
       loading, 
       isAuthenticated,
-      checkAuthStatus 
+      isSeller,
+      isAdmin,
+      isUser,
+      isActive,
+      checkAuthStatus,
+      updateProfile,
+      changePassword
     }}>
       {children}
     </AuthContext.Provider>

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import Link from 'next/link';
+import { useAuth } from '../../components/AuthContext';
 
 const sections = [
   { name: 'Dashboard', path: '/Dashboard' },
@@ -4800,6 +4801,7 @@ const sections = [
   },
   { name: 'Order List', path: '/Dashboard/OrderList' },
   { name: 'User List', path: '/Dashboard/UserList' },
+  { name: 'Seller List', path: '/Dashboard/SellerList' },
   { name: 'Category List', path: '/Dashboard/CategoryList' },
   { name: 'Brand List', path: '/Dashboard/BrandList' },
   { name: 'Coupon List', path: '/Dashboard/CouponList' },
@@ -4831,12 +4833,22 @@ function sortSidebarItems(items) {
 }
 
 export default function Sidebar({ onSetting, onLogout, open, onClose }) {
+  const { isAdmin } = useAuth();
   // Track open state for each collapsible item by name
   const [openSection, setOpenSection] = useState(null);
   const [openSubSection, setOpenSubSection] = useState(null);
 
+  // Filter sections based on user role
+  const filteredSections = sections.filter(section => {
+    // Only show SellerList to admin users
+    if (section.name === 'Seller List') {
+      return isAdmin();
+    }
+    return true;
+  });
+
   // Sort sections before rendering
-  const sortedSections = sortSidebarItems(sections);
+  const sortedSections = sortSidebarItems(filteredSections);
 
   const handleToggle = (name) => {
     setOpenSection(openSection === name ? null : name);

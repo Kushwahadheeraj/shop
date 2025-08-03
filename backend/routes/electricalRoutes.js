@@ -110,6 +110,28 @@ function crudRoutes(resource, controller) {
   router.put(`/${resource}/Update/:id`, upload.array('photos', 5), updateHandler);
   router.delete(`/${resource}/delete/:id`, deleteHandler);
 }
+
+function crudRoutesSimple(resource, controller) {
+  const createHandler = controller && controller.create;
+  const getAllHandler = controller && controller.getAll;
+  const getOneHandler = controller && controller.getOne;
+  const updateHandler = controller && controller.update;
+  const deleteHandler = controller && controller.delete;
+
+  if (!createHandler || !getAllHandler || !getOneHandler || !updateHandler || !deleteHandler) {
+    console.error(
+      `Missing handler for resource: ${resource}\n` +
+      `create: ${!!createHandler}, getAll: ${!!getAllHandler}, getOne: ${!!getOneHandler}, update: ${!!updateHandler}, delete: ${!!deleteHandler}`
+    );
+    return;
+  }
+
+  router.post(`/${resource}/create`, upload.array('photos', 5), createHandler);
+  router.get(`/${resource}/get`, getAllHandler);
+  router.get(`/${resource}/getOne/:id`, getOneHandler);
+  router.put(`/${resource}/Update/:id`, upload.array('photos', 5), updateHandler);
+  router.delete(`/${resource}/delete/:id`, deleteHandler);
+}
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
@@ -157,45 +179,45 @@ crudRoutes('distributionBoards', distributionBoards);
 crudRoutes('dimmer', dimmer);
 
 // --- LIGHTS CONTROLLERS ROUTES ---
-crudRoutes('ceilinglight', ceilinglight);
-crudRoutes('cfl', cFL);
-crudRoutes('desklight', deskLight);
-crudRoutes('focuslight', focusLight);
-crudRoutes('gardenlight', gardenLight);
-crudRoutes('gatelight', gateLight);
-crudRoutes('gls', gLS);
-crudRoutes('home', home);
-crudRoutes('lamps', lamps);
-crudRoutes('ledbatten', lEDBatten);
-crudRoutes('ledbulbs', lEDBulbs);
-crudRoutes('leddownlightersspotlight', ledDownLightersSpotLight);
-crudRoutes('ledluminaires', lEDLuminaires);
-crudRoutes('ledpanellight', lEDPanelLight);
-crudRoutes('ledspotlight', lEDSpotlight);
-crudRoutes('ledstreetlight', lEDStreetLight);
-crudRoutes('ledstrips', lEDStrips);
-crudRoutes('ledsurfacelight', ledSurfaceLight);
-crudRoutes('lightelectronics', lightElectronics);
-crudRoutes('mirrorlight', mirrorLight);
-crudRoutes('reflections', reflections);
-crudRoutes('standardincandescent', standardIncandescent);
-crudRoutes('tbulb', tBulb);
-crudRoutes('tubelight', tubeLight);
-crudRoutes('underwaterlights', underWaterLights);
-crudRoutes('walllight', wallLight);
+crudRoutesSimple('ceilinglight', ceilinglight);
+crudRoutesSimple('cfl', cFL);
+crudRoutesSimple('desklight', deskLight);
+crudRoutesSimple('focuslight', focusLight);
+crudRoutesSimple('gardenlight', gardenLight);
+crudRoutesSimple('gatelight', gateLight);
+crudRoutesSimple('gls', gLS);
+crudRoutesSimple('home', home);
+crudRoutesSimple('lamps', lamps);
+crudRoutesSimple('ledbatten', lEDBatten);
+crudRoutesSimple('ledbulbs', lEDBulbs);
+crudRoutesSimple('leddownlightersspotlight', ledDownLightersSpotLight);
+crudRoutesSimple('ledluminaires', lEDLuminaires);
+crudRoutesSimple('ledpanellight', lEDPanelLight);
+crudRoutesSimple('ledspotlight', lEDSpotlight);
+crudRoutesSimple('ledstreetlight', lEDStreetLight);
+crudRoutesSimple('ledstrips', lEDStrips);
+crudRoutesSimple('ledsurfacelight', ledSurfaceLight);
+crudRoutesSimple('lightelectronics', lightElectronics);
+crudRoutesSimple('mirrorlight', mirrorLight);
+crudRoutesSimple('reflections', reflections);
+crudRoutesSimple('standardincandescent', standardIncandescent);
+crudRoutesSimple('tbulb', tBulb);
+crudRoutesSimple('tubelight', tubeLight);
+crudRoutesSimple('underwaterlights', underWaterLights);
+crudRoutesSimple('walllight', wallLight);
 
 // --- FANS CONTROLLERS ROUTES ---
-crudRoutes('cabinfans', cabinFans);
-crudRoutes('ceilingfans', ceilingFans);
-crudRoutes('pedestalfans', pedestalfans);
-crudRoutes('tablefans', tableFans);
-crudRoutes('ventilationexhaustfans', ventilationExhaustfans);
-crudRoutes('wallmountingfans', wallMountingfans);
+crudRoutesSimple('cabinfans', cabinFans);
+crudRoutesSimple('ceilingfans', ceilingFans);
+crudRoutesSimple('pedestalfans', pedestalfans);
+crudRoutesSimple('tablefans', tableFans);
+crudRoutesSimple('ventilationexhaustfans', ventilationExhaustfans);
+crudRoutesSimple('wallmountingfans', wallMountingfans);
 
 // --- ELECTRICALFITTINGS CONTROLLERS ROUTES ---
-crudRoutes('accessories', accessories);
-crudRoutes('circulardeepbox', circularDeepBox);
-crudRoutes('circularsurfacebox', circularSurfaceBox);
-crudRoutes('rigidtype', rigidType);
+crudRoutesSimple('accessories', accessories);
+crudRoutesSimple('circulardeepbox', circularDeepBox);
+crudRoutesSimple('circularsurfacebox', circularSurfaceBox);
+crudRoutesSimple('rigidtype', rigidType);
 
 module.exports = router;

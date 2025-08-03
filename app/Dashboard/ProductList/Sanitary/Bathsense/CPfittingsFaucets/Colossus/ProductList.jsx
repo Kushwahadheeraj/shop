@@ -13,7 +13,7 @@ export default function ProductList() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/sanitary/bathsense/cpfittingsfaucets`;
+  const API_URL = `${API_BASE_URL}/sanitary/bathsense-pfittings-faucets-colossus`;
 
   useEffect(() => {
     fetchProducts();

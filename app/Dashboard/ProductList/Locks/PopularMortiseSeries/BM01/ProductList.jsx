@@ -13,7 +13,7 @@ export default function ProductList() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/locks/popularmortiseseries/bm01`;
+  const API_URL = `${API_BASE_URL}/locks/popular-mortise-series/bm01`;
 
   useEffect(() => {
     fetchProducts();

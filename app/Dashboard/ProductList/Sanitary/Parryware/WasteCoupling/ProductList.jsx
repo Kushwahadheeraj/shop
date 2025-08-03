@@ -13,7 +13,7 @@ export default function ProductList() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/sanitary/parryware/wastecoupling`;
+  const API_URL = `${API_BASE_URL}/sanitary/parryware-waste-coupling-waste-coupling`;
 
   useEffect(() => {
     fetchProducts();

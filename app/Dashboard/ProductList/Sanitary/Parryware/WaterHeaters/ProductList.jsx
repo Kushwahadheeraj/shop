@@ -13,7 +13,7 @@ export default function ProductList() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/sanitary/parryware/waterheaters`;
+  const API_URL = `${API_BASE_URL}/sanitary/parryware-water-heaters-water-heaters`;
 
   useEffect(() => {
     fetchProducts();

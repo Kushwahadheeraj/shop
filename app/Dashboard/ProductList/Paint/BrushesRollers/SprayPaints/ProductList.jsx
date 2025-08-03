@@ -13,7 +13,7 @@ export default function ProductList() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/paint/brushesrollers/spraypaints`;
+  const API_URL = `${API_BASE_URL}/paint/brushes-rollers-spray-paints`;
 
   useEffect(() => {
     fetchProducts();

@@ -13,7 +13,7 @@ export default function ProductList() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/sanitary/corsa/otherusefulitems`;
+  const API_URL = `${API_BASE_URL}/sanitary/corsa-other-useful-items-ball-valves`;
 
   useEffect(() => {
     fetchProducts();

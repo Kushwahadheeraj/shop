@@ -13,7 +13,7 @@ export default function ProductList() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/locks/furniturelocks/camlock`;
+  const API_URL = `${API_BASE_URL}/locks/furniture-locks/cam-lock`;
 
   useEffect(() => {
     fetchProducts();

@@ -13,7 +13,7 @@ export default function ProductList() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/paint/primer/metalprimer`;
+  const API_URL = `${API_BASE_URL}/paint/primer-metal-primer`;
 
   useEffect(() => {
     fetchProducts();

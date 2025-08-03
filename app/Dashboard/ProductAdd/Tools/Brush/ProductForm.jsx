@@ -94,7 +94,7 @@ export default function ProductForm() {
     tags.forEach(tag => formData.append("tags", tag));
     photos.forEach(photo => formData.append("photos", photo));
     // TODO: Update API endpoint for each product type
-    // const res = await fetch(`/api/your-endpoint`, { method: "POST", body: formData });
+    const res = await fetch(`${API_BASE_URL}/tools/brush/create`, { method: 'POST', body: data });
     if (res.ok) onSave && onSave();
   };
 

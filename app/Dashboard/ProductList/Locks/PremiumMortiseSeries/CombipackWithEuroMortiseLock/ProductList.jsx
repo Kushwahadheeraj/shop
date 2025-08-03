@@ -13,7 +13,7 @@ export default function ProductList() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/locks/premiummortiseseries/combipackwitheuromortiselock`;
+  const API_URL = `${API_BASE_URL}/locks/premium-mortise-series/combipack-with-240mm-euro-mortise-lock`;
 
   useEffect(() => {
     fetchProducts();

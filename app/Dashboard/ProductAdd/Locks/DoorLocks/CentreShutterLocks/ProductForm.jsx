@@ -152,7 +152,7 @@ export default function ProductForm() {
       f.fieldValues.forEach(val => data.append('customFieldValue' + (idx+1), val));
     });
     files.forEach(f => data.append('photos', f));
-    const res = await fetch(`${API_BASE_URL}/locks/door-locks/centre-shutter-locks/create`, { method: 'POST', body: data });
+    const res = await fetch(`${API_BASE_URL}/locks/DoorLocks/CentreShutterLocks/create`, { method: 'POST', body: data });
     if (res.ok) onSave && onSave();
   };
 

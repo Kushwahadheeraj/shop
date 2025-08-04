@@ -16,16 +16,44 @@ function uploadToCloudinary(buffer) {
 // Create a new home paint product
 exports.createHomePaint = async (req, res) => {
   try {
-    let imageUrl = '';
+    console.log('Create home paint request received');
+    console.log('Files received:', req.files ? req.files.length : 0);
+    console.log('Body received:', req.body);
     
-    // Handle image upload if provided
-    if (req.file) {
-      imageUrl = await uploadToCloudinary(req.file.buffer);
+    let imageUrls = [];
+    
+    // Handle multiple image uploads if provided
+    if (req.files && req.files.length > 0) {
+      console.log('Processing', req.files.length, 'files');
+      for (const file of req.files) {
+        console.log('Uploading file:', file.originalname, file.size);
+        const imageUrl = await uploadToCloudinary(file.buffer);
+        imageUrls.push(imageUrl);
+        console.log('Uploaded to:', imageUrl);
+      }
+    } else {
+      console.log('No files received');
+    }
+
+    // Parse tags and colors from request body
+    let tags = [];
+    let colors = [];
+    
+    if (req.body.tags) {
+      tags = typeof req.body.tags === 'string' ? req.body.tags.split(',').map(tag => tag.trim()) : req.body.tags;
+    }
+    
+    if (req.body.colors) {
+      colors = typeof req.body.colors === 'string' ? req.body.colors.split(',').map(color => color.trim()) : req.body.colors;
     }
 
     const productData = {
       ...req.body,
-      image: imageUrl
+      images: imageUrls,
+      tags: tags,
+      colors: colors,
+      price: parseFloat(req.body.price) || 0,
+      discount: parseFloat(req.body.discount) || 0
     };
 
     const product = new HomePaintsModel(productData);
@@ -105,7 +133,10 @@ exports.getHomePaintsByBrand = async (req, res) => {
 exports.getHomePaintsByColor = async (req, res) => {
   try {
     const { color } = req.params;
-    const products = await HomePaintsModel.find({ color, isActive: true }).sort({ createdAt: -1 });
+    const products = await HomePaintsModel.find({ 
+      colors: { $in: [color] }, 
+      isActive: true 
+    }).sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
       count: products.length,
@@ -165,12 +196,34 @@ exports.getOneHomePaint = async (req, res) => {
 // Update home paint product by ID
 exports.updateHomePaint = async (req, res) => {
   try {
-    let updateData = { ...req.body };
+    // Parse tags and colors from request body
+    let tags = [];
+    let colors = [];
     
-    // Handle image upload if provided
-    if (req.file) {
-      const imageUrl = await uploadToCloudinary(req.file.buffer);
-      updateData.image = imageUrl;
+    if (req.body.tags) {
+      tags = typeof req.body.tags === 'string' ? req.body.tags.split(',').map(tag => tag.trim()) : req.body.tags;
+    }
+    
+    if (req.body.colors) {
+      colors = typeof req.body.colors === 'string' ? req.body.colors.split(',').map(color => color.trim()) : req.body.colors;
+    }
+
+    let updateData = {
+      ...req.body,
+      tags: tags,
+      colors: colors,
+      price: parseFloat(req.body.price) || 0,
+      discount: parseFloat(req.body.discount) || 0
+    };
+    
+    // Handle multiple image uploads if provided
+    if (req.files && req.files.length > 0) {
+      const imageUrls = [];
+      for (const file of req.files) {
+        const imageUrl = await uploadToCloudinary(file.buffer);
+        imageUrls.push(imageUrl);
+      }
+      updateData.images = imageUrls;
     }
 
     const product = await HomePaintsModel.findByIdAndUpdate(

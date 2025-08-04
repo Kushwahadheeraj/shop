@@ -6,7 +6,8 @@ import API_BASE_URL from "@/lib/apiConfig";
 
 export default function ProductForm() {
   const [form, setForm] = useState({
-    mainText: 'Top selling Products',
+    title: '',
+    offer: '',
   });
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -33,7 +34,7 @@ export default function ProductForm() {
   };
 
   const isFormValid = () => {
-    return form.mainText && file;
+    return form.title && file;
   };
 
   const handleSubmit = async (e) => {
@@ -44,49 +45,62 @@ export default function ProductForm() {
     }
 
     const data = new FormData();
-    data.append('mainText', form.mainText);
+    data.append('title', form.title);
+    data.append('offer', form.offer);
     data.append('image', file);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/home/card/create`, { 
+      const res = await fetch(`${API_BASE_URL}/home/offer/create`, { 
         method: 'POST', 
         body: data 
       });
       
       if (res.ok) {
-        alert('Product created successfully!');
-        setForm({ mainText: '' });
+        alert('Offer created successfully!');
+        setForm({ title: '', offer: 'Offer' });
         setFile(null);
         setPreview(null);
       } else {
-        alert('Error creating product');
+        alert('Error creating offer');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error creating product');
+      alert('Error creating offer');
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-6 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
-      <h2 className="text-2xl font-bold mb-6 text-center">Add Card Product</h2>
-
-      {/* mainText */}
+      <h2 className="text-2xl font-bold mb-6 text-center">Add Offer</h2>
+      
+      {/* Title */}
       <div>
-        <label className="block text-sm font-medium mb-2">Main Text</label>
+        <label className="block text-sm font-medium mb-2">Title *</label>
         <Input 
-        name="mainText" 
-        value={form.mainText} 
-        onChange={handleChange} 
-        placeholder="Enter main text" 
-        required 
-        className="w-full"
+          name="title" 
+          value={form.title} 
+          onChange={handleChange} 
+          placeholder="Enter offer title" 
+          required 
+          className="w-full"
+        />
+      </div>
+
+      {/* Offer Type */}
+      <div>
+        <label className="block text-sm font-medium mb-2">Offer Type</label>
+        <Input 
+          name="offer" 
+          value={form.offer} 
+          onChange={handleChange} 
+          placeholder="Enter offer type" 
+          className="w-full bg-gray-50"
         />
       </div>
 
       {/* Image Upload */}
       <div>
-        <label className="block text-sm font-medium mb-2">Product Image</label>
+        <label className="block text-sm font-medium mb-2">Offer Image *</label>
         <Input 
           name="image" 
           type="file" 
@@ -116,14 +130,32 @@ export default function ProductForm() {
         )}
       </div>
 
+      {/* Preview Section */}
+      <div className="border-t pt-4">
+        <h3 className="text-lg font-semibold mb-3">Preview</h3>
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="text-center">
+            {preview && (
+              <img 
+                src={preview} 
+                alt="Offer Preview" 
+                className="w-20 h-20 object-cover rounded mx-auto mb-3"
+              />
+            )}
+            <h3 className="text-lg font-bold mb-2">{form.title || 'Offer Title'}</h3>
+            <p className="text-gray-600 text-sm">{form.offer}</p>
+          </div>
+        </div>
+      </div>
+
       {/* Submit Button */}
       <Button 
         type="submit" 
         className="w-full" 
         disabled={!isFormValid()}
       >
-        Create Product
+        Create Offer
       </Button>
     </form>
   );
-}
+} 

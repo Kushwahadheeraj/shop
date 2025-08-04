@@ -12,7 +12,7 @@ export default function ProductForm() {
     title: '',
     description: '',
   });
-  const [file, setFile] = useState(null);
+  const [error, setError] = useState("");
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -23,30 +23,33 @@ export default function ProductForm() {
     setForm(prev => ({ ...prev, icon: value }));
   };
 
-  
-
- 
-
   const isFormValid = () => {
-    return form.title && form.description && file;
+    return form.title && form.description;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    
     if (!isFormValid()) {
-      setPhotoError("Please fill all required fields and upload an image");
+      setError("Please fill all required fields");
       return;
     }
 
-    const data = new FormData();
-    data.append('icon', form.icon);
-    data.append('title', form.title);
-    data.append('description', form.description);
+    // Send as JSON instead of FormData since services don't have file uploads
+    const serviceData = {
+      icon: form.icon,
+      title: form.title,
+      description: form.description
+    };
 
     try {
       const res = await fetch(`${API_BASE_URL}/home/service/create`, { 
-        method: 'POST', 
-        body: data 
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(serviceData)
       });
       
       if (res.ok) {
@@ -56,25 +59,31 @@ export default function ProductForm() {
           title: '',
           description: '',
         });
-        setFile(null);
-        setPreview(null);
+        setError("");
       } else {
-        alert('Error creating service');
+        const errorData = await res.json();
+        setError(errorData.message || 'Error creating service');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error creating service');
+      setError('Error creating service');
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-6 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
-      <h2 className="text-2xl font-bold mb-6 text-center">Add Service Product</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">Add Service</h2>
+      
+      {error && (
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-600">{error}</p>
+        </div>
+      )}
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Icon Selection */}
         <div>
-          <label className="block text-sm font-medium mb-2">Icon</label>
+          <label className="block text-sm font-medium mb-2">Icon *</label>
           <Select value={form.icon} onValueChange={handleSelectChange}>
             <SelectTrigger>
               <SelectValue placeholder="Select an icon" />
@@ -96,7 +105,7 @@ export default function ProductForm() {
 
         {/* Title */}
         <div>
-          <label className="block text-sm font-medium mb-2">Title </label>
+          <label className="block text-sm font-medium mb-2">Title *</label>
           <Input 
             name="title" 
             value={form.title} 
@@ -106,11 +115,11 @@ export default function ProductForm() {
             className="w-full"
           />
         </div>
-
+      </div>
 
       {/* Description */}
       <div>
-        <label className="block text-sm font-medium mb-2">Description </label>
+        <label className="block text-sm font-medium mb-2">Description *</label>
         <Textarea 
           name="description" 
           value={form.description} 
@@ -120,10 +129,7 @@ export default function ProductForm() {
           className="w-full"
           rows={4}
         />
-       
       </div>
-
-      
 
       {/* Preview Section */}
       <div className="border-t pt-4">
@@ -131,9 +137,9 @@ export default function ProductForm() {
         <div className="bg-gray-50 p-4 rounded-lg">
           <div className="text-center">
             <div className="mb-2">
-              {/* Icon preview - you can add actual icon rendering here */}
-              <div className="w-10 h-10 mx-auto mb-4 bg-blue-500 rounded-full flex items-center justify-center text-white">
-                {form.icon.charAt(0)}
+              {/* Icon preview */}
+              <div className="w-10 h-10 mx-auto mb-4 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                {form.icon ? form.icon.charAt(0) : 'S'}
               </div>
             </div>
             <h3 className="text-xl font-extrabold mb-2">{form.title || 'Service Title'}</h3>
@@ -150,7 +156,6 @@ export default function ProductForm() {
       >
         Create Service
       </Button>
-      </div>
     </form>
   );
 }

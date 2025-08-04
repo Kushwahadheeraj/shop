@@ -6,10 +6,10 @@ const PopularProductsSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
-  image: { 
+  images: [{ 
     type: String, 
     required: true
-  },
+  }],
   description: { 
     type: String, 
     trim: true
@@ -18,10 +18,17 @@ const PopularProductsSchema = new mongoose.Schema({
     type: String, 
     trim: true
   },
+  tags: [{
+    type: String,
+    trim: true
+  }],
   price: { 
     type: Number
   },
-  originalPrice: { 
+  minPrice: { 
+    type: Number
+  },
+  maxPrice: { 
     type: Number
   },
   discount: { 
@@ -32,6 +39,15 @@ const PopularProductsSchema = new mongoose.Schema({
     type: Number, 
     default: 0
   },
+  variants: [{
+    variantName: { type: String, trim: true },
+    price: { type: Number },
+    discountPrice: { type: Number }
+  }],
+  customFields: [{
+    fieldName: { type: String, trim: true },
+    fieldValues: [{ type: String, trim: true }]
+  }],
   isActive: { 
     type: Boolean, 
     default: true

@@ -48,7 +48,7 @@ exports.createCard = async (req, res) => {
 // Get all cards
 exports.getAllCards = async (req, res) => {
   try {
-    const cards = await CardModel.find({ isActive: true }).sort({ createdAt: -1 });
+    const cards = await CardModel.find().sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
       count: cards.length,
@@ -67,7 +67,7 @@ exports.getAllCards = async (req, res) => {
 exports.getCardsByCategory = async (req, res) => {
   try {
     const { category } = req.params;
-    const cards = await CardModel.find({ category, isActive: true }).sort({ createdAt: -1 });
+    const cards = await CardModel.find({ category }).sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
       count: cards.length,

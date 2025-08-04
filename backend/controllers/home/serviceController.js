@@ -3,14 +3,42 @@ const ServiceModel = require('../../models/ServiceModel');
 // Create a new service
 exports.createService = async (req, res) => {
   try {
-    const service = new ServiceModel(req.body);
+    console.log('Service creation request body:', req.body); // Debug log
+    console.log('Request headers:', req.headers); // Debug log
+    
+    // Validate required fields
+    if (!req.body.icon || !req.body.title || !req.body.description) {
+      console.log('Missing fields:', { 
+        icon: !!req.body.icon, 
+        title: !!req.body.title, 
+        description: !!req.body.description 
+      });
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required fields: icon, title, and description are required'
+      });
+    }
+
+    const serviceData = {
+      icon: req.body.icon,
+      title: req.body.title,
+      description: req.body.description
+    };
+
+    console.log('Creating service with data:', serviceData); // Debug log
+
+    const service = new ServiceModel(serviceData);
     const savedService = await service.save();
+    
+    console.log('Service created successfully:', savedService); // Debug log
+    
     res.status(201).json({
       success: true,
       message: 'Service created successfully',
       data: savedService
     });
   } catch (error) {
+    console.error('Service creation error:', error); // Debug log
     res.status(500).json({
       success: false,
       message: 'Error creating service',
@@ -29,6 +57,7 @@ exports.getAllServices = async (req, res) => {
       data: services
     });
   } catch (error) {
+    console.error('Service fetch error:', error); // Debug log
     res.status(500).json({
       success: false,
       message: 'Error fetching services',
@@ -52,6 +81,7 @@ exports.getOneService = async (req, res) => {
       data: service
     });
   } catch (error) {
+    console.error('Service fetch error:', error); // Debug log
     res.status(500).json({
       success: false,
       message: 'Error fetching service',
@@ -80,6 +110,7 @@ exports.updateService = async (req, res) => {
       data: service
     });
   } catch (error) {
+    console.error('Service update error:', error); // Debug log
     res.status(500).json({
       success: false,
       message: 'Error updating service',
@@ -103,6 +134,7 @@ exports.deleteService = async (req, res) => {
       message: 'Service deleted successfully'
     });
   } catch (error) {
+    console.error('Service delete error:', error); // Debug log
     res.status(500).json({
       success: false,
       message: 'Error deleting service',

@@ -36,7 +36,7 @@ export default function ProductForm() {
   };
 
   const isFormValid = () => {
-    return form.mainText && form.subtext && form.descrText && file;
+    return form.mainText && form.subtext && form.descText && file;
   };
 
   const handleSubmit = async (e) => {
@@ -63,9 +63,7 @@ export default function ProductForm() {
         setForm({
           mainText: '',
           subtext: '',
-          descrText: '',
           descText: '',
-          offer: '',
         });
         setFile(null);
         setPreview(null);
@@ -108,29 +106,14 @@ export default function ProductForm() {
             className="w-full"
           />
         </div>
-
-       
-
-        {/* Offer */}
-        <div>
-          <label className="block text-sm font-medium mb-2">Offer</label>
-          <Input 
-            name="offer" 
-            value={form.offer} 
-            onChange={handleChange} 
-            placeholder="Enter offer details" 
-            className="w-full"
-          />
-        </div>
-
-       
+      
       </div>
 
       {/* Description Text */}
       <div>
         <label className="block text-sm font-medium mb-2">Description Text </label>
         <Textarea 
-          name="descrText" 
+          name="descText" 
           value={form.descText} 
           onChange={handleChange} 
           placeholder="Enter description text" 
@@ -187,9 +170,8 @@ export default function ProductForm() {
             )}
             <h3 className="text-xl font-bold mb-2">{form.mainText || 'Main Text'}</h3>
             <p className="text-lg mb-2">{form.subtext || 'Sub Text'}</p>
-            <p className="text-sm text-gray-600 mb-2">{form.descrText || 'Description Text'}</p>
+            <p className="text-sm text-gray-600 mb-2">{form.descText || 'Description Text'}</p>
             {form.descText && <p className="text-xs text-gray-500">{form.descText}</p>}
-            {form.offer && <p className="text-sm font-semibold text-red-600 mt-2">{form.offer}</p>}
           </div>
         </div>
       </div>

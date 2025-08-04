@@ -7,7 +7,6 @@ import API_BASE_URL from "@/lib/apiConfig";
 export default function ProductForm() {
   const [form, setForm] = useState({
     name: '',
-    category: 'Brands',
   });
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -46,8 +45,7 @@ export default function ProductForm() {
 
     const data = new FormData();
     data.append('name', form.name);
-    data.append('category', form.category);
-    data.append('image', file);
+    data.append('logo', file);
 
     try {
       const res = await fetch(`${API_BASE_URL}/home/brands/create`, { 
@@ -57,7 +55,7 @@ export default function ProductForm() {
       
       if (res.ok) {
         alert('Product created successfully!');
-        setForm({ name: '', category: 'Brands' });
+        setForm({ name: '' });
         setFile(null);
         setPreview(null);
       } else {
@@ -75,33 +73,23 @@ export default function ProductForm() {
       
       {/* Product Name */}
       <div>
-        <label className="block text-sm font-medium mb-2">Product Name</label>
+        <label className="block text-sm font-medium mb-2">Brand Name</label>
         <Input 
           name="name" 
           value={form.name} 
           onChange={handleChange} 
-          placeholder="Enter product name" 
+          placeholder="Enter brand name" 
           required 
           className="w-full"
         />
       </div>
 
-      {/* Category */}
-      <div>
-        <label className="block text-sm font-medium mb-2">Category</label>
-        <Input 
-          name="category" 
-          value={form.category} 
-          readOnly 
-          className="w-full bg-gray-50"
-        />
-      </div>
 
       {/* Image Upload */}
       <div>
         <label className="block text-sm font-medium mb-2">Product Image</label>
         <Input 
-          name="image" 
+          name="logo" 
           type="file" 
           onChange={handleFile} 
           accept="image/*" 

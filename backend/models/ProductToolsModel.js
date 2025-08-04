@@ -6,10 +6,10 @@ const ProductToolsSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
-  image: { 
+  images: [{ 
     type: String, 
     required: true
-  },
+  }],
   description: { 
     type: String, 
     trim: true
@@ -18,8 +18,26 @@ const ProductToolsSchema = new mongoose.Schema({
     type: String, 
     trim: true
   },
+  tags: [{
+    type: String,
+    trim: true
+  }],
   price: { 
     type: Number
+  },
+  minPrice: { 
+    type: Number
+  },
+  maxPrice: { 
+    type: Number
+  },
+  discount: { 
+    type: Number, 
+    default: 0
+  },
+  rating: { 
+    type: Number, 
+    default: 0
   },
   brand: { 
     type: String, 
@@ -29,6 +47,15 @@ const ProductToolsSchema = new mongoose.Schema({
     type: String, 
     trim: true
   },
+  variants: [{
+    variantName: { type: String, trim: true },
+    price: { type: Number },
+    discountPrice: { type: Number }
+  }],
+  customFields: [{
+    fieldName: { type: String, trim: true },
+    fieldValues: [{ type: String, trim: true }]
+  }],
   isActive: { 
     type: Boolean, 
     default: true

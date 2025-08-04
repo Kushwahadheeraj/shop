@@ -389,8 +389,8 @@ const sections = [
             path: '/Dashboard/ProductAdd/Home/Service',
           },
           {
-            name: 'Tools',
-            path: '/Dashboard/ProductAdd/Home/Tools',
+            name: 'Offer',
+            path: '/Dashboard/ProductAdd/Home/Offer',
           },
         ],
       },
@@ -2784,8 +2784,8 @@ const sections = [
             path: '/Dashboard/ProductList/Home/Service',
           },
           {
-            name: 'Tools',
-            path: '/Dashboard/ProductList/Home/Tools',
+            name: 'Offer',
+            path: '/Dashboard/ProductList/Home/Offer',
           },
         ],
       },

@@ -2,7 +2,7 @@ const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
 const HomeElectricalModel = require('../../models/HomeElectricalModel');
 
-// Upload image to Cloudinary
+// Upload photos to Cloudinary
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream((err, result) => {
@@ -18,14 +18,33 @@ exports.createHomeElectrical = async (req, res) => {
   try {
     let imageUrl = '';
     
-    // Handle image upload if provided
+    // Handle photos upload if provided
     if (req.file) {
       imageUrl = await uploadToCloudinary(req.file.buffer);
     }
 
+    // Handle tags array - if tags is sent as multiple values, it will be an array
+    let tags = [];
+    if (req.body.tags) {
+      // If tags is already an array, use it directly
+      if (Array.isArray(req.body.tags)) {
+        tags = req.body.tags;
+      } else {
+        // If tags is a single value, convert to array
+        tags = [req.body.tags];
+      }
+    }
+
     const productData = {
-      ...req.body,
-      image: imageUrl
+      name: req.body.name,
+      description: req.body.description,
+      category: req.body.category,
+      price: req.body.price,
+      originalPrice: req.body.originalPrice,
+      discount: req.body.discount,
+      brand: req.body.brand,
+      photos: imageUrl,
+      tags: tags
     };
 
     const product = new HomeElectricalModel(productData);
@@ -127,12 +146,31 @@ exports.getOneHomeElectrical = async (req, res) => {
 // Update home electrical product by ID
 exports.updateHomeElectrical = async (req, res) => {
   try {
-    let updateData = { ...req.body };
+    let updateData = {
+      name: req.body.name,
+      description: req.body.description,
+      category: req.body.category,
+      price: req.body.price,
+      originalPrice: req.body.originalPrice,
+      discount: req.body.discount,
+      brand: req.body.brand
+    };
     
-    // Handle image upload if provided
+    // Handle photos upload if provided
     if (req.file) {
       const imageUrl = await uploadToCloudinary(req.file.buffer);
-      updateData.image = imageUrl;
+      updateData.photos = imageUrl;
+    }
+
+    // Handle tags array
+    if (req.body.tags) {
+      let tags = [];
+      if (Array.isArray(req.body.tags)) {
+        tags = req.body.tags;
+      } else {
+        tags = [req.body.tags];
+      }
+      updateData.tags = tags;
     }
 
     const product = await HomeElectricalModel.findByIdAndUpdate(

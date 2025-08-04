@@ -1,31 +1,17 @@
 const mongoose = require('mongoose');
 
 const CardSchema = new mongoose.Schema({
-  title: { 
+  mainText: { 
     type: String, 
     required: true,
     trim: true
   },
-  subtitle: { 
-    type: String, 
-    trim: true
-  },
+  
   image: { 
     type: String, 
     required: true
   },
-  link: { 
-    type: String, 
-    trim: true
-  },
-  category: { 
-    type: String, 
-    trim: true
-  },
-  isActive: { 
-    type: Boolean, 
-    default: true
-  }
+  
 }, { 
   timestamps: true 
 });

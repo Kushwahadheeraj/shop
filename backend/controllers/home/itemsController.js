@@ -24,8 +24,10 @@ exports.createItem = async (req, res) => {
     }
 
     const itemData = {
-      ...req.body,
-      uploadedImage: imageUrl
+      image: imageUrl,
+      link: req.body.link,
+      title: req.body.title,
+      subtitle: req.body.subtitle
     };
 
     const item = new ItemsModel(itemData);
@@ -89,12 +91,16 @@ exports.getOneItem = async (req, res) => {
 // Update item by ID
 exports.updateItem = async (req, res) => {
   try {
-    let updateData = { ...req.body };
+    let updateData = {
+      link: req.body.link,
+      title: req.body.title,
+      subtitle: req.body.subtitle
+    };
     
     // Handle image upload if provided
     if (req.file) {
       const imageUrl = await uploadToCloudinary(req.file.buffer);
-      updateData.uploadedImage = imageUrl;
+      updateData.image = imageUrl;
     }
 
     const item = await ItemsModel.findByIdAndUpdate(

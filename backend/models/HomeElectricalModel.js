@@ -32,9 +32,9 @@ const HomeElectricalSchema = new mongoose.Schema({
     type: String, 
     trim: true
   },
-  specifications: { 
-    type: String, 
-    trim: true
+  tags: {
+    type: [String],
+    default: []
   },
   isActive: { 
     type: Boolean, 

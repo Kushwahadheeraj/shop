@@ -1,25 +1,32 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import ProductTable from "@/components/ProductTable";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, RefreshCw, ArrowLeft } from "lucide-react";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Plus, RefreshCw, Search, MoreHorizontal, Eye, Edit, Trash2 } from "lucide-react";
 import API_BASE_URL from "@/lib/apiConfig";
 
 export default function ProductList() {
-  const [products, setProducts] = useState([]);
+  const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [cardToDelete, setCardToDelete] = useState(null);
   const router = useRouter();
 
   const API_URL = `${API_BASE_URL}/home/card`;
 
   useEffect(() => {
-    fetchProducts();
+    fetchCards();
   }, []);
 
-  const fetchProducts = async () => {
+  const fetchCards = async () => {
     setLoading(true);
     setError(null);
     try {
@@ -27,50 +34,83 @@ export default function ProductList() {
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
-      const data = await res.json();
-      // Ensure products is always an array
-      const productsArray = Array.isArray(data) ? data : (data.products || data.data || []);
-      setProducts(productsArray);
+      const responseData = await res.json();
+      console.log('API Response:', responseData); // Debug log
+      
+      // Handle the response format: {"success":true,"count":0,"data":[]}
+      let cardsArray = [];
+      if (responseData.success && responseData.data) {
+        cardsArray = responseData.data;
+      } else if (Array.isArray(responseData)) {
+        cardsArray = responseData;
+      } else if (responseData.cards) {
+        cardsArray = responseData.cards;
+      }
+      
+      setCards(cardsArray);
     } catch (err) {
       setError(err.message);
-      console.error('Error fetching products:', err);
-      setProducts([]); // Set empty array on error
+      console.error('Error fetching cards:', err);
+      setCards([]); // Set empty array on error
     } finally {
       setLoading(false);
     }
   };
 
-  const handleEdit = (product) => {
-    router.push("/Dashboard/ProductAdd/Home/Card?id=" + product._id);
+  const handleEdit = (card) => {
+    router.push("/Dashboard/ProductAdd/Home/Card?id=" + card._id);
   };
 
   const handleDelete = async (id) => {
     try {
-      const res = await fetch(API_URL + '/delete:' + id, { method: "DELETE" });
+      const res = await fetch(API_URL + '/delete/' + id, { method: "DELETE" });
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
-      await fetchProducts(); // Refresh the list
+      await fetchCards(); // Refresh the list
     } catch (err) {
       setError(err.message);
-      console.error('Error deleting product:', err);
+      console.error('Error deleting card:', err);
     }
   };
 
-  const handleView = (product) => {
-    router.push(`/Dashboard/ProductView/home/card/${product._id}`);
+  const handleView = (card) => {
+    router.push(`/Dashboard/ProductView/home/card/${card._id}`);
   };
 
   const handleAddNew = () => {
     router.push("/Dashboard/ProductAdd/Home/Card");
   };
 
-  if (loading && products.length === 0) {
+  const handleDeleteClick = (card) => {
+    setCardToDelete(card);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (cardToDelete) {
+      handleDelete(cardToDelete._id);
+    }
+    setDeleteDialogOpen(false);
+    setCardToDelete(null);
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    return new Date(dateString).toLocaleDateString();
+  };
+
+  // Filter cards based on search term
+  const filteredCards = cards.filter(card => 
+    card.mainText?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (loading && cards.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4 text-gray-400" />
-          <p className="text-gray-500">Loading products...</p>
+          <p className="text-gray-500">Loading cards...</p>
         </div>
       </div>
     );
@@ -82,12 +122,12 @@ export default function ProductList() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <CardTitle>Home Card Products</CardTitle>
+              <CardTitle>Card Management</CardTitle>
             </div>
             <div className="flex gap-2">
               <Button 
                 variant="outline" 
-                onClick={fetchProducts}
+                onClick={fetchCards}
                 disabled={loading}
               >
                 <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
@@ -95,7 +135,7 @@ export default function ProductList() {
               </Button>
               <Button onClick={handleAddNew}>
                 <Plus className="w-4 h-4 mr-2" />
-                Add New Product
+                Add New Card
               </Button>
             </div>
           </div>
@@ -107,23 +147,145 @@ export default function ProductList() {
               <Button 
                 variant="outline" 
                 size="sm" 
-                onClick={fetchProducts}
+                onClick={fetchCards}
                 className="mt-2"
               >
                 Try Again
               </Button>
             </div>
           )}
+
+          {/* Search Bar */}
+          <div className="mb-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder="Search cards by main text..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <div className="text-sm text-gray-600 mt-2">
+              Showing {filteredCards.length} of {cards.length} cards
+            </div>
+          </div>
           
-          <ProductTable
-            products={products}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            onView={handleView}
-            category="Home Card Products"
-          />
+          {/* Cards Table */}
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Main Text</TableHead>
+                  <TableHead>Image</TableHead>
+                  <TableHead>Created Date</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredCards.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                      {searchTerm ? 'No cards found matching your search' : (
+                        <div className="text-center">
+                          <div className="text-lg font-medium mb-2">No cards found</div>
+                          <div className="text-sm text-gray-400 mb-4">Start by adding your first card</div>
+                          <Button onClick={handleAddNew} size="sm">
+                            <Plus className="w-4 h-4 mr-2" />
+                            Add First Card
+                          </Button>
+                        </div>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredCards.map((card) => (
+                    <TableRow key={card._id} className="hover:bg-gray-50">
+                      <TableCell className="font-medium">
+                        <div>
+                          <div className="font-semibold">{card.mainText}</div>
+                          <div className="text-xs text-gray-500">ID: {card._id}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {card.image ? (
+                          <div className="flex items-center">
+                            <img 
+                              src={card.image} 
+                              alt={card.mainText} 
+                              className="w-16 h-16 object-cover rounded border"
+                              onError={(e) => {
+                                e.target.src = "/placeholder-image.jpg";
+                              }}
+                            />
+                          </div>
+                        ) : (
+                          <Badge variant="outline" className="text-xs">No Image</Badge>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-sm text-gray-500">
+                        {formatDate(card.createdAt)}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="default">
+                          Active
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <MoreHorizontal className="w-4 h-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleView(card)}>
+                              <Eye className="w-4 h-4 mr-2" />
+                              View
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleEdit(card)}>
+                              <Edit className="w-4 h-4 mr-2" />
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => handleDeleteClick(card)}
+                              className="text-red-600"
+                            >
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Card</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete "{cardToDelete?.mainText}"? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete}>
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

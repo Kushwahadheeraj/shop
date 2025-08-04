@@ -7,13 +7,11 @@ import API_BASE_URL from "@/lib/apiConfig";
 
 export default function ProductForm() {
   const [form, setForm] = useState({
-    image: '',
     mainText: '',
     subtext: '',
     descrText: '',
     descText: '',
     offer: '',
-    category: 'ToolsImage',
   });
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -51,13 +49,11 @@ export default function ProductForm() {
     }
 
     const data = new FormData();
-    data.append('image', form.image);
     data.append('mainText', form.mainText);
     data.append('subtext', form.subtext);
     data.append('descrText', form.descrText);
     data.append('descText', form.descText);
     data.append('offer', form.offer);
-    data.append('category', form.category);
     data.append('uploadedImage', file);
 
     try {
@@ -69,13 +65,11 @@ export default function ProductForm() {
       if (res.ok) {
         alert('Image Slider item created successfully!');
         setForm({
-          image: '',
           mainText: '',
           subtext: '',
           descrText: '',
           descText: '',
           offer: '',
-          category: 'ToolsImage',
         });
         setFile(null);
         setPreview(null);
@@ -119,18 +113,6 @@ export default function ProductForm() {
           />
         </div>
 
-        {/* Image Path */}
-        <div>
-          <label className="block text-sm font-medium mb-2">Image Path</label>
-          <Input 
-            name="image" 
-            value={form.image} 
-            onChange={handleChange} 
-            placeholder="/images/slider1.jpg" 
-            className="w-full"
-          />
-        </div>
-
         {/* Offer */}
         <div>
           <label className="block text-sm font-medium mb-2">Offer</label>
@@ -140,17 +122,6 @@ export default function ProductForm() {
             onChange={handleChange} 
             placeholder="Enter offer details" 
             className="w-full"
-          />
-        </div>
-
-        {/* Category */}
-        <div>
-          <label className="block text-sm font-medium mb-2">Category</label>
-          <Input 
-            name="category" 
-            value={form.category} 
-            readOnly 
-            className="w-full bg-gray-50"
           />
         </div>
       </div>

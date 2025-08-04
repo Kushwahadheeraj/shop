@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
-const ToolsSchema = new mongoose.Schema({
-  name: { 
+const OfferSchema = new mongoose.Schema({
+  title: { 
     type: String, 
     required: true,
     trim: true
@@ -10,16 +10,10 @@ const ToolsSchema = new mongoose.Schema({
     type: String, 
     required: true
   },
-  description: { 
+  offer: { 
     type: String, 
+    required: true,
     trim: true
-  },
-  category: { 
-    type: String, 
-    trim: true
-  },
-  price: { 
-    type: Number
   },
   isActive: { 
     type: Boolean, 
@@ -29,4 +23,4 @@ const ToolsSchema = new mongoose.Schema({
   timestamps: true 
 });
 
-module.exports = mongoose.model('Tools', ToolsSchema); 
+module.exports = mongoose.model('Offer', OfferSchema); 

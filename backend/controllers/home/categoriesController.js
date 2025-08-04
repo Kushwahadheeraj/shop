@@ -45,10 +45,10 @@ exports.createCategory = async (req, res) => {
   }
 };
 
-// Get all categories
+// Get all cards
 exports.getAllCategories = async (req, res) => {
   try {
-    const categories = await CategoriesModel.find({ isActive: true }).sort({ createdAt: -1 });
+    const categories = await CategoriesModel.find().sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
       count: categories.length,
@@ -63,7 +63,26 @@ exports.getAllCategories = async (req, res) => {
   }
 };
 
-// Get one category by ID
+// Get cards by category
+exports.getCategoriesByCategory = async (req, res) => {
+  try {
+    const { category } = req.params;
+    const categories = await CategoriesModel.find({ category }).sort({ createdAt: -1 });
+    res.status(200).json({
+      success: true,
+      count: categories.length,
+      data: categories
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching categories by category',
+      error: error.message
+    });
+  }
+};
+
+// Get one card by ID
 exports.getOneCategory = async (req, res) => {
   try {
     const category = await CategoriesModel.findById(req.params.id);
@@ -86,7 +105,7 @@ exports.getOneCategory = async (req, res) => {
   }
 };
 
-// Update category by ID
+// Update card by ID
 exports.updateCategory = async (req, res) => {
   try {
     let updateData = { ...req.body };
@@ -124,7 +143,7 @@ exports.updateCategory = async (req, res) => {
   }
 };
 
-// Delete category by ID
+// Delete card by ID
 exports.deleteCategory = async (req, res) => {
   try {
     const category = await CategoriesModel.findByIdAndDelete(req.params.id);

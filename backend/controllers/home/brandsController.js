@@ -48,7 +48,7 @@ exports.createBrand = async (req, res) => {
 // Get all brands
 exports.getAllBrands = async (req, res) => {
   try {
-    const brands = await BrandsModel.find({ isActive: true }).sort({ createdAt: -1 });
+    const brands = await BrandsModel.find().sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
       count: brands.length,

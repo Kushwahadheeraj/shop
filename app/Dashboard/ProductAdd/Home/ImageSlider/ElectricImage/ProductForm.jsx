@@ -36,7 +36,7 @@ export default function ProductForm() {
   };
 
   const isFormValid = () => {
-    return form.mainText && form.subtext && form.descrText && file;
+    return form.mainText && form.subtext && file;
   };
 
   const handleSubmit = async (e) => {
@@ -153,9 +153,7 @@ export default function ProductForm() {
             )}
             <h3 className="text-xl font-bold mb-2">{form.mainText || 'Main Text'}</h3>
             <p className="text-lg mb-2">{form.subtext || 'Sub Text'}</p>
-            <p className="text-sm text-gray-600 mb-2">{form.descrText || 'Description Text'}</p>
-            {form.descText && <p className="text-xs text-gray-500">{form.descText}</p>}
-            {form.offer && <p className="text-sm font-semibold text-red-600 mt-2">{form.offer}</p>}
+           
           </div>
         </div>
       </div>

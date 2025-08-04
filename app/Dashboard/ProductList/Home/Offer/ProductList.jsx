@@ -14,7 +14,7 @@ export default function ProductList() {
   const [deleteId, setDeleteId] = useState(null);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/home/tools`;
+  const API_URL = `${API_BASE_URL}/home/offer`;
 
   useEffect(() => {
     fetchOffers();
@@ -41,7 +41,7 @@ export default function ProductList() {
   };
 
   const handleEdit = (offer) => {
-    router.push("/Dashboard/ProductAdd/Home/Tools?id=" + offer._id);
+    router.push("/Dashboard/ProductAdd/Home/Offer?id=" + offer._id);
   };
 
   const handleDelete = async (id) => {
@@ -58,11 +58,11 @@ export default function ProductList() {
   };
 
   const handleView = (offer) => {
-    router.push(`/Dashboard/ProductView/home/tools/${offer._id}`);
+    router.push(`/Dashboard/ProductView/home/offer/${offer._id}`);
   };
 
   const handleAddNew = () => {
-    router.push("/Dashboard/ProductAdd/Home/Tools");
+    router.push("/Dashboard/ProductAdd/Home/Offer");
   };
 
   const handleDeleteClick = (id) => {
@@ -255,4 +255,4 @@ export default function ProductList() {
       )}
     </div>
   );
-}
+} 

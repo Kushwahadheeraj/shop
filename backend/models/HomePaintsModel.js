@@ -6,10 +6,10 @@ const HomePaintsSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
-  image: { 
+  images: [{ 
     type: String, 
     required: true
-  },
+  }],
   description: { 
     type: String, 
     trim: true
@@ -18,8 +18,13 @@ const HomePaintsSchema = new mongoose.Schema({
     type: String, 
     trim: true
   },
+  tags: [{
+    type: String,
+    trim: true
+  }],
   price: { 
-    type: Number
+    type: Number,
+    required: true
   },
   originalPrice: { 
     type: Number
@@ -28,14 +33,17 @@ const HomePaintsSchema = new mongoose.Schema({
     type: Number, 
     default: 0
   },
+  discountPrice: {
+    type: Number
+  },
   brand: { 
     type: String, 
     trim: true
   },
-  color: { 
-    type: String, 
+  colors: [{
+    type: String,
     trim: true
-  },
+  }],
   finish: { 
     type: String, 
     trim: true
@@ -46,6 +54,27 @@ const HomePaintsSchema = new mongoose.Schema({
   }
 }, { 
   timestamps: true 
+});
+
+// Pre-save middleware to calculate discount price
+HomePaintsSchema.pre('save', function(next) {
+  if (this.price && this.discount) {
+    this.discountPrice = this.price - (this.price * this.discount / 100);
+  } else if (this.price) {
+    this.discountPrice = this.price;
+  }
+  next();
+});
+
+// Pre-update middleware to calculate discount price
+HomePaintsSchema.pre('findOneAndUpdate', function(next) {
+  const update = this.getUpdate();
+  if (update.price && update.discount) {
+    update.discountPrice = update.price - (update.price * update.discount / 100);
+  } else if (update.price) {
+    update.discountPrice = update.price;
+  }
+  next();
 });
 
 module.exports = mongoose.model('HomePaints', HomePaintsSchema); 

@@ -10,18 +10,6 @@ const BrandsSchema = new mongoose.Schema({
     type: String, 
     required: true
   },
-  description: { 
-    type: String, 
-    trim: true
-  },
-  website: { 
-    type: String, 
-    trim: true
-  },
-  isActive: { 
-    type: Boolean, 
-    default: true
-  }
 }, { 
   timestamps: true 
 });

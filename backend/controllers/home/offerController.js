@@ -1,6 +1,6 @@
 const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
-const ToolsModel = require('../../models/ToolsModel');
+const OfferModel = require('../../models/OfferModel');
 
 // Upload image to Cloudinary
 function uploadToCloudinary(buffer) {
@@ -13,8 +13,8 @@ function uploadToCloudinary(buffer) {
   });
 }
 
-// Create a new tool
-exports.createTool = async (req, res) => {
+// Create a new offer
+exports.createOffer = async (req, res) => {
   try {
     let imageUrl = '';
     
@@ -23,92 +23,96 @@ exports.createTool = async (req, res) => {
       imageUrl = await uploadToCloudinary(req.file.buffer);
     }
 
-    const toolData = {
-      ...req.body,
+    const offerData = {
+      title: req.body.title,
+      offer: req.body.offer,
       image: imageUrl
     };
 
-    const tool = new ToolsModel(toolData);
-    const savedTool = await tool.save();
+    const offer = new OfferModel(offerData);
+    const savedOffer = await offer.save();
     
     res.status(201).json({
       success: true,
-      message: 'Tool created successfully',
-      data: savedTool
+      message: 'Offer created successfully',
+      data: savedOffer
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Error creating tool',
+      message: 'Error creating offer',
       error: error.message
     });
   }
 };
 
-// Get all tools
-exports.getAllTools = async (req, res) => {
+// Get all offers
+exports.getAllOffers = async (req, res) => {
   try {
-    const tools = await ToolsModel.find({ isActive: true }).sort({ createdAt: -1 });
+    const offers = await OfferModel.find({ isActive: true }).sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
-      count: tools.length,
-      data: tools
+      count: offers.length,
+      data: offers
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Error fetching tools',
+      message: 'Error fetching offers',
       error: error.message
     });
   }
 };
 
-// Get tools by category
-exports.getToolsByCategory = async (req, res) => {
+// Get offers by offer type
+exports.getOffersByType = async (req, res) => {
   try {
-    const { category } = req.params;
-    const tools = await ToolsModel.find({ category, isActive: true }).sort({ createdAt: -1 });
+    const { offerType } = req.params;
+    const offers = await OfferModel.find({ offer: offerType, isActive: true }).sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
-      count: tools.length,
-      data: tools
+      count: offers.length,
+      data: offers
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Error fetching tools by category',
+      message: 'Error fetching offers by type',
       error: error.message
     });
   }
 };
 
-// Get one tool by ID
-exports.getOneTool = async (req, res) => {
+// Get one offer by ID
+exports.getOneOffer = async (req, res) => {
   try {
-    const tool = await ToolsModel.findById(req.params.id);
-    if (!tool) {
+    const offer = await OfferModel.findById(req.params.id);
+    if (!offer) {
       return res.status(404).json({
         success: false,
-        message: 'Tool not found'
+        message: 'Offer not found'
       });
     }
     res.status(200).json({
       success: true,
-      data: tool
+      data: offer
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Error fetching tool',
+      message: 'Error fetching offer',
       error: error.message
     });
   }
 };
 
-// Update tool by ID
-exports.updateTool = async (req, res) => {
+// Update offer by ID
+exports.updateOffer = async (req, res) => {
   try {
-    let updateData = { ...req.body };
+    let updateData = {
+      title: req.body.title,
+      offer: req.body.offer
+    };
     
     // Handle image upload if provided
     if (req.file) {
@@ -116,51 +120,51 @@ exports.updateTool = async (req, res) => {
       updateData.image = imageUrl;
     }
 
-    const tool = await ToolsModel.findByIdAndUpdate(
+    const offer = await OfferModel.findByIdAndUpdate(
       req.params.id,
       updateData,
       { new: true, runValidators: true }
     );
     
-    if (!tool) {
+    if (!offer) {
       return res.status(404).json({
         success: false,
-        message: 'Tool not found'
+        message: 'Offer not found'
       });
     }
     
     res.status(200).json({
       success: true,
-      message: 'Tool updated successfully',
-      data: tool
+      message: 'Offer updated successfully',
+      data: offer
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Error updating tool',
+      message: 'Error updating offer',
       error: error.message
     });
   }
 };
 
-// Delete tool by ID
-exports.deleteTool = async (req, res) => {
+// Delete offer by ID
+exports.deleteOffer = async (req, res) => {
   try {
-    const tool = await ToolsModel.findByIdAndDelete(req.params.id);
-    if (!tool) {
+    const offer = await OfferModel.findByIdAndDelete(req.params.id);
+    if (!offer) {
       return res.status(404).json({
         success: false,
-        message: 'Tool not found'
+        message: 'Offer not found'
       });
     }
     res.status(200).json({
       success: true,
-      message: 'Tool deleted successfully'
+      message: 'Offer deleted successfully'
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Error deleting tool',
+      message: 'Error deleting offer',
       error: error.message
     });
   }

@@ -10,18 +10,11 @@ const CategoriesSchema = new mongoose.Schema({
     type: String, 
     required: true
   },
-  description: { 
-    type: String, 
-    trim: true
+  items: {
+    type: [String],
+    default: []
   },
-  link: { 
-    type: String, 
-    trim: true
-  },
-  isActive: { 
-    type: Boolean, 
-    default: true
-  }
+ 
 }, { 
   timestamps: true 
 });

@@ -16,16 +16,53 @@ function uploadToCloudinary(buffer) {
 // Create a new product tool
 exports.createProductTool = async (req, res) => {
   try {
-    let imageUrl = '';
+    let imageUrls = [];
     
-    // Handle image upload if provided
-    if (req.file) {
-      imageUrl = await uploadToCloudinary(req.file.buffer);
+    // Handle multiple image uploads if provided
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        const imageUrl = await uploadToCloudinary(file.buffer);
+        imageUrls.push(imageUrl);
+      }
+    }
+
+    // Parse tags from request body
+    let tags = [];
+    if (req.body.tags) {
+      tags = typeof req.body.tags === 'string' ? req.body.tags.split(',').map(tag => tag.trim()) : req.body.tags;
+    }
+
+    // Parse custom fields from request body
+    let customFields = [];
+    if (req.body.customFields) {
+      try {
+        customFields = JSON.parse(req.body.customFields);
+      } catch (e) {
+        console.log('Error parsing custom fields:', e);
+      }
+    }
+
+    // Parse variants from request body
+    let variants = [];
+    if (req.body.variants) {
+      try {
+        variants = JSON.parse(req.body.variants);
+      } catch (e) {
+        console.log('Error parsing variants:', e);
+      }
     }
 
     const productToolData = {
       ...req.body,
-      image: imageUrl
+      images: imageUrls,
+      tags: tags,
+      customFields: customFields,
+      variants: variants,
+      price: parseFloat(req.body.price) || 0,
+      minPrice: parseFloat(req.body.minPrice) || 0,
+      maxPrice: parseFloat(req.body.maxPrice) || 0,
+      discount: parseFloat(req.body.discount) || 0,
+      rating: parseFloat(req.body.rating) || 0
     };
 
     const productTool = new ProductToolsModel(productToolData);
@@ -48,7 +85,7 @@ exports.createProductTool = async (req, res) => {
 // Get all product tools
 exports.getAllProductTools = async (req, res) => {
   try {
-    const productTools = await ProductToolsModel.find({ isActive: true }).sort({ createdAt: -1 });
+    const productTools = await ProductToolsModel.find({ isActive: true }).sort({ rating: -1, createdAt: -1 });
     res.status(200).json({
       success: true,
       count: productTools.length,
@@ -67,7 +104,7 @@ exports.getAllProductTools = async (req, res) => {
 exports.getProductToolsByCategory = async (req, res) => {
   try {
     const { category } = req.params;
-    const productTools = await ProductToolsModel.find({ category, isActive: true }).sort({ createdAt: -1 });
+    const productTools = await ProductToolsModel.find({ category, isActive: true }).sort({ rating: -1, createdAt: -1 });
     res.status(200).json({
       success: true,
       count: productTools.length,
@@ -86,7 +123,7 @@ exports.getProductToolsByCategory = async (req, res) => {
 exports.getProductToolsByBrand = async (req, res) => {
   try {
     const { brand } = req.params;
-    const productTools = await ProductToolsModel.find({ brand, isActive: true }).sort({ createdAt: -1 });
+    const productTools = await ProductToolsModel.find({ brand, isActive: true }).sort({ rating: -1, createdAt: -1 });
     res.status(200).json({
       success: true,
       count: productTools.length,
@@ -127,12 +164,52 @@ exports.getOneProductTool = async (req, res) => {
 // Update product tool by ID
 exports.updateProductTool = async (req, res) => {
   try {
-    let updateData = { ...req.body };
+    // Parse tags from request body
+    let tags = [];
+    if (req.body.tags) {
+      tags = typeof req.body.tags === 'string' ? req.body.tags.split(',').map(tag => tag.trim()) : req.body.tags;
+    }
+
+    // Parse custom fields from request body
+    let customFields = [];
+    if (req.body.customFields) {
+      try {
+        customFields = JSON.parse(req.body.customFields);
+      } catch (e) {
+        console.log('Error parsing custom fields:', e);
+      }
+    }
+
+    // Parse variants from request body
+    let variants = [];
+    if (req.body.variants) {
+      try {
+        variants = JSON.parse(req.body.variants);
+      } catch (e) {
+        console.log('Error parsing variants:', e);
+      }
+    }
+
+    let updateData = { 
+      ...req.body,
+      tags: tags,
+      customFields: customFields,
+      variants: variants,
+      price: parseFloat(req.body.price) || 0,
+      minPrice: parseFloat(req.body.minPrice) || 0,
+      maxPrice: parseFloat(req.body.maxPrice) || 0,
+      discount: parseFloat(req.body.discount) || 0,
+      rating: parseFloat(req.body.rating) || 0
+    };
     
-    // Handle image upload if provided
-    if (req.file) {
-      const imageUrl = await uploadToCloudinary(req.file.buffer);
-      updateData.image = imageUrl;
+    // Handle multiple image uploads if provided
+    if (req.files && req.files.length > 0) {
+      const imageUrls = [];
+      for (const file of req.files) {
+        const imageUrl = await uploadToCloudinary(file.buffer);
+        imageUrls.push(imageUrl);
+      }
+      updateData.images = imageUrls;
     }
 
     const productTool = await ProductToolsModel.findByIdAndUpdate(

@@ -48,7 +48,7 @@ exports.createSanitaryImage = async (req, res) => {
 // Get all sanitary image sliders
 exports.getAllSanitaryImages = async (req, res) => {
   try {
-    const sanitaryImages = await SanitaryImageModel.find({ isActive: true }).sort({ order: 1, createdAt: -1 });
+    const sanitaryImages = await SanitaryImageModel.find().sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
       count: sanitaryImages.length,

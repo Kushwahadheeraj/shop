@@ -13,7 +13,7 @@ function uploadToCloudinary(buffer) {
   });
 }
 
-// Create a new card slider
+// Create a new card
 exports.createCardSlider = async (req, res) => {
   try {
     let imageUrl = '';
@@ -23,32 +23,32 @@ exports.createCardSlider = async (req, res) => {
       imageUrl = await uploadToCloudinary(req.file.buffer);
     }
 
-    const cardSliderData = {
+    const cardData = {
       ...req.body,
       image: imageUrl
     };
 
-    const cardSlider = new CardSliderModel(cardSliderData);
+    const cardSlider = new CardSliderModel(cardData);
     const savedCardSlider = await cardSlider.save();
     
     res.status(201).json({
       success: true,
-      message: 'Card slider created successfully',
+      message: 'CardSlider created successfully',
       data: savedCardSlider
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Error creating card slider',
+      message: 'Error creating cardSlider',
       error: error.message
     });
   }
 };
 
-// Get all card sliders
+// Get all cards
 exports.getAllCardSliders = async (req, res) => {
   try {
-    const cardSliders = await CardSliderModel.find({ isActive: true }).sort({ order: 1, createdAt: -1 });
+    const cardSliders = await CardSliderModel.find().sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
       count: cardSliders.length,
@@ -57,20 +57,39 @@ exports.getAllCardSliders = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Error fetching card sliders',
+      message: 'Error fetching cardSliders',
       error: error.message
     });
   }
 };
 
-// Get one card slider by ID
+// Get cards by category
+exports.getCardSlidersByCategory = async (req, res) => {
+  try {
+    const { category } = req.params;
+    const cardSliders = await CardSliderModel.find({ category }).sort({ createdAt: -1 });
+    res.status(200).json({
+      success: true,
+      count: cardSliders.length,
+      data: cardSliders
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching cards by category',
+      error: error.message
+    });
+  }
+};
+
+// Get one card by ID
 exports.getOneCardSlider = async (req, res) => {
   try {
     const cardSlider = await CardSliderModel.findById(req.params.id);
     if (!cardSlider) {
       return res.status(404).json({
         success: false,
-        message: 'Card slider not found'
+        message: 'CardSlider not found'
       });
     }
     res.status(200).json({
@@ -80,13 +99,13 @@ exports.getOneCardSlider = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Error fetching card slider',
+      message: 'Error fetching cardSlider',
       error: error.message
     });
   }
 };
 
-// Update card slider by ID
+// Update card by ID
 exports.updateCardSlider = async (req, res) => {
   try {
     let updateData = { ...req.body };
@@ -106,42 +125,42 @@ exports.updateCardSlider = async (req, res) => {
     if (!cardSlider) {
       return res.status(404).json({
         success: false,
-        message: 'Card slider not found'
+        message: 'CardSlider not found'
       });
     }
     
     res.status(200).json({
       success: true,
-      message: 'Card slider updated successfully',
+      message: 'CardSlider updated successfully',
       data: cardSlider
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Error updating card slider',
+      message: 'Error updating cardSlider',
       error: error.message
     });
   }
 };
 
-// Delete card slider by ID
+// Delete card by ID
 exports.deleteCardSlider = async (req, res) => {
   try {
     const cardSlider = await CardSliderModel.findByIdAndDelete(req.params.id);
     if (!cardSlider) {
       return res.status(404).json({
         success: false,
-        message: 'Card slider not found'
+        message: 'CardSlider not found'
       });
     }
     res.status(200).json({
       success: true,
-      message: 'Card slider deleted successfully'
+      message: 'CardSlider deleted successfully'
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Error deleting card slider',
+      message: 'Error deleting cardSlider',
       error: error.message
     });
   }

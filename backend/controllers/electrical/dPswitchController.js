@@ -1,6 +1,7 @@
 const ElectricalModels = require('../../models/ElectricalModels');
 const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
+const shouldLog = process.env.APP_DEBUG === 'true';
 
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
@@ -12,18 +13,70 @@ function uploadToCloudinary(buffer) {
   });
 }
 
+function coerceAmps(maybeAmps) {
+  if (!maybeAmps) return [];
+  if (typeof maybeAmps === 'string') {
+    try {
+      const parsed = JSON.parse(maybeAmps);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+  if (Array.isArray(maybeAmps)) {
+    const jsonCandidate = maybeAmps.find(v => typeof v === 'string' && v.trim().startsWith('['));
+    if (jsonCandidate) {
+      try {
+        const parsed = JSON.parse(jsonCandidate);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        // fallthrough to validation of object entries
+      }
+    }
+    return maybeAmps;
+  }
+  return [];
+}
+
+function sanitizeAmps(amps) {
+  if (!Array.isArray(amps)) return [];
+  return amps.filter(amp =>
+    amp && typeof amp === 'object' && amp.amps && amp.amps.trim() !== '' &&
+    amp.price !== undefined && !isNaN(Number(amp.price))
+  );
+}
+
 exports.createDPswitch = async (req, res) => {
   try {
+    if (shouldLog) {
+      console.log('[DPswitch] Create request');
+      console.log('[DPswitch] Body:', req.body);
+      console.log('[DPswitch] Files:', req.files);
+    }
+
     if (!req.files || req.files.length < 1) {
       return res.status(400).json({ error: 'At least 1 image is required.' });
     }
     if (req.files.length > 5) {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
-    const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
 
-    // Parse tag and amps if sent as JSON string
-    let { tag, amps, ...rest } = req.body;
+    if (shouldLog) console.log('[DPswitch] Uploading images to Cloudinary...');
+    const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+    if (shouldLog) console.log('[DPswitch] Uploaded URLs:', photoUrls);
+
+    // Parse amps and tag if sent as JSON string or array entries
+    let { amps, tag, ...rest } = req.body;
+    if (shouldLog) {
+      console.log('[DPswitch] Raw amps:', amps);
+      console.log('[DPswitch] Raw tag:', tag);
+    }
+
+    // Coerce and sanitize amps
+    const coercedAmps = coerceAmps(amps);
+    const finalAmps = sanitizeAmps(coercedAmps);
+
+    // Ensure tag is an array
     if (typeof tag === 'string') {
       try {
         tag = JSON.parse(tag);
@@ -31,27 +84,36 @@ exports.createDPswitch = async (req, res) => {
         tag = [tag];
       }
     }
-    if (typeof amps === 'string') {
-      amps = JSON.parse(amps);
+    if (!Array.isArray(tag)) {
+      tag = tag ? [tag] : [];
     }
 
-    const product = new ElectricalModels({
+    // Filter out empty tags
+    tag = tag.filter(t => t && t.trim() !== '');
+
+    const productData = {
       ...rest,
+      amps: finalAmps,
       tag,
-      amps,
       photos: photoUrls,
-      category: rest.category || 'dPswitch'
-    });
+      category: rest.category || 'DPswitch'
+    };
+
+    if (shouldLog) console.log('[DPswitch] Creating with data:', productData);
+    const product = new ElectricalModels(productData);
     await product.save();
+    if (shouldLog) console.log('[DPswitch] Created:', product._id);
+
     res.status(201).json(product);
   } catch (err) {
+    console.error('Error in createDPswitch:', err);
     res.status(500).json({ error: err.message });
   }
 };
 
 exports.getAllDPswitch = async (req, res) => {
   try {
-    const products = await ElectricalModels.find({ category: 'dPswitch' });
+    const products = await ElectricalModels.find({ category: 'dpswitch' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -60,7 +122,7 @@ exports.getAllDPswitch = async (req, res) => {
 
 exports.getOneDPswitch = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'dPswitch' });
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'dpswitch' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -70,28 +132,56 @@ exports.getOneDPswitch = async (req, res) => {
 
 exports.updateDPswitch = async (req, res) => {
   try {
+    if (shouldLog) {
+      console.log('[DPswitch] Update id:', req.params.id);
+      console.log('[DPswitch] Body:', req.body);
+      console.log('[DPswitch] Files:', req.files);
+    }
+
     let update = { ...req.body };
+
+    if (update.amps) {
+      update.amps = sanitizeAmps(coerceAmps(update.amps));
+    }
+
+    if (update.tag && typeof update.tag === 'string') {
+      try {
+        update.tag = JSON.parse(update.tag);
+      } catch {
+        update.tag = [update.tag];
+      }
+    }
+    if (update.tag && !Array.isArray(update.tag)) {
+      update.tag = [update.tag];
+    }
+    if (update.tag) {
+      update.tag = update.tag.filter(t => t && t.trim() !== '');
+    }
+
     if (req.files && req.files.length > 0) {
       if (req.files.length > 5) {
         return res.status(400).json({ error: 'No more than 5 images allowed.' });
       }
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
+
     const product = await ElectricalModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'dPswitch' },
+      { _id: req.params.id, category: 'dpswitch' },
       update,
       { new: true }
     );
     if (!product) return res.status(404).json({ error: 'Not found' });
+
     res.json(product);
   } catch (err) {
+    console.error('Error in updateDPswitch:', err);
     res.status(500).json({ error: err.message });
   }
 };
 
 exports.deleteDPswitch = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'dPswitch' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'dpswitch' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

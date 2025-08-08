@@ -43,7 +43,7 @@ export default function ProductList() {
 
   const handleDelete = async (id) => {
     try {
-      const res = await fetch(API_URL + '/delete:' + id, { method: "DELETE" });
+      const res = await fetch(API_URL + '/delete/' + id, { method: "DELETE" });
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }

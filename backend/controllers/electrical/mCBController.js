@@ -1,6 +1,7 @@
 const ElectricalModels = require('../../models/ElectricalModels');
 const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
+const shouldLog = process.env.APP_DEBUG === 'true';
 
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
@@ -12,26 +13,107 @@ function uploadToCloudinary(buffer) {
   });
 }
 
+function coerceAmps(maybeAmps) {
+  if (!maybeAmps) return [];
+  if (typeof maybeAmps === 'string') {
+    try {
+      const parsed = JSON.parse(maybeAmps);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+  if (Array.isArray(maybeAmps)) {
+    const jsonCandidate = maybeAmps.find(v => typeof v === 'string' && v.trim().startsWith('['));
+    if (jsonCandidate) {
+      try {
+        const parsed = JSON.parse(jsonCandidate);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        // fallthrough to validation of object entries
+      }
+    }
+    return maybeAmps;
+  }
+  return [];
+}
+
+function sanitizeAmps(amps) {
+  if (!Array.isArray(amps)) return [];
+  return amps.filter(amp =>
+    amp && typeof amp === 'object' && amp.amps && amp.amps.trim() !== '' &&
+    amp.price !== undefined && !isNaN(Number(amp.price))
+  );
+}
+
 exports.createMCB = async (req, res) => {
   try {
+    if (shouldLog) {
+      console.log('[MCB] Create request');
+      console.log('[MCB] Body:', req.body);
+      console.log('[MCB] Files:', req.files);
+    }
+
     if (!req.files || req.files.length < 1) {
       return res.status(400).json({ error: 'At least 1 image is required.' });
     }
     if (req.files.length > 5) {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
+
+    if (shouldLog) console.log('[MCB] Uploading images to Cloudinary...');
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new ElectricalModels({ ...req.body, photos: photoUrls, category: 'mCB' });
+    if (shouldLog) console.log('[MCB] Uploaded URLs:', photoUrls);
+
+    // Parse amps and tag if sent as JSON string or array entries
+    let { amps, tag, ...rest } = req.body;
+    if (shouldLog) {
+      console.log('[MCB] Raw amps:', amps);
+      console.log('[MCB] Raw tag:', tag);
+    }
+
+    // Coerce and sanitize amps
+    const coercedAmps = coerceAmps(amps);
+    const finalAmps = sanitizeAmps(coercedAmps);
+
+    // Ensure tag is an array
+    if (typeof tag === 'string') {
+      try {
+        tag = JSON.parse(tag);
+      } catch {
+        tag = [tag];
+      }
+    }
+    if (!Array.isArray(tag)) {
+      tag = tag ? [tag] : [];
+    }
+
+    // Filter out empty tags
+    tag = tag.filter(t => t && t.trim() !== '');
+
+    const productData = {
+      ...rest,
+      amps: finalAmps,
+      tag,
+      photos: photoUrls,
+      category: rest.category || 'MCB'
+    };
+
+    if (shouldLog) console.log('[MCB] Creating with data:', productData);
+    const product = new ElectricalModels(productData);
     await product.save();
+    if (shouldLog) console.log('[MCB] Created:', product._id);
+
     res.status(201).json(product);
   } catch (err) {
+    console.error('Error in createMCB:', err);
     res.status(500).json({ error: err.message });
   }
 };
 
 exports.getAllMCB = async (req, res) => {
   try {
-    const products = await ElectricalModels.find({ category: 'mCB' });
+    const products = await ElectricalModels.find({ category: 'mcb' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -40,7 +122,7 @@ exports.getAllMCB = async (req, res) => {
 
 exports.getOneMCB = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'mCB' });
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'mcb' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -50,28 +132,56 @@ exports.getOneMCB = async (req, res) => {
 
 exports.updateMCB = async (req, res) => {
   try {
+    if (shouldLog) {
+      console.log('[MCB] Update id:', req.params.id);
+      console.log('[MCB] Body:', req.body);
+      console.log('[MCB] Files:', req.files);
+    }
+
     let update = { ...req.body };
+
+    if (update.amps) {
+      update.amps = sanitizeAmps(coerceAmps(update.amps));
+    }
+
+    if (update.tag && typeof update.tag === 'string') {
+      try {
+        update.tag = JSON.parse(update.tag);
+      } catch {
+        update.tag = [update.tag];
+      }
+    }
+    if (update.tag && !Array.isArray(update.tag)) {
+      update.tag = [update.tag];
+    }
+    if (update.tag) {
+      update.tag = update.tag.filter(t => t && t.trim() !== '');
+    }
+
     if (req.files && req.files.length > 0) {
       if (req.files.length > 5) {
         return res.status(400).json({ error: 'No more than 5 images allowed.' });
       }
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
+
     const product = await ElectricalModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'mCB' },
+      { _id: req.params.id, category: 'mcb' },
       update,
       { new: true }
     );
     if (!product) return res.status(404).json({ error: 'Not found' });
+
     res.json(product);
   } catch (err) {
+    console.error('Error in updateMCB:', err);
     res.status(500).json({ error: err.message });
   }
 };
 
 exports.deleteMCB = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'mCB' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'mcb' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

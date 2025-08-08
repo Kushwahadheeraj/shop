@@ -6,13 +6,6 @@ import { Textarea } from "@/components/ui/textarea";
 import API_BASE_URL from "@/lib/apiConfig";
 
 const categories = ["Surface Cleaner", "Toilet Cleaner", "Glass Cleaner"];
-const tagsList = ["Antibacterial", "Eco Friendly", "Fragrant", "Heavy Duty"];
-const TAG_OPTIONS = [
-  "Antibacterial",
-  "Eco Friendly",
-  "Fragrant",
-  "Heavy Duty"
-];
 
 export default function ProductForm({ product, onSave }) {
   const [form, setForm] = useState(product || {
@@ -29,6 +22,7 @@ export default function ProductForm({ product, onSave }) {
   const [files, setFiles] = useState([]);
   const [preview, setPreview] = useState([]);
   const [photoError, setPhotoError] = useState("");
+  const [newTag, setNewTag] = useState("");
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -70,14 +64,28 @@ export default function ProductForm({ product, onSave }) {
     setPreview(newPreview);
   };
 
-  const handleTagChange = (option) => {
-    setForm((prev) => {
-      const already = prev.tag.includes(option);
-      return {
+  const handleAddTag = () => {
+    if (newTag.trim() && !form.tag.includes(newTag.trim())) {
+      setForm(prev => ({
         ...prev,
-        tag: already ? prev.tag.filter(t => t !== option) : [...prev.tag, option]
-      };
-    });
+        tag: [...prev.tag, newTag.trim()]
+      }));
+      setNewTag("");
+    }
+  };
+
+  const handleRemoveTag = (tagToRemove) => {
+    setForm(prev => ({
+      ...prev,
+      tag: prev.tag.filter(tag => tag !== tagToRemove)
+    }));
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddTag();
+    }
   };
 
   const handleSubmit = async e => {
@@ -178,24 +186,38 @@ export default function ProductForm({ product, onSave }) {
           <Textarea name="description" value={form.description} onChange={handleChange} placeholder="Description" />
         </div>
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium mb-1">Tags (Select multiple)</label>
+          <label className="block text-sm font-medium mb-1">Tags (Add custom tags)</label>
           <div className="flex flex-wrap gap-2 mb-2">
             {form.tag.map((t) => (
-              <span key={t} className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">{t}</span>
+              <span key={t} className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
+                {t}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveTag(t)}
+                  className="text-blue-500 hover:text-blue-700 font-bold"
+                >
+                  ×
+                </button>
+              </span>
             ))}
-            {form.tag.length === 0 && <span className="text-gray-400 text-xs">No tag selected</span>}
+            {form.tag.length === 0 && <span className="text-gray-400 text-xs">No tags added</span>}
           </div>
-          <div className="flex flex-wrap gap-2">
-            {TAG_OPTIONS.map(option => (
-              <button
-                type="button"
-                key={option}
-                className={`px-3 py-1 rounded-full border text-xs font-medium transition ${form.tag.includes(option) ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-blue-50'}`}
-                onClick={() => handleTagChange(option)}
-              >
-                {option}
-              </button>
-            ))}
+          <div className="flex gap-2">
+            <Input
+              value={newTag}
+              onChange={(e) => setNewTag(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Type a tag and press Enter or click Add"
+              className="flex-1"
+            />
+            <Button 
+              type="button" 
+              onClick={handleAddTag}
+              disabled={!newTag.trim() || form.tag.includes(newTag.trim())}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              Add
+            </Button>
           </div>
         </div>
       </div>

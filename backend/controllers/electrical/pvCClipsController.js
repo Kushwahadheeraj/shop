@@ -1,6 +1,7 @@
 const ElectricalModels = require('../../models/ElectricalModels');
 const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
+const shouldLog = process.env.APP_DEBUG === 'true';
 
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
@@ -12,35 +13,116 @@ function uploadToCloudinary(buffer) {
   });
 }
 
-exports.createPvCClips = async (req, res) => {
+function coerceAmps(maybeAmps) {
+  if (!maybeAmps) return [];
+  if (typeof maybeAmps === 'string') {
+    try {
+      const parsed = JSON.parse(maybeAmps);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+  if (Array.isArray(maybeAmps)) {
+    const jsonCandidate = maybeAmps.find(v => typeof v === 'string' && v.trim().startsWith('['));
+    if (jsonCandidate) {
+      try {
+        const parsed = JSON.parse(jsonCandidate);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        // fallthrough to validation of object entries
+      }
+    }
+    return maybeAmps;
+  }
+  return [];
+}
+
+function sanitizeAmps(amps) {
+  if (!Array.isArray(amps)) return [];
+  return amps.filter(amp =>
+    amp && typeof amp === 'object' && amp.amps && amp.amps.trim() !== '' &&
+    amp.price !== undefined && !isNaN(Number(amp.price))
+  );
+}
+
+exports.createPVCClips = async (req, res) => {
   try {
+    if (shouldLog) {
+      console.log('[PVCClips] Create request');
+      console.log('[PVCClips] Body:', req.body);
+      console.log('[PVCClips] Files:', req.files);
+    }
+
     if (!req.files || req.files.length < 1) {
       return res.status(400).json({ error: 'At least 1 image is required.' });
     }
     if (req.files.length > 5) {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
+
+    if (shouldLog) console.log('[PVCClips] Uploading images to Cloudinary...');
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new ElectricalModels({ ...req.body, photos: photoUrls, category: 'pvCClips' });
+    if (shouldLog) console.log('[PVCClips] Uploaded URLs:', photoUrls);
+
+    // Parse amps and tag if sent as JSON string or array entries
+    let { amps, tag, ...rest } = req.body;
+    if (shouldLog) {
+      console.log('[PVCClips] Raw amps:', amps);
+      console.log('[PVCClips] Raw tag:', tag);
+    }
+
+    // Coerce and sanitize amps
+    const coercedAmps = coerceAmps(amps);
+    const finalAmps = sanitizeAmps(coercedAmps);
+
+    // Ensure tag is an array
+    if (typeof tag === 'string') {
+      try {
+        tag = JSON.parse(tag);
+      } catch {
+        tag = [tag];
+      }
+    }
+    if (!Array.isArray(tag)) {
+      tag = tag ? [tag] : [];
+    }
+
+    // Filter out empty tags
+    tag = tag.filter(t => t && t.trim() !== '');
+
+    const productData = {
+      ...rest,
+      amps: finalAmps,
+      tag,
+      photos: photoUrls,
+      category: rest.category || 'PVCClips'
+    };
+
+    if (shouldLog) console.log('[PVCClips] Creating with data:', productData);
+    const product = new ElectricalModels(productData);
     await product.save();
+    if (shouldLog) console.log('[PVCClips] Created:', product._id);
+
     res.status(201).json(product);
   } catch (err) {
+    console.error('Error in createPVCClips:', err);
     res.status(500).json({ error: err.message });
   }
 };
 
-exports.getAllPvCClips = async (req, res) => {
+exports.getAllPVCClips = async (req, res) => {
   try {
-    const products = await ElectricalModels.find({ category: 'pvCClips' });
+    const products = await ElectricalModels.find({ category: 'pvcclips' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-exports.getOnePvCClips = async (req, res) => {
+exports.getOnePVCClips = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'pvCClips' });
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'pvcclips' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -48,30 +130,58 @@ exports.getOnePvCClips = async (req, res) => {
   }
 };
 
-exports.updatePvCClips = async (req, res) => {
+exports.updatePVCClips = async (req, res) => {
   try {
+    if (shouldLog) {
+      console.log('[PVCClips] Update id:', req.params.id);
+      console.log('[PVCClips] Body:', req.body);
+      console.log('[PVCClips] Files:', req.files);
+    }
+
     let update = { ...req.body };
+
+    if (update.amps) {
+      update.amps = sanitizeAmps(coerceAmps(update.amps));
+    }
+
+    if (update.tag && typeof update.tag === 'string') {
+      try {
+        update.tag = JSON.parse(update.tag);
+      } catch {
+        update.tag = [update.tag];
+      }
+    }
+    if (update.tag && !Array.isArray(update.tag)) {
+      update.tag = [update.tag];
+    }
+    if (update.tag) {
+      update.tag = update.tag.filter(t => t && t.trim() !== '');
+    }
+
     if (req.files && req.files.length > 0) {
       if (req.files.length > 5) {
         return res.status(400).json({ error: 'No more than 5 images allowed.' });
       }
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
+
     const product = await ElectricalModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'pvCClips' },
+      { _id: req.params.id, category: 'pvcclips' },
       update,
       { new: true }
     );
     if (!product) return res.status(404).json({ error: 'Not found' });
+
     res.json(product);
   } catch (err) {
+    console.error('Error in updatePVCClips:', err);
     res.status(500).json({ error: err.message });
   }
 };
 
-exports.deletePvCClips = async (req, res) => {
+exports.deletePVCClips = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'pvCClips' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'pvcclips' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

@@ -14,7 +14,7 @@ const dataSlider = [
     subText: 'GETS EVERYWHERE. DOES EVERYTHING',
     descrText: 'Ryobi.Designed to do more.',
     descText: "A cut above.Power tools that won't quit",
-    desText: 'UPTO 30% OFF',
+    desText: 'UPTO 30% OFF', 
   },
 ];
 

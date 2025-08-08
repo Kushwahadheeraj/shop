@@ -3,6 +3,8 @@
 const cloudinary = require('../config/cloudinary');
 const streamifier = require('streamifier');
 const CleaningModels = require('../models/CleaningModels');
+const shouldLog = process.env.APP_DEBUG === 'true';
+
 /**
  * Uploads a buffer to Cloudinary and returns the secure URL.
  * @param {Buffer} buffer
@@ -23,16 +25,28 @@ function uploadToCloudinary(buffer) {
  */
 exports.createCleaning = async (req, res) => {
   try {
+    if (shouldLog) {
+      console.log('[Cleaning] Create request');
+      console.log('[Cleaning] Body:', req.body);
+      console.log('[Cleaning] Files:', req.files);
+    }
+
     if (!req.files || req.files.length < 1) {
       return res.status(400).json({ error: 'At least 1 image is required.' });
     }
     if (req.files.length > 5) {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
-    const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
 
-    // Parse tag if sent as JSON string
+    if (shouldLog) console.log('[Cleaning] Uploading images to Cloudinary...');
+    const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+    if (shouldLog) console.log('[Cleaning] Uploaded URLs:', photoUrls);
+
+    // Parse tag if sent as JSON string or array entries
     let { tag, ...rest } = req.body;
+    if (shouldLog) console.log('[Cleaning] Raw tag:', tag);
+
+    // Ensure tag is an array
     if (typeof tag === 'string') {
       try {
         tag = JSON.parse(tag);
@@ -40,16 +54,28 @@ exports.createCleaning = async (req, res) => {
         tag = [tag];
       }
     }
+    if (!Array.isArray(tag)) {
+      tag = tag ? [tag] : [];
+    }
 
-    const product = new CleaningModels({
+    // Filter out empty tags
+    tag = tag.filter(t => t && t.trim() !== '');
+
+    const productData = {
       ...rest,
       tag,
       photos: photoUrls,
       category: rest.category || 'Cleaning'
-    });
+    };
+
+    if (shouldLog) console.log('[Cleaning] Creating with data:', productData);
+    const product = new CleaningModels(productData);
     await product.save();
+    if (shouldLog) console.log('[Cleaning] Created:', product._id);
+
     res.status(201).json(product);
   } catch (err) {
+    console.error('Error in createCleaning:', err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -59,27 +85,53 @@ exports.createCleaning = async (req, res) => {
  */
 exports.updateCleaning = async (req, res) => {
   try {
+    if (shouldLog) {
+      console.log('[Cleaning] Update id:', req.params.id);
+      console.log('[Cleaning] Body:', req.body);
+      console.log('[Cleaning] Files:', req.files);
+    }
+
     let update = { ...req.body };
+
+    // Parse tag
+    if (update.tag && typeof update.tag === 'string') {
+      try {
+        update.tag = JSON.parse(update.tag);
+      } catch {
+        update.tag = [update.tag];
+      }
+    }
+    if (update.tag && !Array.isArray(update.tag)) {
+      update.tag = [update.tag];
+    }
+    if (update.tag) {
+      update.tag = update.tag.filter(t => t && t.trim() !== '');
+    }
+
     if (req.files && req.files.length > 0) {
       if (req.files.length > 5) {
         return res.status(400).json({ error: 'No more than 5 images allowed.' });
       }
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
+
     const product = await CleaningModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'cleaning' },
+      { _id: req.params.id },
       update,
       { new: true }
     );
     if (!product) return res.status(404).json({ error: 'Not found' });
+
     res.json(product);
   } catch (err) {
+    console.error('Error in updateCleaning:', err);
     res.status(500).json({ error: err.message });
   }
 };
+
 exports.getAllCleaning = async (req, res) => {
   try {
-    const cleanings = await Cleaning.find();
+    const cleanings = await CleaningModels.find();
     res.json(cleanings);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -88,7 +140,7 @@ exports.getAllCleaning = async (req, res) => {
 
 exports.deleteCleaning = async (req, res) => {
   try {
-    const cleaning = await Cleaning.findByIdAndDelete(req.params.id);
+    const cleaning = await CleaningModels.findByIdAndDelete(req.params.id);
     if (!cleaning) return res.status(404).json({ message: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

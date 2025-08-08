@@ -1,6 +1,7 @@
 const ElectricalModels = require('../../models/ElectricalModels');
 const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
+const shouldLog = process.env.APP_DEBUG === 'true';
 
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
@@ -12,19 +13,100 @@ function uploadToCloudinary(buffer) {
   });
 }
 
+function coerceAmps(maybeAmps) {
+  if (!maybeAmps) return [];
+  if (typeof maybeAmps === 'string') {
+    try {
+      const parsed = JSON.parse(maybeAmps);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+  if (Array.isArray(maybeAmps)) {
+    const jsonCandidate = maybeAmps.find(v => typeof v === 'string' && v.trim().startsWith('['));
+    if (jsonCandidate) {
+      try {
+        const parsed = JSON.parse(jsonCandidate);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        // fallthrough to validation of object entries
+      }
+    }
+    return maybeAmps;
+  }
+  return [];
+}
+
+function sanitizeAmps(amps) {
+  if (!Array.isArray(amps)) return [];
+  return amps.filter(amp =>
+    amp && typeof amp === 'object' && amp.amps && amp.amps.trim() !== '' &&
+    amp.price !== undefined && !isNaN(Number(amp.price))
+  );
+}
+
 exports.createLights = async (req, res) => {
   try {
+    if (shouldLog) {
+      console.log('[Lights] Create request');
+      console.log('[Lights] Body:', req.body);
+      console.log('[Lights] Files:', req.files);
+    }
+
     if (!req.files || req.files.length < 1) {
       return res.status(400).json({ error: 'At least 1 image is required.' });
     }
     if (req.files.length > 5) {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
+
+    if (shouldLog) console.log('[Lights] Uploading images to Cloudinary...');
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new ElectricalModels({ ...req.body, photos: photoUrls, category: 'lights' });
+    if (shouldLog) console.log('[Lights] Uploaded URLs:', photoUrls);
+
+    // Parse amps and tag if sent as JSON string or array entries
+    let { amps, tag, ...rest } = req.body;
+    if (shouldLog) {
+      console.log('[Lights] Raw amps:', amps);
+      console.log('[Lights] Raw tag:', tag);
+    }
+
+    // Coerce and sanitize amps
+    const coercedAmps = coerceAmps(amps);
+    const finalAmps = sanitizeAmps(coercedAmps);
+
+    // Ensure tag is an array
+    if (typeof tag === 'string') {
+      try {
+        tag = JSON.parse(tag);
+      } catch {
+        tag = [tag];
+      }
+    }
+    if (!Array.isArray(tag)) {
+      tag = tag ? [tag] : [];
+    }
+
+    // Filter out empty tags
+    tag = tag.filter(t => t && t.trim() !== '');
+
+    const productData = {
+      ...rest,
+      amps: finalAmps,
+      tag,
+      photos: photoUrls,
+      category: rest.category || 'Lights'
+    };
+
+    if (shouldLog) console.log('[Lights] Creating with data:', productData);
+    const product = new ElectricalModels(productData);
     await product.save();
+    if (shouldLog) console.log('[Lights] Created:', product._id);
+
     res.status(201).json(product);
   } catch (err) {
+    console.error('Error in createLights:', err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -50,21 +132,49 @@ exports.getOneLights = async (req, res) => {
 
 exports.updateLights = async (req, res) => {
   try {
+    if (shouldLog) {
+      console.log('[Lights] Update id:', req.params.id);
+      console.log('[Lights] Body:', req.body);
+      console.log('[Lights] Files:', req.files);
+    }
+
     let update = { ...req.body };
+
+    if (update.amps) {
+      update.amps = sanitizeAmps(coerceAmps(update.amps));
+    }
+
+    if (update.tag && typeof update.tag === 'string') {
+      try {
+        update.tag = JSON.parse(update.tag);
+      } catch {
+        update.tag = [update.tag];
+      }
+    }
+    if (update.tag && !Array.isArray(update.tag)) {
+      update.tag = [update.tag];
+    }
+    if (update.tag) {
+      update.tag = update.tag.filter(t => t && t.trim() !== '');
+    }
+
     if (req.files && req.files.length > 0) {
       if (req.files.length > 5) {
         return res.status(400).json({ error: 'No more than 5 images allowed.' });
       }
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
+
     const product = await ElectricalModels.findOneAndUpdate(
       { _id: req.params.id, category: 'lights' },
       update,
       { new: true }
     );
     if (!product) return res.status(404).json({ error: 'Not found' });
+
     res.json(product);
   } catch (err) {
+    console.error('Error in updateLights:', err);
     res.status(500).json({ error: err.message });
   }
 };

@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, RefreshCw, ArrowLeft } from "lucide-react";
 import API_BASE_URL from "@/lib/apiConfig";
 
-export default function ProductList() {
+export default function ProductList({ onSave }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -43,7 +43,9 @@ export default function ProductList() {
 
   const handleDelete = async (id) => {
     try {
-      const res = await fetch(API_URL + '/delete:' + id, { method: "DELETE" });
+      const deleteUrl = `${API_URL}/delete/${id}`;
+      console.log('Delete URL:', deleteUrl);
+      const res = await fetch(deleteUrl, { method: "DELETE" });;
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }

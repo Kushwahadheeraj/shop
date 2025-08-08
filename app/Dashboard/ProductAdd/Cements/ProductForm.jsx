@@ -26,6 +26,7 @@ export default function ProductForm({ product, onSave }) {
   const [files, setFiles] = useState([]);
   const [preview, setPreview] = useState([]);
   const [photoError, setPhotoError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   // Add state for weights if not present in product
   const [weights, setWeights] = useState(product?.weights || []);
@@ -127,10 +128,12 @@ export default function ProductForm({ product, onSave }) {
 
   const handleSubmit = async e => {
     e.preventDefault();
+    if (submitting) return; // prevent double submit
     if (files.length === 0) {
       setPhotoError("Please upload at least 1 photo.");
       return;
     }
+    setSubmitting(true);
     setPhotoError("");
     // Use whatever is in the form for SKU and category
     const formToSubmit = { ...form };
@@ -138,15 +141,26 @@ export default function ProductForm({ product, onSave }) {
     Object.entries(formToSubmit).forEach(([k, v]) => {
       if (k === 'tag') {
         v.forEach(val => data.append('tag', val));
-      } else {
+      } else if (k !== 'weights') {
         data.append(k, v);
       }
     });
     // Add weights as JSON string
     data.append('weights', JSON.stringify(weights));
     files.forEach(f => data.append('photos', f));
-    const res = await fetch(`${API_BASE_URL}/cements/create`, { method: product ? 'PUT' : 'POST', body: data });
-    if (res.ok) onSave && onSave();
+    try {
+      const res = await fetch(`${API_BASE_URL}/cements/create`, { method: product ? 'PUT' : 'POST', body: data });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `Request failed (${res.status})`);
+      }
+      onSave && onSave();
+    } catch (err) {
+      console.error('Create cements error:', err);
+      alert(err.message);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -266,8 +280,8 @@ export default function ProductForm({ product, onSave }) {
         </div>
       </div>
       <Button type="submit" className="w-full mt-4"
-        disabled={!isFormValid()}
-      >{product ? 'Update' : 'Create'} Product</Button>
+        disabled={!isFormValid() || submitting}
+      >{submitting ? 'Submitting...' : (product ? 'Update' : 'Create')} Product</Button>
     </form>
   );
 } 

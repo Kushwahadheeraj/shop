@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import API_BASE_URL from "@/lib/apiConfig";
 
-export default function ProductForm() {
+export default function ProductForm({ onSave }) {
   // 3 custom fields, each with a name and multiple values
   const [customFields, setCustomFields] = useState([
     { fieldName: '', fieldValues: [''] },

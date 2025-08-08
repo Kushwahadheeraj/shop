@@ -131,26 +131,69 @@ export default function ProductForm({ product, onSave }) {
 
   const handleSubmit = async e => {
     e.preventDefault();
+    console.log('Form submission started');
+    console.log('Form data:', form);
+    console.log('Weights:', weights);
+    console.log('Files:', files);
+    
     if (files.length === 0) {
       setPhotoError("Please upload at least 1 photo.");
       return;
     }
     setPhotoError("");
+    
     // Use whatever is in the form for SKU and category
     const formToSubmit = { ...form };
     const data = new FormData();
+    
+    console.log('Building FormData...');
     Object.entries(formToSubmit).forEach(([k, v]) => {
       if (k === 'tag') {
+        console.log('Adding tags:', v);
         v.forEach(val => data.append('tag', val));
       } else {
+        console.log(`Adding ${k}:`, v);
         data.append(k, v);
       }
     });
+    
     // Add weights as JSON string
+    console.log('Adding weights as JSON:', weights);
     data.append('weights', JSON.stringify(weights));
-    files.forEach(f => data.append('photos', f));
-    const res = await fetch(`${API_BASE_URL}/adhesives/create`, { method: product ? 'PUT' : 'POST', body: data });
-    if (res.ok) onSave && onSave();
+    
+    // Add files
+    console.log('Adding files to FormData...');
+    files.forEach((f, index) => {
+      console.log(`Adding file ${index}:`, f.name);
+      data.append('photos', f);
+    });
+    
+    console.log('FormData built, sending request...');
+    console.log('API URL:', `${API_BASE_URL}/adhesives/create`);
+    
+    try {
+      const res = await fetch(`${API_BASE_URL}/adhesives/create`, { 
+        method: product ? 'PUT' : 'POST', 
+        body: data 
+      });
+      
+      console.log('Response status:', res.status);
+      console.log('Response headers:', res.headers);
+      
+      if (res.ok) {
+        const result = await res.json();
+        console.log('Success response:', result);
+        alert('Product created successfully!');
+        onSave && onSave();
+      } else {
+        const errorData = await res.json();
+        console.error('Error response:', errorData);
+        alert(`Error creating product: ${errorData.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+      alert(`Network error: ${error.message}`);
+    }
   };
 
   return (

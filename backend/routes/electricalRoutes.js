@@ -43,6 +43,7 @@ const dPswitch = require('../controllers/electrical/dPswitchController');
 const doorBells = require('../controllers/electrical/doorBellsController');
 const distributionBoards = require('../controllers/electrical/distributionBoardsController');
 const dimmer = require('../controllers/electrical/dimmerController');
+const aggregate = require('../controllers/electrical/aggregateController');
 
 // --- LIGHTS CONTROLLERS IMPORTS ---
 const ceilinglight = require('../controllers/electrical/Lights/CeilinglightController.js');
@@ -221,3 +222,6 @@ crudRoutesSimple('circularsurfacebox', circularSurfaceBox);
 crudRoutesSimple('rigidtype', rigidType);
 
 module.exports = router;
+// Aggregate endpoints
+router.get('/categories', aggregate.getElectricalCategoriesWithData);
+router.post('/first-by-categories', aggregate.getFirstByCategories);

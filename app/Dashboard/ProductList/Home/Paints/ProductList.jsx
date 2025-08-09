@@ -36,9 +36,24 @@ export default function ProductList() {
   const router = useRouter();
 
   const API_URL = `${API_BASE_URL}/home/paints`;
+  const STORAGE_KEY = 'homePaintsSelectedCategories';
+  const [selectedCats, setSelectedCats] = useState([]);
 
   useEffect(() => {
     fetchProducts();
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const qp = params.get('categories');
+      if (qp) {
+        const arr = JSON.parse(qp);
+        if (Array.isArray(arr)) setSelectedCats(arr);
+      } else {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        if (Array.isArray(saved)) setSelectedCats(saved);
+      }
+    } catch (e) {
+      // ignore
+    }
   }, []);
 
   const fetchProducts = async () => {
@@ -60,31 +75,6 @@ export default function ProductList() {
       console.error('Error fetching products:', err);
       setError(err.message);
       setProducts([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-      const responseData = await res.json();
-      console.log('API Response:', responseData); // Debug log
-      
-      // Handle the response format: {"success":true,"count":0,"data":[]}
-      let productsArray = [];
-      if (responseData.success && responseData.data) {
-        productsArray = responseData.data;
-      } else if (Array.isArray(responseData)) {
-        productsArray = responseData;
-      } else if (responseData.products) {
-        productsArray = responseData.products;
-      }
-      
-      setProducts(productsArray);
-    } catch (err) {
-      setError(err.message);
-      console.error('Error fetching products:', err);
-      setProducts([]); // Set empty array on error
     } finally {
       setLoading(false);
     }
@@ -143,7 +133,9 @@ export default function ProductList() {
   };
 
   // Filter products based on search term
-  const filteredProducts = products.filter(product =>
+  const filteredProducts = products
+    .filter(product => (selectedCats.length === 0 || selectedCats.includes(product.category)))
+    .filter(product =>
     product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     product.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     product.brand?.toLowerCase().includes(searchTerm.toLowerCase()) ||

@@ -8,6 +8,9 @@ const homePaintsController = require('../../controllers/home/homePaintsControlle
 // HomePaints routes
 router.post('/create', upload.array('images', 8), homePaintsController.createHomePaint);
 router.get('/get', homePaintsController.getAllHomePaints);
+router.get('/source-categories', homePaintsController.getSourceCategories);
+router.get('/selected-categories', homePaintsController.getSelectedCategories);
+router.post('/select-categories', homePaintsController.selectCategories);
 router.get('/getByCategory/:category', homePaintsController.getHomePaintsByCategory);
 router.get('/getByBrand/:brand', homePaintsController.getHomePaintsByBrand);
 router.get('/getByColor/:color', homePaintsController.getHomePaintsByColor);

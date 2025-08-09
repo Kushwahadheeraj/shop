@@ -8,6 +8,10 @@ const homeElectricalController = require('../../controllers/home/homeElectricalC
 // HomeElectrical routes
 router.post('/create', upload.single('image'), homeElectricalController.createHomeElectrical);
 router.get('/get', homeElectricalController.getAllHomeElectrical);
+router.get('/selected-categories', homeElectricalController.getSelectedCategories);
+router.post('/select-categories', homeElectricalController.selectCategories);
+// Convenience: categories from main ElectricalModels and first product per category via same endpoint
+// Example: GET /api/home/electrical/get?firstPerCategory=true
 router.get('/getByCategory/:category', homeElectricalController.getHomeElectricalByCategory);
 router.get('/getByBrand/:brand', homeElectricalController.getHomeElectricalByBrand);
 router.get('/getOne/:id', homeElectricalController.getOneHomeElectrical);

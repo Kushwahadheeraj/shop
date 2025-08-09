@@ -104,7 +104,7 @@ export default function ProductForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (files.length === 0) {
+    if (!file) {
       setPhotoError("Please upload at least 1 photo.");
       return;
     }

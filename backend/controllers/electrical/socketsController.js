@@ -113,7 +113,7 @@ exports.createSockets = async (req, res) => {
 
 exports.getAllSockets = async (req, res) => {
   try {
-    const products = await ElectricalModels.find({ category: 'sockets' });
+    const products = await ElectricalModels.find({ category: 'Sockets' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -122,7 +122,7 @@ exports.getAllSockets = async (req, res) => {
 
 exports.getOneSockets = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'sockets' });
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'Sockets' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -166,7 +166,7 @@ exports.updateSockets = async (req, res) => {
     }
 
     const product = await ElectricalModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'sockets' },
+      { _id: req.params.id, category: 'Sockets' },
       update,
       { new: true }
     );
@@ -181,7 +181,7 @@ exports.updateSockets = async (req, res) => {
 
 exports.deleteSockets = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'sockets' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'Sockets' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

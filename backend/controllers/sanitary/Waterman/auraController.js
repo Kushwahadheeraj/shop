@@ -30,7 +30,7 @@ exports.createAura = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'aura' });
+    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'Aura' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateAura = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Sanitary.findOneAndUpdate(
-      { _id: req.params.id, category: 'aura' },
+      { _id: req.params.id, category: 'Aura' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateAura = async (req, res) => {
 };
 exports.getAllAura = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'waterman/aura' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'Aura' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllAura = async (req, res) => {
 
 exports.getOneAura = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'waterman/aura' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'Aura' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneAura = async (req, res) => {
 
 exports.deleteAura = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'waterman/aura' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'Aura' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

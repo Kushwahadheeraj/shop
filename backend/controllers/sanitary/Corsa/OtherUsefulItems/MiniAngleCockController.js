@@ -63,7 +63,7 @@ exports.updateMiniAngleCock = async (req, res) => {
 };
 exports.getAllMiniAngleCock = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'corsa/OtherUsefulItems/MiniAngleCock' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'MiniAngleCock' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllMiniAngleCock = async (req, res) => {
 
 exports.getOneMiniAngleCock = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'corsa/OtherUsefulItems/MiniAngleCock' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'MiniAngleCock' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneMiniAngleCock = async (req, res) => {
 
 exports.deleteMiniAngleCock = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'corsa/OtherUsefulItems/MiniAngleCock' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'MiniAngleCock' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

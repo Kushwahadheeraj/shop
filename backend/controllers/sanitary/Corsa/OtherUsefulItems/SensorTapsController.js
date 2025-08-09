@@ -63,7 +63,7 @@ exports.updateSensorTaps = async (req, res) => {
 };
 exports.getAllSensorTaps = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'corsa/OtherUsefulItems/SensorTaps' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'SensorTaps' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllSensorTaps = async (req, res) => {
 
 exports.getOneSensorTaps = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'corsa/OtherUsefulItems/SensorTaps' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'SensorTaps' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneSensorTaps = async (req, res) => {
 
 exports.deleteSensorTaps = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'corsa/OtherUsefulItems/SensorTaps' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'SensorTaps' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

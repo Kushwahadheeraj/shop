@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 const tagsList = ["Heavy Duty", "Lightweight", "Universal", "Child Safe"];
 
-export default function ProductForm() {
+export default function ProductForm({ onSave }) {
   const [name, setName] = useState("");
   const [photos, setPhotos] = useState([]);
   const [preview, setPreview] = useState([]);
@@ -79,6 +79,11 @@ export default function ProductForm() {
 
   const handleSubmit = async e => {
     e.preventDefault();
+    if (files.length === 0) {
+      setPhotoError("Please upload at least 1 photo.");
+      return;
+    }
+    setPhotoError("");
     if (photos.length === 0) {
       setPhotoError("At least one photo is required.");
       return;
@@ -91,7 +96,7 @@ export default function ProductForm() {
     formData.append("discountPrice", discountPrice);
     formData.append("totalProduct", totalProduct);
     formData.append("category", category);
-    tags.forEach(tag => formData.append("tags", tag));
+    tag.forEach(tag => formData.append("tag", tag));
     photos.forEach(photo => formData.append("photos", photo));
     // TODO: Update API endpoint for each product type
     const res = await fetch(`${API_BASE_URL}/tools/brush/create`, { method: 'POST', body: data });

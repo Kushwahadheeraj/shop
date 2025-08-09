@@ -30,7 +30,7 @@ exports.createGluegun = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Tools({ ...req.body, photos: photoUrls, category: 'gluegun' });
+    const product = new Tools({ ...req.body, photos: photoUrls, category: 'Gluegun' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateGluegun = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Tools.findOneAndUpdate(
-      { _id: req.params.id, category: 'gluegun' },
+      { _id: req.params.id, category: 'Gluegun' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateGluegun = async (req, res) => {
 };
 exports.getAllGluegun = async (req, res) => {
   try {
-    const products = await Tools.find({ category: 'gluegun' });
+    const products = await Tools.find({ category: 'Gluegun' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllGluegun = async (req, res) => {
 
 exports.getOneGluegun = async (req, res) => {
   try {
-    const product = await Tools.findOne({ _id: req.params.id, category: 'gluegun' });
+    const product = await Tools.findOne({ _id: req.params.id, category: 'Gluegun' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneGluegun = async (req, res) => {
 
 exports.deleteGluegun = async (req, res) => {
   try {
-    const product = await Tools.findOneAndDelete({ _id: req.params.id, category: 'gluegun' });
+    const product = await Tools.findOneAndDelete({ _id: req.params.id, category: 'Gluegun' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

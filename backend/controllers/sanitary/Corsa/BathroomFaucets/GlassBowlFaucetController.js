@@ -63,7 +63,7 @@ exports.updateGlassBowlFaucet = async (req, res) => {
 };
 exports.getAllGlassBowlFaucet = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'corsa/BathroomFaucets/GlassBowlFaucet' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'GlassBowlFaucet' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllGlassBowlFaucet = async (req, res) => {
 
 exports.getOneGlassBowlFaucet = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'corsa/BathroomFaucets/GlassBowlFaucet' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'GlassBowlFaucet' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneGlassBowlFaucet = async (req, res) => {
 
 exports.deleteGlassBowlFaucet = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'corsa/BathroomFaucets/GlassBowlFaucet' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'GlassBowlFaucet' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

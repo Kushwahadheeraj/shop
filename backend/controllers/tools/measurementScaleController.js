@@ -30,7 +30,7 @@ exports.createMeasurementScale = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Tools({ ...req.body, photos: photoUrls, category: 'measurementScale' });
+    const product = new Tools({ ...req.body, photos: photoUrls, category: 'MeasurementScale' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateMeasurementScale = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Tools.findOneAndUpdate(
-      { _id: req.params.id, category: 'measurementScale' },
+      { _id: req.params.id, category: 'MeasurementScale' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateMeasurementScale = async (req, res) => {
 };
 exports.getAllMeasurementScale = async (req, res) => {
   try {
-    const products = await Tools.find({ category: 'measurementScale' });
+    const products = await Tools.find({ category: 'MeasurementScale' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllMeasurementScale = async (req, res) => {
 
 exports.getOneMeasurementScale = async (req, res) => {
   try {
-    const product = await Tools.findOne({ _id: req.params.id, category: 'measurementScale' });
+    const product = await Tools.findOne({ _id: req.params.id, category: 'MeasurementScale' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneMeasurementScale = async (req, res) => {
 
 exports.deleteMeasurementScale = async (req, res) => {
   try {
-    const product = await Tools.findOneAndDelete({ _id: req.params.id, category: 'measurementScale' });
+    const product = await Tools.findOneAndDelete({ _id: req.params.id, category: 'MeasurementScale' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

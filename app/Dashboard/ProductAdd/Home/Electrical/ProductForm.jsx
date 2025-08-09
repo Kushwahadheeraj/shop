@@ -88,6 +88,11 @@ export default function ProductForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (files.length === 0) {
+      setPhotoError("Please upload at least 1 photo.");
+      return;
+    }
+    setPhotoError("");
     if (!isFormValid()) {
       setPhotoError("Please fill all required fields and upload an image");
       return;
@@ -107,7 +112,7 @@ export default function ProductForm() {
     
     // Add tags separately
     if (tags.length > 0) {
-      tags.forEach(tag => data.append('tags', tag));
+      tag.forEach(tag => data.append('tag', tag));
     }
     
     // Add image

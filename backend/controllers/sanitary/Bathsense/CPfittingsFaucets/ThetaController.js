@@ -63,7 +63,7 @@ exports.updateTheta = async (req, res) => {
 };
 exports.getAllTheta = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'bathsense/CPfittingsFaucets/Theta' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'Theta' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllTheta = async (req, res) => {
 
 exports.getOneTheta = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'bathsense/CPfittingsFaucets/Theta' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'Theta' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneTheta = async (req, res) => {
 
 exports.deleteTheta = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'bathsense/CPfittingsFaucets/Theta' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'Theta' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

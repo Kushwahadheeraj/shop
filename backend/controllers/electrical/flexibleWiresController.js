@@ -113,7 +113,7 @@ exports.createFlexibleWires = async (req, res) => {
 
 exports.getAllFlexibleWires = async (req, res) => {
   try {
-    const products = await ElectricalModels.find({ category: 'flexiblewires' });
+    const products = await ElectricalModels.find({ category: 'Flexiblewires' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -122,7 +122,7 @@ exports.getAllFlexibleWires = async (req, res) => {
 
 exports.getOneFlexibleWires = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'flexiblewires' });
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'Flexiblewires' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -166,7 +166,7 @@ exports.updateFlexibleWires = async (req, res) => {
     }
 
     const product = await ElectricalModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'flexiblewires' },
+      { _id: req.params.id, category: 'Flexiblewires' },
       update,
       { new: true }
     );
@@ -181,7 +181,7 @@ exports.updateFlexibleWires = async (req, res) => {
 
 exports.deleteFlexibleWires = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'flexiblewires' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'Flexiblewires' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

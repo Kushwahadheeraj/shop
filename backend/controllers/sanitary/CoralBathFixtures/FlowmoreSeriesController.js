@@ -63,7 +63,7 @@ exports.updateFlowmoreSeries = async (req, res) => {
 };
 exports.getAllFlowmoreSeries = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'coralBathFixtures/FlowmoreSeries' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'FlowmoreSeries' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllFlowmoreSeries = async (req, res) => {
 
 exports.getOneFlowmoreSeries = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'coralBathFixtures/FlowmoreSeries' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'FlowmoreSeries' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneFlowmoreSeries = async (req, res) => {
 
 exports.deleteFlowmoreSeries = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'coralBathFixtures/FlowmoreSeries' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'FlowmoreSeries' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

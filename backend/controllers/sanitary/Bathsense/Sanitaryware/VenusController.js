@@ -63,7 +63,7 @@ exports.updateVenus = async (req, res) => {
 };
 exports.getAllVenus = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'bathsense/Sanitaryware/Venus' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'Venus' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllVenus = async (req, res) => {
 
 exports.getOneVenus = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'bathsense/Sanitaryware/Venus' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'Venus' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneVenus = async (req, res) => {
 
 exports.deleteVenus = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'bathsense/Sanitaryware/Venus' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'Venus' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

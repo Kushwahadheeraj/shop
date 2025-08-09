@@ -63,7 +63,7 @@ exports.updateAutoCloseTaps = async (req, res) => {
 };
 exports.getAllAutoCloseTaps = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'essess/AutoCloseTaps' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'AutoCloseTaps' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllAutoCloseTaps = async (req, res) => {
 
 exports.getOneAutoCloseTaps = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'essess/AutoCloseTaps' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'AutoCloseTaps' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneAutoCloseTaps = async (req, res) => {
 
 exports.deleteAutoCloseTaps = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'essess/AutoCloseTaps' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'AutoCloseTaps' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

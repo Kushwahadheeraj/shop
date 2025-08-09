@@ -63,7 +63,7 @@ exports.updateJazz = async (req, res) => {
 };
 exports.getAllJazz = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'corsa/BathroomFaucets/Jazz' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'Jazz' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllJazz = async (req, res) => {
 
 exports.getOneJazz = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'corsa/BathroomFaucets/Jazz' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'Jazz' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneJazz = async (req, res) => {
 
 exports.deleteJazz = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'corsa/BathroomFaucets/Jazz' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'Jazz' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

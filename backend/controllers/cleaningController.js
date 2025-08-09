@@ -116,7 +116,7 @@ exports.updateCleaning = async (req, res) => {
     }
 
     const product = await CleaningModels.findOneAndUpdate(
-      { _id: req.params.id },
+      { _id: req.params.id, category: 'Cleaning' },
       update,
       { new: true }
     );
@@ -131,29 +131,29 @@ exports.updateCleaning = async (req, res) => {
 
 exports.getAllCleaning = async (req, res) => {
   try {
-    const cleanings = await CleaningModels.find();
+    const cleanings = await CleaningModels.find({ category: 'Cleaning' });
     res.json(cleanings);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.deleteCleaning = async (req, res) => {
   try {
-    const cleaning = await CleaningModels.findByIdAndDelete(req.params.id);
-    if (!cleaning) return res.status(404).json({ message: 'Not found' });
+    const cleaning = await CleaningModels.findOneAndDelete({ _id: req.params.id, category: 'Cleaning' });
+    if (!cleaning) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.getOneCleaning = async (req, res) => {
   try {
-    const cleaning = await CleaningModels.findById(req.params.id);
-    if (!cleaning) return res.status(404).json({ message: 'Not found' });
+    const cleaning = await CleaningModels.findOne({ _id: req.params.id, category: 'Cleaning' });
+    if (!cleaning) return res.status(404).json({ error: 'Not found' });
     res.json(cleaning);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };

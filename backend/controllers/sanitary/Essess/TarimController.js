@@ -63,7 +63,7 @@ exports.updateTarim = async (req, res) => {
 };
 exports.getAllTarim = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'essess/Tarim' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'Tarim' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllTarim = async (req, res) => {
 
 exports.getOneTarim = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'essess/Tarim' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'Tarim' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneTarim = async (req, res) => {
 
 exports.deleteTarim = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'essess/Tarim' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'Tarim' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

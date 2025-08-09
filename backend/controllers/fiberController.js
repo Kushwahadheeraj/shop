@@ -30,7 +30,7 @@ exports.createFiber = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new FiberModels({ ...req.body, photos: photoUrls, category: 'fiber' });
+    const product = new FiberModels({ ...req.body, photos: photoUrls, category: 'Fiber' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateFiber = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await FiberModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'fiber' },
+      { _id: req.params.id, category: 'Fiber' },
       update,
       { new: true }
     );
@@ -63,29 +63,29 @@ exports.updateFiber = async (req, res) => {
 };
 exports.getAllFiber = async (req, res) => {
   try {
-    const fibers = await Fiber.find();
+    const fibers = await FiberModels.find({ category: 'Fiber' });
     res.json(fibers);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.deleteFiber = async (req, res) => {
   try {
-    const fiber = await Fiber.findByIdAndDelete(req.params.id);
-    if (!fiber) return res.status(404).json({ message: 'Not found' });
+    const fiber = await FiberModels.findOneAndDelete({ _id: req.params.id, category: 'Fiber' });
+    if (!fiber) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.getOneFiber = async (req, res) => {
   try {
-    const fiber = await FiberModels.findById(req.params.id);
-    if (!fiber) return res.status(404).json({ message: 'Not found' });
+    const fiber = await FiberModels.findOne({ _id: req.params.id, category: 'Fiber' });
+    if (!fiber) return res.status(404).json({ error: 'Not found' });
     res.json(fiber);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };

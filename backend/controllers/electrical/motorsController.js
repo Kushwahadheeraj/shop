@@ -113,7 +113,7 @@ exports.createMotors = async (req, res) => {
 
 exports.getAllMotors = async (req, res) => {
   try {
-    const products = await ElectricalModels.find({ category: 'motors' });
+    const products = await ElectricalModels.find({ category: 'Motors' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -122,7 +122,7 @@ exports.getAllMotors = async (req, res) => {
 
 exports.getOneMotors = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'motors' });
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'Motors' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -166,7 +166,7 @@ exports.updateMotors = async (req, res) => {
     }
 
     const product = await ElectricalModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'motors' },
+      { _id: req.params.id, category: 'Motors' },
       update,
       { new: true }
     );
@@ -181,7 +181,7 @@ exports.updateMotors = async (req, res) => {
 
 exports.deleteMotors = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'motors' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'Motors' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

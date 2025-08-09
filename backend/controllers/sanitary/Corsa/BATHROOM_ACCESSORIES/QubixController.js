@@ -63,7 +63,7 @@ exports.updateQubix = async (req, res) => {
 };
 exports.getAllQubix = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'corsa/BATHROOMACCESSORIES/Qubix' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'Qubix' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllQubix = async (req, res) => {
 
 exports.getOneQubix = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'corsa/BATHROOMACCESSORIES/Qubix' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'Qubix' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneQubix = async (req, res) => {
 
 exports.deleteQubix = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'corsa/BATHROOMACCESSORIES/Qubix' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'Qubix' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

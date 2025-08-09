@@ -30,7 +30,7 @@ exports.createValve = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'valve' });
+    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'Valve' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateValve = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Sanitary.findOneAndUpdate(
-      { _id: req.params.id, category: 'valve' },
+      { _id: req.params.id, category: 'Valve' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateValve = async (req, res) => {
 };
 exports.getAllValve = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'leoBathFittings/Valve/valve' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'Valve' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllValve = async (req, res) => {
 
 exports.getOneValve = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'leoBathFittings/Valve/valve' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'Valve' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneValve = async (req, res) => {
 
 exports.deleteValve = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'leoBathFittings/Valve/valve' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'Valve' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

@@ -30,7 +30,7 @@ exports.createCrackFillers = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Paint({ ...req.body, photos: photoUrls, category: 'crackFillers' });
+    const product = new Paint({ ...req.body, photos: photoUrls, category: 'CrackFillers' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateCrackFillers = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Paint.findOneAndUpdate(
-      { _id: req.params.id, category: 'crackFillers' },
+      { _id: req.params.id, category: 'CrackFillers' },
       update,
       { new: true }
     );
@@ -66,26 +66,26 @@ exports.getAllCrackFillers = async (req, res) => {
     const items = await Paint.find({ category: 'CrackFillers' });
     res.json(items);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.getOneCrackFillers = async (req, res) => {
   try {
     const item = await Paint.findOne({ _id: req.params.id, category: 'CrackFillers' });
-    if (!item) return res.status(404).json({ message: 'Not found' });
+    if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.deleteCrackFillers = async (req, res) => {
   try {
     const item = await Paint.findOneAndDelete({ _id: req.params.id, category: 'CrackFillers' });
-    if (!item) return res.status(404).json({ message: 'Not found' });
+    if (!item) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };

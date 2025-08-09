@@ -8,7 +8,7 @@ import API_BASE_URL from "@/lib/apiConfig";
 
 export default function ProductList() {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteId, setDeleteId] = useState(null);
@@ -24,7 +24,25 @@ export default function ProductList() {
     setLoading(true);
     setError(null);
     try {
+      console.log('API URL:', API_URL + '/get');
       const res = await fetch(API_URL + '/get');
+      console.log('Response status:', res.status);
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      const data = await res.json();
+      console.log('Response data:', data);
+      console.log('Data type:', typeof data);
+      console.log('Data length:', Array.isArray(data) ? data.length : 'Not an array');
+      setProducts(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error('Error fetching products:', err);
+      setError(err.message);
+      setProducts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
@@ -129,14 +147,14 @@ export default function ProductList() {
         <CardContent>
           {error && (
             <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-600">Error: {error}</p>
+              <p className="text-red-600">Error loading products: {error}</p>
               <Button 
                 variant="outline" 
                 size="sm" 
                 onClick={fetchProducts}
                 className="mt-2"
               >
-                Try Again
+                Retry Loading
               </Button>
             </div>
           )}

@@ -63,7 +63,7 @@ exports.updateAltius = async (req, res) => {
 };
 exports.getAllAltius = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'bathsense/CPfittingsFaucets/Altius' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'Altius' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllAltius = async (req, res) => {
 
 exports.getOneAltius = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'bathsense/CPfittingsFaucets/Altius' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'Altius' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneAltius = async (req, res) => {
 
 exports.deleteAltius = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'bathsense/CPfittingsFaucets/Altius' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'Altius' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

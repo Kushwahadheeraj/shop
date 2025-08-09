@@ -113,7 +113,7 @@ exports.createPlug = async (req, res) => {
 
 exports.getAllPlug = async (req, res) => {
   try {
-    const products = await ElectricalModels.find({ category: 'plug' });
+    const products = await ElectricalModels.find({ category: 'Plug' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -122,7 +122,7 @@ exports.getAllPlug = async (req, res) => {
 
 exports.getOnePlug = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'plug' });
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'Plug' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -166,7 +166,7 @@ exports.updatePlug = async (req, res) => {
     }
 
     const product = await ElectricalModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'plug' },
+      { _id: req.params.id, category: 'Plug' },
       update,
       { new: true }
     );
@@ -181,7 +181,7 @@ exports.updatePlug = async (req, res) => {
 
 exports.deletePlug = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'plug' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'Plug' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

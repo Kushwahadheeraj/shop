@@ -63,7 +63,7 @@ exports.updateHealthFaucet = async (req, res) => {
 };
 exports.getAllHealthFaucet = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'corsa/SHOWERS/HealthFaucet' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'HealthFaucet' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllHealthFaucet = async (req, res) => {
 
 exports.getOneHealthFaucet = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'corsa/SHOWERS/HealthFaucet' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'HealthFaucet' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneHealthFaucet = async (req, res) => {
 
 exports.deleteHealthFaucet = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'corsa/SHOWERS/HealthFaucet' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'HealthFaucet' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

@@ -63,7 +63,7 @@ exports.updateSeries8BSeries = async (req, res) => {
 };
 exports.getAllSeries8BSeries = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'essess/Accessories/Series8BSeries' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'Series8BSeries' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllSeries8BSeries = async (req, res) => {
 
 exports.getOneSeries8BSeries = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'essess/Accessories/Series8BSeries' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'Series8BSeries' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneSeries8BSeries = async (req, res) => {
 
 exports.deleteSeries8BSeries = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'essess/Accessories/Series8BSeries' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'Series8BSeries' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

@@ -63,7 +63,7 @@ exports.updateBold = async (req, res) => {
 };
 exports.getAllBold = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'corsa/BathroomFaucets/Bold' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'Bold' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllBold = async (req, res) => {
 
 exports.getOneBold = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'corsa/BathroomFaucets/Bold' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'Bold' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneBold = async (req, res) => {
 
 exports.deleteBold = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'corsa/BathroomFaucets/Bold' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'Bold' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

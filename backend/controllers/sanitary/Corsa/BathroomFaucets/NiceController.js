@@ -63,7 +63,7 @@ exports.updateNice = async (req, res) => {
 };
 exports.getAllNice = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'corsa/BathroomFaucets/Nice' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'Nice' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllNice = async (req, res) => {
 
 exports.getOneNice = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'corsa/BathroomFaucets/Nice' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'Nice' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneNice = async (req, res) => {
 
 exports.deleteNice = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'corsa/BathroomFaucets/Nice' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'Nice' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

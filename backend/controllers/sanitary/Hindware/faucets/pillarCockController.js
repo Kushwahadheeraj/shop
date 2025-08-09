@@ -30,7 +30,7 @@ exports.createPillarCock = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'pillarCock' });
+    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'PillarCock' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updatePillarCock = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Sanitary.findOneAndUpdate(
-      { _id: req.params.id, category: 'pillarCock' },
+      { _id: req.params.id, category: 'PillarCock' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updatePillarCock = async (req, res) => {
 };
 exports.getAllPillarCock = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'hindware/faucets/pillarCock' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'PillarCock' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllPillarCock = async (req, res) => {
 
 exports.getOnePillarCock = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'hindware/faucets/pillarCock' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'PillarCock' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOnePillarCock = async (req, res) => {
 
 exports.deletePillarCock = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'hindware/faucets/pillarCock' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'PillarCock' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

@@ -63,7 +63,7 @@ exports.updateArrow = async (req, res) => {
 };
 exports.getAllArrow = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'corsa/BathroomFaucets/Arrow' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'Arrow' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllArrow = async (req, res) => {
 
 exports.getOneArrow = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'corsa/BathroomFaucets/Arrow' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'Arrow' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneArrow = async (req, res) => {
 
 exports.deleteArrow = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'corsa/BathroomFaucets/Arrow' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'Arrow' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

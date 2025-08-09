@@ -30,7 +30,7 @@ exports.createBathrooms = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new WaterProofing({ ...req.body, photos: photoUrls, category: 'bathrooms' });
+    const product = new WaterProofing({ ...req.body, photos: photoUrls, category: 'Bathrooms' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateBathrooms = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await WaterProofing.findOneAndUpdate(
-      { _id: req.params.id, category: 'bathrooms' },
+      { _id: req.params.id, category: 'Bathrooms' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateBathrooms = async (req, res) => {
 };
 exports.getAllBathrooms = async (req, res) => {
   try {
-    const products = await WaterProofing.find({ category: 'bathrooms' });
+    const products = await WaterProofing.find({ category: 'Bathrooms' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllBathrooms = async (req, res) => {
 
 exports.getOneBathrooms = async (req, res) => {
   try {
-    const product = await WaterProofing.findOne({ _id: req.params.id, category: 'bathrooms' });
+    const product = await WaterProofing.findOne({ _id: req.params.id, category: 'Bathrooms' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneBathrooms = async (req, res) => {
 
 exports.deleteBathrooms = async (req, res) => {
   try {
-    const product = await WaterProofing.findOneAndDelete({ _id: req.params.id, category: 'bathrooms' });
+    const product = await WaterProofing.findOneAndDelete({ _id: req.params.id, category: 'Bathrooms' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

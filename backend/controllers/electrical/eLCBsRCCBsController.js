@@ -113,7 +113,7 @@ exports.createELCBsRCCBs = async (req, res) => {
 
 exports.getAllELCBsRCCBs = async (req, res) => {
   try {
-    const products = await ElectricalModels.find({ category: 'elcbsrccbs' });
+    const products = await ElectricalModels.find({ category: 'Elcbsrccbs' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -122,7 +122,7 @@ exports.getAllELCBsRCCBs = async (req, res) => {
 
 exports.getOneELCBsRCCBs = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'elcbsrccbs' });
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'Elcbsrccbs' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -166,7 +166,7 @@ exports.updateELCBsRCCBs = async (req, res) => {
     }
 
     const product = await ElectricalModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'elcbsrccbs' },
+      { _id: req.params.id, category: 'Elcbsrccbs' },
       update,
       { new: true }
     );
@@ -181,7 +181,7 @@ exports.updateELCBsRCCBs = async (req, res) => {
 
 exports.deleteELCBsRCCBs = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'elcbsrccbs' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'Elcbsrccbs' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

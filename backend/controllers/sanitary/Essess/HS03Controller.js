@@ -63,7 +63,7 @@ exports.updateHS03 = async (req, res) => {
 };
 exports.getAllHS03 = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'essess/HS03' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'HS03' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllHS03 = async (req, res) => {
 
 exports.getOneHS03 = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'essess/HS03' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'HS03' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneHS03 = async (req, res) => {
 
 exports.deleteHS03 = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'essess/HS03' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'HS03' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

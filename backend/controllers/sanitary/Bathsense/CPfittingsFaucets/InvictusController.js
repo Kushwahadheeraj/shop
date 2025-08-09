@@ -63,7 +63,7 @@ exports.updateInvictus = async (req, res) => {
 };
 exports.getAllInvictus = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'bathsense/CPfittingsFaucets/Invictus' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'Invictus' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllInvictus = async (req, res) => {
 
 exports.getOneInvictus = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'bathsense/CPfittingsFaucets/Invictus' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'Invictus' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneInvictus = async (req, res) => {
 
 exports.deleteInvictus = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'bathsense/CPfittingsFaucets/Invictus' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'Invictus' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

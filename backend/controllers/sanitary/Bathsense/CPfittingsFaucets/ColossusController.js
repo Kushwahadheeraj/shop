@@ -63,7 +63,7 @@ exports.updateColossus = async (req, res) => {
 };
 exports.getAllColossus = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'bathsense/CPfittingsFaucets/Colossus' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'Colossus' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllColossus = async (req, res) => {
 
 exports.getOneColossus = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'bathsense/CPfittingsFaucets/Colossus' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'Colossus' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneColossus = async (req, res) => {
 
 exports.deleteColossus = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'bathsense/CPfittingsFaucets/Colossus' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'Colossus' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

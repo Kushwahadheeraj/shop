@@ -113,7 +113,7 @@ exports.createModularSurfaceBox = async (req, res) => {
 
 exports.getAllModularSurfaceBox = async (req, res) => {
   try {
-    const products = await ElectricalModels.find({ category: 'modularsurfacebox' });
+    const products = await ElectricalModels.find({ category: 'Modularsurfacebox' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -122,7 +122,7 @@ exports.getAllModularSurfaceBox = async (req, res) => {
 
 exports.getOneModularSurfaceBox = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'modularsurfacebox' });
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'Modularsurfacebox' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -166,7 +166,7 @@ exports.updateModularSurfaceBox = async (req, res) => {
     }
 
     const product = await ElectricalModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'modularsurfacebox' },
+      { _id: req.params.id, category: 'Modularsurfacebox' },
       update,
       { new: true }
     );
@@ -181,7 +181,7 @@ exports.updateModularSurfaceBox = async (req, res) => {
 
 exports.deleteModularSurfaceBox = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'modularsurfacebox' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'Modularsurfacebox' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

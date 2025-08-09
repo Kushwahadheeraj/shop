@@ -113,7 +113,7 @@ exports.createPVCClips = async (req, res) => {
 
 exports.getAllPVCClips = async (req, res) => {
   try {
-    const products = await ElectricalModels.find({ category: 'pvcclips' });
+    const products = await ElectricalModels.find({ category: 'Pvcclips' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -122,7 +122,7 @@ exports.getAllPVCClips = async (req, res) => {
 
 exports.getOnePVCClips = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'pvcclips' });
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'Pvcclips' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -166,7 +166,7 @@ exports.updatePVCClips = async (req, res) => {
     }
 
     const product = await ElectricalModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'pvcclips' },
+      { _id: req.params.id, category: 'Pvcclips' },
       update,
       { new: true }
     );
@@ -181,7 +181,7 @@ exports.updatePVCClips = async (req, res) => {
 
 exports.deletePVCClips = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'pvcclips' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'Pvcclips' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

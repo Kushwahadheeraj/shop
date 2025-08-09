@@ -30,7 +30,7 @@ exports.createHardwareBathroomAccessories = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'hardwareBathroomAccessories' });
+    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'HardwareBathroomAccessories' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateHardwareBathroomAccessories = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Sanitary.findOneAndUpdate(
-      { _id: req.params.id, category: 'hardwareBathroomAccessories' },
+      { _id: req.params.id, category: 'HardwareBathroomAccessories' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateHardwareBathroomAccessories = async (req, res) => {
 };
 exports.getAllHardwareBathroomAccessories = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'hardwareBathroomAccessories' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'HardwareBathroomAccessories' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllHardwareBathroomAccessories = async (req, res) => {
 
 exports.getOneHardwareBathroomAccessories = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'hardwareBathroomAccessories' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'HardwareBathroomAccessories' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneHardwareBathroomAccessories = async (req, res) => {
 
 exports.deleteHardwareBathroomAccessories = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'hardwareBathroomAccessories' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'HardwareBathroomAccessories' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

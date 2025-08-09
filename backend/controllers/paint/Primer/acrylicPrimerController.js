@@ -30,7 +30,7 @@ exports.createAcrylicPrimer = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Paint({ ...req.body, photos: photoUrls, category: 'acrylicPrimer' });
+    const product = new Paint({ ...req.body, photos: photoUrls, category: 'AcrylicPrimer' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateAcrylicPrimer = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Paint.findOneAndUpdate(
-      { _id: req.params.id, category: 'acrylicPrimer' },
+      { _id: req.params.id, category: 'AcrylicPrimer' },
       update,
       { new: true }
     );
@@ -66,26 +66,26 @@ exports.getAllAcrylicPrimer = async (req, res) => {
     const items = await Paint.find({ category: 'AcrylicPrimer' });
     res.json(items);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.getOneAcrylicPrimer = async (req, res) => {
   try {
     const item = await Paint.findOne({ _id: req.params.id, category: 'AcrylicPrimer' });
-    if (!item) return res.status(404).json({ message: 'Not found' });
+    if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.deleteAcrylicPrimer = async (req, res) => {
   try {
     const item = await Paint.findOneAndDelete({ _id: req.params.id, category: 'AcrylicPrimer' });
-    if (!item) return res.status(404).json({ message: 'Not found' });
+    if (!item) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };

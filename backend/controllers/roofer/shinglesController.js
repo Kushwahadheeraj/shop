@@ -30,7 +30,7 @@ exports.createShingles = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Roofer({ ...req.body, photos: photoUrls, category: 'shingles' });
+    const product = new Roofer({ ...req.body, photos: photoUrls, category: 'Shingles' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateShingles = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Roofer.findOneAndUpdate(
-      { _id: req.params.id, category: 'shingles' },
+      { _id: req.params.id, category: 'Shingles' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateShingles = async (req, res) => {
 };
 exports.getAllShingles = async (req, res) => {
   try {
-    const products = await require('../../models/PvcMatsModels').find({ category: 'shingles' });
+    const products = await require('../../models/PvcMatsModels').find({ category: 'Shingles' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllShingles = async (req, res) => {
 
 exports.getOneShingles = async (req, res) => {
   try {
-    const product = await require('../../models/PvcMatsModels').findOne({ _id: req.params.id, category: 'shingles' });
+    const product = await require('../../models/PvcMatsModels').findOne({ _id: req.params.id, category: 'Shingles' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneShingles = async (req, res) => {
 
 exports.deleteShingles = async (req, res) => {
   try {
-    const product = await require('../../models/PvcMatsModels').findOneAndDelete({ _id: req.params.id, category: 'shingles' });
+    const product = await require('../../models/PvcMatsModels').findOneAndDelete({ _id: req.params.id, category: 'Shingles' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

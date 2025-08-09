@@ -126,7 +126,7 @@ export default function ProductForm({ onSave }) {
       }
     });
     files.forEach(f => data.append('photos', f));
-    const res = await fetch(`${API_BASE_URL}/electrical/Adaptors/create`, { method: 'POST', body: data });
+    const res = await fetch(`${API_BASE_URL}/electrical/adaptors/create`, { method: 'POST', body: data });
     if (res.ok) {
       alert('Product created successfully!');
       if (onSave) onSave();
@@ -162,7 +162,7 @@ export default function ProductForm({ onSave }) {
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Total Product</label>
-          <Input name="totalProduct" type="number" value={form.totalProduct} onChange={handleChange} placeholder="Total Product" required />
+          <Input name="totalProduct" type="number" value={form.totalProduct} onChange={handleChange} placeholder="Total Product" />
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Category</label>

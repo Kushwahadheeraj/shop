@@ -113,7 +113,7 @@ exports.createHolders = async (req, res) => {
 
 exports.getAllHolders = async (req, res) => {
   try {
-    const products = await ElectricalModels.find({ category: 'holders' });
+    const products = await ElectricalModels.find({ category: 'Holders' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -122,7 +122,7 @@ exports.getAllHolders = async (req, res) => {
 
 exports.getOneHolders = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'holders' });
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'Holders' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -166,7 +166,7 @@ exports.updateHolders = async (req, res) => {
     }
 
     const product = await ElectricalModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'holders' },
+      { _id: req.params.id, category: 'Holders' },
       update,
       { new: true }
     );
@@ -181,7 +181,7 @@ exports.updateHolders = async (req, res) => {
 
 exports.deleteHolders = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'holders' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'Holders' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

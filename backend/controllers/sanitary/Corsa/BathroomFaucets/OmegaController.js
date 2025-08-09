@@ -63,7 +63,7 @@ exports.updateOmega = async (req, res) => {
 };
 exports.getAllOmega = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'corsa/BathroomFaucets/Omega' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'Omega' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllOmega = async (req, res) => {
 
 exports.getOneOmega = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'corsa/BathroomFaucets/Omega' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'Omega' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneOmega = async (req, res) => {
 
 exports.deleteOmega = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'corsa/BathroomFaucets/Omega' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'Omega' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

@@ -30,7 +30,7 @@ exports.createSlbmFaucetTall = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'slbmFaucetTall' });
+    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'SlbmFaucetTall' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateSlbmFaucetTall = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Sanitary.findOneAndUpdate(
-      { _id: req.params.id, category: 'slbmFaucetTall' },
+      { _id: req.params.id, category: 'SlbmFaucetTall' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateSlbmFaucetTall = async (req, res) => {
 };
 exports.getAllSlbmFaucetTall = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'hindware/faucets/slbmFaucetTall' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'SlbmFaucetTall' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllSlbmFaucetTall = async (req, res) => {
 
 exports.getOneSlbmFaucetTall = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'hindware/faucets/slbmFaucetTall' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'SlbmFaucetTall' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneSlbmFaucetTall = async (req, res) => {
 
 exports.deleteSlbmFaucetTall = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'hindware/faucets/slbmFaucetTall' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'SlbmFaucetTall' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

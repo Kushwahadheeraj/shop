@@ -162,7 +162,7 @@ exports.updateDry = async (req, res) => {
     }
 
     const product = await DryModels.findOneAndUpdate(
-      { _id: req.params.id },
+      { _id: req.params.id, category: 'Dry' },
       update,
       { new: true }
     );
@@ -177,29 +177,29 @@ exports.updateDry = async (req, res) => {
 
 exports.getAllDry = async (req, res) => {
   try {
-    const drys = await DryModels.find();
+    const drys = await DryModels.find({ category: 'Dry' });
     res.json(drys);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.deleteDry = async (req, res) => {
   try {
-    const dry = await DryModels.findByIdAndDelete(req.params.id);
-    if (!dry) return res.status(404).json({ message: 'Not found' });
+    const dry = await DryModels.findOneAndDelete({ _id: req.params.id, category: 'Dry' });
+    if (!dry) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.getOneDry = async (req, res) => {
   try {
-    const dry = await DryModels.findById(req.params.id);
-    if (!dry) return res.status(404).json({ message: 'Not found' });
+    const dry = await DryModels.findOne({ _id: req.params.id, category: 'Dry' });
+    if (!dry) return res.status(404).json({ error: 'Not found' });
     res.json(dry);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };

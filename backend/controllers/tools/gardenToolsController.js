@@ -30,7 +30,7 @@ exports.createGardenTools = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Tools({ ...req.body, photos: photoUrls, category: 'gardenTools' });
+    const product = new Tools({ ...req.body, photos: photoUrls, category: 'GardenTools' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateGardenTools = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Tools.findOneAndUpdate(
-      { _id: req.params.id, category: 'gardenTools' },
+      { _id: req.params.id, category: 'GardenTools' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateGardenTools = async (req, res) => {
 };
 exports.getAllGardenTools = async (req, res) => {
   try {
-    const products = await Tools.find({ category: 'gardenTools' });
+    const products = await Tools.find({ category: 'GardenTools' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllGardenTools = async (req, res) => {
 
 exports.getOneGardenTools = async (req, res) => {
   try {
-    const product = await Tools.findOne({ _id: req.params.id, category: 'gardenTools' });
+    const product = await Tools.findOne({ _id: req.params.id, category: 'GardenTools' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneGardenTools = async (req, res) => {
 
 exports.deleteGardenTools = async (req, res) => {
   try {
-    const product = await Tools.findOneAndDelete({ _id: req.params.id, category: 'gardenTools' });
+    const product = await Tools.findOneAndDelete({ _id: req.params.id, category: 'GardenTools' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

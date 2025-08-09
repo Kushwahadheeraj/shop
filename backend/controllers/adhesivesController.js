@@ -94,7 +94,7 @@ exports.createAdhesives = async (req, res) => {
       weights: weights || [],
       tag: tag || [],
       photos: photoUrls,
-      category: 'adhesives'
+      category: 'Adhesives'
     };
     
     if (shouldLog) console.log('Creating product with data:', productData);
@@ -159,7 +159,7 @@ exports.updateAdhesives = async (req, res) => {
     if (shouldLog) console.log('Final update object:', update);
     
     const product = await AdhesivesModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'adhesives' },
+      { _id: req.params.id, category: 'Adhesives' },
       update,
       { new: true }
     );
@@ -173,29 +173,29 @@ exports.updateAdhesives = async (req, res) => {
 
 exports.getOneAdhesives = async (req, res) => {
   try {
-    const adhesive = await AdhesivesModels.findById(req.params.id);
-    if (!adhesive) return res.status(404).json({ message: 'Not found' });
+    const adhesive = await AdhesivesModels.findOne({ _id: req.params.id, category: 'Adhesives' });
+    if (!adhesive) return res.status(404).json({ error: 'Not found' });
     res.json(adhesive);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.getAllAdhesives = async (req, res) => {
   try {
-    const adhesives = await AdhesivesModels.find();
+    const adhesives = await AdhesivesModels.find({ category: 'Adhesives' });
     res.json(adhesives);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.deleteAdhesives = async (req, res) => {
   try {
-    const adhesive = await AdhesivesModels.findByIdAndDelete(req.params.id);
-    if (!adhesive) return res.status(404).json({ message: 'Not found' });
+    const adhesive = await AdhesivesModels.findOneAndDelete({ _id: req.params.id, category: 'Adhesives' });
+    if (!adhesive) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };

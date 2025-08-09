@@ -63,7 +63,7 @@ exports.updateSeries2Swing = async (req, res) => {
 };
 exports.getAllSeries2Swing = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'essess/Accessories/Series2Swing' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'Series2Swing' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllSeries2Swing = async (req, res) => {
 
 exports.getOneSeries2Swing = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'essess/Accessories/Series2Swing' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'Series2Swing' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneSeries2Swing = async (req, res) => {
 
 exports.deleteSeries2Swing = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'essess/Accessories/Series2Swing' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'Series2Swing' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

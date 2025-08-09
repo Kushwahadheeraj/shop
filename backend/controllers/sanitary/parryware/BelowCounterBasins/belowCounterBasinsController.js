@@ -30,7 +30,7 @@ exports.createBelowCounterBasins = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'belowCounterBasins' });
+    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'BelowCounterBasins' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateBelowCounterBasins = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Sanitary.findOneAndUpdate(
-      { _id: req.params.id, category: 'belowCounterBasins' },
+      { _id: req.params.id, category: 'BelowCounterBasins' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateBelowCounterBasins = async (req, res) => {
 };
 exports.getAllBelowCounterBasins = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'parryware/BelowCounterBasins/belowCounterBasins' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'BelowCounterBasins' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllBelowCounterBasins = async (req, res) => {
 
 exports.getOneBelowCounterBasins = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'parryware/BelowCounterBasins/belowCounterBasins' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'BelowCounterBasins' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneBelowCounterBasins = async (req, res) => {
 
 exports.deleteBelowCounterBasins = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'parryware/BelowCounterBasins/belowCounterBasins' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'BelowCounterBasins' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

@@ -113,7 +113,7 @@ exports.createIndicator = async (req, res) => {
 
 exports.getAllIndicator = async (req, res) => {
   try {
-    const products = await ElectricalModels.find({ category: 'indicator' });
+    const products = await ElectricalModels.find({ category: 'Indicator' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -122,7 +122,7 @@ exports.getAllIndicator = async (req, res) => {
 
 exports.getOneIndicator = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'indicator' });
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'Indicator' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -166,7 +166,7 @@ exports.updateIndicator = async (req, res) => {
     }
 
     const product = await ElectricalModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'indicator' },
+      { _id: req.params.id, category: 'Indicator' },
       update,
       { new: true }
     );
@@ -181,7 +181,7 @@ exports.updateIndicator = async (req, res) => {
 
 exports.deleteIndicator = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'indicator' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'Indicator' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

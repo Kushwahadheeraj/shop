@@ -63,7 +63,7 @@ exports.updateAlmond = async (req, res) => {
 };
 exports.getAllAlmond = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'corsa/BathroomFaucets/Almond' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'Almond' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllAlmond = async (req, res) => {
 
 exports.getOneAlmond = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'corsa/BathroomFaucets/Almond' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'Almond' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneAlmond = async (req, res) => {
 
 exports.deleteAlmond = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'corsa/BathroomFaucets/Almond' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'Almond' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

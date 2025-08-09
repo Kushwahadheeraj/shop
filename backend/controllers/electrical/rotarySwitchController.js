@@ -113,7 +113,7 @@ exports.createRotarySwitch = async (req, res) => {
 
 exports.getAllRotarySwitch = async (req, res) => {
   try {
-    const products = await ElectricalModels.find({ category: 'rotaryswitch' });
+    const products = await ElectricalModels.find({ category: 'Rotaryswitch' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -122,7 +122,7 @@ exports.getAllRotarySwitch = async (req, res) => {
 
 exports.getOneRotarySwitch = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'rotaryswitch' });
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'Rotaryswitch' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -166,7 +166,7 @@ exports.updateRotarySwitch = async (req, res) => {
     }
 
     const product = await ElectricalModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'rotaryswitch' },
+      { _id: req.params.id, category: 'Rotaryswitch' },
       update,
       { new: true }
     );
@@ -181,7 +181,7 @@ exports.updateRotarySwitch = async (req, res) => {
 
 exports.deleteRotarySwitch = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'rotaryswitch' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'Rotaryswitch' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

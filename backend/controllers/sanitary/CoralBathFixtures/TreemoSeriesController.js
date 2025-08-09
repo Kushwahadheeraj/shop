@@ -63,7 +63,7 @@ exports.updateTreemoSeries = async (req, res) => {
 };
 exports.getAllTreemoSeries = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'coralBathFixtures/TreemoSeries' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'TreemoSeries' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllTreemoSeries = async (req, res) => {
 
 exports.getOneTreemoSeries = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'coralBathFixtures/TreemoSeries' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'TreemoSeries' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneTreemoSeries = async (req, res) => {
 
 exports.deleteTreemoSeries = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'coralBathFixtures/TreemoSeries' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'TreemoSeries' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

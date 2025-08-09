@@ -30,7 +30,7 @@ exports.createDeuschMixer = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'deuschMixer' });
+    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'DeuschMixer' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateDeuschMixer = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Sanitary.findOneAndUpdate(
-      { _id: req.params.id, category: 'deuschMixer' },
+      { _id: req.params.id, category: 'DeuschMixer' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateDeuschMixer = async (req, res) => {
 };
 exports.getAllDeuschMixer = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'hindware/faucets/deuschMixer' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'DeuschMixer' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllDeuschMixer = async (req, res) => {
 
 exports.getOneDeuschMixer = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'hindware/faucets/deuschMixer' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'DeuschMixer' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneDeuschMixer = async (req, res) => {
 
 exports.deleteDeuschMixer = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'hindware/faucets/deuschMixer' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'DeuschMixer' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

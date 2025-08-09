@@ -30,7 +30,7 @@ exports.createHome = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new HomeModels({ ...req.body, photos: photoUrls, category: 'home' });
+    const product = new HomeModels({ ...req.body, photos: photoUrls, category: 'Home' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateHome = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await HomeModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'home' },
+      { _id: req.params.id, category: 'Home' },
       update,
       { new: true }
     );
@@ -63,29 +63,29 @@ exports.updateHome = async (req, res) => {
 };
 exports.getAllHome = async (req, res) => {
   try {
-    const homes = await Home.find();
+    const homes = await HomeModels.find({ category: 'Home' });
     res.json(homes);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.deleteHome = async (req, res) => {
   try {
-    const home = await Home.findByIdAndDelete(req.params.id);
-    if (!home) return res.status(404).json({ message: 'Not found' });
+    const home = await HomeModels.findOneAndDelete({ _id: req.params.id, category: 'Home' });
+    if (!home) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.getOneHome = async (req, res) => {
   try {
-    const home = await HomeModels.findById(req.params.id);
-    if (!home) return res.status(404).json({ message: 'Not found' });
+    const home = await HomeModels.findOne({ _id: req.params.id, category: 'Home' });
+    if (!home) return res.status(404).json({ error: 'Not found' });
     res.json(home);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };

@@ -63,7 +63,7 @@ exports.updatePressmaticPushCock = async (req, res) => {
 };
 exports.getAllPressmaticPushCock = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'corsa/OtherUsefulItems/PressmaticPushCock' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'PressmaticPushCock' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllPressmaticPushCock = async (req, res) => {
 
 exports.getOnePressmaticPushCock = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'corsa/OtherUsefulItems/PressmaticPushCock' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'PressmaticPushCock' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOnePressmaticPushCock = async (req, res) => {
 
 exports.deletePressmaticPushCock = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'corsa/OtherUsefulItems/PressmaticPushCock' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'PressmaticPushCock' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

@@ -30,7 +30,7 @@ exports.createScrewDriver = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Tools({ ...req.body, photos: photoUrls, category: 'screwDriver' });
+    const product = new Tools({ ...req.body, photos: photoUrls, category: 'ScrewDriver' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateScrewDriver = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Tools.findOneAndUpdate(
-      { _id: req.params.id, category: 'screwDriver' },
+      { _id: req.params.id, category: 'ScrewDriver' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateScrewDriver = async (req, res) => {
 };
 exports.getAllScrewDriver = async (req, res) => {
   try {
-    const products = await Tools.find({ category: 'screwDriver' });
+    const products = await Tools.find({ category: 'ScrewDriver' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllScrewDriver = async (req, res) => {
 
 exports.getOneScrewDriver = async (req, res) => {
   try {
-    const product = await Tools.findOne({ _id: req.params.id, category: 'screwDriver' });
+    const product = await Tools.findOne({ _id: req.params.id, category: 'ScrewDriver' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneScrewDriver = async (req, res) => {
 
 exports.deleteScrewDriver = async (req, res) => {
   try {
-    const product = await Tools.findOneAndDelete({ _id: req.params.id, category: 'screwDriver' });
+    const product = await Tools.findOneAndDelete({ _id: req.params.id, category: 'ScrewDriver' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

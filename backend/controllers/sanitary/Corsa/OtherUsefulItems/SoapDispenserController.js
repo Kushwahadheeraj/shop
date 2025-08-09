@@ -63,7 +63,7 @@ exports.updateSoapDispenser = async (req, res) => {
 };
 exports.getAllSoapDispenser = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'corsa/OtherUsefulItems/SoapDispenser' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'SoapDispenser' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllSoapDispenser = async (req, res) => {
 
 exports.getOneSoapDispenser = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'corsa/OtherUsefulItems/SoapDispenser' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'SoapDispenser' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneSoapDispenser = async (req, res) => {
 
 exports.deleteSoapDispenser = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'corsa/OtherUsefulItems/SoapDispenser' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'SoapDispenser' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

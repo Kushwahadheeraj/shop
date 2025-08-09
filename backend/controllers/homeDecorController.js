@@ -30,7 +30,7 @@ exports.createHomeDecor = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new HomeDecorModels({ ...req.body, photos: photoUrls, category: 'homeDecor' });
+    const product = new HomeDecorModels({ ...req.body, photos: photoUrls, category: 'HomeDecor' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateHomeDecor = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await HomeDecorModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'homeDecor' },
+      { _id: req.params.id, category: 'HomeDecor' },
       update,
       { new: true }
     );
@@ -63,29 +63,29 @@ exports.updateHomeDecor = async (req, res) => {
 };
 exports.getAllHomeDecor = async (req, res) => {
   try {
-    const homeDecors = await HomeDecor.find();
+    const homeDecors = await HomeDecorModels.find({ category: 'HomeDecor' });
     res.json(homeDecors);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.deleteHomeDecor = async (req, res) => {
   try {
-    const homeDecor = await HomeDecor.findByIdAndDelete(req.params.id);
-    if (!homeDecor) return res.status(404).json({ message: 'Not found' });
+    const homeDecor = await HomeDecorModels.findOneAndDelete({ _id: req.params.id, category: 'HomeDecor' });
+    if (!homeDecor) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.getOneHomeDecor = async (req, res) => {
   try {
-    const homeDecor = await HomeDecorModels.findById(req.params.id);
-    if (!homeDecor) return res.status(404).json({ message: 'Not found' });
+    const homeDecor = await HomeDecorModels.findOne({ _id: req.params.id, category: 'HomeDecor' });
+    if (!homeDecor) return res.status(404).json({ error: 'Not found' });
     res.json(homeDecor);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };

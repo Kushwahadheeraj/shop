@@ -30,7 +30,7 @@ exports.createFitting = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new FittingModels({ ...req.body, photos: photoUrls, category: 'fitting' });
+    const product = new FittingModels({ ...req.body, photos: photoUrls, category: 'Fitting' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateFitting = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await FittingModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'fitting' },
+      { _id: req.params.id, category: 'Fitting' },
       update,
       { new: true }
     );
@@ -63,29 +63,29 @@ exports.updateFitting = async (req, res) => {
 };
 exports.getAllFitting = async (req, res) => {
   try {
-    const fittings = await Fitting.find();
+    const fittings = await FittingModels.find({ category: 'Fitting' });
     res.json(fittings);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.deleteFitting = async (req, res) => {
   try {
-    const fitting = await Fitting.findByIdAndDelete(req.params.id);
-    if (!fitting) return res.status(404).json({ message: 'Not found' });
+    const fitting = await FittingModels.findOneAndDelete({ _id: req.params.id, category: 'Fitting' });
+    if (!fitting) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.getOneFitting = async (req, res) => {
   try {
-    const fitting = await FittingModels.findById(req.params.id);
-    if (!fitting) return res.status(404).json({ message: 'Not found' });
+    const fitting = await FittingModels.findOne({ _id: req.params.id, category: 'Fitting' });
+    if (!fitting) return res.status(404).json({ error: 'Not found' });
     res.json(fitting);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };

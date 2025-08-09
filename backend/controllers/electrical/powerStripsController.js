@@ -113,7 +113,7 @@ exports.createPowerStrips = async (req, res) => {
 
 exports.getAllPowerStrips = async (req, res) => {
   try {
-    const products = await ElectricalModels.find({ category: 'powerstrips' });
+    const products = await ElectricalModels.find({ category: 'Powerstrips' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -122,7 +122,7 @@ exports.getAllPowerStrips = async (req, res) => {
 
 exports.getOnePowerStrips = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'powerstrips' });
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'Powerstrips' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -166,7 +166,7 @@ exports.updatePowerStrips = async (req, res) => {
     }
 
     const product = await ElectricalModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'powerstrips' },
+      { _id: req.params.id, category: 'Powerstrips' },
       update,
       { new: true }
     );
@@ -181,7 +181,7 @@ exports.updatePowerStrips = async (req, res) => {
 
 exports.deletePowerStrips = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'powerstrips' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'Powerstrips' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

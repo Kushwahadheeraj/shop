@@ -30,7 +30,7 @@ exports.createCreacksJoints = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new WaterProofing({ ...req.body, photos: photoUrls, category: 'creacksJoints' });
+    const product = new WaterProofing({ ...req.body, photos: photoUrls, category: 'CreacksJoints' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateCreacksJoints = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await WaterProofing.findOneAndUpdate(
-      { _id: req.params.id, category: 'creacksJoints' },
+      { _id: req.params.id, category: 'CreacksJoints' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateCreacksJoints = async (req, res) => {
 };
 exports.getAllCreacksJoints = async (req, res) => {
   try {
-    const products = await WaterProofing.find({ category: 'creacksJoints' });
+    const products = await WaterProofing.find({ category: 'CreacksJoints' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllCreacksJoints = async (req, res) => {
 
 exports.getOneCreacksJoints = async (req, res) => {
   try {
-    const product = await WaterProofing.findOne({ _id: req.params.id, category: 'creacksJoints' });
+    const product = await WaterProofing.findOne({ _id: req.params.id, category: 'CreacksJoints' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneCreacksJoints = async (req, res) => {
 
 exports.deleteCreacksJoints = async (req, res) => {
   try {
-    const product = await WaterProofing.findOneAndDelete({ _id: req.params.id, category: 'creacksJoints' });
+    const product = await WaterProofing.findOneAndDelete({ _id: req.params.id, category: 'CreacksJoints' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

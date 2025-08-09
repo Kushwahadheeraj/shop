@@ -63,7 +63,7 @@ exports.updateHandShowers = async (req, res) => {
 };
 exports.getAllHandShowers = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'essess/Showers/HandShowers' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'HandShowers' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllHandShowers = async (req, res) => {
 
 exports.getOneHandShowers = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'essess/Showers/HandShowers' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'HandShowers' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneHandShowers = async (req, res) => {
 
 exports.deleteHandShowers = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'essess/Showers/HandShowers' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'HandShowers' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

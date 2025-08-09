@@ -30,7 +30,7 @@ exports.createLighting = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new LightingModels({ ...req.body, photos: photoUrls, category: 'lighting' });
+    const product = new LightingModels({ ...req.body, photos: photoUrls, category: 'Lighting' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateLighting = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await LightingModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'lighting' },
+      { _id: req.params.id, category: 'Lighting' },
       update,
       { new: true }
     );
@@ -63,29 +63,29 @@ exports.updateLighting = async (req, res) => {
 };
 exports.getAllLighting = async (req, res) => {
   try {
-    const lightings = await Lighting.find();
+    const lightings = await LightingModels.find({ category: 'Lighting' });
     res.json(lightings);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.deleteLighting = async (req, res) => {
   try {
-    const lighting = await Lighting.findByIdAndDelete(req.params.id);
-    if (!lighting) return res.status(404).json({ message: 'Not found' });
+    const lighting = await LightingModels.findOneAndDelete({ _id: req.params.id, category: 'Lighting' });
+    if (!lighting) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.getOneLighting = async (req, res) => {
   try {
-    const lighting = await LightingModels.findById(req.params.id);
-    if (!lighting) return res.status(404).json({ message: 'Not found' });
+    const lighting = await LightingModels.findOne({ _id: req.params.id, category: 'Lighting' });
+    if (!lighting) return res.status(404).json({ error: 'Not found' });
     res.json(lighting);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };

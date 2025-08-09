@@ -63,7 +63,7 @@ exports.updateHotelierSeries = async (req, res) => {
 };
 exports.getAllHotelierSeries = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'essess/HotelierSeries' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'HotelierSeries' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllHotelierSeries = async (req, res) => {
 
 exports.getOneHotelierSeries = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'essess/HotelierSeries' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'HotelierSeries' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneHotelierSeries = async (req, res) => {
 
 exports.deleteHotelierSeries = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'essess/HotelierSeries' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'HotelierSeries' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

@@ -111,7 +111,7 @@ exports.loginSeller = async (req, res) => {
       } 
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -166,7 +166,7 @@ exports.getAllSeller = async (req, res) => {
     const sellers = await Seller.find();
     res.json(sellers);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -176,10 +176,10 @@ exports.getAllSeller = async (req, res) => {
 exports.getOneSeller = async (req, res) => {
   try {
     const seller = await Seller.findById(req.params.id);
-    if (!seller) return res.status(404).json({ message: 'Not found' });
+    if (!seller) return res.status(404).json({ error: 'Not found' });
     res.json(seller);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -194,10 +194,10 @@ exports.updateSeller = async (req, res) => {
       { email, password, username, avatar },
       { new: true }
     );
-    if (!seller) return res.status(404).json({ message: 'Not found' });
+    if (!seller) return res.status(404).json({ error: 'Not found' });
     res.json(seller);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -207,10 +207,10 @@ exports.updateSeller = async (req, res) => {
 exports.deleteSeller = async (req, res) => {
   try {
     const seller = await Seller.findByIdAndDelete(req.params.id);
-    if (!seller) return res.status(404).json({ message: 'Not found' });
+    if (!seller) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -237,7 +237,7 @@ exports.getCurrentSellerProfile = async (req, res) => {
       updatedAt: seller.updatedAt
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -318,7 +318,7 @@ exports.updateCurrentSellerProfile = async (req, res) => {
       }
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -353,7 +353,7 @@ exports.changePassword = async (req, res) => {
 
     res.json({ message: 'Password changed successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 

@@ -40,7 +40,7 @@ exports.getAllNepulPipes = async (req, res) => {
     const items = await Pipe.find({ category: 'NepulPipes' });
     res.json(items);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -48,10 +48,10 @@ exports.getAllNepulPipes = async (req, res) => {
 exports.getOneNepulPipes = async (req, res) => {
   try {
     const item = await Pipe.findOne({ _id: req.params.id, category: 'NepulPipes' });
-    if (!item) return res.status(404).json({ message: 'Not found' });
+    if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -63,7 +63,7 @@ exports.updateNepulPipes = async (req, res) => {
       req.body,
       { new: true }
     );
-    if (!item) return res.status(404).json({ message: 'Not found' });
+    if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -74,9 +74,9 @@ exports.updateNepulPipes = async (req, res) => {
 exports.deleteNepulPipes = async (req, res) => {
   try {
     const item = await Pipe.findOneAndDelete({ _id: req.params.id, category: 'NepulPipes' });
-    if (!item) return res.status(404).json({ message: 'Not found' });
+    if (!item) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };

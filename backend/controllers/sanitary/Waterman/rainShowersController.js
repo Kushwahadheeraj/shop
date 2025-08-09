@@ -30,7 +30,7 @@ exports.createRainShowers = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'rainShowers' });
+    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'RainShowers' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateRainShowers = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Sanitary.findOneAndUpdate(
-      { _id: req.params.id, category: 'rainShowers' },
+      { _id: req.params.id, category: 'RainShowers' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateRainShowers = async (req, res) => {
 };
 exports.getAllRainShowers = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'waterman/rainShowers' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'RainShowers' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllRainShowers = async (req, res) => {
 
 exports.getOneRainShowers = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'waterman/rainShowers' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'RainShowers' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneRainShowers = async (req, res) => {
 
 exports.deleteRainShowers = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'waterman/rainShowers' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'RainShowers' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

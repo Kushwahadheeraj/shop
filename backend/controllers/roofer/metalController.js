@@ -30,7 +30,7 @@ exports.createMetal = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Roofer({ ...req.body, photos: photoUrls, category: 'metal' });
+    const product = new Roofer({ ...req.body, photos: photoUrls, category: 'Metal' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateMetal = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Roofer.findOneAndUpdate(
-      { _id: req.params.id, category: 'metal' },
+      { _id: req.params.id, category: 'Metal' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateMetal = async (req, res) => {
 };
 exports.getAllMetal = async (req, res) => {
   try {
-    const products = await require('../../models/PvcMatsModels').find({ category: 'metal' });
+    const products = await require('../../models/PvcMatsModels').find({ category: 'Metal' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllMetal = async (req, res) => {
 
 exports.getOneMetal = async (req, res) => {
   try {
-    const product = await require('../../models/PvcMatsModels').findOne({ _id: req.params.id, category: 'metal' });
+    const product = await require('../../models/PvcMatsModels').findOne({ _id: req.params.id, category: 'Metal' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneMetal = async (req, res) => {
 
 exports.deleteMetal = async (req, res) => {
   try {
-    const product = await require('../../models/PvcMatsModels').findOneAndDelete({ _id: req.params.id, category: 'metal' });
+    const product = await require('../../models/PvcMatsModels').findOneAndDelete({ _id: req.params.id, category: 'Metal' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

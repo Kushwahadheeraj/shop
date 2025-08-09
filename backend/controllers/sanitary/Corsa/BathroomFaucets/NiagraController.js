@@ -63,7 +63,7 @@ exports.updateNiagra = async (req, res) => {
 };
 exports.getAllNiagra = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'corsa/BathroomFaucets/Niagra' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'Niagra' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllNiagra = async (req, res) => {
 
 exports.getOneNiagra = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'corsa/BathroomFaucets/Niagra' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'Niagra' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneNiagra = async (req, res) => {
 
 exports.deleteNiagra = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'corsa/BathroomFaucets/Niagra' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'Niagra' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

@@ -30,7 +30,7 @@ exports.createWoodChisel = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Tools({ ...req.body, photos: photoUrls, category: 'woodChisel' });
+    const product = new Tools({ ...req.body, photos: photoUrls, category: 'WoodChisel' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateWoodChisel = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Tools.findOneAndUpdate(
-      { _id: req.params.id, category: 'woodChisel' },
+      { _id: req.params.id, category: 'WoodChisel' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateWoodChisel = async (req, res) => {
 };
 exports.getAllWoodChisel = async (req, res) => {
   try {
-    const products = await Tools.find({ category: 'woodChisel' });
+    const products = await Tools.find({ category: 'WoodChisel' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllWoodChisel = async (req, res) => {
 
 exports.getOneWoodChisel = async (req, res) => {
   try {
-    const product = await Tools.findOne({ _id: req.params.id, category: 'woodChisel' });
+    const product = await Tools.findOne({ _id: req.params.id, category: 'WoodChisel' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneWoodChisel = async (req, res) => {
 
 exports.deleteWoodChisel = async (req, res) => {
   try {
-    const product = await Tools.findOneAndDelete({ _id: req.params.id, category: 'woodChisel' });
+    const product = await Tools.findOneAndDelete({ _id: req.params.id, category: 'WoodChisel' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

@@ -115,7 +115,7 @@ exports.create = async (req, res) => {
 // Get All
 exports.getAll = async (req, res) => {
   try {
-    const products = await ElectricalModels.find({ category: 'focuslight' });
+    const products = await ElectricalModels.find({ category: 'Focuslight' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -125,7 +125,7 @@ exports.getAll = async (req, res) => {
 // Get One
 exports.getOne = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'focuslight' });
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'Focuslight' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -170,7 +170,7 @@ exports.update = async (req, res) => {
     }
 
     const product = await ElectricalModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'focuslight' },
+      { _id: req.params.id, category: 'Focuslight' },
       update,
       { new: true }
     );
@@ -186,7 +186,7 @@ exports.update = async (req, res) => {
 // Delete
 exports.delete = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'focuslight' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'Focuslight' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

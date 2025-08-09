@@ -30,7 +30,7 @@ exports.createBathroomAccessories = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'bathroomAccessories' });
+    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'BathroomAccessories' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateBathroomAccessories = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Sanitary.findOneAndUpdate(
-      { _id: req.params.id, category: 'bathroomAccessories' },
+      { _id: req.params.id, category: 'BathroomAccessories' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateBathroomAccessories = async (req, res) => {
 };
 exports.getAllBathroomAccessories = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'waterTec/bathroomAccessories' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'BathroomAccessories' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllBathroomAccessories = async (req, res) => {
 
 exports.getOneBathroomAccessories = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'waterTec/bathroomAccessories' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'BathroomAccessories' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneBathroomAccessories = async (req, res) => {
 
 exports.deleteBathroomAccessories = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'waterTec/bathroomAccessories' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'BathroomAccessories' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

@@ -30,7 +30,7 @@ exports.createHealthFaucets = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'healthFaucets' });
+    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'HealthFaucets' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateHealthFaucets = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Sanitary.findOneAndUpdate(
-      { _id: req.params.id, category: 'healthFaucets' },
+      { _id: req.params.id, category: 'HealthFaucets' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateHealthFaucets = async (req, res) => {
 };
 exports.getAllHealthFaucets = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'waterTec/healthFaucets' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'HealthFaucets' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllHealthFaucets = async (req, res) => {
 
 exports.getOneHealthFaucets = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'waterTec/healthFaucets' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'HealthFaucets' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneHealthFaucets = async (req, res) => {
 
 exports.deleteHealthFaucets = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'waterTec/healthFaucets' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'HealthFaucets' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

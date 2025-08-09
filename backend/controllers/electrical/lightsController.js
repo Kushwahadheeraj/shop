@@ -113,7 +113,7 @@ exports.createLights = async (req, res) => {
 
 exports.getAllLights = async (req, res) => {
   try {
-    const products = await ElectricalModels.find({ category: 'lights' });
+    const products = await ElectricalModels.find({ category: 'Lights' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -122,7 +122,7 @@ exports.getAllLights = async (req, res) => {
 
 exports.getOneLights = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'lights' });
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'Lights' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -166,7 +166,7 @@ exports.updateLights = async (req, res) => {
     }
 
     const product = await ElectricalModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'lights' },
+      { _id: req.params.id, category: 'Lights' },
       update,
       { new: true }
     );
@@ -181,7 +181,7 @@ exports.updateLights = async (req, res) => {
 
 exports.deleteLights = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'lights' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'Lights' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

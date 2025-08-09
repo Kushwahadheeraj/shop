@@ -113,7 +113,7 @@ exports.createDistributionBoards = async (req, res) => {
 
 exports.getAllDistributionBoards = async (req, res) => {
   try {
-    const products = await ElectricalModels.find({ category: 'distributionboards' });
+    const products = await ElectricalModels.find({ category: 'Distributionboards' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -122,7 +122,7 @@ exports.getAllDistributionBoards = async (req, res) => {
 
 exports.getOneDistributionBoards = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'distributionboards' });
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'Distributionboards' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -166,7 +166,7 @@ exports.updateDistributionBoards = async (req, res) => {
     }
 
     const product = await ElectricalModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'distributionboards' },
+      { _id: req.params.id, category: 'Distributionboards' },
       update,
       { new: true }
     );
@@ -181,7 +181,7 @@ exports.updateDistributionBoards = async (req, res) => {
 
 exports.deleteDistributionBoards = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'distributionboards' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'Distributionboards' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

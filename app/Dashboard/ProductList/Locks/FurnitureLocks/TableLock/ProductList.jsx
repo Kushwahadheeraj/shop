@@ -9,7 +9,7 @@ import API_BASE_URL from "@/lib/apiConfig";
 
 export default function ProductList() {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const router = useRouter();
 
@@ -23,19 +23,26 @@ export default function ProductList() {
     setLoading(true);
     setError(null);
     try {
+      console.log('API URL:', API_URL + '/get');
       const res = await fetch(API_URL + '/get');
+      console.log('Response status:', res.status);
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
       const data = await res.json();
-      setProducts(data);
+      console.log('Response data:', data);
+      console.log('Data type:', typeof data);
+      console.log('Data length:', Array.isArray(data) ? data.length : 'Not an array');
+      setProducts(Array.isArray(data) ? data : []);
     } catch (err) {
-      setError(err.message);
       console.error('Error fetching products:', err);
+      setError(err.message);
+      setProducts([]);
     } finally {
       setLoading(false);
     }
   };
+      
 
   const handleEdit = (product) => {
     router.push("/Dashboard/ProductAdd/Locks/FurnitureLocks/TableLock?id=" + product._id);
@@ -45,14 +52,16 @@ export default function ProductList() {
     try {
       const deleteUrl = `${API_URL}/delete/${id}`;
       console.log('Delete URL:', deleteUrl);
-      const res = await fetch(deleteUrl, { method: "DELETE" });;
+      const res = await fetch(deleteUrl, { method: "DELETE" });
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
+      alert('Product deleted successfully!');
       await fetchProducts(); // Refresh the list
     } catch (err) {
-      setError(err.message);
       console.error('Error deleting product:', err);
+      alert(`Error deleting product: ${err.message}`);
+      setError(err.message);
     }
   };
 
@@ -74,7 +83,7 @@ export default function ProductList() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4 text-gray-400" />
-          <p className="text-gray-500">Loading products...</p>
+          <p className="text-gray-500">Loading products... Please wait.</p>
         </div>
       </div>
     );
@@ -116,14 +125,14 @@ export default function ProductList() {
         <CardContent>
           {error && (
             <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-600">Error: {error}</p>
+              <p className="text-red-600">Error loading products: {error}</p>
               <Button 
                 variant="outline" 
                 size="sm" 
                 onClick={fetchProducts}
                 className="mt-2"
               >
-                Try Again
+                Retry Loading
               </Button>
             </div>
           )}

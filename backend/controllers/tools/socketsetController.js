@@ -30,7 +30,7 @@ exports.createSocketset = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Tools({ ...req.body, photos: photoUrls, category: 'socketset' });
+    const product = new Tools({ ...req.body, photos: photoUrls, category: 'Socketset' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateSocketset = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Tools.findOneAndUpdate(
-      { _id: req.params.id, category: 'socketset' },
+      { _id: req.params.id, category: 'Socketset' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateSocketset = async (req, res) => {
 };
 exports.getAllSocketset = async (req, res) => {
   try {
-    const products = await Tools.find({ category: 'socketset' });
+    const products = await Tools.find({ category: 'Socketset' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllSocketset = async (req, res) => {
 
 exports.getOneSocketset = async (req, res) => {
   try {
-    const product = await Tools.findOne({ _id: req.params.id, category: 'socketset' });
+    const product = await Tools.findOne({ _id: req.params.id, category: 'Socketset' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneSocketset = async (req, res) => {
 
 exports.deleteSocketset = async (req, res) => {
   try {
-    const product = await Tools.findOneAndDelete({ _id: req.params.id, category: 'socketset' });
+    const product = await Tools.findOneAndDelete({ _id: req.params.id, category: 'Socketset' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

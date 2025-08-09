@@ -182,7 +182,7 @@ export default function ProductForm({ product, onSave }) {
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Total Product</label>
-          <Input name="totalProduct" type="number" value={form.totalProduct} onChange={handleChange} placeholder="Total Product" />
+          <Input name="totalProduct" type="number" required />
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Category</label>

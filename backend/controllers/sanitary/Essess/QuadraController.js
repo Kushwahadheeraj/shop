@@ -63,7 +63,7 @@ exports.updateQuadra = async (req, res) => {
 };
 exports.getAllQuadra = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'essess/Quadra' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'Quadra' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllQuadra = async (req, res) => {
 
 exports.getOneQuadra = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'essess/Quadra' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'Quadra' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneQuadra = async (req, res) => {
 
 exports.deleteQuadra = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'essess/Quadra' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'Quadra' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

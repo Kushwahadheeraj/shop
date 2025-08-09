@@ -30,7 +30,7 @@ exports.createUncategorized = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new UncategorizedModels({ ...req.body, photos: photoUrls, category: 'uncategorized' });
+    const product = new UncategorizedModels({ ...req.body, photos: photoUrls, category: 'Uncategorized' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateUncategorized = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await UncategorizedModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'uncategorized' },
+      { _id: req.params.id, category: 'Uncategorized' },
       update,
       { new: true }
     );
@@ -63,29 +63,29 @@ exports.updateUncategorized = async (req, res) => {
 };
 exports.getAllUncategorized = async (req, res) => {
   try {
-    const uncategorizeds = await Uncategorized.find();
+    const uncategorizeds = await UncategorizedModels.find({ category: 'Uncategorized' });
     res.json(uncategorizeds);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.deleteUncategorized = async (req, res) => {
   try {
-    const uncategorized = await Uncategorized.findByIdAndDelete(req.params.id);
-    if (!uncategorized) return res.status(404).json({ message: 'Not found' });
+    const uncategorized = await UncategorizedModels.findOneAndDelete({ _id: req.params.id, category: 'Uncategorized' });
+    if (!uncategorized) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.getOneUncategorized = async (req, res) => {
   try {
-    const uncategorized = await UncategorizedModels.findById(req.params.id);
-    if (!uncategorized) return res.status(404).json({ message: 'Not found' });
+    const uncategorized = await UncategorizedModels.findOne({ _id: req.params.id, category: 'Uncategorized' });
+    if (!uncategorized) return res.status(404).json({ error: 'Not found' });
     res.json(uncategorized);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };

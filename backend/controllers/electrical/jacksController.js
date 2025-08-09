@@ -113,7 +113,7 @@ exports.createJacks = async (req, res) => {
 
 exports.getAllJacks = async (req, res) => {
   try {
-    const products = await ElectricalModels.find({ category: 'jacks' });
+    const products = await ElectricalModels.find({ category: 'Jacks' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -122,7 +122,7 @@ exports.getAllJacks = async (req, res) => {
 
 exports.getOneJacks = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'jacks' });
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'Jacks' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -166,7 +166,7 @@ exports.updateJacks = async (req, res) => {
     }
 
     const product = await ElectricalModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'jacks' },
+      { _id: req.params.id, category: 'Jacks' },
       update,
       { new: true }
     );
@@ -181,7 +181,7 @@ exports.updateJacks = async (req, res) => {
 
 exports.deleteJacks = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'jacks' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'Jacks' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

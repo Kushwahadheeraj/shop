@@ -30,7 +30,7 @@ exports.createFlushCocks = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'flushCocks' });
+    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'FlushCocks' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateFlushCocks = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Sanitary.findOneAndUpdate(
-      { _id: req.params.id, category: 'flushCocks' },
+      { _id: req.params.id, category: 'FlushCocks' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateFlushCocks = async (req, res) => {
 };
 exports.getAllFlushCocks = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'parryware/FAUCETS/flushCocks' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'FlushCocks' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllFlushCocks = async (req, res) => {
 
 exports.getOneFlushCocks = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'parryware/FAUCETS/flushCocks' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'FlushCocks' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneFlushCocks = async (req, res) => {
 
 exports.deleteFlushCocks = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'parryware/FAUCETS/flushCocks' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'FlushCocks' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

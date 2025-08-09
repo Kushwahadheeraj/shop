@@ -8,7 +8,7 @@ import API_BASE_URL from "@/lib/apiConfig";
 
 export default function ProductList() {
   const [offers, setOffers] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteId, setDeleteId] = useState(null);
@@ -128,14 +128,14 @@ export default function ProductList() {
         <CardContent>
           {error && (
             <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-600">Error: {error}</p>
+              <p className="text-red-600">Error loading products: {error}</p>
               <Button 
                 variant="outline" 
                 size="sm" 
                 onClick={fetchOffers}
                 className="mt-2"
               >
-                Try Again
+                Retry Loading
               </Button>
             </div>
           )}

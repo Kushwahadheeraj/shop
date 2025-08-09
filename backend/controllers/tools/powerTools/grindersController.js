@@ -30,7 +30,7 @@ exports.createGrinders = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Tools({ ...req.body, photos: photoUrls, category: 'grinders' });
+    const product = new Tools({ ...req.body, photos: photoUrls, category: 'Grinders' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateGrinders = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Tools.findOneAndUpdate(
-      { _id: req.params.id, category: 'grinders' },
+      { _id: req.params.id, category: 'Grinders' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateGrinders = async (req, res) => {
 };
 exports.getAllGrinders = async (req, res) => {
   try {
-    const products = await Tools.find({ category: 'grinders' });
+    const products = await Tools.find({ category: 'Grinders' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllGrinders = async (req, res) => {
 
 exports.getOneGrinders = async (req, res) => {
   try {
-    const product = await Tools.findOne({ _id: req.params.id, category: 'grinders' });
+    const product = await Tools.findOne({ _id: req.params.id, category: 'Grinders' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneGrinders = async (req, res) => {
 
 exports.deleteGrinders = async (req, res) => {
   try {
-    const product = await Tools.findOneAndDelete({ _id: req.params.id, category: 'grinders' });
+    const product = await Tools.findOneAndDelete({ _id: req.params.id, category: 'Grinders' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

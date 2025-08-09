@@ -30,7 +30,7 @@ exports.createToiletSeatCovers = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'toiletSeatCovers' });
+    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'ToiletSeatCovers' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateToiletSeatCovers = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Sanitary.findOneAndUpdate(
-      { _id: req.params.id, category: 'toiletSeatCovers' },
+      { _id: req.params.id, category: 'ToiletSeatCovers' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateToiletSeatCovers = async (req, res) => {
 };
 exports.getAllToiletSeatCovers = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'waterTec/toiletSeatCovers' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'ToiletSeatCovers' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllToiletSeatCovers = async (req, res) => {
 
 exports.getOneToiletSeatCovers = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'waterTec/toiletSeatCovers' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'ToiletSeatCovers' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneToiletSeatCovers = async (req, res) => {
 
 exports.deleteToiletSeatCovers = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'waterTec/toiletSeatCovers' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'ToiletSeatCovers' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

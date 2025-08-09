@@ -63,7 +63,7 @@ exports.updateSupreme = async (req, res) => {
 };
 exports.getAllSupreme = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'corsa/BATHROOMACCESSORIES/Supreme' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'Supreme' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllSupreme = async (req, res) => {
 
 exports.getOneSupreme = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'corsa/BATHROOMACCESSORIES/Supreme' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'Supreme' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneSupreme = async (req, res) => {
 
 exports.deleteSupreme = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'corsa/BATHROOMACCESSORIES/Supreme' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'Supreme' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

@@ -113,7 +113,7 @@ exports.createTVOutlets = async (req, res) => {
 
 exports.getAllTVOutlets = async (req, res) => {
   try {
-    const products = await ElectricalModels.find({ category: 'tvoutlets' });
+    const products = await ElectricalModels.find({ category: 'Tvoutlets' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -122,7 +122,7 @@ exports.getAllTVOutlets = async (req, res) => {
 
 exports.getOneTVOutlets = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'tvoutlets' });
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'Tvoutlets' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -166,7 +166,7 @@ exports.updateTVOutlets = async (req, res) => {
     }
 
     const product = await ElectricalModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'tvoutlets' },
+      { _id: req.params.id, category: 'Tvoutlets' },
       update,
       { new: true }
     );
@@ -181,7 +181,7 @@ exports.updateTVOutlets = async (req, res) => {
 
 exports.deleteTVOutlets = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'tvoutlets' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'Tvoutlets' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

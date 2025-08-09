@@ -113,7 +113,7 @@ exports.createWaterHeater = async (req, res) => {
 
 exports.getAllWaterHeater = async (req, res) => {
   try {
-    const products = await ElectricalModels.find({ category: 'waterheater' });
+    const products = await ElectricalModels.find({ category: 'Waterheater' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -122,7 +122,7 @@ exports.getAllWaterHeater = async (req, res) => {
 
 exports.getOneWaterHeater = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'waterheater' });
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'Waterheater' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -166,7 +166,7 @@ exports.updateWaterHeater = async (req, res) => {
     }
 
     const product = await ElectricalModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'waterheater' },
+      { _id: req.params.id, category: 'Waterheater' },
       update,
       { new: true }
     );
@@ -181,7 +181,7 @@ exports.updateWaterHeater = async (req, res) => {
 
 exports.deleteWaterHeater = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'waterheater' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'Waterheater' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

@@ -113,7 +113,7 @@ exports.createKITKATFuses = async (req, res) => {
 
 exports.getAllKITKATFuses = async (req, res) => {
   try {
-    const products = await ElectricalModels.find({ category: 'kitkatfuses' });
+    const products = await ElectricalModels.find({ category: 'Kitkatfuses' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -122,7 +122,7 @@ exports.getAllKITKATFuses = async (req, res) => {
 
 exports.getOneKITKATFuses = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'kitkatfuses' });
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'Kitkatfuses' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -166,7 +166,7 @@ exports.updateKITKATFuses = async (req, res) => {
     }
 
     const product = await ElectricalModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'kitkatfuses' },
+      { _id: req.params.id, category: 'Kitkatfuses' },
       update,
       { new: true }
     );
@@ -181,7 +181,7 @@ exports.updateKITKATFuses = async (req, res) => {
 
 exports.deleteKITKATFuses = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'kitkatfuses' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'Kitkatfuses' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

@@ -113,7 +113,7 @@ exports.createInsulationTapes = async (req, res) => {
 
 exports.getAllInsulationTapes = async (req, res) => {
   try {
-    const products = await ElectricalModels.find({ category: 'insulationtapes' });
+    const products = await ElectricalModels.find({ category: 'Insulationtapes' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -122,7 +122,7 @@ exports.getAllInsulationTapes = async (req, res) => {
 
 exports.getOneInsulationTapes = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'insulationtapes' });
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'Insulationtapes' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -166,7 +166,7 @@ exports.updateInsulationTapes = async (req, res) => {
     }
 
     const product = await ElectricalModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'insulationtapes' },
+      { _id: req.params.id, category: 'Insulationtapes' },
       update,
       { new: true }
     );
@@ -181,7 +181,7 @@ exports.updateInsulationTapes = async (req, res) => {
 
 exports.deleteInsulationTapes = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'insulationtapes' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'Insulationtapes' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

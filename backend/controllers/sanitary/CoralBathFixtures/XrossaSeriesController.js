@@ -63,7 +63,7 @@ exports.updateXrossaSeries = async (req, res) => {
 };
 exports.getAllXrossaSeries = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'coralBathFixtures/XrossaSeries' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'XrossaSeries' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllXrossaSeries = async (req, res) => {
 
 exports.getOneXrossaSeries = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'coralBathFixtures/XrossaSeries' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'XrossaSeries' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneXrossaSeries = async (req, res) => {
 
 exports.deleteXrossaSeries = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'coralBathFixtures/XrossaSeries' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'XrossaSeries' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

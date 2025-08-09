@@ -113,7 +113,7 @@ exports.createFan = async (req, res) => {
 
 exports.getAllFan = async (req, res) => {
   try {
-    const products = await ElectricalModels.find({ category: 'fan' });
+    const products = await ElectricalModels.find({ category: 'Fan' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -122,7 +122,7 @@ exports.getAllFan = async (req, res) => {
 
 exports.getOneFan = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'fan' });
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'Fan' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -166,7 +166,7 @@ exports.updateFan = async (req, res) => {
     }
 
     const product = await ElectricalModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'fan' },
+      { _id: req.params.id, category: 'Fan' },
       update,
       { new: true }
     );
@@ -181,7 +181,7 @@ exports.updateFan = async (req, res) => {
 
 exports.deleteFan = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'fan' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'Fan' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

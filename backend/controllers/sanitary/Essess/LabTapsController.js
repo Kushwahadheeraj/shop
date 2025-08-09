@@ -63,7 +63,7 @@ exports.updateLabTaps = async (req, res) => {
 };
 exports.getAllLabTaps = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'essess/LabTaps' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'LabTaps' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllLabTaps = async (req, res) => {
 
 exports.getOneLabTaps = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'essess/LabTaps' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'LabTaps' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneLabTaps = async (req, res) => {
 
 exports.deleteLabTaps = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'essess/LabTaps' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'LabTaps' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

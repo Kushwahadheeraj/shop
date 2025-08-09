@@ -63,7 +63,7 @@ exports.updateKitchenSink = async (req, res) => {
 };
 exports.getAllKitchenSink = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'corsa/Kitchen/KitchenSink' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'KitchenSink' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllKitchenSink = async (req, res) => {
 
 exports.getOneKitchenSink = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'corsa/Kitchen/KitchenSink' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'KitchenSink' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneKitchenSink = async (req, res) => {
 
 exports.deleteKitchenSink = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'corsa/Kitchen/KitchenSink' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'KitchenSink' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

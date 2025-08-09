@@ -63,7 +63,7 @@ exports.updateDolphin = async (req, res) => {
 };
 exports.getAllDolphin = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'corsa/BATHROOMACCESSORIES/Dolphin' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'Dolphin' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllDolphin = async (req, res) => {
 
 exports.getOneDolphin = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'corsa/BATHROOMACCESSORIES/Dolphin' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'Dolphin' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneDolphin = async (req, res) => {
 
 exports.deleteDolphin = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'corsa/BATHROOMACCESSORIES/Dolphin' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'Dolphin' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

@@ -30,7 +30,7 @@ exports.createHardware = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new HardwareModels({ ...req.body, photos: photoUrls, category: 'hardware' });
+    const product = new HardwareModels({ ...req.body, photos: photoUrls, category: 'Hardware' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateHardware = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await HardwareModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'hardware' },
+      { _id: req.params.id, category: 'Hardware' },
       update,
       { new: true }
     );
@@ -63,29 +63,29 @@ exports.updateHardware = async (req, res) => {
 };
 exports.getAllHardware = async (req, res) => {
   try {
-    const hardwares = await Hardware.find();
+    const hardwares = await HardwareModels.find({ category: 'Hardware' });
     res.json(hardwares);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.deleteHardware = async (req, res) => {
   try {
-    const hardware = await Hardware.findByIdAndDelete(req.params.id);
-    if (!hardware) return res.status(404).json({ message: 'Not found' });
+    const hardware = await HardwareModels.findOneAndDelete({ _id: req.params.id, category: 'Hardware' });
+    if (!hardware) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.getOneHardware = async (req, res) => {
   try {
-    const hardware = await HardwareModels.findById(req.params.id);
-    if (!hardware) return res.status(404).json({ message: 'Not found' });
+    const hardware = await HardwareModels.findOne({ _id: req.params.id, category: 'Hardware' });
+    if (!hardware) return res.status(404).json({ error: 'Not found' });
     res.json(hardware);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };

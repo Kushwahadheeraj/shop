@@ -67,36 +67,36 @@ exports.getAllAllureRossetteSeries = async (req, res) => {
     const items = await Lock.find({ type: 'AllureRossetteSeries' });
     res.json(items);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.getAllAllureRossetteSeries = async (req, res) => {
   try {
     const item = await Lock.findOne({ _id: req.params.id, type: 'AllureRossetteSeries' });
-    if (!item) return res.status(404).json({ message: 'Not found' });
+    if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.deleteAllureRossetteSeries = async (req, res) => {
   try {
     const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'AllureRossetteSeries' });
-    if (!item) return res.status(404).json({ message: 'Not found' });
+    if (!item) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.getOneAllureRossetteSeries = async (req, res) => {
   try {
     const item = await Lock.findOne({ _id: req.params.id, type: 'AllureRossetteSeries' });
-    if (!item) return res.status(404).json({ message: 'Not found' });
+    if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };

@@ -30,7 +30,7 @@ exports.createBrush = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new BrushModels({ ...req.body, photos: photoUrls, category: 'brush' });
+    const product = new BrushModels({ ...req.body, photos: photoUrls, category: 'Brush' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateBrush = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await BrushModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'brush' },
+      { _id: req.params.id, category: 'Brush' },
       update,
       { new: true }
     );
@@ -64,7 +64,7 @@ exports.updateBrush = async (req, res) => {
 
 exports.getOneBrush = async (req, res) => {
   try {
-    const brush = await BrushModels.findOne({ _id: req.params.id, category: 'brush' });
+    const brush = await BrushModels.findOne({ _id: req.params.id, category: 'Brush' });
     if (!brush) return res.status(404).json({ error: 'Not found' });
     res.json(brush);
   } catch (err) {
@@ -73,19 +73,19 @@ exports.getOneBrush = async (req, res) => {
 };
 exports.getAllBrush = async (req, res) => {
   try {
-    const brushes = await Brush.find();
+    const brushes = await BrushModels.find({ category: 'Brush' });
     res.json(brushes);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.deleteBrush = async (req, res) => {
   try {
-    const brush = await Brush.findByIdAndDelete(req.params.id);
-    if (!brush) return res.status(404).json({ message: 'Not found' });
+    const brush = await BrushModels.findOneAndDelete({ _id: req.params.id, category: 'Brush' });
+    if (!brush) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };

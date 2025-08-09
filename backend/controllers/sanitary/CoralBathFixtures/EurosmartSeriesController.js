@@ -63,7 +63,7 @@ exports.updateEurosmartSeries = async (req, res) => {
 };
 exports.getAllEurosmartSeries = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'coralBathFixtures/EurosmartSeries' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'EurosmartSeries' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllEurosmartSeries = async (req, res) => {
 
 exports.getOneEurosmartSeries = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'coralBathFixtures/EurosmartSeries' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'EurosmartSeries' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneEurosmartSeries = async (req, res) => {
 
 exports.deleteEurosmartSeries = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'coralBathFixtures/EurosmartSeries' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'EurosmartSeries' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

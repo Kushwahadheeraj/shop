@@ -30,7 +30,7 @@ exports.createCarpenterPincer = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Tools({ ...req.body, photos: photoUrls, category: 'carpenterPincer' });
+    const product = new Tools({ ...req.body, photos: photoUrls, category: 'CarpenterPincer' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateCarpenterPincer = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Tools.findOneAndUpdate(
-      { _id: req.params.id, category: 'carpenterPincer' },
+      { _id: req.params.id, category: 'CarpenterPincer' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateCarpenterPincer = async (req, res) => {
 };
 exports.getAllCarpenterPincer = async (req, res) => {
   try {
-    const products = await Tools.find({ category: 'carpenterPincer' });
+    const products = await Tools.find({ category: 'CarpenterPincer' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllCarpenterPincer = async (req, res) => {
 
 exports.getOneCarpenterPincer = async (req, res) => {
   try {
-    const product = await Tools.findOne({ _id: req.params.id, category: 'carpenterPincer' });
+    const product = await Tools.findOne({ _id: req.params.id, category: 'CarpenterPincer' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneCarpenterPincer = async (req, res) => {
 
 exports.deleteCarpenterPincer = async (req, res) => {
   try {
-    const product = await Tools.findOneAndDelete({ _id: req.params.id, category: 'carpenterPincer' });
+    const product = await Tools.findOneAndDelete({ _id: req.params.id, category: 'CarpenterPincer' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

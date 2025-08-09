@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import API_BASE_URL from "@/lib/apiConfig";
 
-export default function ProductForm() {
+export default function ProductForm({ onSave }) {
   // 3 custom fields, each with a name and multiple values
   const [customFields, setCustomFields] = useState([
     { fieldName: '', fieldValues: [''] },
@@ -140,6 +140,11 @@ export default function ProductForm() {
   // Submit
   const handleSubmit = async e => {
     e.preventDefault();
+    if (files.length === 0) {
+      setPhotoError("Please upload at least 1 photo.");
+      return;
+    }
+    setPhotoError("");
     setPhotoError("");
     const data = new FormData();
     Object.entries(form).forEach(([k, v]) => {

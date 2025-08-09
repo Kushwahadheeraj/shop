@@ -145,7 +145,7 @@ exports.updateCements = async (req, res) => {
     }
 
     const product = await CementsModels.findOneAndUpdate(
-      { _id: req.params.id },
+      { _id: req.params.id, category: 'Cements' },
       update,
       { new: true }
     );
@@ -160,29 +160,29 @@ exports.updateCements = async (req, res) => {
 
 exports.getAllCements = async (req, res) => {
   try {
-    const cements = await CementsModels.find();
+    const cements = await CementsModels.find({ category: 'Cements' });
     res.json(cements);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.deleteCements = async (req, res) => {
   try {
-    const cement = await CementsModels.findByIdAndDelete(req.params.id);
-    if (!cement) return res.status(404).json({ message: 'Not found' });
+    const cement = await CementsModels.findOneAndDelete({ _id: req.params.id, category: 'Cements' });
+    if (!cement) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.getOneCements = async (req, res) => {
   try {
-    const cements = await CementsModels.findById(req.params.id);
-    if (!cements) return res.status(404).json({ message: 'Not found' });
+    const cements = await CementsModels.findOne({ _id: req.params.id, category: 'Cements' });
+    if (!cements) return res.status(404).json({ error: 'Not found' });
     res.json(cements);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };

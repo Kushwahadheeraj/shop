@@ -30,7 +30,7 @@ exports.createBirlaPipes = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Pipe({ ...req.body, photos: photoUrls, category: 'birlaPipes' });
+    const product = new Pipe({ ...req.body, photos: photoUrls, category: 'BirlaPipes' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateBirlaPipes = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Pipe.findOneAndUpdate(
-      { _id: req.params.id, category: 'birlaPipes' },
+      { _id: req.params.id, category: 'BirlaPipes' },
       update,
       { new: true }
     );
@@ -63,29 +63,29 @@ exports.updateBirlaPipes = async (req, res) => {
 };
 exports.getAllBirlaPipes = async (req, res) => {
   try {
-    const items = await Pipe.find({ category: 'birlaPipes' });
+    const items = await Pipe.find({ category: 'BirlaPipes' });
     res.json(items);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.getOneBirlaPipes = async (req, res) => {
   try {
-    const item = await Pipe.findOne({ _id: req.params.id, category: 'birlaPipes' });
-    if (!item) return res.status(404).json({ message: 'Not found' });
+    const item = await Pipe.findOne({ _id: req.params.id, category: 'BirlaPipes' });
+    if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.deleteBirlaPipes = async (req, res) => {
   try {
-    const item = await Pipe.findOneAndDelete({ _id: req.params.id, category: 'birlaPipes' });
-    if (!item) return res.status(404).json({ message: 'Not found' });
+    const item = await Pipe.findOneAndDelete({ _id: req.params.id, category: 'BirlaPipes' });
+    if (!item) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 };

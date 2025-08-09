@@ -30,7 +30,7 @@ exports.createAddOn = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'addOn' });
+    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'AddOn' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateAddOn = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Sanitary.findOneAndUpdate(
-      { _id: req.params.id, category: 'addOn' },
+      { _id: req.params.id, category: 'AddOn' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateAddOn = async (req, res) => {
 };
 exports.getAllAddOn = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'hindware/addOn' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'AddOn' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllAddOn = async (req, res) => {
 
 exports.getOneAddOn = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'hindware/addOn' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'AddOn' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneAddOn = async (req, res) => {
 
 exports.deleteAddOn = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'hindware/addOn' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'AddOn' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

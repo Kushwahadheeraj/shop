@@ -63,7 +63,7 @@ exports.updateOverheadShower = async (req, res) => {
 };
 exports.getAllOverheadShower = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'corsa/SHOWERS/OverheadShower' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'OverheadShower' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllOverheadShower = async (req, res) => {
 
 exports.getOneOverheadShower = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'corsa/SHOWERS/OverheadShower' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'OverheadShower' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneOverheadShower = async (req, res) => {
 
 exports.deleteOverheadShower = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'corsa/SHOWERS/OverheadShower' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'OverheadShower' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

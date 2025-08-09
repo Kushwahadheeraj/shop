@@ -30,7 +30,7 @@ exports.createExposedMixers = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'exposedMixers' });
+    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'ExposedMixers' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateExposedMixers = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Sanitary.findOneAndUpdate(
-      { _id: req.params.id, category: 'exposedMixers' },
+      { _id: req.params.id, category: 'ExposedMixers' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateExposedMixers = async (req, res) => {
 };
 exports.getAllExposedMixers = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'hindware/faucets/exposedMixers' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'ExposedMixers' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllExposedMixers = async (req, res) => {
 
 exports.getOneExposedMixers = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'hindware/faucets/exposedMixers' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'ExposedMixers' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneExposedMixers = async (req, res) => {
 
 exports.deleteExposedMixers = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'hindware/faucets/exposedMixers' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'ExposedMixers' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

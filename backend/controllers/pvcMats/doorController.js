@@ -30,7 +30,7 @@ exports.createDoor = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new PvcMats({ ...req.body, photos: photoUrls, category: 'door' });
+    const product = new PvcMats({ ...req.body, photos: photoUrls, category: 'Door' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateDoor = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await PvcMats.findOneAndUpdate(
-      { _id: req.params.id, category: 'door' },
+      { _id: req.params.id, category: 'Door' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateDoor = async (req, res) => {
 };
 exports.getAllDoor = async (req, res) => {
   try {
-    const products = await PvcMats.find({ category: 'door' });
+    const products = await PvcMats.find({ category: 'Door' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllDoor = async (req, res) => {
 
 exports.getOneDoor = async (req, res) => {
   try {
-    const product = await PvcMats.findOne({ _id: req.params.id, category: 'door' });
+    const product = await PvcMats.findOne({ _id: req.params.id, category: 'Door' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneDoor = async (req, res) => {
 
 exports.deleteDoor = async (req, res) => {
   try {
-    const product = await PvcMats.findOneAndDelete({ _id: req.params.id, category: 'door' });
+    const product = await PvcMats.findOneAndDelete({ _id: req.params.id, category: 'Door' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

@@ -63,7 +63,7 @@ exports.updateCelato = async (req, res) => {
 };
 exports.getAllCelato = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'essess/Celato' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'Celato' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllCelato = async (req, res) => {
 
 exports.getOneCelato = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'essess/Celato' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'Celato' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneCelato = async (req, res) => {
 
 exports.deleteCelato = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'essess/Celato' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'Celato' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

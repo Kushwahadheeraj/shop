@@ -30,7 +30,7 @@ exports.createBathTub = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'bathTub' });
+    const product = new Sanitary({ ...req.body, photos: photoUrls, category: 'BathTub' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -51,7 +51,7 @@ exports.updateBathTub = async (req, res) => {
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
     const product = await Sanitary.findOneAndUpdate(
-      { _id: req.params.id, category: 'bathTub' },
+      { _id: req.params.id, category: 'BathTub' },
       update,
       { new: true }
     );
@@ -63,7 +63,7 @@ exports.updateBathTub = async (req, res) => {
 };
 exports.getAllBathTub = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'hindware/bathTub' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'BathTub' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllBathTub = async (req, res) => {
 
 exports.getOneBathTub = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'hindware/bathTub' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'BathTub' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneBathTub = async (req, res) => {
 
 exports.deleteBathTub = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'hindware/bathTub' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'BathTub' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

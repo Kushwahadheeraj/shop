@@ -63,7 +63,7 @@ exports.updateBathsenseEssentials = async (req, res) => {
 };
 exports.getAllBathsenseEssentials = async (req, res) => {
   try {
-    const products = await require('../../models/SanitaryModels').find({ category: 'bathsense/CPfittingsFaucets/BathsenseEssentials' });
+    const products = await require('../../models/SanitaryModels').find({ category: 'BathsenseEssentials' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -72,7 +72,7 @@ exports.getAllBathsenseEssentials = async (req, res) => {
 
 exports.getOneBathsenseEssentials = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'bathsense/CPfittingsFaucets/BathsenseEssentials' });
+    const product = await require('../../models/SanitaryModels').findOne({ _id: req.params.id, category: 'BathsenseEssentials' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -82,7 +82,7 @@ exports.getOneBathsenseEssentials = async (req, res) => {
 
 exports.deleteBathsenseEssentials = async (req, res) => {
   try {
-    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'bathsense/CPfittingsFaucets/BathsenseEssentials' });
+    const product = await require('../../models/SanitaryModels').findOneAndDelete({ _id: req.params.id, category: 'BathsenseEssentials' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

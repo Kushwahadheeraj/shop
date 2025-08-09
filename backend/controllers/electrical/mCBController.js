@@ -113,7 +113,7 @@ exports.createMCB = async (req, res) => {
 
 exports.getAllMCB = async (req, res) => {
   try {
-    const products = await ElectricalModels.find({ category: 'mcb' });
+    const products = await ElectricalModels.find({ category: 'Mcb' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -122,7 +122,7 @@ exports.getAllMCB = async (req, res) => {
 
 exports.getOneMCB = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'mcb' });
+    const product = await ElectricalModels.findOne({ _id: req.params.id, category: 'Mcb' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -166,7 +166,7 @@ exports.updateMCB = async (req, res) => {
     }
 
     const product = await ElectricalModels.findOneAndUpdate(
-      { _id: req.params.id, category: 'mcb' },
+      { _id: req.params.id, category: 'Mcb' },
       update,
       { new: true }
     );
@@ -181,7 +181,7 @@ exports.updateMCB = async (req, res) => {
 
 exports.deleteMCB = async (req, res) => {
   try {
-    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'mcb' });
+    const product = await ElectricalModels.findOneAndDelete({ _id: req.params.id, category: 'Mcb' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

@@ -48,7 +48,7 @@ export default function ProductView({ api, id }) {
     setSaving(true);
     setError("");
     try {
-      const res = await fetch(`${API_BASE_URL}/${api}/update:${id}`, {
+      const res = await fetch(`${API_BASE_URL}/${api}/update/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(editForm),
@@ -67,7 +67,7 @@ export default function ProductView({ api, id }) {
     setDeleting(true);
     setError("");
     try {
-      const res = await fetch(`${API_BASE_URL}/${api}/delete:${id}`, {
+      const res = await fetch(`${API_BASE_URL}/${api}/delete/${id}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed to delete product");

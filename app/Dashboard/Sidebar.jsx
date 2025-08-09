@@ -381,6 +381,10 @@ const sections = [
             path: '/Dashboard/ProductAdd/Home/PopularProducts',
           },
           {
+            name: 'Electrical Home',
+            path: '/Dashboard/ProductAdd/Home/ElectricalHome',
+          },
+          {
             name: 'Product Tools',
             path: '/Dashboard/ProductAdd/Home/ProductTools',
           },
@@ -2774,6 +2778,10 @@ const sections = [
           {
             name: 'Popular Products',
             path: '/Dashboard/ProductList/Home/PopularProducts',
+          },
+          {
+            name: 'Electrical Home',
+            path: '/Dashboard/ProductList/Home/ElectricalHome',
           },
           {
             name: 'Product Tools',

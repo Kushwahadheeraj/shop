@@ -1,6 +1,7 @@
 const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
 const HomePaintsModel = require('../../models/HomePaintsModel');
+const PaintModels = require('../../models/PaintModels');
 
 // Upload image to Cloudinary
 function uploadToCloudinary(buffer) {
@@ -88,6 +89,67 @@ exports.getAllHomePaints = async (req, res) => {
       message: 'Error fetching home paint products',
       error: error.message
     });
+  }
+};
+
+// New: Distinct categories from source PaintModels (only those having data)
+exports.getSourceCategories = async (_req, res) => {
+  try {
+    const cats = await PaintModels.distinct('category');
+    const filtered = cats.filter(c => typeof c === 'string' && c.trim().length > 0).sort((a,b)=>a.localeCompare(b));
+    res.status(200).json({ success: true, count: filtered.length, data: filtered });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error fetching paint categories', error: error.message });
+  }
+};
+
+// New: Distinct categories already selected into HomePaintsModel
+exports.getSelectedCategories = async (_req, res) => {
+  try {
+    const cats = await HomePaintsModel.distinct('category');
+    const filtered = cats.filter(c => typeof c === 'string' && c.trim().length > 0).sort((a,b)=>a.localeCompare(b));
+    res.status(200).json({ success: true, count: filtered.length, data: filtered });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error fetching selected paint categories', error: error.message });
+  }
+};
+
+// New: Select categories → copy first product from PaintModels into HomePaintsModel (if not exists)
+exports.selectCategories = async (req, res) => {
+  try {
+    let { categories } = req.body;
+    if (!categories) categories = [];
+    if (typeof categories === 'string') {
+      try { categories = JSON.parse(categories); } catch { categories = String(categories).split(',').map(s=>s.trim()).filter(Boolean); }
+    }
+    if (!Array.isArray(categories)) categories = [];
+
+    const results = [];
+    for (const cat of categories) {
+      if (!cat) continue;
+      const exists = await HomePaintsModel.findOne({ category: cat });
+      if (exists) { results.push({ category: cat, status: 'exists', id: exists._id }); continue; }
+      const src = await PaintModels.findOne({ category: cat }).sort({ createdAt: 1 });
+      if (!src) { results.push({ category: cat, status: 'not_found' }); continue; }
+      const doc = new HomePaintsModel({
+        name: src.name,
+        description: src.description,
+        category: src.category,
+        brand: src.brand,
+        price: src.fixPrice ?? 0,
+        discount: (typeof src.discountPercent === 'number' ? src.discountPercent : (src.discount || 0)),
+        tags: Array.isArray(src.tags) ? src.tags : (src.tags ? [src.tags] : []),
+        colors: Array.isArray(src.colors) ? src.colors : [],
+        images: Array.isArray(src.photos) && src.photos.length > 0 ? [src.photos[0]] : [],
+        isActive: true
+      });
+      await doc.save();
+      results.push({ category: cat, status: 'created', id: doc._id });
+    }
+
+    res.status(200).json({ success: true, data: results });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error selecting paint categories', error: error.message });
   }
 };
 

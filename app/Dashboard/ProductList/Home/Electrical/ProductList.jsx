@@ -51,11 +51,19 @@ export default function ProductList() {
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
-      const data = await res.json();
-      console.log('Response data:', data);
-      console.log('Data type:', typeof data);
-      console.log('Data length:', Array.isArray(data) ? data.length : 'Not an array');
-      setProducts(Array.isArray(data) ? data : []);
+      const responseData = await res.json();
+      console.log('API Response:', responseData);
+
+      let productsArray = [];
+      if (responseData && responseData.success && Array.isArray(responseData.data)) {
+        productsArray = responseData.data;
+      } else if (Array.isArray(responseData)) {
+        productsArray = responseData;
+      } else if (responseData && Array.isArray(responseData.products)) {
+        productsArray = responseData.products;
+      }
+
+      setProducts(productsArray);
     } catch (err) {
       console.error('Error fetching products:', err);
       setError(err.message);
@@ -64,31 +72,7 @@ export default function ProductList() {
       setLoading(false);
     }
   };
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-      const responseData = await res.json();
-      console.log('API Response:', responseData); // Debug log
-      
-      // Handle the response format: {"success":true,"count":0,"data":[]}
-      let productsArray = [];
-      if (responseData.success && responseData.data) {
-        productsArray = responseData.data;
-      } else if (Array.isArray(responseData)) {
-        productsArray = responseData;
-      } else if (responseData.products) {
-        productsArray = responseData.products;
-      }
-      
-      setProducts(productsArray);
-    } catch (err) {
-      setError(err.message);
-      console.error('Error fetching products:', err);
-      setProducts([]); // Set empty array on error
-    } finally {
-      setLoading(false);
-    }
-  };
+
 
   const handleEdit = (product) => {
     router.push("/Dashboard/ProductAdd/Home/Electrical?id=" + product._id);

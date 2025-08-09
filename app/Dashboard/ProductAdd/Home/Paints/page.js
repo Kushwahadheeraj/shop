@@ -1,4 +1,4 @@
-import ProductForm from "./ProductForm.jsx";
+import CategorySelect from "./CategorySelect.jsx";
 export default function HomeProductAddPage() {
-  return <ProductForm />;
-} 
+  return <CategorySelect />;
+}

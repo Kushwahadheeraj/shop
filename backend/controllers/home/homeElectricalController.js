@@ -1,6 +1,8 @@
 const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
 const HomeElectricalModel = require('../../models/HomeElectricalModel');
+// Import main ElectricalModels to source categories and products from main electrical DB
+const ElectricalModels = require('../../models/ElectricalModels');
 
 // Upload photos to Cloudinary
 function uploadToCloudinary(buffer) {
@@ -43,7 +45,7 @@ exports.createHomeElectrical = async (req, res) => {
       originalPrice: req.body.originalPrice,
       discount: req.body.discount,
       brand: req.body.brand,
-      photos: imageUrl,
+      image: imageUrl,
       tags: tags
     };
 
@@ -64,20 +66,69 @@ exports.createHomeElectrical = async (req, res) => {
   }
 };
 
-// Get all home electrical products
+// Get all home electrical products (with optional category filter and first-per-category mode)
 exports.getAllHomeElectrical = async (req, res) => {
   try {
-    const products = await HomeElectricalModel.find({ isActive: true }).sort({ createdAt: -1 });
+    const { categories, firstPerCategory } = req.query;
+
+    if (firstPerCategory === 'true') {
+      let categoryList = [];
+      if (categories) {
+        try {
+          const parsed = JSON.parse(categories);
+          if (Array.isArray(parsed)) categoryList = parsed;
+        } catch {
+          categoryList = String(categories)
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean);
+        }
+      }
+
+      if (categoryList.length === 0) {
+        categoryList = await ElectricalModels.distinct('category');
+      }
+
+      const results = await Promise.all(
+        categoryList.map(async (cat) => {
+          const doc = await ElectricalModels
+            .findOne({ category: cat })
+            .sort({ createdAt: 1 });
+          return doc ? { category: cat, product: doc } : { category: cat, product: null };
+        })
+      );
+
+      return res.status(200).json({ success: true, data: results.filter((r) => r.product) });
+    }
+
+    const filter = { isActive: true };
+    if (categories) {
+      try {
+        const parsed = JSON.parse(categories);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          filter.category = { $in: parsed };
+        }
+      } catch {
+        const list = String(categories)
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean);
+        if (list.length > 0) filter.category = { $in: list };
+      }
+    }
+
+    // When not in firstPerCategory mode, still return Home model list
+    const products = await HomeElectricalModel.find(filter).sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
       count: products.length,
-      data: products
+      data: products,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
       message: 'Error fetching home electrical products',
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -98,6 +149,63 @@ exports.getHomeElectricalByCategory = async (req, res) => {
       message: 'Error fetching home electrical products by category',
       error: error.message
     });
+  }
+};
+
+// Get categories already selected into HomeElectricalModel
+exports.getSelectedCategories = async (req, res) => {
+  try {
+    const cats = await HomeElectricalModel.distinct('category');
+    const filtered = cats.filter(c => typeof c === 'string' && c.trim().length > 0);
+    res.status(200).json({ success: true, count: filtered.length, data: filtered });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error fetching selected categories', error: error.message });
+  }
+};
+
+// Select categories: copy first product from main ElectricalModels into HomeElectricalModel (if not exists)
+exports.selectCategories = async (req, res) => {
+  try {
+    let { categories } = req.body;
+    if (!categories) categories = [];
+    if (typeof categories === 'string') {
+      try { categories = JSON.parse(categories); } catch { categories = String(categories).split(',').map(s => s.trim()).filter(Boolean); }
+    }
+    if (!Array.isArray(categories)) categories = [];
+
+    const results = [];
+    for (const cat of categories) {
+      if (!cat) continue;
+      // skip if already selected
+      const exists = await HomeElectricalModel.findOne({ category: cat });
+      if (exists) {
+        results.push({ category: cat, status: 'exists', id: exists._id });
+        continue;
+      }
+      // source from main electrical collection
+      const src = await ElectricalModels.findOne({ category: cat }).sort({ createdAt: 1 });
+      if (!src) {
+        results.push({ category: cat, status: 'not_found' });
+        continue;
+      }
+      const doc = new HomeElectricalModel({
+        name: src.name,
+        description: src.description,
+        category: src.category,
+        price: src.fixPrice ?? src.discountPrice ?? src.price ?? undefined,
+        originalPrice: src.price ?? undefined,
+        discount: src.discount ?? 0,
+        brand: src.brand,
+        image: Array.isArray(src.photos) && src.photos.length > 0 ? src.photos[0] : '',
+        tags: Array.isArray(src.tag) ? src.tag : (src.tag ? [src.tag] : [])
+      });
+      await doc.save();
+      results.push({ category: cat, status: 'created', id: doc._id });
+    }
+
+    res.status(200).json({ success: true, data: results });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error selecting categories', error: error.message });
   }
 };
 
@@ -159,7 +267,7 @@ exports.updateHomeElectrical = async (req, res) => {
     // Handle photos upload if provided
     if (req.file) {
       const imageUrl = await uploadToCloudinary(req.file.buffer);
-      updateData.photos = imageUrl;
+      updateData.image = imageUrl;
     }
 
     // Handle tags array

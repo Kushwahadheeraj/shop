@@ -88,7 +88,7 @@ export default function ProductForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (files.length === 0) {
+    if (!file) {
       setPhotoError("Please upload at least 1 photo.");
       return;
     }
@@ -110,9 +110,9 @@ export default function ProductForm() {
       }
     });
     
-    // Add tags separately
+    // Add tags separately (backend expects 'tags')
     if (tags.length > 0) {
-      tag.forEach(tag => data.append('tag', tag));
+      tags.forEach(tag => data.append('tags', tag));
     }
     
     // Add image

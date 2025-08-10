@@ -28,49 +28,29 @@ import {
 import API_BASE_URL from "@/lib/apiConfig";
 
 export default function ProductList() {
+  const router = useRouter();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteId, setDeleteId] = useState(null);
-  const router = useRouter();
 
   const API_URL = `${API_BASE_URL}/home/paints`;
-  const STORAGE_KEY = 'homePaintsSelectedCategories';
-  const [selectedCats, setSelectedCats] = useState([]);
 
   useEffect(() => {
     fetchProducts();
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const qp = params.get('categories');
-      if (qp) {
-        const arr = JSON.parse(qp);
-        if (Array.isArray(arr)) setSelectedCats(arr);
-      } else {
-        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-        if (Array.isArray(saved)) setSelectedCats(saved);
-      }
-    } catch (e) {
-      // ignore
-    }
   }, []);
 
   const fetchProducts = async () => {
     setLoading(true);
     setError(null);
     try {
-      console.log('API URL:', API_URL + '/get');
-      const res = await fetch(API_URL + '/get');
-      console.log('Response status:', res.status);
+      const res = await fetch(`${API_URL}/get`);
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
       const data = await res.json();
-      console.log('Response data:', data);
-      console.log('Data type:', typeof data);
-      console.log('Data length:', Array.isArray(data) ? data.length : 'Not an array');
-      setProducts(Array.isArray(data) ? data : []);
+      setProducts(Array.isArray(data?.data) ? data.data : []);
     } catch (err) {
       console.error('Error fetching products:', err);
       setError(err.message);
@@ -87,7 +67,6 @@ export default function ProductList() {
   const handleDelete = async (id) => {
     try {
       const deleteUrl = `${API_URL}/delete/${id}`;
-      console.log('Delete URL:', deleteUrl);
       const res = await fetch(deleteUrl, { method: "DELETE" });
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
@@ -133,9 +112,7 @@ export default function ProductList() {
   };
 
   // Filter products based on search term
-  const filteredProducts = products
-    .filter(product => (selectedCats.length === 0 || selectedCats.includes(product.category)))
-    .filter(product =>
+  const filteredProducts = products.filter(product =>
     product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     product.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     product.brand?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -324,7 +301,7 @@ export default function ProductList() {
                           ) : (
                             <span className="text-gray-400 text-sm">No tags</span>
                           )}
-                          {product.tags && product.tags.length > 2 && (
+                          {product.colors && product.tags.length > 2 && (
                             <Badge variant="secondary" className="text-xs">
                               +{product.tags.length - 2} more
                             </Badge>

@@ -1,11 +1,5 @@
 const mongoose = require('mongoose');
 
-const OptionSchema = new mongoose.Schema({
-  price: { type: Number, required: true },
-  liter: { type: Number }, // for liter-based option
-  kg: { type: Number },    // for kg-based option
-}, { _id: false });
-
 const PaintProductSchema = new mongoose.Schema({
   name: { type: String, required: true },
   photos: {
@@ -14,23 +8,21 @@ const PaintProductSchema = new mongoose.Schema({
     required: true
   },
   description: { type: String },
-  fixPrice: { type: Number, required: true },
+  fixPrice: { type: Number },
   discount: { type: Number, default: 0 },
   discountPrice: { type: Number },
   discountPercent: { type: Number },
   minPrice: { type: Number },
   maxPrice: { type: Number },
-  totalProduct: { type: Number, required: true },
+  totalProduct: { type: Number },
   category: { type: String, required: true },
   tags: [String],
-  type: {
-    type: [OptionSchema],
-    validate: [arr => arr.length > 0, 'At least one type option is required']
-  },
-  colors: {
-    type: [String],
-    validate: [arr => arr.length > 0, 'At least one color is required']
-  }
+  variants: [{
+    variantName: { type: String },
+    fixPrice: { type: Number },
+    discountPrice: { type: Number }
+  }],
+  colors: [String]
 }, { timestamps: true });
 
 PaintProductSchema.pre('save', function(next) {
@@ -41,17 +33,6 @@ PaintProductSchema.pre('save', function(next) {
     this.discountPrice = this.fixPrice;
     this.discountPercent = 0;
   }
-
-  // Calculate minPrice and maxPrice from type options
-  if (Array.isArray(this.type) && this.type.length > 0) {
-    const prices = this.type.map(opt => opt.price).filter(p => typeof p === 'number');
-    this.minPrice = Math.min(...prices);
-    this.maxPrice = Math.max(...prices);
-  } else {
-    this.minPrice = undefined;
-    this.maxPrice = undefined;
-  }
-
   next();
 });
 

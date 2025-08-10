@@ -157,7 +157,7 @@ export default function ProductForm({ onSave }) {
       f.fieldValues.forEach(val => data.append('customFieldValue' + (idx+1), val));
     });
     files.forEach(f => data.append('photos', f));
-    const res = await fetch(`${API_BASE_URL}/locks/LeverMortiseLocks/LeverMortiseLocks/create`, { method: 'POST', body: data });
+    const res = await fetch(`${API_BASE_URL}/locks/lever-mortise-locks/lever-mortise-locks/create`, { method: 'POST', body: data });
     if (res.ok) onSave && onSave();
   };
 

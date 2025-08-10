@@ -44,6 +44,13 @@ exports.createPentaboltAries = async (req, res) => {
  */
 exports.updatePentaboltAries = async (req, res) => {
   try {
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+      req.body.photos = photoUrls;
+    }
     let update = { ...req.body };
     if (req.files && req.files.length > 0) {
       if (req.files.length > 5) {
@@ -64,7 +71,7 @@ exports.updatePentaboltAries = async (req, res) => {
 };
 exports.getAllPentaboltAries = async (req, res) => {
   try {
-    const items = await Lock.find({ type: 'PentaboltAries' });
+    const items = await Lock.find({ category: 'PentaboltAries' });
     res.json(items);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -73,7 +80,7 @@ exports.getAllPentaboltAries = async (req, res) => {
 
 exports.deletePentaboltAries = async (req, res) => {
   try {
-    const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'PentaboltAries' });
+    const item = await Lock.findOneAndDelete({ _id: req.params.id, category: 'PentaboltAries' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
@@ -83,7 +90,7 @@ exports.deletePentaboltAries = async (req, res) => {
 
 exports.getOnePentaboltAries = async (req, res) => {
   try {
-    const item = await Lock.findOne({ _id: req.params.id, type: 'PentaboltAries' });
+    const item = await Lock.findOne({ _id: req.params.id, category: 'PentaboltAries' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
   } catch (err) {

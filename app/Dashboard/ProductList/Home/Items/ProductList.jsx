@@ -209,22 +209,22 @@ export default function ProductList() {
           </div>
           
           {/* Custom Table for Items */}
-          <div className="border rounded-lg">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Image</TableHead>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Subtitle</TableHead>
-                  <TableHead>Link</TableHead>
-                  <TableHead>Created Date</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+          <div className="border rounded-lg overflow-x-auto responsive-table-container">
+            <Table className="responsive-table">
+              <TableHeader className="responsive-table-header">
+                <TableRow className="responsive-table-row">
+                  <TableHead className="responsive-table-cell col-image">Image</TableHead>
+                  <TableHead className="responsive-table-cell col-title">Title</TableHead>
+                  <TableHead className="responsive-table-cell col-subtitle">Subtitle</TableHead>
+                  <TableHead className="responsive-table-cell col-link">Link</TableHead>
+                  <TableHead className="responsive-table-cell col-date">Created Date</TableHead>
+                  <TableHead className="responsive-table-cell col-actions text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredProducts.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                  <TableRow className="responsive-table-row">
+                    <TableCell colSpan={6} className="text-center py-8 text-gray-500 responsive-table-cell">
                       {searchTerm ? 'No items found matching your search' : (
                         <div className="text-center">
                           <div className="text-lg font-medium mb-2">No items found</div>
@@ -239,36 +239,51 @@ export default function ProductList() {
                   </TableRow>
                 ) : (
                   filteredProducts.map((product) => (
-                    <TableRow key={product._id}>
-                      <TableCell>
-                        {product.image && (
-                          <img 
-                            src={product.image} 
-                            alt={product.title}
-                            className="w-12 h-12 object-cover rounded border"
-                          />
-                        )}
+                    <TableRow key={product._id} className="responsive-table-row">
+                      <TableCell className="responsive-table-cell col-image">
+                        <div className="content-height-limit">
+                          {product.image && (
+                            <img 
+                              src={product.image} 
+                              alt={product.title}
+                              className="w-12 h-12 object-cover rounded border flex-shrink-0"
+                            />
+                          )}
+                        </div>
                       </TableCell>
-                      <TableCell className="font-medium">
-                        {product.title}
+                      <TableCell className="font-medium responsive-table-cell col-title">
+                        <div className="content-height-limit">
+                          <div className="text-truncate-tooltip" title={product.title}>{product.title}</div>
+                        </div>
                       </TableCell>
-                      <TableCell>
-                        {product.subtitle || 'N/A'}
+                      <TableCell className="responsive-table-cell col-subtitle">
+                        <div className="content-height-limit">
+                          <div className="text-truncate-tooltip" title={product.subtitle || 'N/A'}>
+                            {product.subtitle || 'N/A'}
+                          </div>
+                        </div>
                       </TableCell>
-                      <TableCell>
-                        <a 
-                          href={product.link} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-800 underline truncate block max-w-xs"
-                        >
-                          {product.link}
-                        </a>
+                      <TableCell className="responsive-table-cell col-link">
+                        <div className="content-height-limit">
+                          <a 
+                            href={product.link} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:text-blue-800 underline truncate block max-w-xs text-truncate-tooltip"
+                            title={product.link}
+                          >
+                            {product.link}
+                          </a>
+                        </div>
                       </TableCell>
-                      <TableCell>
-                        {formatDate(product.createdAt)}
+                      <TableCell className="responsive-table-cell col-date">
+                        <div className="content-height-limit">
+                          <div className="text-truncate-tooltip" title={formatDate(product.createdAt)}>
+                            {formatDate(product.createdAt)}
+                          </div>
+                        </div>
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right responsive-table-cell col-actions">
                         <div className="flex justify-end gap-2">
                           <Button
                             variant="outline"

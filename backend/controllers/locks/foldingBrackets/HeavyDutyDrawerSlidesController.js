@@ -44,6 +44,20 @@ exports.createHeavyDutyDrawerSlides = async (req, res) => {
  */
 exports.updateHeavyDutyDrawerSlides = async (req, res) => {
   try {
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+      req.body.photos = photoUrls;
+    }
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+      req.body.photos = photoUrls;
+    }
     let update = { ...req.body };
     if (req.files && req.files.length > 0) {
       if (req.files.length > 5) {
@@ -64,7 +78,7 @@ exports.updateHeavyDutyDrawerSlides = async (req, res) => {
 };
 exports.getAllHeavyDutyDrawerSlides = async (req, res) => {
   try {
-    const items = await Lock.find({ type: 'HeavyDutyDrawerSlides' });
+    const items = await Lock.find({ category: 'HeavyDutyDrawerSlides' });
     res.json(items);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -73,7 +87,7 @@ exports.getAllHeavyDutyDrawerSlides = async (req, res) => {
 
 exports.deleteHeavyDutyDrawerSlides = async (req, res) => {
   try {
-    const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'HeavyDutyDrawerSlides' });
+    const item = await Lock.findOneAndDelete({ _id: req.params.id, category: 'HeavyDutyDrawerSlides' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
@@ -83,7 +97,7 @@ exports.deleteHeavyDutyDrawerSlides = async (req, res) => {
 
 exports.getOneHeavyDutyDrawerSlides = async (req, res) => {
   try {
-    const item = await Lock.findOne({ _id: req.params.id, type: 'HeavyDutyDrawerSlides' });
+    const item = await Lock.findOne({ _id: req.params.id, category: 'HeavyDutyDrawerSlides' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
   } catch (err) {

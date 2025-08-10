@@ -42,20 +42,35 @@ export default function ProductForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (files.length === 0) {
-      setPhotoError("Please upload at least 1 photo.");
+    
+    // Clear previous errors
+    setPhotoError("");
+    
+    // Validate all required fields
+    if (!form.title || !form.title.trim()) {
+      setPhotoError("Title is required");
       return;
     }
-    setPhotoError("");
+    
+    if (!form.link || !form.link.trim()) {
+      setPhotoError("Link is required");
+      return;
+    }
+    
+    if (!file) {
+      setPhotoError("Please upload an image");
+      return;
+    }
+
     if (!isFormValid()) {
       setPhotoError("Please fill all required fields and upload an image");
       return;
     }
 
     const data = new FormData();
-    data.append('title', form.title);
-    data.append('link', form.link);
-    data.append('subtitle', form.subtitle);
+    data.append('title', form.title.trim());
+    data.append('link', form.link.trim());
+    data.append('subtitle', form.subtitle.trim());
     data.append('image', file);
 
     try {
@@ -76,11 +91,11 @@ export default function ProductForm() {
         setPreview(null);
       } else {
         const errorData = await res.json();
-        alert(errorData.message || 'Error creating item');
+        setPhotoError(errorData.message || 'Error creating item');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error creating item');
+      setPhotoError('Network error. Please try again.');
     }
   };
 

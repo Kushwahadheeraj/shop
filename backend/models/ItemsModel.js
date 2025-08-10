@@ -21,7 +21,8 @@ const ItemsSchema = new mongoose.Schema({
     trim: true
   }
 }, { 
-  timestamps: true 
+  timestamps: true,
+  _id: true
 });
 
 module.exports = mongoose.model('Items', ItemsSchema); 

@@ -44,6 +44,13 @@ exports.createNightLatch7Lever = async (req, res) => {
  */
 exports.updateNightLatch7Lever = async (req, res) => {
   try {
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+      req.body.photos = photoUrls;
+    }
     let update = { ...req.body };
     if (req.files && req.files.length > 0) {
       if (req.files.length > 5) {
@@ -64,7 +71,7 @@ exports.updateNightLatch7Lever = async (req, res) => {
 };
 exports.getAllNightLatch7Lever = async (req, res) => {
   try {
-    const items = await Lock.find({ type: 'NightLatch7Lever' });
+    const items = await Lock.find({ category: 'NightLatch7Lever' });
     res.json(items);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -73,7 +80,7 @@ exports.getAllNightLatch7Lever = async (req, res) => {
 
 exports.deleteNightLatch7Lever = async (req, res) => {
   try {
-    const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'NightLatch7Lever' });
+    const item = await Lock.findOneAndDelete({ _id: req.params.id, category: 'NightLatch7Lever' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
@@ -83,7 +90,7 @@ exports.deleteNightLatch7Lever = async (req, res) => {
 
 exports.getOneNightLatch7Lever = async (req, res) => {
   try {
-    const item = await Lock.findOne({ _id: req.params.id, type: 'NightLatch7Lever' });
+    const item = await Lock.findOne({ _id: req.params.id, category: 'NightLatch7Lever' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
   } catch (err) {

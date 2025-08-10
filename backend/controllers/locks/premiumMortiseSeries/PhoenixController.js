@@ -44,6 +44,13 @@ exports.createPhoenix = async (req, res) => {
  */
 exports.updatePhoenix = async (req, res) => {
   try {
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+      req.body.photos = photoUrls;
+    }
     let update = { ...req.body };
     if (req.files && req.files.length > 0) {
       if (req.files.length > 5) {
@@ -64,7 +71,7 @@ exports.updatePhoenix = async (req, res) => {
 };
 exports.getAllPhoenix = async (req, res) => {
   try {
-    const items = await Lock.find({ type: 'Phoenix' });
+    const items = await Lock.find({ category: 'Phoenix' });
     res.json(items);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -73,7 +80,7 @@ exports.getAllPhoenix = async (req, res) => {
 
 exports.deletePhoenix = async (req, res) => {
   try {
-    const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'Phoenix' });
+    const item = await Lock.findOneAndDelete({ _id: req.params.id, category: 'Phoenix' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
@@ -83,7 +90,7 @@ exports.deletePhoenix = async (req, res) => {
 
 exports.getOnePhoenix = async (req, res) => {
   try {
-    const item = await Lock.findOne({ _id: req.params.id, type: 'Phoenix' });
+    const item = await Lock.findOne({ _id: req.params.id, category: 'Phoenix' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
   } catch (err) {

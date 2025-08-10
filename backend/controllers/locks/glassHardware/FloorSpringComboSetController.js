@@ -31,7 +31,14 @@ exports.createFloorSpringComboSet = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Lock({ ...req.body, photos: photoUrls, category: 'FloorSpringComboSet' });
+    const product = new Lock({ 
+      ...req.body, 
+      photos: photoUrls, 
+      category: 'FloorSpringComboSet',
+      type: 'FloorSpringComboSet',
+      productNo: req.body.productNo || 'FSCS-' + Date.now(),
+      productQualityName: req.body.productQualityName || 'Standard'
+    });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -44,6 +51,13 @@ exports.createFloorSpringComboSet = async (req, res) => {
  */
 exports.updateFloorSpringComboSet = async (req, res) => {
   try {
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+      req.body.photos = photoUrls;
+    }
     let update = { ...req.body };
     if (req.files && req.files.length > 0) {
       if (req.files.length > 5) {
@@ -64,7 +78,7 @@ exports.updateFloorSpringComboSet = async (req, res) => {
 };
 exports.getAllFloorSpringComboSet = async (req, res) => {
   try {
-    const items = await Lock.find({ type: 'FloorSpringComboSet' });
+    const items = await Lock.find({ category: 'FloorSpringComboSet' });
     res.json(items);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -73,7 +87,7 @@ exports.getAllFloorSpringComboSet = async (req, res) => {
 
 exports.deleteFloorSpringComboSet = async (req, res) => {
   try {
-    const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'FloorSpringComboSet' });
+    const item = await Lock.findOneAndDelete({ _id: req.params.id, category: 'FloorSpringComboSet' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
@@ -83,7 +97,7 @@ exports.deleteFloorSpringComboSet = async (req, res) => {
 
 exports.getOneFloorSpringComboSet = async (req, res) => {
   try {
-    const item = await Lock.findOne({ _id: req.params.id, type: 'FloorSpringComboSet' });
+    const item = await Lock.findOne({ _id: req.params.id, category: 'FloorSpringComboSet' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
   } catch (err) {

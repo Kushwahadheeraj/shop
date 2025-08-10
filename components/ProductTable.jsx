@@ -160,67 +160,67 @@ export default function ProductTable({ products, onEdit, onDelete, onView, categ
           <CardTitle>{category || "Products"} List</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
+          <div className="responsive-table-container">
+            <Table className="responsive-table">
+              <TableHeader className="responsive-table-header">
+                <TableRow className="responsive-table-row">
                   <TableHead 
-                    className="cursor-pointer hover:bg-gray-50"
+                    className="responsive-table-cell col-name cursor-pointer hover:bg-gray-50"
                     onClick={() => handleSort("name")}
                   >
                     Name {sortBy === "name" && (sortOrder === "asc" ? "↑" : "↓")}
                   </TableHead>
-                  <TableHead>Photos</TableHead>
+                  <TableHead className="responsive-table-cell col-image">Photos</TableHead>
                   <TableHead 
-                    className="cursor-pointer hover:bg-gray-50"
+                    className="responsive-table-cell col-price cursor-pointer hover:bg-gray-50"
                     onClick={() => handleSort("minPrice")}
                   >
                     Min Price {sortBy === "minPrice" && (sortOrder === "asc" ? "↑" : "↓")}
                   </TableHead>
                   <TableHead 
-                    className="cursor-pointer hover:bg-gray-50"
+                    className="responsive-table-cell col-price cursor-pointer hover:bg-gray-50"
                     onClick={() => handleSort("maxPrice")}
                   >
                     Max Price {sortBy === "maxPrice" && (sortOrder === "asc" ? "↑" : "↓")}
                   </TableHead>
-                  <TableHead>Discount</TableHead>
+                  <TableHead className="responsive-table-cell col-status">Discount</TableHead>
                   <TableHead 
-                    className="cursor-pointer hover:bg-gray-50"
+                    className="responsive-table-cell col-status cursor-pointer hover:bg-gray-50"
                     onClick={() => handleSort("totalProduct")}
                   >
                     Stock {sortBy === "totalProduct" && (sortOrder === "asc" ? "↑" : "↓")}
                   </TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Tags</TableHead>
-                  <TableHead>Created</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="responsive-table-cell col-category">Category</TableHead>
+                  <TableHead className="responsive-table-cell col-tags">Tags</TableHead>
+                  <TableHead className="responsive-table-cell col-date">Created</TableHead>
+                  <TableHead className="responsive-table-cell col-actions text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredAndSortedProducts.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={10} className="text-center py-8 text-gray-500">
+                  <TableRow className="responsive-table-row">
+                    <TableCell colSpan={10} className="text-center py-8 text-gray-500 responsive-table-cell">
                       No products found
                     </TableCell>
                   </TableRow>
                 ) : (
                   filteredAndSortedProducts.map((product) => (
-                    <TableRow key={product._id} className="hover:bg-gray-50">
-                      <TableCell className="font-medium">
-                        <div>
-                          <div>{product.name}</div>
-                          <div className="text-xs text-gray-500">SKU: {product.sku || "N/A"}</div>
+                    <TableRow key={product._id} className="hover:bg-gray-50 responsive-table-row">
+                      <TableCell className="font-medium responsive-table-cell col-name">
+                        <div className="content-height-limit">
+                          <div className="text-truncate-tooltip" title={product.name}>{product.name}</div>
+                          <div className="text-xs text-gray-500 text-truncate-tooltip" title={`SKU: ${product.sku || "N/A"}`}>SKU: {product.sku || "N/A"}</div>
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="responsive-table-cell col-image">
                         {product.photos && product.photos.length > 0 ? (
-                          <div className="flex flex-row gap-1 flex-wrap">
+                          <div className="flex flex-row gap-1 flex-wrap content-height-limit">
                             {product.photos.slice(0, 3).map((url, idx) => (
                               <img 
                                 key={idx} 
                                 src={url} 
                                 alt="product" 
-                                className="w-10 h-10 object-cover rounded border"
+                                className="w-10 h-10 object-cover rounded border flex-shrink-0"
                                 onError={(e) => {
                                   e.target.src = "/placeholder-image.jpg";
                                 }}
@@ -236,27 +236,27 @@ export default function ProductTable({ products, onEdit, onDelete, onView, categ
                           <Badge variant="outline" className="text-xs">No Image</Badge>
                         )}
                       </TableCell>
-                      <TableCell>{formatPrice(product.minPrice)}</TableCell>
-                      <TableCell>{formatPrice(product.maxPrice)}</TableCell>
-                      <TableCell>
+                      <TableCell className="responsive-table-cell col-price text-truncate-tooltip" title={formatPrice(product.minPrice)}>{formatPrice(product.minPrice)}</TableCell>
+                      <TableCell className="responsive-table-cell col-price text-truncate-tooltip" title={formatPrice(product.maxPrice)}>{formatPrice(product.maxPrice)}</TableCell>
+                      <TableCell className="responsive-table-cell col-status">
                         {product.discount ? (
                           <Badge variant="destructive">{product.discount}%</Badge>
                         ) : (
                           <span className="text-gray-400">-</span>
                         )}
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="responsive-table-cell col-status">
                         <Badge variant={product.totalProduct > 0 ? "default" : "destructive"}>
                           {product.totalProduct || 0}
                         </Badge>
                       </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{product.category}</Badge>
+                      <TableCell className="responsive-table-cell col-category">
+                        <Badge variant="outline" className="text-truncate-tooltip" title={product.category}>{product.category}</Badge>
                       </TableCell>
-                      <TableCell>
-                        <div className="flex flex-wrap gap-1">
+                      <TableCell className="responsive-table-cell col-tags">
+                        <div className="flex flex-wrap gap-1 content-height-limit">
                           {product.tag && product.tag.slice(0, 2).map((tag, idx) => (
-                            <Badge key={idx} variant="secondary" className="text-xs">
+                            <Badge key={idx} variant="secondary" className="text-xs badge-truncate" title={tag}>
                               {tag}
                             </Badge>
                           ))}
@@ -267,10 +267,10 @@ export default function ProductTable({ products, onEdit, onDelete, onView, categ
                           )}
                         </div>
                       </TableCell>
-                      <TableCell className="text-sm text-gray-500">
+                      <TableCell className="text-sm text-gray-500 responsive-table-cell col-date text-truncate-tooltip" title={formatDate(product.createdAt)}>
                         {formatDate(product.createdAt)}
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right responsive-table-cell col-actions">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon">

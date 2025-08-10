@@ -24,8 +24,6 @@ export default function ProductForm() {
     discount: '',
     discountPrice: '',
     rating: '',
-    brand: '',
-    specifications: '',
     tags: [],
     isActive: true
   });
@@ -227,8 +225,6 @@ export default function ProductForm() {
     data.append('maxPrice', form.maxPrice);
     data.append('discount', form.discount);
     data.append('rating', form.rating);
-    data.append('brand', form.brand);
-    data.append('specifications', form.specifications);
     data.append('tags', form.tags.join(','));
     data.append('customFields', JSON.stringify(customFields));
     data.append('variants', JSON.stringify(variants));
@@ -492,17 +488,7 @@ export default function ProductForm() {
             />
           </div>
 
-          {/* Brand */}
-          <div>
-            <label className="block text-sm font-medium mb-2">Brand</label>
-            <Input
-              type="text"
-              name="brand"
-              value={form.brand}
-              onChange={handleChange}
-              placeholder="Enter brand name"
-            />
-          </div>
+         
         </div>
 
         {/* Description */}
@@ -515,20 +501,7 @@ export default function ProductForm() {
             placeholder="Enter product description"
             rows={4}
           />
-        </div>
-
-        {/* Specifications */}
-        <div>
-          <label className="block text-sm font-medium mb-2">Specifications</label>
-          <Textarea
-            name="specifications"
-            value={form.specifications}
-            onChange={handleChange}
-            placeholder="Enter product specifications"
-            rows={4}
-          />
-        </div>
-
+        </div>     
         {/* Tags */}
         <div>
           <label className="block text-sm font-medium mb-2">Tags</label>

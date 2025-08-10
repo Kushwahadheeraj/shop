@@ -184,20 +184,20 @@ export default function ProductList() {
           </div>
           
           {/* Custom Table for Paints */}
-          <div className="border rounded-lg overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Images</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Brand</TableHead>
-                  <TableHead>Price</TableHead>
-                  <TableHead>Colors</TableHead>
-                  <TableHead>Tags</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Created Date</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+          <div className="border rounded-lg overflow-x-auto responsive-table-container">
+            <Table className="responsive-table">
+              <TableHeader className="responsive-table-header">
+                <TableRow className="responsive-table-row">
+                  <TableHead className="responsive-table-cell col-image">Images</TableHead>
+                  <TableHead className="responsive-table-cell col-name">Name</TableHead>
+                  <TableHead className="responsive-table-cell col-category">Category</TableHead>
+                  <TableHead className="responsive-table-cell col-brand">Brand</TableHead>
+                  <TableHead className="responsive-table-cell col-price">Price</TableHead>
+                  <TableHead className="responsive-table-cell col-variants">Colors</TableHead>
+                  <TableHead className="responsive-table-cell col-tags">Tags</TableHead>
+                  <TableHead className="responsive-table-cell col-status">Status</TableHead>
+                  <TableHead className="responsive-table-cell col-date">Created Date</TableHead>
+                  <TableHead className="responsive-table-cell col-actions text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -218,15 +218,15 @@ export default function ProductList() {
                   </TableRow>
                 ) : (
                   filteredProducts.map((product) => (
-                    <TableRow key={product._id}>
-                      <TableCell>
-                        <div className="relative">
+                    <TableRow key={product._id} className="responsive-table-row">
+                      <TableCell className="responsive-table-cell col-image">
+                        <div className="relative content-height-limit">
                           {product.images && product.images.length > 0 ? (
                             <>
                               <img 
                                 src={product.images[0]} 
                                 alt={product.name}
-                                className="w-12 h-12 object-cover rounded border"
+                                className="w-12 h-12 object-cover rounded border flex-shrink-0"
                               />
                               {product.images.length > 1 && (
                                 <div className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
@@ -241,24 +241,28 @@ export default function ProductList() {
                           )}
                         </div>
                       </TableCell>
-                      <TableCell className="font-medium">
-                        <div className="max-w-xs">
-                          <div className="font-medium">{product.name}</div>
+                      <TableCell className="font-medium responsive-table-cell col-name">
+                        <div className="max-w-xs content-height-limit">
+                          <div className="font-medium text-truncate-tooltip" title={product.name}>{product.name}</div>
                           {product.description && (
-                            <div className="text-xs text-gray-500 truncate">
+                            <div className="text-xs text-gray-500 line-clamp-2 text-truncate-tooltip" title={product.description}>
                               {product.description}
                             </div>
                           )}
                         </div>
                       </TableCell>
-                      <TableCell>
-                        {product.category || 'N/A'}
+                      <TableCell className="responsive-table-cell col-category">
+                        <div className="text-truncate-tooltip content-height-limit" title={product.category || 'N/A'}>
+                          {product.category || 'N/A'}
+                        </div>
                       </TableCell>
-                      <TableCell>
-                        {product.brand || 'N/A'}
+                      <TableCell className="responsive-table-cell col-brand">
+                        <div className="text-truncate-tooltip content-height-limit" title={product.brand || 'N/A'}>
+                          {product.brand || 'N/A'}
+                        </div>
                       </TableCell>
-                      <TableCell>
-                        <div className="space-y-1">
+                      <TableCell className="responsive-table-cell col-price">
+                        <div className="space-y-1 content-height-limit">
                           <div className="text-sm font-medium">{formatPrice(product.price)}</div>
                           {product.discountPrice && product.discountPrice !== product.price && (
                             <div className="text-xs text-gray-500 line-through">
@@ -272,11 +276,11 @@ export default function ProductList() {
                           )}
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <div className="flex flex-wrap gap-1 max-w-32">
+                      <TableCell className="responsive-table-cell col-variants">
+                        <div className="flex flex-wrap gap-1 max-w-32 content-height-limit">
                           {product.colors && product.colors.length > 0 ? (
                             product.colors.slice(0, 2).map((color, index) => (
-                              <Badge key={index} variant="outline" className="text-xs">
+                              <Badge key={index} variant="outline" className="text-xs badge-truncate" title={color}>
                                 {color}
                               </Badge>
                             ))
@@ -290,11 +294,11 @@ export default function ProductList() {
                           )}
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <div className="flex flex-wrap gap-1 max-w-32">
+                      <TableCell className="responsive-table-cell col-tags">
+                        <div className="flex flex-wrap gap-1 max-w-32 content-height-limit">
                           {product.tags && product.tags.length > 0 ? (
                             product.tags.slice(0, 2).map((tag, index) => (
-                              <Badge key={index} variant="outline" className="text-xs">
+                              <Badge key={index} variant="outline" className="text-xs badge-truncate" title={tag}>
                                 {tag}
                               </Badge>
                             ))
@@ -308,15 +312,17 @@ export default function ProductList() {
                           )}
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="responsive-table-cell col-status">
                         <Badge variant={product.isActive !== false ? "default" : "destructive"}>
                           {product.isActive !== false ? "Active" : "Inactive"}
                         </Badge>
                       </TableCell>
-                      <TableCell>
-                        {formatDate(product.createdAt)}
+                      <TableCell className="responsive-table-cell col-date">
+                        <div className="text-truncate-tooltip content-height-limit" title={formatDate(product.createdAt)}>
+                          {formatDate(product.createdAt)}
+                        </div>
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right responsive-table-cell col-actions">
                         <div className="flex justify-end gap-2">
                           <Button
                             variant="outline"

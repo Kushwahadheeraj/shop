@@ -17,6 +17,7 @@ const hingesController = require('../controllers/locks//doorAccessories/HingesCo
 const magneticDoorStoppersController = require('../controllers/locks/doorAccessories/MagneticDoorStoppersController');
 const woodenSlidingDoorFittingsController = require('../controllers/locks/doorAccessories/WoodenSlidingDoorFittingsController');
 const ballBearingDoorHingesController = require('../controllers/locks/doorAccessories/BallBearingDoorHingesController');
+const aluminiumTowerBoltController = require('../controllers/locks/doorAccessories/AluminiumTowerBolt');
 
 // Import controllers from doorControls
 const doorCloserControllers = require('../controllers/locks/doorControls/DoorCloserControllers');
@@ -164,7 +165,7 @@ function crudRoutes(resource, controller, resourceName) {
 
 // Register all routes
 // Main directory controllers
-crudRoutes('patch-fittings', patchFittingsController, 'PatchFittingss');
+crudRoutes('patch-fittings', patchFittingsController, 'PatchFittings');
 crudRoutes('mortise-lock-body', mortiseLockBodyController, 'MortiseLockBody');
 crudRoutes('mortice-locks', morticeLocksController, 'MorticeLocks');
 
@@ -176,6 +177,7 @@ crudRoutes('door-accessories/hinges', hingesController, 'Hinges');
 crudRoutes('door-accessories/magnetic-door-stoppers', magneticDoorStoppersController, 'MagneticDoorStoppers');
 crudRoutes('door-accessories/wooden-sliding-door-fittings', woodenSlidingDoorFittingsController, 'WoodenSlidingDoorFittings');
 crudRoutes('door-accessories/ball-bearing-door-hinges', ballBearingDoorHingesController, 'BallBearingDoorHinges');
+crudRoutes('door-accessories/aluminium-tower-bolt', aluminiumTowerBoltController, 'AluminiumTowerBolt');
 
 // Door Controls
 crudRoutes('door-controls/door-closer', doorCloserControllers, 'DoorCloser');

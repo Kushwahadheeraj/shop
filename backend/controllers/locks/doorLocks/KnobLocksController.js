@@ -44,6 +44,20 @@ exports.createKnobLocks = async (req, res) => {
  */
 exports.updateKnobLocks = async (req, res) => {
   try {
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+      req.body.photos = photoUrls;
+    }
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+      req.body.photos = photoUrls;
+    }
     let update = { ...req.body };
     if (req.files && req.files.length > 0) {
       if (req.files.length > 5) {
@@ -64,7 +78,7 @@ exports.updateKnobLocks = async (req, res) => {
 };
 exports.getAllKnobLocks = async (req, res) => {
   try {
-    const items = await Lock.find({ type: 'KnobLocks' });
+    const items = await Lock.find({ category: 'KnobLocks' });
     res.json(items);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -73,7 +87,7 @@ exports.getAllKnobLocks = async (req, res) => {
 
 exports.deleteKnobLocks = async (req, res) => {
   try {
-    const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'KnobLocks' });
+    const item = await Lock.findOneAndDelete({ _id: req.params.id, category: 'KnobLocks' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
@@ -83,7 +97,7 @@ exports.deleteKnobLocks = async (req, res) => {
 
 exports.getOneKnobLocks = async (req, res) => {
   try {
-    const item = await Lock.findOne({ _id: req.params.id, type: 'KnobLocks' });
+    const item = await Lock.findOne({ _id: req.params.id, category: 'KnobLocks' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
   } catch (err) {

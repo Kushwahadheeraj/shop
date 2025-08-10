@@ -172,21 +172,21 @@ export default function ProductList() {
           </div>
           
           {/* Cards Table */}
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Main Text</TableHead>
-                  <TableHead>Image</TableHead>
-                  <TableHead>Created Date</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+          <div className="overflow-x-auto responsive-table-container">
+            <Table className="responsive-table">
+              <TableHeader className="responsive-table-header">
+                <TableRow className="responsive-table-row">
+                  <TableHead className="responsive-table-cell col-name">Main Text</TableHead>
+                  <TableHead className="responsive-table-cell col-image">Image</TableHead>
+                  <TableHead className="responsive-table-cell col-date">Created Date</TableHead>
+                  <TableHead className="responsive-table-cell col-status">Status</TableHead>
+                  <TableHead className="responsive-table-cell col-actions text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredCards.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                  <TableRow className="responsive-table-row">
+                    <TableCell colSpan={5} className="text-center py-8 text-gray-500 responsive-table-cell">
                       {searchTerm ? 'No cards found matching your search' : (
                         <div className="text-center">
                           <div className="text-lg font-medium mb-2">No cards found</div>
@@ -201,62 +201,70 @@ export default function ProductList() {
                   </TableRow>
                 ) : (
                   filteredCards.map((card) => (
-                    <TableRow key={card._id} className="hover:bg-gray-50">
-                      <TableCell className="font-medium">
-                        <div>
-                          <div className="font-semibold">{card.mainText}</div>
+                    <TableRow key={card._id} className="hover:bg-gray-50 responsive-table-row">
+                      <TableCell className="responsive-table-cell col-name">
+                        <div className="content-height-limit">
+                          <div className="font-semibold text-truncate-tooltip" title={card.mainText}>{card.mainText}</div>
                           <div className="text-xs text-gray-500">ID: {card._id}</div>
                         </div>
                       </TableCell>
-                      <TableCell>
-                        {card.image ? (
-                          <div className="flex items-center">
-                            <img 
-                              src={card.image} 
-                              alt={card.mainText} 
-                              className="w-16 h-16 object-cover rounded border"
-                              onError={(e) => {
-                                e.target.src = "/placeholder-image.jpg";
-                              }}
-                            />
-                          </div>
-                        ) : (
-                          <Badge variant="outline" className="text-xs">No Image</Badge>
-                        )}
+                      <TableCell className="responsive-table-cell col-image">
+                        <div className="content-height-limit">
+                          {card.image ? (
+                            <div className="flex items-center">
+                              <img 
+                                src={card.image} 
+                                alt={card.mainText} 
+                                className="w-16 h-16 object-cover rounded border flex-shrink-0"
+                                onError={(e) => {
+                                  e.target.src = "/placeholder-image.jpg";
+                                }}
+                              />
+                            </div>
+                          ) : (
+                            <Badge variant="outline" className="text-xs">No Image</Badge>
+                          )}
+                        </div>
                       </TableCell>
-                      <TableCell className="text-sm text-gray-500">
-                        {formatDate(card.createdAt)}
+                      <TableCell className="responsive-table-cell col-date text-sm text-gray-500">
+                        <div className="content-height-limit text-truncate-tooltip" title={formatDate(card.createdAt)}>
+                          {formatDate(card.createdAt)}
+                        </div>
                       </TableCell>
-                      <TableCell>
-                        <Badge variant="default">
-                          Active
-                        </Badge>
+                      <TableCell className="responsive-table-cell col-status">
+                        <div className="content-height-limit">
+                          <Badge variant="default">
+                            Active
+                          </Badge>
+                        </div>
                       </TableCell>
-                      <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreHorizontal className="w-4 h-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => handleView(card)}>
-                              <Eye className="w-4 h-4 mr-2" />
-                              View
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleEdit(card)}>
-                              <Edit className="w-4 h-4 mr-2" />
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem 
-                              onClick={() => handleDeleteClick(card)}
-                              className="text-red-600"
-                            >
-                              <Trash2 className="w-4 h-4 mr-2" />
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                      <TableCell className="responsive-table-cell col-actions text-right">
+                        <div className="content-height-limit">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon">
+                                <MoreHorizontal className="w-4 h-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => handleView(card)}>
+                                <Eye className="w-4 h-4 mr-2" />
+                                View
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleEdit(card)}>
+                                <Edit className="w-4 h-4 mr-2" />
+                                Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuItem 
+                                onClick={() => handleDeleteClick(card)}
+                                className="text-red-600"
+                              >
+                                <Trash2 className="w-4 h-4 mr-2" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))

@@ -9,6 +9,8 @@ const locksProductSchema = new mongoose.Schema({
   description: String,
   discount: { type: Number, default: 0 },
   price: { type: Number, required: true },
+  minPrice: { type: Number }, // Optional min price
+  maxPrice: { type: Number }, // Optional max price
   discountPrice: { type: Number },
   totalProduct: { type: Number, required: true },
   category: { type: String, required: true },

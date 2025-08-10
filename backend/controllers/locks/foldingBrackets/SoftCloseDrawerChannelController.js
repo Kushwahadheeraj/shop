@@ -44,6 +44,20 @@ exports.createSoftCloseDrawerChannel = async (req, res) => {
  */
 exports.updateSoftCloseDrawerChannel = async (req, res) => {
   try {
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+      req.body.photos = photoUrls;
+    }
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+      req.body.photos = photoUrls;
+    }
     let update = { ...req.body };
     if (req.files && req.files.length > 0) {
       if (req.files.length > 5) {
@@ -64,7 +78,7 @@ exports.updateSoftCloseDrawerChannel = async (req, res) => {
 };
 exports.getAllSoftCloseDrawerChannel = async (req, res) => {
   try {
-    const items = await Lock.find({ type: 'SoftCloseDrawerChannel' });
+    const items = await Lock.find({ category: 'SoftCloseDrawerChannel' });
     res.json(items);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -73,7 +87,7 @@ exports.getAllSoftCloseDrawerChannel = async (req, res) => {
 
 exports.deleteSoftCloseDrawerChannel = async (req, res) => {
   try {
-    const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'SoftCloseDrawerChannel' });
+    const item = await Lock.findOneAndDelete({ _id: req.params.id, category: 'SoftCloseDrawerChannel' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
@@ -83,7 +97,7 @@ exports.deleteSoftCloseDrawerChannel = async (req, res) => {
 
 exports.getOneSoftCloseDrawerChannel = async (req, res) => {
   try {
-    const item = await Lock.findOne({ _id: req.params.id, type: 'SoftCloseDrawerChannel' });
+    const item = await Lock.findOne({ _id: req.params.id, category: 'SoftCloseDrawerChannel' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
   } catch (err) {

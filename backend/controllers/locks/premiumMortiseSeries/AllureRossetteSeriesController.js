@@ -44,6 +44,13 @@ exports.createAllureRossetteSeries = async (req, res) => {
  */
 exports.updateAllureRossetteSeries = async (req, res) => {
   try {
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+      req.body.photos = photoUrls;
+    }
     let update = { ...req.body };
     if (req.files && req.files.length > 0) {
       if (req.files.length > 5) {
@@ -64,7 +71,7 @@ exports.updateAllureRossetteSeries = async (req, res) => {
 };
 exports.getAllAllureRossetteSeries = async (req, res) => {
   try {
-    const items = await Lock.find({ type: 'AllureRossetteSeries' });
+    const items = await Lock.find({ category: 'AllureRossetteSeries' });
     res.json(items);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -83,7 +90,7 @@ exports.getAllAllureRossetteSeries = async (req, res) => {
 
 exports.deleteAllureRossetteSeries = async (req, res) => {
   try {
-    const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'AllureRossetteSeries' });
+    const item = await Lock.findOneAndDelete({ _id: req.params.id, category: 'AllureRossetteSeries' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
@@ -93,7 +100,7 @@ exports.deleteAllureRossetteSeries = async (req, res) => {
 
 exports.getOneAllureRossetteSeries = async (req, res) => {
   try {
-    const item = await Lock.findOne({ _id: req.params.id, type: 'AllureRossetteSeries' });
+    const item = await Lock.findOne({ _id: req.params.id, category: 'AllureRossetteSeries' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
   } catch (err) {

@@ -19,7 +19,7 @@ export default function ProductForm({ onSave }) {
     discount: '',
     discountPrice: '',
     totalProduct: '',
-    category: 'PopularMortiseSeries',
+    category: 'popular-mortise-series',
     description: '',
     tags: [],
     variants: [], // { variantName: '', price: '', discountPrice: '' }
@@ -157,13 +157,13 @@ export default function ProductForm({ onSave }) {
       f.fieldValues.forEach(val => data.append('customFieldValue' + (idx+1), val));
     });
     files.forEach(f => data.append('photos', f));
-    const res = await fetch(`${API_BASE_URL}/locks/PopularMortiseSeries/PopularMortiseSeries/create`, { method: 'POST', body: data });
+    const res = await fetch(`${API_BASE_URL}/locks/popular-mortise-series/popular-mortise-series/create`, { method: 'POST', body: data });
     if (res.ok) onSave && onSave();
   };
 
   return (
     <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-6 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
-      <h2 className="text-2xl font-bold mb-2 text-center">Add PopularMortiseSeries Product</h2>
+      <h2 className="text-2xl font-bold mb-2 text-center">Add popular-mortise-series Product</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium mb-1">Product Name</label>

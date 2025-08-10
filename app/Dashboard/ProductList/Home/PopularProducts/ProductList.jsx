@@ -51,22 +51,6 @@ export default function ProductList() {
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
-      const data = await res.json();
-      console.log('Response data:', data);
-      console.log('Data type:', typeof data);
-      console.log('Data length:', Array.isArray(data) ? data.length : 'Not an array');
-      setProducts(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error('Error fetching products:', err);
-      setError(err.message);
-      setProducts([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
       const responseData = await res.json();
       console.log('API Response:', responseData); // Debug log
       
@@ -223,27 +207,27 @@ export default function ProductList() {
           </div>
           
           {/* Custom Table for Popular Products */}
-          <div className="border rounded-lg overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Images</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Price Range</TableHead>
-                  <TableHead>Current Price</TableHead>
-                  <TableHead>Variants</TableHead>
-                  <TableHead>Tags</TableHead>
-                  <TableHead>Rating</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Created Date</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+          <div className="border rounded-lg overflow-x-auto responsive-table-container">
+            <Table className="responsive-table">
+              <TableHeader className="responsive-table-header">
+                <TableRow className="responsive-table-row">
+                  <TableHead className="responsive-table-cell col-image">Images</TableHead>
+                  <TableHead className="responsive-table-cell col-name">Name</TableHead>
+                  <TableHead className="responsive-table-cell col-category">Category</TableHead>
+                  <TableHead className="responsive-table-cell col-price">Price Range</TableHead>
+                  <TableHead className="responsive-table-cell col-price">Current Price</TableHead>
+                  <TableHead className="responsive-table-cell col-variants">Variants</TableHead>
+                  <TableHead className="responsive-table-cell col-tags">Tags</TableHead>
+                  <TableHead className="responsive-table-cell col-rating">Rating</TableHead>
+                  <TableHead className="responsive-table-cell col-status">Status</TableHead>
+                  <TableHead className="responsive-table-cell col-date">Created Date</TableHead>
+                  <TableHead className="responsive-table-cell col-actions text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredProducts.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={11} className="text-center py-8 text-gray-500">
+                  <TableRow className="responsive-table-row">
+                    <TableCell colSpan={11} className="text-center py-8 text-gray-500 responsive-table-cell">
                       {searchTerm ? 'No popular products found matching your search' : (
                         <div className="text-center">
                           <div className="text-lg font-medium mb-2">No popular products found</div>
@@ -258,9 +242,9 @@ export default function ProductList() {
                   </TableRow>
                 ) : (
                   filteredProducts.map((product) => (
-                    <TableRow key={product._id}>
-                      <TableCell>
-                        <div className="relative">
+                    <TableRow key={product._id} className="responsive-table-row">
+                      <TableCell className="responsive-table-cell col-image">
+                        <div className="relative content-height-limit">
                           {(() => {
                             // Handle both old 'image' and new 'images' field for backward compatibility
                             const productImages = product.images || (product.image ? [product.image] : []);
@@ -272,7 +256,7 @@ export default function ProductList() {
                                   <img 
                                     src={productImages[0]} 
                                     alt={product.name}
-                                    className="w-12 h-12 object-cover rounded border"
+                                    className="w-12 h-12 object-cover rounded border flex-shrink-0"
                                     onError={(e) => {
                                       console.error('Image failed to load:', productImages[0], e);
                                       e.target.style.display = 'none';
@@ -303,21 +287,23 @@ export default function ProductList() {
                           })()}
                         </div>
                       </TableCell>
-                      <TableCell className="font-medium">
-                        <div className="max-w-xs">
-                          <div className="font-medium">{product.name}</div>
+                      <TableCell className="font-medium responsive-table-cell col-name">
+                        <div className="max-w-xs content-height-limit">
+                          <div className="font-medium text-truncate-tooltip" title={product.name}>{product.name}</div>
                           {product.description && (
-                            <div className="text-xs text-gray-500 truncate">
+                            <div className="text-xs text-gray-500 line-clamp-2 text-truncate-tooltip" title={product.description}>
                               {product.description}
                             </div>
                           )}
                         </div>
                       </TableCell>
-                      <TableCell>
-                        {product.category || 'N/A'}
+                      <TableCell className="responsive-table-cell col-category">
+                        <div className="text-truncate-tooltip content-height-limit" title={product.category || 'N/A'}>
+                          {product.category || 'N/A'}
+                        </div>
                       </TableCell>
-                      <TableCell>
-                        <div className="space-y-1">
+                      <TableCell className="responsive-table-cell col-price">
+                        <div className="space-y-1 content-height-limit">
                           {product.minPrice && product.maxPrice ? (
                             <div className="text-sm">
                               {formatPrice(product.minPrice)} - {formatPrice(product.maxPrice)}
@@ -331,8 +317,8 @@ export default function ProductList() {
                           )}
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <div className="space-y-1">
+                      <TableCell className="responsive-table-cell col-price">
+                        <div className="space-y-1 content-height-limit">
                           <div className="text-sm font-medium">{formatPrice(product.price)}</div>
                           {product.discount && product.discount > 0 && (
                             <Badge variant="destructive" className="text-xs">
@@ -341,9 +327,9 @@ export default function ProductList() {
                           )}
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Package className="w-4 h-4 text-gray-400" />
+                      <TableCell className="responsive-table-cell col-variants">
+                        <div className="flex items-center gap-2 content-height-limit">
+                          <Package className="w-4 h-4 text-gray-400 flex-shrink-0" />
                           <div className="text-sm">
                             {product.variants && product.variants.length > 0 ? (
                               <div>
@@ -359,11 +345,11 @@ export default function ProductList() {
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <div className="flex flex-wrap gap-1 max-w-32">
+                      <TableCell className="responsive-table-cell col-tags">
+                        <div className="flex flex-wrap gap-1 max-w-32 content-height-limit">
                           {product.tags && product.tags.length > 0 ? (
                             product.tags.slice(0, 2).map((tag, index) => (
-                              <Badge key={index} variant="outline" className="text-xs">
+                              <Badge key={index} variant="outline" className="text-xs badge-truncate" title={tag}>
                                 {tag}
                               </Badge>
                             ))
@@ -377,8 +363,8 @@ export default function ProductList() {
                           )}
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
+                      <TableCell className="responsive-table-cell col-rating">
+                        <div className="flex items-center gap-2 content-height-limit">
                           <span className="text-sm font-medium">{formatRating(product.rating)}</span>
                           {product.rating > 0 && (
                             <div className="flex">
@@ -399,15 +385,17 @@ export default function ProductList() {
                           )}
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="responsive-table-cell col-status">
                         <Badge variant={product.isActive !== false ? "default" : "destructive"}>
                           {product.isActive !== false ? "Active" : "Inactive"}
                         </Badge>
                       </TableCell>
-                      <TableCell>
-                        {formatDate(product.createdAt)}
+                      <TableCell className="responsive-table-cell col-date">
+                        <div className="text-truncate-tooltip content-height-limit" title={formatDate(product.createdAt)}>
+                          {formatDate(product.createdAt)}
+                        </div>
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right responsive-table-cell col-actions">
                         <div className="flex justify-end gap-2">
                           <Button
                             variant="outline"

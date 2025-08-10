@@ -31,19 +31,39 @@ exports.createDiamantPadlocks = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Lock({ ...req.body, photos: photoUrls, category: 'DiamantPadlocks' });
-    await product.save();
-    res.status(201).json(product);
+    const item = new Lock({ 
+      ...req.body, 
+      photos: photoUrls, 
+      category: 'DiamantPadlocks',
+      type: 'DiamantPadlocks',
+      productNo: req.body.productNo || 'DP-' + Date.now(),
+      productQualityName: req.body.productQualityName || 'Standard'
+    });
+    await item.save();
+    res.status(201).json(item);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
-
 /**
  * Update a DiamantPadlocks product by ID.
  */
 exports.updateDiamantPadlocks = async (req, res) => {
   try {
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+      req.body.photos = photoUrls;
+    }
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+      req.body.photos = photoUrls;
+    }
     let update = { ...req.body };
     if (req.files && req.files.length > 0) {
       if (req.files.length > 5) {
@@ -64,7 +84,7 @@ exports.updateDiamantPadlocks = async (req, res) => {
 };
 exports.getAllDiamantPadlocks = async (req, res) => {
   try {
-    const items = await Lock.find({ type: 'DiamantPadlocks' });
+    const items = await Lock.find({ category: 'DiamantPadlocks' });
     res.json(items);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -73,7 +93,7 @@ exports.getAllDiamantPadlocks = async (req, res) => {
 
 exports.deleteDiamantPadlocks = async (req, res) => {
   try {
-    const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'DiamantPadlocks' });
+    const item = await Lock.findOneAndDelete({ _id: req.params.id, category: 'DiamantPadlocks' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
@@ -83,7 +103,7 @@ exports.deleteDiamantPadlocks = async (req, res) => {
 
 exports.getOneDiamantPadlocks = async (req, res) => {
   try {
-    const item = await Lock.findOne({ _id: req.params.id, type: 'DiamantPadlocks' });
+    const item = await Lock.findOne({ _id: req.params.id, category: 'DiamantPadlocks' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
   } catch (err) {

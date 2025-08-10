@@ -3,7 +3,10 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Plus, X } from "lucide-react";
 import API_BASE_URL from "@/lib/apiConfig";
+import { colorOptions } from "@/lib/colorOptions";
 
 export default function ProductForm({ onSave }) {
   // 3 custom fields, each with a name and multiple values
@@ -14,28 +17,33 @@ export default function ProductForm({ onSave }) {
   ]);
   const [form, setForm] = useState({
     name: '',
-    sku: 'N/A',
-    price: '',
+    fixPrice: '',
     discount: '',
     discountPrice: '',
     totalProduct: '',
     category: 'WoodStainers',
     description: '',
     tags: [],
-    variants: [], // { variantName: '', price: '', discountPrice: '' }
+    colors: [],
+    variants: [], // { variantName: '', fixPrice: '', discountPrice: '' }
+    minPrice: '',
+    maxPrice: '',
   });
   const [files, setFiles] = useState([]);
   const [preview, setPreview] = useState([]);
   const [photoError, setPhotoError] = useState("");
   const [tagInput, setTagInput] = useState("");
+  const [colorInput, setColorInput] = useState("");
+  // Predefined color options imported from shared config
+  
 
   // Discount price auto-calc
   const handleChange = e => {
     const { name, value } = e.target;
     setForm(prev => {
       let updated = { ...prev, [name]: value };
-      if (name === 'price' || name === 'discount') {
-        const price = parseFloat(name === 'price' ? value : prev.price);
+      if (name === 'fixPrice' || name === 'discount') {
+        const price = parseFloat(name === 'fixPrice' ? value : prev.fixPrice);
         const discount = parseFloat(name === 'discount' ? value : prev.discount);
         updated.discountPrice = (!isNaN(price) && !isNaN(discount)) ? (price - (price * discount / 100)).toFixed(2) : '';
       }
@@ -76,15 +84,15 @@ export default function ProductForm({ onSave }) {
 
   // Variants logic
   const handleAddVariant = () => {
-    setForm(prev => ({ ...prev, variants: [...prev.variants, { variantName: '', price: '', discountPrice: '' }] }));
+    setForm(prev => ({ ...prev, variants: [...prev.variants, { variantName: '', fixPrice: '', discountPrice: '' }] }));
   };
   const handleVariantChange = (idx, field, value) => {
     setForm(prev => {
       const updated = [...prev.variants];
       updated[idx][field] = value;
       // auto discountPrice
-      if (field === 'price' || field === 'discount') {
-        const price = parseFloat(field === 'price' ? value : updated[idx].price);
+      if (field === 'fixPrice' || field === 'discount') {
+            const price = parseFloat(field === 'fixPrice' ? value : updated[idx].fixPrice);
         const discount = parseFloat(form.discount);
         updated[idx].discountPrice = (!isNaN(price) && !isNaN(discount)) ? (price - (price * discount / 100)).toFixed(2) : '';
       }
@@ -113,6 +121,21 @@ export default function ProductForm({ onSave }) {
     });
   };
 
+
+  // Colors
+  const handleAddColor = () => {
+    const color = colorInput.trim();
+    if (color && !form.colors.includes(color)) {
+      setForm(prev => ({ ...prev, colors: [...prev.colors, color] }));
+    }
+    setColorInput("");
+  };
+  const handleRemoveColor = idx => {
+    setForm(prev => {
+      const updated = prev.colors.filter((_, i) => i !== idx);
+      return { ...prev, colors: updated };
+    });
+  };
   // Images
   const handleFiles = e => {
     let selected = Array.from(e.target.files);
@@ -140,18 +163,36 @@ export default function ProductForm({ onSave }) {
   // Submit
   const handleSubmit = async e => {
     e.preventDefault();
+    if (!form.name.trim()) {
+      setPhotoError("Product name is required.");
+      return;
+    }
+    if (!form.fixPrice || form.fixPrice <= 0) {
+      setPhotoError("Valid price is required.");
+      return;
+    }
     if (files.length === 0) {
       setPhotoError("Please upload at least 1 photo.");
       return;
     }
+    
     setPhotoError("");
-    setPhotoError("");
+    
     const data = new FormData();
     Object.entries(form).forEach(([k, v]) => {
       if (k === 'tags') {
         v.forEach(val => data.append('tags', val));
+      } else if (k === 'colors') {
+        v.forEach(val => data.append('colors', val));
       } else if (k === 'variants') {
-        data.append(k, JSON.stringify(v));
+        // Handle variants array properly - send as individual fields
+        if (v && v.length > 0) {
+          v.forEach((variant, idx) => {
+            data.append(`variants[${idx}][variantName]`, variant.variantName || '');
+            data.append(`variants[${idx}][fixPrice]`, variant.fixPrice || '');
+            data.append(`variants[${idx}][discountPrice]`, variant.discountPrice || '');
+          });
+        }
       } else {
         data.append(k, v);
       }
@@ -162,8 +203,17 @@ export default function ProductForm({ onSave }) {
       f.fieldValues.forEach(val => data.append('customFieldValue' + (idx+1), val));
     });
     files.forEach(f => data.append('photos', f));
-    const res = await fetch(`${API_BASE_URL}/paint/Stainers/WoodStainers/create`, { method: 'POST', body: data });
-    if (res.ok) onSave && onSave();
+    try {
+      const res = await fetch(`${API_BASE_URL}/paint/stainers-wood-stainers/create`, { method: 'POST', body: data });
+    if (res.ok) {
+        if (res.ok) onSave && onSave();
+      } else {
+        const errorData = await res.json();
+        setPhotoError(errorData.error || 'Failed to create product');
+      }
+    } catch (error) {
+      setPhotoError('Network error: ' + error.message);
+    }
   };
 
   return (
@@ -174,13 +224,10 @@ export default function ProductForm({ onSave }) {
           <label className="block text-sm font-medium mb-1">Product Name</label>
           <Input name="name" value={form.name} onChange={handleChange} placeholder="Product Name" required />
         </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">SKU</label>
-          <Input name="sku" value={form.sku} onChange={handleChange} placeholder="SKU" />
-        </div>
+        
         <div>
           <label className="block text-sm font-medium mb-1">Price</label>
-          <Input name="price" type="number" value={form.price} onChange={handleChange} placeholder="Price" required />
+          <Input name="fixPrice" type="number" value={form.fixPrice} onChange={handleChange} placeholder="Price" required />
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Discount (%)</label>
@@ -193,6 +240,14 @@ export default function ProductForm({ onSave }) {
         <div>
           <label className="block text-sm font-medium mb-1">Total Product</label>
           <Input name="totalProduct" type="number" value={form.totalProduct} onChange={handleChange} placeholder="Total Product" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Min Price</label>
+          <Input name="minPrice" type="number" value={form.minPrice} onChange={handleChange} placeholder="Min Price" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Max Price</label>
+          <Input name="maxPrice" type="number" value={form.maxPrice} onChange={handleChange} placeholder="Max Price" />
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Category</label>
@@ -226,7 +281,7 @@ export default function ProductForm({ onSave }) {
         {form.variants.map((v, idx) => (
           <div key={idx} className="flex gap-2 items-center">
             <Input className="w-1/3" placeholder="Variant Name" value={v.variantName} onChange={e => handleVariantChange(idx, 'variantName', e.target.value)} />
-            <Input className="w-1/3" type="number" placeholder="Price" value={v.price} onChange={e => handleVariantChange(idx, 'price', e.target.value)} />
+            <Input className="w-1/3" type="number" placeholder="Price" value={v.fixPrice} onChange={e => handleVariantChange(idx, 'fixPrice', e.target.value)} />
             <Input className="w-1/3" type="number" placeholder="Discounted Price (auto)" value={v.discountPrice} readOnly />
             <Button type="button" onClick={() => handleRemoveVariant(idx)} className="bg-red-500 hover:bg-red-600 text-white px-2 py-1">Remove</Button>
           </div>
@@ -254,6 +309,51 @@ export default function ProductForm({ onSave }) {
         )}
       </div>
       {/* Tags */}
+      {/* Colors */}
+      <div className="space-y-2">
+        <label className="block text-sm font-medium">Colors</label>
+        
+        {/* Predefined Colors Select */}
+        <div className="mb-3">
+          <p className="text-sm text-gray-600 mb-2">Select from predefined colors:</p>
+          <select 
+            className="w-full p-2 border border-gray-300 rounded-md mb-2"
+            onChange={(e) => {
+              const selectedColor = e.target.value;
+              if (selectedColor && !form.colors.includes(selectedColor)) {
+                setForm(prev => ({ ...prev, colors: [...prev.colors, selectedColor] }));
+                e.target.value = ''; // Reset select
+              }
+            }}
+          >
+            <option value="">-- Select a color --</option>
+            {colorOptions.map((color) => (
+              <option key={color} value={color}>{color}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Custom Color Input */}
+         <div className="flex gap-2 mb-2">
+          <Input 
+            value={colorInput} 
+            onChange={e => setColorInput(e.target.value)} 
+            onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddColor(); }}} 
+            placeholder="Type custom color and press Enter or Add" 
+          />
+           <Button type="button" onClick={handleAddColor} className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1">Add</Button>
+        </div>
+
+        {/* Selected Colors Display */}
+         <div className="flex flex-wrap gap-2">
+          {form.colors.map((color, idx) => (
+            <Badge key={color} variant="secondary" className="flex items-center">
+              {color}
+              <button type="button" onClick={() => handleRemoveColor(idx)} className="ml-2 text-red-500">×</button>
+            </Badge>
+          ))}
+        </div>
+      </div>
       <div>
         <label className="block text-sm font-medium mb-1">Tags</label>
         <div className="flex gap-2 mb-2">

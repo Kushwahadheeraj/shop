@@ -77,7 +77,10 @@ exports.createHomePaint = async (req, res) => {
 // Get all home paint products
 exports.getAllHomePaints = async (req, res) => {
   try {
-    const products = await HomePaintsModel.find({ isActive: true }).sort({ createdAt: -1 });
+    const filter = { isActive: true };
+    
+    // When not in firstPerCategory mode, still return Home model list
+    const products = await HomePaintsModel.find(filter).sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
       count: products.length,

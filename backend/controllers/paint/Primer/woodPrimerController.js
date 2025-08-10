@@ -29,11 +29,24 @@ exports.createWoodPrimer = async (req, res) => {
     if (req.files.length > 5) {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
+    
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Paint({ ...req.body, photos: photoUrls, category: 'WoodPrimer' });
+    
+    // Parse variants if it's a JSON string
+    let productData = { ...req.body };
+    if (req.body.variants && typeof req.body.variants === 'string') {
+      try {
+        productData.variants = JSON.parse(req.body.variants);
+      } catch (err) {
+        return res.status(400).json({ error: 'Invalid variants data format' });
+      }
+    }
+    
+    const product = new Paint({ ...productData, photos: photoUrls, category: 'WoodPrimer' });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
+    console.error('Error creating WoodPrimer:', err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -44,12 +57,23 @@ exports.createWoodPrimer = async (req, res) => {
 exports.updateWoodPrimer = async (req, res) => {
   try {
     let update = { ...req.body };
+    
+    // Parse variants if it's a JSON string
+    if (req.body.variants && typeof req.body.variants === 'string') {
+      try {
+        update.variants = JSON.parse(req.body.variants);
+      } catch (err) {
+        return res.status(400).json({ error: 'Invalid variants data format' });
+      }
+    }
+    
     if (req.files && req.files.length > 0) {
       if (req.files.length > 5) {
         return res.status(400).json({ error: 'No more than 5 images allowed.' });
       }
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
+    
     const product = await Paint.findOneAndUpdate(
       { _id: req.params.id, category: 'WoodPrimer' },
       update,
@@ -58,6 +82,7 @@ exports.updateWoodPrimer = async (req, res) => {
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
+    console.error('Error updating WoodPrimer:', err);
     res.status(500).json({ error: err.message });
   }
 };

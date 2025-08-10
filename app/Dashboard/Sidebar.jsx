@@ -341,7 +341,7 @@ const sections = [
           },
           {
             name: 'Electrical',
-            path: '/Dashboard/ProductAdd/Home/Electrical',
+            path: '/Dashboard/ProductAdd/Home/ElectricalHome',
           },
           {
             name: 'Image Slider',
@@ -379,10 +379,6 @@ const sections = [
           {
             name: 'Popular Products',
             path: '/Dashboard/ProductAdd/Home/PopularProducts',
-          },
-          {
-            name: 'Electrical Home',
-            path: '/Dashboard/ProductAdd/Home/ElectricalHome',
           },
           {
             name: 'Product Tools',
@@ -2740,7 +2736,7 @@ const sections = [
           },
           {
             name: 'Electrical',
-            path: '/Dashboard/ProductList/Home/Electrical',
+            path: '/Dashboard/ProductList/Home/ElectricalHome',
           },
           {
             name: 'Image Slider',
@@ -2779,10 +2775,7 @@ const sections = [
             name: 'Popular Products',
             path: '/Dashboard/ProductList/Home/PopularProducts',
           },
-          {
-            name: 'Electrical Home',
-            path: '/Dashboard/ProductList/Home/ElectricalHome',
-          },
+         
           {
             name: 'Product Tools',
             path: '/Dashboard/ProductList/Home/ProductTools',

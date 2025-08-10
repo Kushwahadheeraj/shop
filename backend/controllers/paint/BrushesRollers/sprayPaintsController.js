@@ -29,8 +29,40 @@ exports.createSprayPaints = async (req, res) => {
     if (req.files.length > 5) {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
+    
+    // Parse variants from form data
+    const variants = [];
+    const variantKeys = Object.keys(req.body).filter(key => key.startsWith('variants['));
+    
+    if (variantKeys.length > 0) {
+      const variantIndices = new Set();
+      variantKeys.forEach(key => {
+        const match = key.match(/variants\[(\d+)\]\[(\w+)\]/);
+        if (match) {
+          const [, index, field] = match;
+          variantIndices.add(parseInt(index));
+        }
+      });
+      
+      variantIndices.forEach(index => {
+        const variant = {
+          variantName: req.body[`variants[${index}][variantName]`] || '',
+          fixPrice: req.body[`variants[${index}][fixPrice]`] || 0,
+          discountPrice: req.body[`variants[${index}][discountPrice]`] || 0
+        };
+        if (variant.variantName || variant.fixPrice) {
+          variants.push(variant);
+        }
+      });
+    }
+    
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Paint({ ...req.body, photos: photoUrls, category: 'SprayPaints' });
+    
+    // Create product data with parsed variants
+    const { variants: _, ...productBody } = req.body; // Remove variants from body
+    const productData = { ...productBody, variants, photos: photoUrls, category: 'SprayPaints' };
+    
+    const product = new Paint(productData);
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -43,13 +75,43 @@ exports.createSprayPaints = async (req, res) => {
  */
 exports.updateSprayPaints = async (req, res) => {
   try {
-    let update = { ...req.body };
+    let { variants: _, ...update } = req.body; // Remove variants from body
+    
+    // Parse variants from form data
+    const variants = [];
+    const variantKeys = Object.keys(req.body).filter(key => key.startsWith('variants['));
+    
+    if (variantKeys.length > 0) {
+      const variantIndices = new Set();
+      variantKeys.forEach(key => {
+        const match = key.match(/variants\[(\d+)\]\[(\w+)\]/);
+        if (match) {
+          const [, index, field] = match;
+          variantIndices.add(parseInt(index));
+        }
+      });
+      
+      variantIndices.forEach(index => {
+        const variant = {
+          variantName: req.body[`variants[${index}][variantName]`] || '',
+          fixPrice: req.body[`variants[${index}][fixPrice]`] || 0,
+          discountPrice: req.body[`variants[${index}][discountPrice]`] || 0
+        };
+        if (variant.variantName || variant.fixPrice) {
+          variants.push(variant);
+        }
+      });
+      
+      update.variants = variants;
+    }
+    
     if (req.files && req.files.length > 0) {
       if (req.files.length > 5) {
         return res.status(400).json({ error: 'No more than 5 images allowed.' });
       }
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
+    
     const product = await Paint.findOneAndUpdate(
       { _id: req.params.id, category: 'SprayPaints' },
       update,

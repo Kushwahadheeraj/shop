@@ -44,6 +44,20 @@ exports.createMainDoorLock = async (req, res) => {
  */
 exports.updateMainDoorLock = async (req, res) => {
   try {
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+      req.body.photos = photoUrls;
+    }
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+      req.body.photos = photoUrls;
+    }
     let update = { ...req.body };
     if (req.files && req.files.length > 0) {
       if (req.files.length > 5) {
@@ -64,7 +78,7 @@ exports.updateMainDoorLock = async (req, res) => {
 };
 exports.getAllMainDoorLock = async (req, res) => {
   try {
-    const items = await Lock.find({ type: 'MainDoorLock' });
+    const items = await Lock.find({ category: 'MainDoorLock' });
     res.json(items);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -73,7 +87,7 @@ exports.getAllMainDoorLock = async (req, res) => {
 
 exports.deleteMainDoorLock = async (req, res) => {
   try {
-    const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'MainDoorLock' });
+    const item = await Lock.findOneAndDelete({ _id: req.params.id, category: 'MainDoorLock' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
@@ -83,7 +97,7 @@ exports.deleteMainDoorLock = async (req, res) => {
 
 exports.getOneMainDoorLock = async (req, res) => {
   try {
-    const item = await Lock.findOne({ _id: req.params.id, type: 'MainDoorLock' });
+    const item = await Lock.findOne({ _id: req.params.id, category: 'MainDoorLock' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
   } catch (err) {

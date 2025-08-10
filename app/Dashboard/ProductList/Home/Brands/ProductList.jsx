@@ -172,21 +172,21 @@ export default function ProductList() {
           </div>
           
           {/* Brands Table */}
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Brand Name</TableHead>
-                  <TableHead>Logo</TableHead>
-                  <TableHead>Created Date</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+          <div className="overflow-x-auto responsive-table-container">
+            <Table className="responsive-table">
+              <TableHeader className="responsive-table-header">
+                <TableRow className="responsive-table-row">
+                  <TableHead className="responsive-table-cell col-name">Brand Name</TableHead>
+                  <TableHead className="responsive-table-cell col-logo">Logo</TableHead>
+                  <TableHead className="responsive-table-cell col-date">Created Date</TableHead>
+                  <TableHead className="responsive-table-cell col-status">Status</TableHead>
+                  <TableHead className="responsive-table-cell col-actions text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredBrands.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                  <TableRow className="responsive-table-row">
+                    <TableCell colSpan={5} className="text-center py-8 text-gray-500 responsive-table-cell">
                       {searchTerm ? 'No brands found matching your search' : (
                         <div className="text-center">
                           <div className="text-lg font-medium mb-2">No brands found</div>
@@ -201,38 +201,44 @@ export default function ProductList() {
                   </TableRow>
                 ) : (
                   filteredBrands.map((brand) => (
-                    <TableRow key={brand._id} className="hover:bg-gray-50">
-                      <TableCell className="font-medium">
-                        <div>
-                          <div className="font-semibold">{brand.name}</div>
-                          <div className="text-xs text-gray-500">ID: {brand._id}</div>
+                    <TableRow key={brand._id} className="hover:bg-gray-50 responsive-table-row">
+                      <TableCell className="font-medium responsive-table-cell col-name">
+                        <div className="content-height-limit">
+                          <div className="font-semibold text-truncate-tooltip" title={brand.name}>{brand.name}</div>
+                          <div className="text-xs text-gray-500 text-truncate-tooltip" title={`ID: ${brand._id}`}>ID: {brand._id}</div>
                         </div>
                       </TableCell>
-                      <TableCell>
-                        {brand.logo ? (
-                          <div className="flex items-center">
-                            <img 
-                              src={brand.logo} 
-                              alt={brand.name} 
-                              className="w-12 h-12 object-cover rounded border"
-                              onError={(e) => {
-                                e.target.src = "/placeholder-image.jpg";
-                              }}
-                            />
+                      <TableCell className="responsive-table-cell col-logo">
+                        <div className="content-height-limit">
+                          {brand.logo ? (
+                            <div className="flex items-center">
+                              <img 
+                                src={brand.logo} 
+                                alt={brand.name} 
+                                className="w-12 h-12 object-cover rounded border flex-shrink-0"
+                                onError={(e) => {
+                                  e.target.src = "/placeholder-image.jpg";
+                                }}
+                              />
+                            </div>
+                          ) : (
+                            <Badge variant="outline" className="text-xs">No Logo</Badge>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-sm text-gray-500 responsive-table-cell col-date">
+                        <div className="content-height-limit">
+                          <div className="text-truncate-tooltip" title={formatDate(brand.createdAt)}>
+                            {formatDate(brand.createdAt)}
                           </div>
-                        ) : (
-                          <Badge variant="outline" className="text-xs">No Logo</Badge>
-                        )}
+                        </div>
                       </TableCell>
-                      <TableCell className="text-sm text-gray-500">
-                        {formatDate(brand.createdAt)}
+                      <TableCell className="responsive-table-cell col-status">
+                        <Badge variant="default">
+                          Active
+                        </Badge>
                       </TableCell>
-                                             <TableCell>
-                         <Badge variant="default">
-                           Active
-                         </Badge>
-                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right responsive-table-cell col-actions">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon">

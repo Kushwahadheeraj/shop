@@ -405,35 +405,35 @@ const sections = [
             subItemsNameComponent: [
               {
                 name: 'Aluminium Tower Bolt',
-                path: '/Dashboard/ProductAdd/Hardware/Locks/DoorAccessories/AluminiumTowerBolt',
+                path: '/Dashboard/ProductAdd/Locks/DoorAccessories/AluminiumTowerBolt',
               },
               {
                 name: 'Ball Bearing Door Hinges',
-                path: '/Dashboard/ProductAdd/Hardware/Locks/DoorAccessories/BallBearingDoorHinges',
+                path: '/Dashboard/ProductAdd/Locks/DoorAccessories/BallBearingDoorHinges',
               },
               {
                 name: 'Concealed Hinges',
-                path: '/Dashboard/ProductAdd/Hardware/Locks/DoorAccessories/ConcealedHinges',
+                path: '/Dashboard/ProductAdd/Locks/DoorAccessories/ConcealedHinges',
               },
               {
                 name: 'Door Eye',
-                path: '/Dashboard/ProductAdd/Hardware/Locks/DoorAccessories/DoorEye',
+                path: '/Dashboard/ProductAdd/Locks/DoorAccessories/DoorEye',
               },
               {
                 name: 'Door Stopper',
-                path: '/Dashboard/ProductAdd/Hardware/Locks/DoorAccessories/DoorStopper',
+                path: '/Dashboard/ProductAdd/Locks/DoorAccessories/DoorStopper',
               },
               {
                 name: 'HINGES',
-                path: '/Dashboard/ProductAdd/Hardware/Locks/DoorAccessories/HINGES',
+                path: '/Dashboard/ProductAdd/Locks/DoorAccessories/HINGES',
               },
               {
                 name: 'Magnetic Door Stoppers',
-                path: '/Dashboard/ProductAdd/Hardware/Locks/DoorAccessories/MagneticDoorStoppers',
+                path: '/Dashboard/ProductAdd/Locks/DoorAccessories/MagneticDoorStoppers',
               },
               {
                 name: 'Wooden Sliding Door Fittings',
-                path: '/Dashboard/ProductAdd/Hardware/Locks/DoorAccessories/WoodenSlidingDoorFittings',
+                path: '/Dashboard/ProductAdd/Locks/DoorAccessories/WoodenSlidingDoorFittings',
               },
             ],
           },
@@ -442,7 +442,7 @@ const sections = [
             subItemsNameComponent: [
               {
                 name: 'Door Closers',
-                path: '/Dashboard/ProductAdd/Locks/DoorControls/DoorClosers',
+                path: '/Dashboard/ProductAdd/Locks/DoorControls/DoorCloser',
               },
               {
                 name: 'Door Stopper',
@@ -2803,35 +2803,35 @@ const sections = [
             subItemsNameComponent: [
               {
                 name: 'Aluminium Tower Bolt',
-                path: '/Dashboard/ProductList/Hardware/Locks/DoorAccessories/AluminiumTowerBolt',
+                path: '/Dashboard/ProductList/Locks/DoorAccessories/AluminiumTowerBolt',
               },
               {
                 name: 'Ball Bearing Door Hinges',
-                path: '/Dashboard/ProductList/Hardware/Locks/DoorAccessories/BallBearingDoorHinges',
+                path: '/Dashboard/ProductList/Locks/DoorAccessories/BallBearingDoorHinges',
               },
               {
                 name: 'Concealed Hinges',
-                path: '/Dashboard/ProductList/Hardware/Locks/DoorAccessories/ConcealedHinges',
+                path: '/Dashboard/ProductList/Locks/DoorAccessories/ConcealedHinges',
               },
               {
                 name: 'Door Eye',
-                path: '/Dashboard/ProductList/Hardware/Locks/DoorAccessories/DoorEye',
+                path: '/Dashboard/ProductList/Locks/DoorAccessories/DoorEye',
               },
               {
                 name: 'Door Stopper',
-                path: '/Dashboard/ProductList/Hardware/Locks/DoorAccessories/DoorStopper',
+                path: '/Dashboard/ProductList/Locks/DoorAccessories/DoorStopper',
               },
               {
                 name: 'HINGES',
-                path: '/Dashboard/ProductList/Hardware/Locks/DoorAccessories/HINGES',
+                path: '/Dashboard/ProductList/Locks/DoorAccessories/HINGES',
               },
               {
                 name: 'Magnetic Door Stoppers',
-                path: '/Dashboard/ProductList/Hardware/Locks/DoorAccessories/MagneticDoorStoppers',
+                path: '/Dashboard/ProductList/Locks/DoorAccessories/MagneticDoorStoppers',
               },
               {
                 name: 'Wooden Sliding Door Fittings',
-                path: '/Dashboard/ProductList/Hardware/Locks/DoorAccessories/WoodenSlidingDoorFittings',
+                path: '/Dashboard/ProductList/Locks/DoorAccessories/WoodenSlidingDoorFittings',
               },
             ],
           },

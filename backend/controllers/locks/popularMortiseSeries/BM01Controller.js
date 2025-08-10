@@ -44,6 +44,13 @@ exports.createBM01 = async (req, res) => {
  */
 exports.updateBM01 = async (req, res) => {
   try {
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+      req.body.photos = photoUrls;
+    }
     let update = { ...req.body };
     if (req.files && req.files.length > 0) {
       if (req.files.length > 5) {
@@ -64,7 +71,7 @@ exports.updateBM01 = async (req, res) => {
 };
 exports.getAllBM01 = async (req, res) => {
   try {
-    const items = await Lock.find({ type: 'BM01' });
+    const items = await Lock.find({ category: 'BM01' });
     res.json(items);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -73,7 +80,7 @@ exports.getAllBM01 = async (req, res) => {
 
 exports.deleteBM01 = async (req, res) => {
   try {
-    const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'BM01' });
+    const item = await Lock.findOneAndDelete({ _id: req.params.id, category: 'BM01' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
@@ -83,7 +90,7 @@ exports.deleteBM01 = async (req, res) => {
 
 exports.getOneBM01 = async (req, res) => {
   try {
-    const item = await Lock.findOne({ _id: req.params.id, type: 'BM01' });
+    const item = await Lock.findOne({ _id: req.params.id, category: 'BM01' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
   } catch (err) {

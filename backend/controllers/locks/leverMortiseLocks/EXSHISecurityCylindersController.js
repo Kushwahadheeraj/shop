@@ -44,6 +44,13 @@ exports.createEXSHISecurityCylinders = async (req, res) => {
  */
 exports.updateEXSHISecurityCylinders = async (req, res) => {
   try {
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+      req.body.photos = photoUrls;
+    }
     let update = { ...req.body };
     if (req.files && req.files.length > 0) {
       if (req.files.length > 5) {
@@ -64,7 +71,7 @@ exports.updateEXSHISecurityCylinders = async (req, res) => {
 };
 exports.getAllEXSHISecurityCylinders = async (req, res) => {
   try {
-    const items = await Lock.find({ type: 'EXSHISecurityCylinders' });
+    const items = await Lock.find({ category: 'EXSHISecurityCylinders' });
     res.json(items);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -73,7 +80,7 @@ exports.getAllEXSHISecurityCylinders = async (req, res) => {
 
 exports.deleteEXSHISecurityCylinders = async (req, res) => {
   try {
-    const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'EXSHISecurityCylinders' });
+    const item = await Lock.findOneAndDelete({ _id: req.params.id, category: 'EXSHISecurityCylinders' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
@@ -83,7 +90,7 @@ exports.deleteEXSHISecurityCylinders = async (req, res) => {
 
 exports.getOneEXSHISecurityCylinders = async (req, res) => {
   try {
-    const item = await Lock.findOne({ _id: req.params.id, type: 'EXSHISecurityCylinders' });
+    const item = await Lock.findOne({ _id: req.params.id, category: 'EXSHISecurityCylinders' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
   } catch (err) {

@@ -168,47 +168,71 @@ export default function ProductList() {
       ) : rows.length === 0 ? (
         <div className="text-gray-500">No products found for selected categories.</div>
       ) : (
-        <div className="border rounded-lg">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Brand</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Tags</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+        <div className="border rounded-lg overflow-x-auto responsive-table-container">
+          <Table className="responsive-table">
+            <TableHeader className="responsive-table-header">
+              <TableRow className="responsive-table-row">
+                <TableHead className="responsive-table-cell col-name">Name</TableHead>
+                <TableHead className="responsive-table-cell col-category">Category</TableHead>
+                <TableHead className="responsive-table-cell col-brand">Brand</TableHead>
+                <TableHead className="responsive-table-cell col-price">Price</TableHead>
+                <TableHead className="responsive-table-cell col-tags">Tags</TableHead>
+                <TableHead className="responsive-table-cell col-date">Created</TableHead>
+                <TableHead className="responsive-table-cell col-actions text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {rows.map((row) => {
                 const p = row.product || {};
                 return (
-                  <TableRow key={`${row.category}-${p._id}`}>
-                    <TableCell className="font-medium">{p.name || "-"}</TableCell>
-                    <TableCell>{row.category || p.category || "-"}</TableCell>
-                    <TableCell>{p.brand || "-"}</TableCell>
-                    <TableCell>{p.price != null ? `₹${Number(p.price).toFixed(2)}` : "-"}</TableCell>
-                    <TableCell>
-                      <div className="flex flex-wrap gap-1">
+                  <TableRow key={`${row.category}-${p._id}`} className="responsive-table-row">
+                    <TableCell className="responsive-table-cell col-name font-medium">
+                      <div className="content-height-limit">
+                        <div className="text-truncate-tooltip" title={p.name || "-"}>{p.name || "-"}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="responsive-table-cell col-category">
+                      <div className="content-height-limit">
+                        <div className="text-truncate-tooltip" title={row.category || p.category || "-"}>{row.category || p.category || "-"}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="responsive-table-cell col-brand">
+                      <div className="content-height-limit">
+                        <div className="text-truncate-tooltip" title={p.brand || "-"}>{p.brand || "-"}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="responsive-table-cell col-price">
+                      <div className="content-height-limit">
+                        <div className="text-truncate-tooltip" title={p.price != null ? `₹${Number(p.price).toFixed(2)}` : "-"}>
+                          {p.price != null ? `₹${Number(p.price).toFixed(2)}` : "-"}
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="responsive-table-cell col-tags">
+                      <div className="flex flex-wrap gap-1 content-height-limit">
                         {(p.tag || p.tags || []).slice(0, 3).map((t, i) => (
-                          <Badge key={i} variant="outline" className="text-xs">{t}</Badge>
+                          <Badge key={i} variant="outline" className="text-xs badge-truncate" title={t}>{t}</Badge>
                         ))}
                         {(p.tag || p.tags || []).length > 3 && (
                           <Badge variant="secondary" className="text-xs">+{(p.tag || p.tags || []).length - 3}</Badge>
                         )}
                       </div>
                     </TableCell>
-                    <TableCell>{p.createdAt ? new Date(p.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '-'}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button variant="outline" size="sm" onClick={() => handleView(p)}>
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                        <Button variant="outline" size="sm" onClick={() => handleDelete(p._id)}>
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                    <TableCell className="responsive-table-cell col-date">
+                      <div className="content-height-limit text-truncate-tooltip" title={p.createdAt ? new Date(p.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '-'}>
+                        {p.createdAt ? new Date(p.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '-'}
+                      </div>
+                    </TableCell>
+                    <TableCell className="responsive-table-cell col-actions text-right">
+                      <div className="content-height-limit">
+                        <div className="flex justify-end gap-2">
+                          <Button variant="outline" size="sm" onClick={() => handleView(p)}>
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                          <Button variant="outline" size="sm" onClick={() => handleDelete(p._id)}>
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
                     </TableCell>
                   </TableRow>

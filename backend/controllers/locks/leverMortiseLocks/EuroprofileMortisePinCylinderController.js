@@ -44,6 +44,13 @@ exports.createEuroprofileMortisePinCylinder = async (req, res) => {
  */
 exports.updateEuroprofileMortisePinCylinder = async (req, res) => {
   try {
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+      req.body.photos = photoUrls;
+    }
     let update = { ...req.body };
     if (req.files && req.files.length > 0) {
       if (req.files.length > 5) {
@@ -64,7 +71,7 @@ exports.updateEuroprofileMortisePinCylinder = async (req, res) => {
 };
 exports.getAllEuroprofileMortisePinCylinder = async (req, res) => {
   try {
-    const items = await Lock.find({ type: 'EuroprofileMortisePinCylinder' });
+    const items = await Lock.find({ category: 'EuroprofileMortisePinCylinder' });
     res.json(items);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -73,7 +80,7 @@ exports.getAllEuroprofileMortisePinCylinder = async (req, res) => {
 
 exports.deleteEuroprofileMortisePinCylinder = async (req, res) => {
   try {
-    const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'EuroprofileMortisePinCylinder' });
+    const item = await Lock.findOneAndDelete({ _id: req.params.id, category: 'EuroprofileMortisePinCylinder' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
@@ -83,7 +90,7 @@ exports.deleteEuroprofileMortisePinCylinder = async (req, res) => {
 
 exports.getOneEuroprofileMortisePinCylinder = async (req, res) => {
   try {
-    const item = await Lock.findOne({ _id: req.params.id, type: 'EuroprofileMortisePinCylinder' });
+    const item = await Lock.findOne({ _id: req.params.id, category: 'EuroprofileMortisePinCylinder' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
   } catch (err) {

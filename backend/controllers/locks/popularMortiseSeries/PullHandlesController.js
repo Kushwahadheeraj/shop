@@ -44,6 +44,13 @@ exports.createPullHandles = async (req, res) => {
  */
 exports.updatePullHandles = async (req, res) => {
   try {
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+      req.body.photos = photoUrls;
+    }
     let update = { ...req.body };
     if (req.files && req.files.length > 0) {
       if (req.files.length > 5) {
@@ -64,7 +71,7 @@ exports.updatePullHandles = async (req, res) => {
 };
 exports.getAllPullHandles = async (req, res) => {
   try {
-    const items = await Lock.find({ type: 'PullHandles' });
+    const items = await Lock.find({ category: 'PullHandles' });
     res.json(items);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -73,7 +80,7 @@ exports.getAllPullHandles = async (req, res) => {
 
 exports.deletePullHandles = async (req, res) => {
   try {
-    const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'PullHandles' });
+    const item = await Lock.findOneAndDelete({ _id: req.params.id, category: 'PullHandles' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
@@ -83,7 +90,7 @@ exports.deletePullHandles = async (req, res) => {
 
 exports.getOnePullHandles = async (req, res) => {
   try {
-    const item = await Lock.findOne({ _id: req.params.id, type: 'PullHandles' });
+    const item = await Lock.findOne({ _id: req.params.id, category: 'PullHandles' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
   } catch (err) {

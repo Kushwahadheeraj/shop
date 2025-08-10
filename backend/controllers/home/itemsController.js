@@ -16,18 +16,40 @@ function uploadToCloudinary(buffer) {
 // Create a new item
 exports.createItem = async (req, res) => {
   try {
+    // Check if image is uploaded
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: 'Image is required'
+      });
+    }
+
+    // Upload image to Cloudinary
     let imageUrl = '';
-    
-    // Handle image upload if provided
-    if (req.file) {
+    try {
       imageUrl = await uploadToCloudinary(req.file.buffer);
+    } catch (uploadError) {
+      console.error('Cloudinary upload error:', uploadError);
+      return res.status(500).json({
+        success: false,
+        message: 'Error uploading image to Cloudinary',
+        error: uploadError.message
+      });
+    }
+
+    // Validate required fields
+    if (!req.body.link || !req.body.title) {
+      return res.status(400).json({
+        success: false,
+        message: 'Link and title are required fields'
+      });
     }
 
     const itemData = {
       image: imageUrl,
       link: req.body.link,
       title: req.body.title,
-      subtitle: req.body.subtitle
+      subtitle: req.body.subtitle || ''
     };
 
     const item = new ItemsModel(itemData);
@@ -39,6 +61,7 @@ exports.createItem = async (req, res) => {
       data: savedItem
     });
   } catch (error) {
+    console.error('Error creating item:', error);
     res.status(500).json({
       success: false,
       message: 'Error creating item',
@@ -94,13 +117,30 @@ exports.updateItem = async (req, res) => {
     let updateData = {
       link: req.body.link,
       title: req.body.title,
-      subtitle: req.body.subtitle
+      subtitle: req.body.subtitle || ''
     };
     
     // Handle image upload if provided
     if (req.file) {
-      const imageUrl = await uploadToCloudinary(req.file.buffer);
-      updateData.image = imageUrl;
+      try {
+        const imageUrl = await uploadToCloudinary(req.file.buffer);
+        updateData.image = imageUrl;
+      } catch (uploadError) {
+        console.error('Cloudinary upload error:', uploadError);
+        return res.status(500).json({
+          success: false,
+          message: 'Error uploading image to Cloudinary',
+          error: uploadError.message
+        });
+      }
+    }
+
+    // Validate required fields
+    if (!req.body.link || !req.body.title) {
+      return res.status(400).json({
+        success: false,
+        message: 'Link and title are required fields'
+      });
     }
 
     const item = await ItemsModel.findByIdAndUpdate(
@@ -122,6 +162,7 @@ exports.updateItem = async (req, res) => {
       data: item
     });
   } catch (error) {
+    console.error('Error updating item:', error);
     res.status(500).json({
       success: false,
       message: 'Error updating item',

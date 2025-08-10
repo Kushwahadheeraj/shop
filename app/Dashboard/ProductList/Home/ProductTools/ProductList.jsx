@@ -35,7 +35,7 @@ export default function ProductList() {
   const [deleteId, setDeleteId] = useState(null);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/home/productTools`;
+  const API_URL = `${API_BASE_URL}/home/producttools`;
 
   useEffect(() => {
     fetchProducts();
@@ -48,41 +48,39 @@ export default function ProductList() {
       console.log('API URL:', API_URL + '/get');
       const res = await fetch(API_URL + '/get');
       console.log('Response status:', res.status);
+      console.log('Response headers:', res.headers);
+      
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
-      const data = await res.json();
-      console.log('Response data:', data);
-      console.log('Data type:', typeof data);
-      console.log('Data length:', Array.isArray(data) ? data.length : 'Not an array');
-      setProducts(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error('Error fetching products:', err);
-      setError(err.message);
-      setProducts([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
+      
       const responseData = await res.json();
       console.log('API Response:', responseData); // Debug log
+      console.log('Response data type:', typeof responseData);
+      console.log('Response data keys:', Object.keys(responseData || {}));
       
       // Handle the response format: {"success":true,"count":0,"data":[]}
       let productsArray = [];
       if (responseData.success && responseData.data) {
         productsArray = responseData.data;
+        console.log('Using success.data path, found products:', productsArray.length);
       } else if (Array.isArray(responseData)) {
         productsArray = responseData;
+        console.log('Using direct array path, found products:', productsArray.length);
       } else if (responseData.products) {
         productsArray = responseData.products;
+        console.log('Using products path, found products:', productsArray.length);
+      } else {
+        console.log('No recognized data structure found in response');
+        console.log('Available keys:', Object.keys(responseData || {}));
       }
       
       console.log('Processed products array:', productsArray); // Debug log
       if (productsArray.length > 0) {
-        console.log('First product images:', productsArray[0].images); // Debug log
+        console.log('First product:', productsArray[0]);
+        console.log('First product images:', productsArray[0].images);
+      } else {
+        console.log('No products found in the array');
       }
       
       setProducts(productsArray);
@@ -223,29 +221,29 @@ export default function ProductList() {
             </div>
           </div>
           
-          {/* Custom Table for Product Tools */}
-          <div className="border rounded-lg overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Images</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Brand</TableHead>
-                  <TableHead>Price Range</TableHead>
-                  <TableHead>Current Price</TableHead>
-                  <TableHead>Variants</TableHead>
-                  <TableHead>Tags</TableHead>
-                  <TableHead>Rating</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Created Date</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+          {/* Product Tools Table */}
+          <div className="overflow-x-auto responsive-table-container">
+            <Table className="responsive-table">
+              <TableHeader className="responsive-table-header">
+                <TableRow className="responsive-table-row">
+                  <TableHead className="responsive-table-cell col-image">Images</TableHead>
+                  <TableHead className="responsive-table-cell col-name">Name</TableHead>
+                  <TableHead className="responsive-table-cell col-category">Category</TableHead>
+                  <TableHead className="responsive-table-cell col-brand">Brand</TableHead>
+                  <TableHead className="responsive-table-cell col-price">Price Range</TableHead>
+                  <TableHead className="responsive-table-cell col-price">Current Price</TableHead>
+                  <TableHead className="responsive-table-cell col-variants">Variants</TableHead>
+                  <TableHead className="responsive-table-cell col-tags">Tags</TableHead>
+                  <TableHead className="responsive-table-cell col-rating">Rating</TableHead>
+                  <TableHead className="responsive-table-cell col-status">Status</TableHead>
+                  <TableHead className="responsive-table-cell col-date">Created Date</TableHead>
+                  <TableHead className="responsive-table-cell col-actions text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredProducts.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={12} className="text-center py-8 text-gray-500">
+                  <TableRow className="responsive-table-row">
+                    <TableCell colSpan={12} className="text-center py-8 text-gray-500 responsive-table-cell">
                       {searchTerm ? 'No product tools found matching your search' : (
                         <div className="text-center">
                           <div className="text-lg font-medium mb-2">No product tools found</div>
@@ -260,9 +258,9 @@ export default function ProductList() {
                   </TableRow>
                 ) : (
                   filteredProducts.map((product) => (
-                    <TableRow key={product._id}>
-                      <TableCell>
-                        <div className="relative">
+                    <TableRow key={product._id} className="hover:bg-gray-50 responsive-table-row">
+                      <TableCell className="responsive-table-cell col-image">
+                        <div className="content-height-limit">
                           {(() => {
                             // Handle both old 'image' and new 'images' field for backward compatibility
                             const productImages = product.images || (product.image ? [product.image] : []);
@@ -274,7 +272,7 @@ export default function ProductList() {
                                   <img 
                                     src={productImages[0]} 
                                     alt={product.name}
-                                    className="w-12 h-12 object-cover rounded border"
+                                    className="w-12 h-12 object-cover rounded border flex-shrink-0"
                                     onError={(e) => {
                                       console.error('Image failed to load:', productImages[0], e);
                                       e.target.style.display = 'none';
@@ -305,39 +303,43 @@ export default function ProductList() {
                           })()}
                         </div>
                       </TableCell>
-                      <TableCell className="font-medium">
-                        <div className="max-w-xs">
-                          <div className="font-medium">{product.name}</div>
+                      <TableCell className="responsive-table-cell col-name">
+                        <div className="content-height-limit">
+                          <div className="font-medium text-truncate-tooltip" title={product.name}>{product.name}</div>
                           {product.description && (
-                            <div className="text-xs text-gray-500 truncate">
+                            <div className="text-xs text-gray-500 line-clamp-2" title={product.description}>
                               {product.description}
                             </div>
                           )}
                         </div>
                       </TableCell>
-                      <TableCell>
-                        {product.category || 'N/A'}
+                      <TableCell className="responsive-table-cell col-category">
+                        <div className="text-truncate-tooltip content-height-limit" title={product.category || 'N/A'}>
+                          {product.category || 'N/A'}
+                        </div>
                       </TableCell>
-                      <TableCell>
-                        {product.brand || 'N/A'}
+                      <TableCell className="responsive-table-cell col-brand">
+                        <div className="text-truncate-tooltip content-height-limit" title={product.brand || 'N/A'}>
+                          {product.brand || 'N/A'}
+                        </div>
                       </TableCell>
-                      <TableCell>
-                        <div className="space-y-1">
+                      <TableCell className="responsive-table-cell col-price">
+                        <div className="space-y-1 content-height-limit">
                           {product.minPrice && product.maxPrice ? (
-                            <div className="text-sm">
+                            <div className="text-sm text-truncate-tooltip" title={`${formatPrice(product.minPrice)} - ${formatPrice(product.maxPrice)}`}>
                               {formatPrice(product.minPrice)} - {formatPrice(product.maxPrice)}
                             </div>
                           ) : product.minPrice ? (
-                            <div className="text-sm">From {formatPrice(product.minPrice)}</div>
+                            <div className="text-sm text-truncate-tooltip" title={`From ${formatPrice(product.minPrice)}`}>From {formatPrice(product.minPrice)}</div>
                           ) : product.maxPrice ? (
-                            <div className="text-sm">Up to {formatPrice(product.maxPrice)}</div>
+                            <div className="text-sm text-truncate-tooltip" title={`Up to ${formatPrice(product.maxPrice)}`}>Up to {formatPrice(product.maxPrice)}</div>
                           ) : (
                             <span className="text-gray-400 text-sm">No range</span>
                           )}
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <div className="space-y-1">
+                      <TableCell className="responsive-table-cell col-price">
+                        <div className="space-y-1 content-height-limit">
                           <div className="text-sm font-medium">{formatPrice(product.price)}</div>
                           {product.discount && product.discount > 0 && (
                             <Badge variant="destructive" className="text-xs">
@@ -346,14 +348,14 @@ export default function ProductList() {
                           )}
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Package className="w-4 h-4 text-gray-400" />
-                          <div className="text-sm">
+                      <TableCell className="responsive-table-cell col-variants">
+                        <div className="flex items-center gap-2 content-height-limit">
+                          <Package className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                          <div className="text-sm min-w-0">
                             {product.variants && product.variants.length > 0 ? (
                               <div>
                                 <div className="font-medium">{product.variants.length} variants</div>
-                                <div className="text-xs text-gray-500">
+                                <div className="text-xs text-gray-500 text-truncate-tooltip" title={product.variants.slice(0, 2).map(v => v.variantName).join(', ')}>
                                   {product.variants.slice(0, 2).map(v => v.variantName).join(', ')}
                                   {product.variants.length > 2 && ` +${product.variants.length - 2} more`}
                                 </div>
@@ -364,29 +366,31 @@ export default function ProductList() {
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <div className="flex flex-wrap gap-1 max-w-32">
+                      <TableCell className="responsive-table-cell col-tags">
+                        <div className="flex flex-wrap gap-1 content-height-limit">
                           {product.tags && product.tags.length > 0 ? (
-                            product.tags.slice(0, 2).map((tag, index) => (
-                              <Badge key={index} variant="outline" className="text-xs">
-                                {tag}
-                              </Badge>
-                            ))
+                            <>
+                              {product.tags.slice(0, 2).map((tag, index) => (
+                                <Badge key={index} variant="outline" className="text-xs badge-truncate" title={tag}>
+                                  {tag}
+                                </Badge>
+                              ))}
+                              {product.tags.length > 2 && (
+                                <Badge variant="secondary" className="text-xs">
+                                  +{product.tags.length - 2} more
+                                </Badge>
+                              )}
+                            </>
                           ) : (
                             <span className="text-gray-400 text-sm">No tags</span>
                           )}
-                          {product.tags && product.tags.length > 2 && (
-                            <Badge variant="secondary" className="text-xs">
-                              +{product.tags.length - 2} more
-                            </Badge>
-                          )}
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
+                      <TableCell className="responsive-table-cell col-rating">
+                        <div className="flex items-center gap-2 content-height-limit">
                           <span className="text-sm font-medium">{formatRating(product.rating)}</span>
                           {product.rating > 0 && (
-                            <div className="flex">
+                            <div className="flex flex-shrink-0">
                               {[...Array(5)].map((_, i) => (
                                 <svg
                                   key={i}
@@ -404,15 +408,17 @@ export default function ProductList() {
                           )}
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="responsive-table-cell col-status">
                         <Badge variant={product.isActive !== false ? "default" : "destructive"}>
                           {product.isActive !== false ? "Active" : "Inactive"}
                         </Badge>
                       </TableCell>
-                      <TableCell>
-                        {formatDate(product.createdAt)}
+                      <TableCell className="responsive-table-cell col-date">
+                        <div className="text-sm text-truncate-tooltip content-height-limit" title={formatDate(product.createdAt)}>
+                          {formatDate(product.createdAt)}
+                        </div>
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right responsive-table-cell col-actions">
                         <div className="flex justify-end gap-2">
                           <Button
                             variant="outline"

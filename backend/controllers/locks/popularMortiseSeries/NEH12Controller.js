@@ -44,6 +44,13 @@ exports.createNEH12 = async (req, res) => {
  */
 exports.updateNEH12 = async (req, res) => {
   try {
+    if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'No more than 5 images allowed.' });
+      }
+      const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
+      req.body.photos = photoUrls;
+    }
     let update = { ...req.body };
     if (req.files && req.files.length > 0) {
       if (req.files.length > 5) {
@@ -64,7 +71,7 @@ exports.updateNEH12 = async (req, res) => {
 };
 exports.getAllNEH12 = async (req, res) => {
   try {
-    const items = await Lock.find({ type: 'NEH12' });
+    const items = await Lock.find({ category: 'NEH12' });
     res.json(items);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -73,7 +80,7 @@ exports.getAllNEH12 = async (req, res) => {
 
 exports.deleteNEH12 = async (req, res) => {
   try {
-    const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'NEH12' });
+    const item = await Lock.findOneAndDelete({ _id: req.params.id, category: 'NEH12' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
@@ -83,7 +90,7 @@ exports.deleteNEH12 = async (req, res) => {
 
 exports.getOneNEH12 = async (req, res) => {
   try {
-    const item = await Lock.findOne({ _id: req.params.id, type: 'NEH12' });
+    const item = await Lock.findOne({ _id: req.params.id, category: 'NEH12' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
   } catch (err) {

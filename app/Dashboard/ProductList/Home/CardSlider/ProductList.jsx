@@ -185,21 +185,21 @@ export default function ProductList() {
           </div>
           
           {/* Custom Table for Card Sliders */}
-          <div className="border rounded-lg">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Image</TableHead>
-                  <TableHead>Created Date</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+          <div className="border rounded-lg overflow-x-auto responsive-table-container">
+            <Table className="responsive-table">
+              <TableHeader className="responsive-table-header">
+                <TableRow className="responsive-table-row">
+                  <TableHead className="responsive-table-cell col-name">Name</TableHead>
+                  <TableHead className="responsive-table-cell col-image">Image</TableHead>
+                  <TableHead className="responsive-table-cell col-date">Created Date</TableHead>
+                  <TableHead className="responsive-table-cell col-status">Status</TableHead>
+                  <TableHead className="responsive-table-cell col-actions text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredCardSliders.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                  <TableRow className="responsive-table-row">
+                    <TableCell colSpan={5} className="text-center py-8 text-gray-500 responsive-table-cell">
                       {searchTerm ? 'No card sliders found matching your search' : (
                         <div className="text-center">
                           <div className="text-lg font-medium mb-2">No card sliders found</div>
@@ -214,68 +214,78 @@ export default function ProductList() {
                   </TableRow>
                 ) : (
                   filteredCardSliders.map((cardSlider) => (
-                    <TableRow key={cardSlider._id}>
-                      <TableCell className="font-medium">
-                        {cardSlider.name}
+                    <TableRow key={cardSlider._id} className="responsive-table-row">
+                      <TableCell className="responsive-table-cell col-name font-medium">
+                        <div className="content-height-limit">
+                          <div className="text-truncate-tooltip" title={cardSlider.name}>{cardSlider.name}</div>
+                        </div>
                       </TableCell>
-                      <TableCell>
-                        {cardSlider.image && (
-                          <img 
-                            src={cardSlider.image} 
-                            alt={cardSlider.name}
-                            className="w-12 h-12 object-cover rounded border"
-                          />
-                        )}
+                      <TableCell className="responsive-table-cell col-image">
+                        <div className="content-height-limit">
+                          {cardSlider.image && (
+                            <img 
+                              src={cardSlider.image} 
+                              alt={cardSlider.name}
+                              className="w-12 h-12 object-cover rounded border flex-shrink-0"
+                            />
+                          )}
+                        </div>
                       </TableCell>
-                      <TableCell>
-                        {formatDate(cardSlider.createdAt)}
+                      <TableCell className="responsive-table-cell col-date">
+                        <div className="content-height-limit text-truncate-tooltip" title={formatDate(cardSlider.createdAt)}>
+                          {formatDate(cardSlider.createdAt)}
+                        </div>
                       </TableCell>
-                      <TableCell>
-                        <Badge variant="default">
-                          Active
-                        </Badge>
+                      <TableCell className="responsive-table-cell col-status">
+                        <div className="content-height-limit">
+                          <Badge variant="default">
+                            Active
+                          </Badge>
+                        </div>
                       </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleView(cardSlider)}
-                          >
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleEdit(cardSlider)}
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleDeleteClick(cardSlider._id)}
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  This action cannot be undone. This will permanently delete the card slider "{cardSlider.name}".
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={confirmDelete}>
-                                  Delete
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
+                      <TableCell className="responsive-table-cell col-actions text-right">
+                        <div className="content-height-limit">
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleView(cardSlider)}
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleEdit(cardSlider)}
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleDeleteClick(cardSlider._id)}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    This action cannot be undone. This will permanently delete the card slider "{cardSlider.name}".
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction onClick={confirmDelete}>
+                                    Delete
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
                         </div>
                       </TableCell>
                     </TableRow>

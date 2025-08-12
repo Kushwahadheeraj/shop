@@ -31,7 +31,14 @@ exports.createGlassHardware = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Lock({ ...req.body, photos: photoUrls, category: 'GlassHardware' });
+    const product = new Lock({ 
+      ...req.body, 
+      photos: photoUrls, 
+      category: 'GlassHardware',
+      type: 'GlassHardware',
+      productNo: req.body.productNo || 'GH-' + Date.now(),
+      productQualityName: req.body.productQualityName || 'Standard'
+    });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -64,7 +71,7 @@ exports.updateGlassHardware = async (req, res) => {
 };
 exports.getAllGlassHardware = async (req, res) => {
   try {
-    const items = await Lock.find({ type: 'glassHardware' });
+    const items = await Lock.find({ category: 'GlassHardware' });
     res.json(items);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -73,7 +80,7 @@ exports.getAllGlassHardware = async (req, res) => {
 
 exports.deleteGlassHardware = async (req, res) => {
   try {
-    const item = await Lock.findOneAndDelete({ _id: req.params.id, type: 'glassHardware' });
+    const item = await Lock.findOneAndDelete({ _id: req.params.id, category: 'GlassHardware' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
@@ -83,7 +90,7 @@ exports.deleteGlassHardware = async (req, res) => {
 
 exports.getOneGlassHardware = async (req, res) => {
   try {
-    const item = await Lock.findOne({ _id: req.params.id, type: 'glassHardware' });
+    const item = await Lock.findOne({ _id: req.params.id, category: 'GlassHardware' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
   } catch (err) {

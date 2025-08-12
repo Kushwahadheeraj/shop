@@ -22,7 +22,7 @@ function uploadToCloudinary(buffer) {
 /**
  * Create a new DiscPadLocks product.
  */
-exports.createDoorKings = async (req, res) => {
+exports.createDiscPadLocks = async (req, res) => {
   try {
     if (!req.files || req.files.length < 1) {
       return res.status(400).json({ error: 'At least 1 image is required.' });
@@ -37,7 +37,9 @@ exports.createDoorKings = async (req, res) => {
       category: 'DiscPadLocks',
       type: 'DiscPadLocks',
       productNo: req.body.productNo || 'DP-' + Date.now(),
-      productQualityName: req.body.productQualityName || 'Standard'
+      productQualityName: req.body.productQualityName || 'Standard',
+      minPrice: req.body.minPrice || undefined,
+      maxPrice: req.body.maxPrice || undefined
     });
     await item.save();
     res.status(201).json(item);

@@ -31,7 +31,14 @@ exports.createDrawerChannels = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Lock({ ...req.body, photos: photoUrls, category: 'DrawerChannels' });
+    const product = new Lock({
+      ...req.body,
+      photos: photoUrls,
+      category: 'DrawerChannels',
+      type: 'DrawerChannels',
+      productNo: req.body.productNo || 'DC-' + Date.now(),
+      productQualityName: req.body.productQualityName || 'Standard'
+    });
     await product.save();
     res.status(201).json(product);
   } catch (err) {

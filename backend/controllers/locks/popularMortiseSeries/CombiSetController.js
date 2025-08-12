@@ -31,7 +31,14 @@ exports.createCombiSet = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Lock({ ...req.body, photos: photoUrls, category: 'CombiSet' });
+    const product = new Lock({
+      ...req.body,
+      photos: photoUrls,
+      category: 'CombiSet',
+      type: 'CombiSet',
+      productNo: req.body.productNo || 'CS-' + Date.now(),
+      productQualityName: req.body.productQualityName || 'Standard'
+    });
     await product.save();
     res.status(201).json(product);
   } catch (err) {

@@ -36,7 +36,7 @@ exports.createCentreShutterLocks = async (req, res) => {
       photos: photoUrls, 
       category: 'CentreShutterLocks',
       type: 'CentreShutterLocks',
-      productNo: req.body.productNo || 'CS-' + Date.now(),
+      productNo: req.body.productNo || 'CSL-' + Date.now(),
       productQualityName: req.body.productQualityName || 'Standard'
     });
     await item.save();

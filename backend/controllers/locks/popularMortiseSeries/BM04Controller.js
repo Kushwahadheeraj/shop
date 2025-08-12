@@ -31,7 +31,14 @@ exports.createBM04 = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Lock({ ...req.body, photos: photoUrls, category: 'BM04' });
+    const product = new Lock({
+      ...req.body,
+      photos: photoUrls,
+      category: 'BM04',
+      type: 'BM04',
+      productNo: req.body.productNo || 'BM04-' + Date.now(),
+      productQualityName: req.body.productQualityName || 'Standard'
+    });
     await product.save();
     res.status(201).json(product);
   } catch (err) {

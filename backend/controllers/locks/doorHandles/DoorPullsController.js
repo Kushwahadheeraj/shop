@@ -34,7 +34,9 @@ exports.createDoorPulls = async (req, res) => {
       category: 'DoorPulls',
       type: 'DoorPulls',
       productNo: req.body.productNo || 'DP-' + Date.now(),
-      productQualityName: req.body.productQualityName || 'Standard'
+      productQualityName: req.body.productQualityName || 'Standard',
+      minPrice: req.body.minPrice || undefined,
+      maxPrice: req.body.maxPrice || undefined
     });
     await item.save();
     res.status(201).json(item);

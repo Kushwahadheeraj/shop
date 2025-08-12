@@ -31,7 +31,14 @@ exports.createUltraVertibolt = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new Lock({ ...req.body, photos: photoUrls, category: 'UltraVertibolt' });
+    const product = new Lock({
+      ...req.body,
+      photos: photoUrls,
+      category: 'UltraVertibolt',
+      type: 'UltraVertibolt',
+      productNo: req.body.productNo || 'UV-' + Date.now(),
+      productQualityName: req.body.productQualityName || 'Standard'
+    });
     await product.save();
     res.status(201).json(product);
   } catch (err) {

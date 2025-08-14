@@ -162,7 +162,7 @@ export default function ProductForm({ onSave }) {
       f.fieldValues.forEach(val => data.append('customFieldValue' + (idx+1), val));
     });
     files.forEach(f => data.append('photos', f));
-    const res = await fetch(`${API_BASE_URL}/sanitary/Hindware/Faucets/BibCock/create`, { method: 'POST', body: data });
+    const res = await fetch(`${API_BASE_URL}/sanitary/-hindware/-faucets/-bib-cock/create`, { method: 'POST', body: data });
     if (res.ok) onSave && onSave();
   };
 

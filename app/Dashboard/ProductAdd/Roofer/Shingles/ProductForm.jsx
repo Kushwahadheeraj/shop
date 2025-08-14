@@ -15,7 +15,9 @@ export default function ProductForm({ onSave }) {
   const [form, setForm] = useState({
     name: '',
     sku: 'N/A',
-    price: '',
+    fixPrice: '',
+    minPrice: '',
+    maxPrice: '',
     discount: '',
     discountPrice: '',
     totalProduct: '',
@@ -34,13 +36,28 @@ export default function ProductForm({ onSave }) {
     const { name, value } = e.target;
     setForm(prev => {
       let updated = { ...prev, [name]: value };
-      if (name === 'price' || name === 'discount') {
-        const price = parseFloat(name === 'price' ? value : prev.price);
+      if (name === 'fixPrice' || name === 'discount') {
+        const price = parseFloat(name === 'fixPrice' ? value : prev.fixPrice);
         const discount = parseFloat(name === 'discount' ? value : prev.discount);
         updated.discountPrice = (!isNaN(price) && !isNaN(discount)) ? (price - (price * discount / 100)).toFixed(2) : '';
       }
       return updated;
     });
+  };
+
+  const calculatePriceRange = () => {
+    let min = Infinity;
+    let max = -Infinity;
+    form.variants.forEach(v => {
+      const p = parseFloat(v.price);
+      if (!isNaN(p)) {
+        if (p < min) min = p;
+        if (p > max) max = p;
+      }
+    });
+    if (min !== Infinity && max !== -Infinity) {
+      setForm(prev => ({ ...prev, minPrice: String(min), maxPrice: String(max) }));
+    }
   };
 
   // Custom Fields logic
@@ -140,30 +157,40 @@ export default function ProductForm({ onSave }) {
   // Submit
   const handleSubmit = async e => {
     e.preventDefault();
+    // validation
+    if (!form.name.trim()) { alert('Product name is required'); return; }
+    if (!form.fixPrice || parseFloat(form.fixPrice) <= 0) { alert('Valid fix price is required'); return; }
+    if (!form.totalProduct || parseFloat(form.totalProduct) <= 0) { alert('Valid total product is required'); return; }
+    if (form.minPrice && form.maxPrice && parseFloat(form.maxPrice) < parseFloat(form.minPrice)) { alert('Max price must be >= Min price'); return; }
     if (files.length === 0) {
       setPhotoError("Please upload at least 1 photo.");
       return;
     }
-    setPhotoError("");
+    if (files.length > 5) { setPhotoError('Maximum 5 photos allowed.'); return; }
     setPhotoError("");
     const data = new FormData();
-    Object.entries(form).forEach(([k, v]) => {
-      if (k === 'tags') {
-        v.forEach(val => data.append('tags', val));
-      } else if (k === 'variants') {
-        data.append(k, JSON.stringify(v));
-      } else {
-        data.append(k, v);
-      }
-    });
+    data.append('name', form.name);
+    data.append('fixPrice', form.fixPrice);
+    if (form.minPrice) data.append('minPrice', form.minPrice);
+    if (form.maxPrice) data.append('maxPrice', form.maxPrice);
+    if (form.discount) data.append('discount', form.discount);
+    if (form.discountPrice) data.append('discountPrice', form.discountPrice);
+    data.append('totalProduct', form.totalProduct);
+    data.append('category', form.category);
+    if (form.description) data.append('description', form.description);
+    if (form.tags.length > 0) data.append('tags', JSON.stringify(form.tags));
+    if (form.variants.length > 0) data.append('variants', JSON.stringify(form.variants));
     // Add custom fields
     customFields.forEach((f, idx) => {
       data.append('customFieldName' + (idx+1), f.fieldName);
       f.fieldValues.forEach(val => data.append('customFieldValue' + (idx+1), val));
     });
     files.forEach(f => data.append('photos', f));
-    const res = await fetch(`${API_BASE_URL}/roofer/shingles/create`, { method: 'POST', body: data });
-    if (res.ok) onSave && onSave();
+    try {
+      const res = await fetch(`${API_BASE_URL}/roofer/shingles/create`, { method: 'POST', body: data });
+      if (res.ok) { alert('Product created successfully!'); onSave && onSave(); }
+      else { const err = await res.json(); alert(err.error || 'Failed to create'); }
+    } catch (err) { alert('Network error'); }
   };
 
   return (
@@ -179,8 +206,16 @@ export default function ProductForm({ onSave }) {
           <Input name="sku" value={form.sku} onChange={handleChange} placeholder="SKU" />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Price</label>
-          <Input name="price" type="number" value={form.price} onChange={handleChange} placeholder="Price" required />
+          <label className="block text-sm font-medium mb-1">Fix Price</label>
+          <Input name="fixPrice" type="number" value={form.fixPrice} onChange={handleChange} placeholder="Fix Price" required />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Min Price</label>
+          <Input name="minPrice" type="number" value={form.minPrice} onChange={handleChange} placeholder="Min Price" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Max Price</label>
+          <Input name="maxPrice" type="number" value={form.maxPrice} onChange={handleChange} placeholder="Max Price" />
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Discount (%)</label>
@@ -221,7 +256,10 @@ export default function ProductForm({ onSave }) {
       <div className="space-y-2">
         <div className="flex justify-between items-center">
           <label className="block text-sm font-medium">Variants</label>
-          <Button type="button" onClick={handleAddVariant} className="bg-green-500 hover:bg-green-600 text-white px-3 py-1">Add Variant</Button>
+          <div className="flex gap-2">
+            <Button type="button" onClick={handleAddVariant} className="bg-green-500 hover:bg-green-600 text-white px-3 py-1">Add Variant</Button>
+            <Button type="button" onClick={calculatePriceRange} className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1">Auto-calc Min/Max</Button>
+          </div>
         </div>
         {form.variants.map((v, idx) => (
           <div key={idx} className="flex gap-2 items-center">

@@ -21,7 +21,7 @@ export default function ProductForm({ onSave }) {
     discount: '',
     discountPrice: '',
     totalProduct: '',
-    category: 'Metal',
+    category: 'Color Sheet',
     description: '',
     tags: [],
     variants: [], // { variantName: '', price: '', discountPrice: '' }
@@ -180,6 +180,26 @@ export default function ProductForm({ onSave }) {
     if (form.description) data.append('description', form.description);
     if (form.tags.length > 0) data.append('tags', JSON.stringify(form.tags));
     if (form.variants.length > 0) data.append('variants', JSON.stringify(form.variants));
+    
+    // Convert custom fields to type format for backend
+    const typeData = [];
+    customFields.forEach((f, idx) => {
+      if (f.fieldName && f.fieldName.trim()) {
+        f.fieldValues.forEach(val => {
+          if (val && val.trim()) {
+            typeData.push({ fit: f.fieldName.trim(), rate: parseFloat(form.fixPrice) || 0 });
+          }
+        });
+      }
+    });
+    
+    // Always send type field (required by schema)
+    if (typeData.length > 0) {
+      data.append('type', JSON.stringify(typeData));
+    } else {
+      data.append('type', JSON.stringify([{ fit: 'Default', rate: parseFloat(form.fixPrice) || 0 }]));
+    }
+    
     // Add custom fields
     customFields.forEach((f, idx) => {
       data.append('customFieldName' + (idx+1), f.fieldName);
@@ -187,7 +207,7 @@ export default function ProductForm({ onSave }) {
     });
     files.forEach(f => data.append('photos', f));
     try {
-      const res = await fetch(`${API_BASE_URL}/roofer/metal/create`, { method: 'POST', body: data });
+      const res = await fetch(`${API_BASE_URL}/roofer/color-sheet/create`, { method: 'POST', body: data });
       if (res.ok) { alert('Product created successfully!'); onSave && onSave(); }
       else { const err = await res.json(); alert(err.error || 'Failed to create'); }
     } catch (err) { alert('Network error'); }
@@ -195,7 +215,7 @@ export default function ProductForm({ onSave }) {
 
   return (
     <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-6 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
-      <h2 className="text-2xl font-bold mb-2 text-center">Add Metal Product</h2>
+      <h2 className="text-2xl font-bold mb-2 text-center">Add Color Sheet Product</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium mb-1">Product Name</label>

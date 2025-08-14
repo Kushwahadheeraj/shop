@@ -19,9 +19,9 @@ function uploadToCloudinary(buffer) {
 }
 
 /**
- * Create a new Shingles product.
+ * Create a new Metal product.
  */
-exports.createShingles = async (req, res) => {
+exports.createColorSheet = async (req, res) => {
   try {
     if (!req.files || req.files.length < 1) {
       return res.status(400).json({ error: 'At least 1 image is required.' });
@@ -32,7 +32,7 @@ exports.createShingles = async (req, res) => {
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
 
     // Build product data with proper mappings and parsing
-    let productData = { ...req.body, photos: photoUrls, category: 'Shingles' };
+    let productData = { ...req.body, photos: photoUrls, category: 'Metal' };
 
     // Map price -> fixPrice if needed
     if (req.body.price && !req.body.fixPrice) {
@@ -87,9 +87,9 @@ exports.createShingles = async (req, res) => {
 };
 
 /**
- * Update a Shingles product by ID.
+ * Update a Metal product by ID.
  */
-exports.updateShingles = async (req, res) => {
+exports.updateColorSheet = async (req, res) => {
   try {
     let update = { ...req.body };
     if (req.files && req.files.length > 0) {
@@ -98,23 +98,19 @@ exports.updateShingles = async (req, res) => {
       }
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
-
     // Map price -> fixPrice
     if (req.body.price && !req.body.fixPrice) {
       update.fixPrice = parseFloat(req.body.price);
       delete update.price;
     }
-
     // Parse tags
     if (req.body.tags && typeof req.body.tags === 'string') {
       try { update.tags = JSON.parse(req.body.tags); } catch (_) { update.tags = [req.body.tags]; }
     }
-
     // Parse variants
     if (req.body.variants && typeof req.body.variants === 'string') {
       try { update.variants = JSON.parse(req.body.variants); } catch (_) {}
     }
-
     // Derive/validate min/max
     const candidateUpdateRates = Array.isArray(update.variants)
       ? update.variants.map(v => parseFloat(v.price)).filter(n => !isNaN(n))
@@ -128,18 +124,16 @@ exports.updateShingles = async (req, res) => {
       update.minPrice = update.minPrice === undefined ? fx : update.minPrice;
       update.maxPrice = update.maxPrice === undefined ? fx : update.maxPrice;
     }
-
     if (update.fixPrice) update.fixPrice = parseFloat(update.fixPrice);
     if (update.discount) update.discount = parseFloat(update.discount);
     if (update.totalProduct) update.totalProduct = parseInt(update.totalProduct, 10);
     if (update.minPrice) update.minPrice = parseFloat(update.minPrice);
     if (update.maxPrice) update.maxPrice = parseFloat(update.maxPrice);
-
     if (update.maxPrice !== undefined && update.minPrice !== undefined && update.maxPrice < update.minPrice) {
       return res.status(400).json({ error: 'maxPrice must be greater than or equal to minPrice' });
     }
     const product = await Roofer.findOneAndUpdate(
-      { _id: req.params.id, category: 'Shingles' },
+      { _id: req.params.id, category: 'Metal' },
       update,
       { new: true }
     );
@@ -149,18 +143,18 @@ exports.updateShingles = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-exports.getAllShingles = async (req, res) => {
+exports.getAllColorSheet = async (req, res) => {
   try {
-    const products = await Roofer.find({ category: 'Shingles' });
+    const products = await Roofer.find({ category: 'Color Sheet' });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-exports.getOneShingles = async (req, res) => {
+exports.getOneColorSheet = async (req, res) => {
   try {
-    const product = await Roofer.findOne({ _id: req.params.id, category: 'Shingles' });
+    const product = await Roofer.findOne({ _id: req.params.id, category: 'Color Sheet' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -168,9 +162,9 @@ exports.getOneShingles = async (req, res) => {
   }
 };
 
-exports.deleteShingles = async (req, res) => {
+exports.deleteColorSheet = async (req, res) => {
   try {
-    const product = await Roofer.findOneAndDelete({ _id: req.params.id, category: 'Shingles' });
+    const product = await Roofer.findOneAndDelete({ _id: req.params.id, category: 'Color Sheet' });
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {

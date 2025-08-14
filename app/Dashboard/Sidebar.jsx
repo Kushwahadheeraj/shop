@@ -1312,11 +1312,13 @@ const sections = [
       {
         name: 'Roofer',
         subItemsName: [
+          { name: 'Aluminium Sheet', path: '/Dashboard/ProductAdd/Roofer/AluminiumSheet'},
+          { name: 'Cements Sheet', path: '/Dashboard/ProductAdd/Roofer/CementsSheet'},
+          { name: 'Color Sheet', path: '/Dashboard/ProductAdd/Roofer/ColorSheet'},
+          { name: 'Fiber Sheet', path: '/Dashboard/ProductAdd/Roofer/FiberSheet'},
+          { name: 'Metal Roofing', path: '/Dashboard/ProductAdd/Roofer/Metal'},
           { name: 'Shingles', path: '/Dashboard/ProductAdd/Roofer/Shingles' },
-          {
-            name: 'Metal Roofing',
-            path: '/Dashboard/ProductAdd/Roofer/Metal',
-          },
+          { name: 'Teen Sheet', path: '/Dashboard/ProductAdd/Roofer/TeenSheet'},
         ],
       },
       {
@@ -3719,11 +3721,13 @@ const sections = [
       {
         name: 'Roofer',
         subItemsName: [
+          { name: 'Aluminium Sheet', path: '/Dashboard/ProductList/Roofer/AluminiumSheet'},
+          { name: 'Cements Sheet', path: '/Dashboard/ProductList/Roofer/CementsSheet'},
+          { name: 'Color Sheet', path: '/Dashboard/ProductList/Roofer/ColorSheet'},
+          { name: 'Fiber Sheet', path: '/Dashboard/ProductList/Roofer/FiberSheet'},
+          { name: 'Metal Roofing', path: '/Dashboard/ProductList/Roofer/Metal'},
           { name: 'Shingles', path: '/Dashboard/ProductList/Roofer/Shingles' },
-          {
-            name: 'Metal Roofing',
-            path: '/Dashboard/ProductList/Roofer/Metal',
-          },
+          { name: 'Teen Sheet', path: '/Dashboard/ProductList/Roofer/TeenSheet'},
         ],
       },
       {

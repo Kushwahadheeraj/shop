@@ -1266,25 +1266,6 @@ const sections = [
         name: 'Pipe',
         subItemsName: [
           {
-            name: 'Supreme Pipe',
-            path: '/Dashboard/ProductAdd/Pipe/SupremePipe',
-          },
-          { name: 'TSA Pipe', path: '/Dashboard/ProductAdd/Pipe/TSAPipe' },
-          {
-            name: 'Prince Pipe',
-            path: '/Dashboard/ProductAdd/Pipe/PrincePipe',
-          },
-          { name: 'Birla Pipe', path: '/Dashboard/ProductAdd/Pipe/BirlaPipe' },
-          { name: 'Tata Pipe', path: '/Dashboard/ProductAdd/Pipe/TataPipe' },
-          {
-            name: 'Prakash Pipe',
-            path: '/Dashboard/ProductAdd/Pipe/PrakashPipe',
-          },
-          {
-            name: 'Finolex Pipes',
-            path: '/Dashboard/ProductAdd/Pipe/FinolexPipes',
-          },
-          {
             name: 'Ashirvad Pipes',
             path: '/Dashboard/ProductAdd/Pipe/AshirvadPipes',
           },
@@ -1292,6 +1273,33 @@ const sections = [
             name: 'Astral Pipes',
             path: '/Dashboard/ProductAdd/Pipe/AstralPipes',
           },
+          { name: 'Birla Pipe', path: '/Dashboard/ProductAdd/Pipe/BirlaPipe' },
+          {
+            name: 'Finolex Pipes',
+            path: '/Dashboard/ProductAdd/Pipe/FinolexPipes',
+          },
+          {
+            name: 'Nepul Pipes',
+            path: '/Dashboard/ProductAdd/Pipe/NepulPipes',
+          },
+          {
+            name: 'Prakash Pipe',
+            path: '/Dashboard/ProductAdd/Pipe/PrakashPipe',
+          },
+          {
+            name: 'Prince Pipe',
+            path: '/Dashboard/ProductAdd/Pipe/PrincePipe',
+          },
+          {
+            name: 'Supreme Pipe',
+            path: '/Dashboard/ProductAdd/Pipe/SupremePipe',
+          },
+          { name: 'TSA Pipe', path: '/Dashboard/ProductAdd/Pipe/TSAPipe' },
+         
+          { name: 'Tata Pipe', path: '/Dashboard/ProductAdd/Pipe/TataPipe' },
+          
+          
+          
         ],
       },
       {
@@ -3664,25 +3672,6 @@ const sections = [
         name: 'Pipe',
         subItemsName: [
           {
-            name: 'Supreme Pipe',
-            path: '/Dashboard/ProductList/Pipe/SupremePipe',
-          },
-          { name: 'TSA Pipe', path: '/Dashboard/ProductList/Pipe/TSAPipe' },
-          {
-            name: 'Prince Pipe',
-            path: '/Dashboard/ProductList/Pipe/PrincePipe',
-          },
-          { name: 'Birla Pipe', path: '/Dashboard/ProductList/Pipe/BirlaPipe' },
-          { name: 'Tata Pipe', path: '/Dashboard/ProductList/Pipe/TataPipe' },
-          {
-            name: 'Prakash Pipe',
-            path: '/Dashboard/ProductList/Pipe/PrakashPipe',
-          },
-          {
-            name: 'Finolex Pipes',
-            path: '/Dashboard/ProductList/Pipe/FinolexPipes',
-          },
-          {
             name: 'Ashirvad Pipes',
             path: '/Dashboard/ProductList/Pipe/AshirvadPipes',
           },
@@ -3690,6 +3679,34 @@ const sections = [
             name: 'Astral Pipes',
             path: '/Dashboard/ProductList/Pipe/AstralPipes',
           },
+          { name: 'Birla Pipe', path: '/Dashboard/ProductList/Pipe/BirlaPipe' },
+          {
+            name: 'Finolex Pipes',
+            path: '/Dashboard/ProductList/Pipe/FinolexPipes',
+          },
+          {
+            name: 'Nepul Pipes',
+            path: '/Dashboard/ProductList/Pipe/NepulPipes',
+          },
+          {
+            name: 'Prakash Pipe',
+            path: '/Dashboard/ProductList/Pipe/PrakashPipe',
+          },
+          {
+            name: 'Prince Pipe',
+            path: '/Dashboard/ProductList/Pipe/PrincePipe',
+          },
+          {
+            name: 'Supreme Pipe',
+            path: '/Dashboard/ProductList/Pipe/SupremePipe',
+          },
+          { name: 'TSA Pipe', path: '/Dashboard/ProductList/Pipe/TSAPipe' },
+         
+          { name: 'Tata Pipe', path: '/Dashboard/ProductList/Pipe/TataPipe' },
+          
+          
+        
+          
         ],
       },
       {

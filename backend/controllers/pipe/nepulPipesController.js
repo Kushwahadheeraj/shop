@@ -19,13 +19,14 @@ function uploadToCloudinary(buffer) {
 }
 
 /**
- * Create a new TsaPipes product.
+ * Create a new AshirvadPipes product.
  */
-exports.createTsaPipes = async (req, res) => {
+exports.createNepulPipes = async (req, res) => {
   try {
     // Debug: log received data
     console.log('Received request body:', req.body);
     console.log('Received files:', req.files ? req.files.length : 'No files');
+    
     if (!req.files || req.files.length < 1) {
       return res.status(400).json({ error: 'At least 1 image is required.' });
     }
@@ -34,7 +35,7 @@ exports.createTsaPipes = async (req, res) => {
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     // Parse JSON fields if they exist
-    let productData = { ...req.body, photos: photoUrls, category: 'TsaPipes' };
+    let productData = { ...req.body, photos: photoUrls, category: 'NepulPipes' };
     
     // Parse type field if it's a string
     if (req.body.type && typeof req.body.type === 'string') {
@@ -98,7 +99,7 @@ exports.createTsaPipes = async (req, res) => {
 /**
  * Update a AshirvadPipes product by ID.
  */
-exports.updateTsaPipes = async (req, res) => {
+exports.updateNepulPipes = async (req, res) => {
   try {
     let update = { ...req.body };
     
@@ -147,11 +148,11 @@ exports.updateTsaPipes = async (req, res) => {
       return res.status(400).json({ error: 'Max price must be greater than or equal to min price' });
     }
     
-          const product = await Pipe.findOneAndUpdate(
-        { _id: req.params.id, category: 'TsaPipes' },
-        update,
-        { new: true }
-      );
+    const product = await Pipe.findOneAndUpdate(
+      { _id: req.params.id, category: 'NepulPipes' },
+      update,
+      { new: true }
+    );
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
@@ -159,18 +160,18 @@ exports.updateTsaPipes = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-exports.getAllTsaPipes = async (req, res) => {
+exports.getAllNepulPipes = async (req, res) => {
   try {
-    const items = await Pipe.find({ category: 'TsaPipes' });
+    const items = await Pipe.find({ category: 'NepulPipes' });
     res.json(items);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-exports.getOneTsaPipes = async (req, res) => {
+exports.getOneNepulPipes = async (req, res) => {
   try {
-    const item = await Pipe.findOne({ _id: req.params.id, category: 'TsaPipes' });
+    const item = await Pipe.findOne({ _id: req.params.id, category: 'NepulPipes' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
   } catch (err) {
@@ -178,9 +179,9 @@ exports.getOneTsaPipes = async (req, res) => {
   }
 };
 
-exports.deleteTsaPipes = async (req, res) => {
+exports.deleteNepulPipes = async (req, res) => {
   try {
-    const item = await Pipe.findOneAndDelete({ _id: req.params.id, category: 'TsaPipes' });
+    const item = await Pipe.findOneAndDelete({ _id: req.params.id, category: 'NepulPipes' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

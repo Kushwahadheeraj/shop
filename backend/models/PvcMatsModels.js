@@ -10,6 +10,16 @@ const PvcMatsProductSchema = new mongoose.Schema({
   totalProduct: { type: Number, required: true },
   category: { type: String, required: true },
   tags: [String],
+  variants: [{ 
+    variantName: String, 
+    price: Number, 
+    discountPrice: Number 
+  }],
+  // Custom fields for storing additional product information
+  customFields: [{
+    fieldName: String,
+    fieldValues: [String]
+  }]
 }, { timestamps: true });
 
 PvcMatsProductSchema.pre('save', function(next) {

@@ -29,11 +29,74 @@ exports.createFloor = async (req, res) => {
     if (req.files.length > 5) {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
+    
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    const product = new PvcMats({ ...req.body, photos: photoUrls, category: 'Floor' });
+    
+    // Prepare product data with proper field mapping
+    let productData = { ...req.body, photos: photoUrls, category: 'Floor' };
+    
+    // Handle price field mapping (frontend sends 'price', backend expects 'fixPrice')
+    if (req.body.price && !req.body.fixPrice) {
+      productData.fixPrice = parseFloat(req.body.price);
+      delete productData.price;
+    }
+    
+    // Parse tags if it's a string
+    if (req.body.tags && typeof req.body.tags === 'string') {
+      try {
+        productData.tags = JSON.parse(req.body.tags);
+      } catch (e) {
+        // If tags parsing fails, treat as single tag
+        productData.tags = [req.body.tags];
+      }
+    }
+    
+    // Parse variants if present
+    if (req.body.variants && typeof req.body.variants === 'string') {
+      try {
+        productData.variants = JSON.parse(req.body.variants);
+      } catch (e) {
+        console.log('Failed to parse variants:', e.message);
+      }
+    }
+    
+    // Handle custom fields
+    const customFields = [];
+    for (let i = 1; i <= 3; i++) {
+      const fieldName = req.body[`customFieldName${i}`];
+      const fieldValues = req.body[`customFieldValue${i}`];
+      
+      if (fieldName && fieldValues) {
+        if (Array.isArray(fieldValues)) {
+          customFields.push({
+            fieldName: fieldName,
+            fieldValues: fieldValues.filter(val => val && val.trim() !== '')
+          });
+        } else {
+          customFields.push({
+            fieldName: fieldName,
+            fieldValues: [fieldValues].filter(val => val && val.trim() !== '')
+          });
+        }
+      }
+    }
+    
+    if (customFields.length > 0) {
+      productData.customFields = customFields;
+    }
+    
+    // Ensure numeric fields are properly parsed
+    if (productData.fixPrice) productData.fixPrice = parseFloat(productData.fixPrice);
+    if (productData.discount) productData.discount = parseFloat(productData.discount);
+    if (productData.totalProduct) productData.totalProduct = parseInt(productData.totalProduct, 10);
+    
+    console.log('Creating Floor product with data:', productData);
+    
+    const product = new PvcMats(productData);
     await product.save();
     res.status(201).json(product);
   } catch (err) {
+    console.error('Error creating Floor product:', err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -44,12 +107,71 @@ exports.createFloor = async (req, res) => {
 exports.updateFloor = async (req, res) => {
   try {
     let update = { ...req.body };
+    
     if (req.files && req.files.length > 0) {
       if (req.files.length > 5) {
         return res.status(400).json({ error: 'No more than 5 images allowed.' });
       }
       update.photos = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     }
+    
+    // Handle price field mapping (frontend sends 'price', backend expects 'fixPrice')
+    if (req.body.price && !req.body.fixPrice) {
+      update.fixPrice = parseFloat(req.body.price);
+      delete update.price;
+    }
+    
+    // Parse tags if it's a string
+    if (req.body.tags && typeof req.body.tags === 'string') {
+      try {
+        update.tags = JSON.parse(req.body.tags);
+      } catch (e) {
+        // If tags parsing fails, treat as single tag
+        update.tags = [req.body.tags];
+      }
+    }
+    
+    // Parse variants if present
+    if (req.body.variants && typeof req.body.variants === 'string') {
+      try {
+        update.variants = JSON.parse(req.body.variants);
+      } catch (e) {
+        console.log('Failed to parse variants:', e.message);
+      }
+    }
+    
+    // Handle custom fields
+    const customFields = [];
+    for (let i = 1; i <= 3; i++) {
+      const fieldName = req.body[`customFieldName${i}`];
+      const fieldValues = req.body[`customFieldValue${i}`];
+      
+      if (fieldName && fieldValues) {
+        if (Array.isArray(fieldValues)) {
+          customFields.push({
+            fieldName: fieldName,
+            fieldValues: fieldValues.filter(val => val && val.trim() !== '')
+          });
+        } else {
+          customFields.push({
+            fieldName: fieldName,
+            fieldValues: [fieldValues].filter(val => val && val.trim() !== '')
+          });
+        }
+      }
+    }
+    
+    if (customFields.length > 0) {
+      update.customFields = customFields;
+    }
+    
+    // Ensure numeric fields are properly parsed
+    if (update.fixPrice) update.fixPrice = parseFloat(update.fixPrice);
+    if (update.discount) update.discount = parseFloat(update.discount);
+    if (update.totalProduct) update.totalProduct = parseInt(update.totalProduct, 10);
+    
+    console.log('Updating Floor product with data:', update);
+    
     const product = await PvcMats.findOneAndUpdate(
       { _id: req.params.id, category: 'Floor' },
       update,
@@ -58,6 +180,7 @@ exports.updateFloor = async (req, res) => {
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
+    console.error('Error updating Floor product:', err);
     res.status(500).json({ error: err.message });
   }
 };

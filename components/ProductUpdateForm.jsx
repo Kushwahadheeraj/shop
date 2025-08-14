@@ -72,7 +72,7 @@ export default function ProductUpdateForm({ product, category, onUpdate, onClose
         description: product.description || '',
         totalProduct: product.totalProduct || '',
         category: product.category || category,
-        tag: product.tag || [],
+        tag: product.tags || [],
         weights: product.weights || [],
         photos: product.photos || []
       });

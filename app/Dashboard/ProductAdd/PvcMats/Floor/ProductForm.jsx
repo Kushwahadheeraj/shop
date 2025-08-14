@@ -140,11 +140,29 @@ export default function ProductForm({ onSave }) {
   // Submit
   const handleSubmit = async e => {
     e.preventDefault();
+    
+    // Validation
+    if (!form.name.trim()) {
+      alert('Product name is required');
+      return;
+    }
+    if (!form.price || parseFloat(form.price) <= 0) {
+      alert('Valid price is required');
+      return;
+    }
+    if (!form.totalProduct || parseFloat(form.totalProduct) <= 0) {
+      alert('Valid total product count is required');
+      return;
+    }
     if (files.length === 0) {
       setPhotoError("Please upload at least 1 photo.");
       return;
     }
-    setPhotoError("");
+    if (files.length > 5) {
+      setPhotoError("Maximum 5 photos allowed.");
+      return;
+    }
+    
     setPhotoError("");
     const data = new FormData();
     Object.entries(form).forEach(([k, v]) => {
@@ -162,8 +180,26 @@ export default function ProductForm({ onSave }) {
       f.fieldValues.forEach(val => data.append('customFieldValue' + (idx+1), val));
     });
     files.forEach(f => data.append('photos', f));
-    const res = await fetch(`${API_BASE_URL}/pvcmats/floor/create`, { method: 'POST', body: data });
-    if (res.ok) onSave && onSave();
+    
+    console.log('Form data being sent:', {
+      name: form.name, price: form.price, totalProduct: form.totalProduct, 
+      category: form.category, tags: form.tags, variants: form.variants,
+      filesCount: files.length
+    });
+    
+    try {
+      const res = await fetch(`${API_BASE_URL}/pvcmats/floor/create`, { method: 'POST', body: data });
+      if (res.ok) {
+        alert('Product created successfully!');
+        onSave && onSave();
+      } else {
+        const errorData = await res.json();
+        alert(`Error: ${errorData.error || 'Failed to create product'}`);
+      }
+    } catch (error) {
+      console.error('Error creating product:', error);
+      alert('Error creating product. Please try again.');
+    }
   };
 
   return (
@@ -191,8 +227,8 @@ export default function ProductForm({ onSave }) {
           <Input name="discountPrice" type="number" value={form.discountPrice} readOnly />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Total Product</label>
-          <Input name="totalProduct" type="number" value={form.totalProduct} onChange={handleChange} placeholder="Total Product" />
+          <label className="block text-sm font-medium mb-1">Total Product *</label>
+          <Input name="totalProduct" type="number" value={form.totalProduct} onChange={handleChange} placeholder="Total Product" required />
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Category</label>

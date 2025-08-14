@@ -59,7 +59,7 @@ export default function ProductTable({ products, onEdit, onDelete, onView, categ
       let aValue = a[sortBy];
       let bValue = b[sortBy];
       
-      if (sortBy === "minPrice" || sortBy === "maxPrice" || sortBy === "totalProduct") {
+      if (sortBy === "minPrice" || sortBy === "maxPrice" || sortBy === "fixPrice" || sortBy === "totalProduct") {
         aValue = parseFloat(aValue) || 0;
         bValue = parseFloat(bValue) || 0;
       } else {
@@ -171,18 +171,29 @@ export default function ProductTable({ products, onEdit, onDelete, onView, categ
                     Name {sortBy === "name" && (sortOrder === "asc" ? "↑" : "↓")}
                   </TableHead>
                   <TableHead className="responsive-table-cell col-image">Photos</TableHead>
-                  <TableHead 
-                    className="responsive-table-cell col-price cursor-pointer hover:bg-gray-50"
-                    onClick={() => handleSort("minPrice")}
-                  >
-                    Min Price {sortBy === "minPrice" && (sortOrder === "asc" ? "↑" : "↓")}
-                  </TableHead>
-                  <TableHead 
-                    className="responsive-table-cell col-price cursor-pointer hover:bg-gray-50"
-                    onClick={() => handleSort("maxPrice")}
-                  >
-                    Max Price {sortBy === "maxPrice" && (sortOrder === "asc" ? "↑" : "↓")}
-                  </TableHead>
+                  {products.length > 0 && products[0].minPrice !== undefined && products[0].maxPrice !== undefined ? (
+                    <>
+                      <TableHead 
+                        className="responsive-table-cell col-price cursor-pointer hover:bg-gray-50"
+                        onClick={() => handleSort("minPrice")}
+                      >
+                        Min Price {sortBy === "minPrice" && (sortOrder === "asc" ? "↑" : "↓")}
+                      </TableHead>
+                      <TableHead 
+                        className="responsive-table-cell col-price cursor-pointer hover:bg-gray-50"
+                        onClick={() => handleSort("maxPrice")}
+                      >
+                        Max Price {sortBy === "maxPrice" && (sortOrder === "asc" ? "↑" : "↓")}
+                      </TableHead>
+                    </>
+                  ) : (
+                    <TableHead 
+                      className="responsive-table-cell col-price cursor-pointer hover:bg-gray-50"
+                      onClick={() => handleSort("fixPrice")}
+                    >
+                      Price {sortBy === "fixPrice" && (sortOrder === "asc" ? "↑" : "↓")}
+                    </TableHead>
+                  )}
                   <TableHead className="responsive-table-cell col-status">Discount</TableHead>
                   <TableHead 
                     className="responsive-table-cell col-status cursor-pointer hover:bg-gray-50"
@@ -236,8 +247,14 @@ export default function ProductTable({ products, onEdit, onDelete, onView, categ
                           <Badge variant="outline" className="text-xs">No Image</Badge>
                         )}
                       </TableCell>
-                      <TableCell className="responsive-table-cell col-price text-truncate-tooltip" title={formatPrice(product.minPrice)}>{formatPrice(product.minPrice)}</TableCell>
-                      <TableCell className="responsive-table-cell col-price text-truncate-tooltip" title={formatPrice(product.maxPrice)}>{formatPrice(product.maxPrice)}</TableCell>
+                      {product.minPrice !== undefined && product.maxPrice !== undefined ? (
+                        <>
+                          <TableCell className="responsive-table-cell col-price text-truncate-tooltip" title={formatPrice(product.minPrice)}>{formatPrice(product.minPrice)}</TableCell>
+                          <TableCell className="responsive-table-cell col-price text-truncate-tooltip" title={formatPrice(product.maxPrice)}>{formatPrice(product.maxPrice)}</TableCell>
+                        </>
+                      ) : (
+                        <TableCell className="responsive-table-cell col-price text-truncate-tooltip" title={formatPrice(product.fixPrice)}>{formatPrice(product.fixPrice)}</TableCell>
+                      )}
                       <TableCell className="responsive-table-cell col-status">
                         {product.discount ? (
                           <Badge variant="destructive">{product.discount}%</Badge>

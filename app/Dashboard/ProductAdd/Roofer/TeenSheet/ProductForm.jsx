@@ -21,7 +21,7 @@ export default function ProductForm({ onSave }) {
     discount: '',
     discountPrice: '',
     totalProduct: '',
-    category: 'Metal',
+    category: 'Teen Sheet',
     description: '',
     tags: [],
     variants: [], // { variantName: '', price: '', discountPrice: '' }
@@ -187,7 +187,7 @@ export default function ProductForm({ onSave }) {
     });
     files.forEach(f => data.append('photos', f));
     try {
-      const res = await fetch(`${API_BASE_URL}/roofer/metal/create`, { method: 'POST', body: data });
+      const res = await fetch(`${API_BASE_URL}/roofer/teen-sheet/create`, { method: 'POST', body: data });
       if (res.ok) { alert('Product created successfully!'); onSave && onSave(); }
       else { const err = await res.json(); alert(err.error || 'Failed to create'); }
     } catch (err) { alert('Network error'); }
@@ -195,7 +195,7 @@ export default function ProductForm({ onSave }) {
 
   return (
     <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-6 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
-      <h2 className="text-2xl font-bold mb-2 text-center">Add Metal Product</h2>
+      <h2 className="text-2xl font-bold mb-2 text-center">Add Teen Sheet Product</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium mb-1">Product Name</label>

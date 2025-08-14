@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
 const OptionSchema = new mongoose.Schema({
-  fit: String,
-  rate: Number
-});
+  fit: { type: String, required: true },
+  rate: { type: Number, required: true }
+}, { _id: false });
 
-const RooferProductSchema = new mongoose.Schema({
+const SheetProductSchema = new mongoose.Schema({
   name: { type: String, required: true },
   photos: [String],
   description: String,
@@ -33,11 +33,11 @@ const RooferProductSchema = new mongoose.Schema({
   }]
 }, { timestamps: true });
 
-RooferProductSchema.pre('save', function(next) {
+SheetProductSchema.pre('save', function(next) {
   if (this.fixPrice && this.discount) {
     this.discountPrice = Math.max(this.fixPrice - this.discount, 0);
   }
   next();
 });
 
-module.exports = mongoose.model('RooferModels', RooferProductSchema);
+module.exports = mongoose.model('SheetModels', SheetProductSchema);

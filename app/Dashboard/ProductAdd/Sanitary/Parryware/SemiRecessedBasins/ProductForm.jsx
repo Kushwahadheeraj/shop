@@ -162,7 +162,7 @@ export default function ProductForm({ onSave }) {
       f.fieldValues.forEach(val => data.append('customFieldValue' + (idx+1), val));
     });
     files.forEach(f => data.append('photos', f));
-    const res = await fetch(`${API_BASE_URL}/sanitary/Parryware/SemiRecessedBasins/create`, { method: 'POST', body: data });
+    const res = await fetch(`${API_BASE_URL}/sanitary/-parryware/-semi-recessed-basins/create`, { method: 'POST', body: data });
     if (res.ok) onSave && onSave();
   };
 

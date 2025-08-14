@@ -32,7 +32,7 @@ exports.createTeenSheet = async (req, res) => {
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
 
     // Build product data with proper mappings and parsing
-    let productData = { ...req.body, photos: photoUrls, category: 'Metal' };
+    let productData = { ...req.body, photos: photoUrls, category: 'Teen Sheet' };
 
     // Map price -> fixPrice if needed
     if (req.body.price && !req.body.fixPrice) {
@@ -133,7 +133,7 @@ exports.updateTeenSheet = async (req, res) => {
       return res.status(400).json({ error: 'maxPrice must be greater than or equal to minPrice' });
     }
     const product = await Roofer.findOneAndUpdate(
-      { _id: req.params.id, category: 'Metal' },
+      { _id: req.params.id, category: 'Teen Sheet' },
       update,
       { new: true }
     );

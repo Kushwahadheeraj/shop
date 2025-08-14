@@ -133,40 +133,40 @@ const HindwareFaucetsSinkMixerController = require('../controllers/sanitary/Hind
 const HindwareFaucetsSlbmFaucetController = require('../controllers/sanitary/Hindware/faucets/slbmFaucetController.js');
 const HindwareFaucetsSlbmFaucetTallController = require('../controllers/sanitary/Hindware/faucets/slbmFaucetTallController.js');
 const HindwareFaucetsWallMixerController = require('../controllers/sanitary/Hindware/faucets/wallMixerController.js');
-const HindwareShowersRainShowersController = require('../controllers/sanitary/Hindware/showers/rainShowersController.js');
+const HindwareShowersRainShowersController = require('../controllers/sanitary/Hindware/rainShowersController.js');
 const HindwareWashBasinsController = require('../controllers/sanitary/Hindware/washBasinsController.js');
 const HindwareWaterClosetsController = require('../controllers/sanitary/Hindware/waterClosetsController.js');
 const jaquarController = require('../controllers/sanitary/jaquarController.js');
 const kitchenSinksController = require('../controllers/sanitary/kitchenSinksController.js');
-const LeoBathFittingsBathroomAccessoriesBathroomAccessoriesController = require('../controllers/sanitary/LeoBathFittings/BathroomAccessories/bathroomAccessoriesController.js');
-const LeoBathFittingsFaucetsFaucetsController = require('../controllers/sanitary/LeoBathFittings/Faucets/faucetsController.js');
-const LeoBathFittingsValveValveController = require('../controllers/sanitary/LeoBathFittings/Valve/valveController.js');
-const PamayFaucetsFaucetsController = require('../controllers/sanitary/Pamay/Faucets/faucetsController.js');
-const PamayShowersShowersController = require('../controllers/sanitary/Pamay/Showers/showersController.js');
-const parrywareAccessoriesAccessoriesController = require('../controllers/sanitary/parryware/Accessories/accessoriesController.js');
-const parrywareAngleValvesAngleValvesController = require('../controllers/sanitary/parryware/AngleValves/angleValvesController.js');
-const parrywareBelowCounterBasinsBelowCounterBasinsController = require('../controllers/sanitary/parryware/BelowCounterBasins/belowCounterBasinsController.js');
-const parrywareBowlBasinsBowlBasinsController = require('../controllers/sanitary/parryware/BowlBasins/bowlBasinsController.js');
-const parrywareCLOSETSClosetsController = require('../controllers/sanitary/parryware/CLOSETS/closetsController.js');
-const parrywareConcealedCisternConcealedCisternController = require('../controllers/sanitary/parryware/ConcealedCistern/concealedCisternController.js');
-const parrywareEuropeanWaterClosetEuropeanWaterClosetController = require('../controllers/sanitary/parryware/EuropeanWaterCloset/europeanWaterClosetController.js');
+const LeoBathFittingsBathroomAccessoriesBathroomAccessoriesController = require('../controllers/sanitary/LeoBathFittings/bathroomAccessoriesController.js');
+const LeoBathFittingsFaucetsFaucetsController = require('../controllers/sanitary/LeoBathFittings/faucetsController.js');
+const LeoBathFittingsValveValveController = require('../controllers/sanitary/LeoBathFittings/valveController.js');
+const PamayFaucetsFaucetsController = require('../controllers/sanitary/Pamay/faucetsController.js');
+const PamayShowersShowersController = require('../controllers/sanitary/Pamay/showersController.js');
+const parrywareAccessoriesAccessoriesController = require('../controllers/sanitary/parryware/accessoriesController.js');
+const parrywareAngleValvesAngleValvesController = require('../controllers/sanitary/parryware/angleValvesController.js');
+const parrywareBelowCounterBasinsBelowCounterBasinsController = require('../controllers/sanitary/parryware/belowCounterBasinsController.js');
+const parrywareBowlBasinsBowlBasinsController = require('../controllers/sanitary/parryware/bowlBasinsController.js');
+const parrywareCLOSETSClosetsController = require('../controllers/sanitary/parryware/closetsController.js');
+const parrywareConcealedCisternConcealedCisternController = require('../controllers/sanitary/parryware/concealedCisternController.js');
+const parrywareEuropeanWaterClosetEuropeanWaterClosetController = require('../controllers/sanitary/parryware/europeanWaterClosetController.js');
 const parrywareFAUCETSFlushCocksController = require('../controllers/sanitary/parryware/FAUCETS/flushCocksController.js');
 const parrywareFAUCETSFlushValveController = require('../controllers/sanitary/parryware/FAUCETS/flushValveController.js');
 const parrywareFAUCETSHealthFaucetsController = require('../controllers/sanitary/parryware/FAUCETS/healthFaucetsController.js');
 const parrywareFAUCETSKitchenSinksController = require('../controllers/sanitary/parryware/FAUCETS/kitchenSinksController.js');
 const parrywareFAUCETSPedestalsController = require('../controllers/sanitary/parryware/FAUCETS/pedestalsController.js');
-const parrywarePolymerCisternsPolymerCisternsController = require('../controllers/sanitary/parryware/PolymerCisterns/polymerCisternsController.js');
-const parrywarePushPlatesPushPlatesController = require('../controllers/sanitary/parryware/PushPlates/pushPlatesController.js');
-const parrywareSeatCoversSeatCoversController = require('../controllers/sanitary/parryware/SeatCovers/seatCoversController.js');
-const parrywareSemiRecessedBasinsSemiRecessedBasinsController = require('../controllers/sanitary/parryware/SemiRecessedBasins/semiRecessedBasinsController.js');
-const parrywareShowerEnclosuresShowerEnclosuresController = require('../controllers/sanitary/parryware/ShowerEnclosures/showerEnclosuresController.js');
-const parrywareShowerPanelsShowerPanelsController = require('../controllers/sanitary/parryware/ShowerPanels/showerPanelsController.js');
-const parrywareShowersShowersController = require('../controllers/sanitary/parryware/showers/showersController.js');
-const parrywareUtsavRangeUtsavRangeController = require('../controllers/sanitary/parryware/UtsavRange/utsavRangeController.js');
-const parrywareWashBasinsWashBasinsController = require('../controllers/sanitary/parryware/washBasins/washBasinsController.js');
-const parrywareWasteCouplingWasteCouplingController = require('../controllers/sanitary/parryware/WasteCoupling/wasteCouplingController.js');
-const parrywareWaterHeatersWaterHeatersController = require('../controllers/sanitary/parryware/WaterHeaters/waterHeatersController.js');
-const PearlPreciousProductsEdgeEdgeController = require('../controllers/sanitary/PearlPreciousProducts/Edge/edgeController.js');
+const parrywarePolymerCisternsPolymerCisternsController = require('../controllers/sanitary/parryware/polymerCisternsController.js');
+const parrywarePushPlatesPushPlatesController = require('../controllers/sanitary/parryware/pushPlatesController.js');
+const parrywareSeatCoversSeatCoversController = require('../controllers/sanitary/parryware/seatCoversController.js');
+const parrywareSemiRecessedBasinsSemiRecessedBasinsController = require('../controllers/sanitary/parryware/semiRecessedBasinsController.js');
+const parrywareShowerEnclosuresShowerEnclosuresController = require('../controllers/sanitary/parryware/showerEnclosuresController.js');
+const parrywareShowerPanelsShowerPanelsController = require('../controllers/sanitary/parryware/showerPanelsController.js');
+const parrywareShowersShowersController = require('../controllers/sanitary/parryware/showersController.js');
+const parrywareUtsavRangeUtsavRangeController = require('../controllers/sanitary/parryware/utsavRangeController.js');
+const parrywareWashBasinsWashBasinsController = require('../controllers/sanitary/parryware/washBasinsController.js');
+const parrywareWasteCouplingWasteCouplingController = require('../controllers/sanitary/parryware/wasteCouplingController.js');
+const parrywareWaterHeatersWaterHeatersController = require('../controllers/sanitary/parryware/waterHeatersController.js');
+const PearlPreciousProductsEdgeEdgeController = require('../controllers/sanitary/PearlPreciousProducts/edgeController.js');
 const showersController = require('../controllers/sanitary/showersController.js');
 const tapsController = require('../controllers/sanitary/tapsController.js');
 const washbasinsController = require('../controllers/sanitary/washbasinsController.js');
@@ -207,11 +207,11 @@ const WaterTecTSeriesController = require('../controllers/sanitary/WaterTec/tSer
 const WaterTecValvesController = require('../controllers/sanitary/WaterTec/valvesController.js');
 
 // acrylic-products endpoints
-router.post('/acrylic-products/create', upload.array('photos', 5), acrylicProductsController.createAcrylicProducts);
-router.get('/acrylic-products/get', acrylicProductsController.getAllAcrylicProducts);
-router.get('/acrylic-products/getOne/:id', acrylicProductsController.getOneAcrylicProducts);
-router.put('/acrylic-products/update/:id', upload.array('photos', 5), acrylicProductsController.updateAcrylicProducts);
-router.delete('/acrylic-products/delete/:id', acrylicProductsController.deleteAcrylicProducts);
+router.post('/acrylic-products/create', upload.array('photos', 5), acrylicProductsController.createacrylicProducts);
+router.get('/acrylic-products/get', acrylicProductsController.getAllacrylicProducts);
+router.get('/acrylic-products/getOne/:id', acrylicProductsController.getOneacrylicProducts);
+router.put('/acrylic-products/update/:id', upload.array('photos', 5), acrylicProductsController.updateacrylicProducts);
+router.delete('/acrylic-products/delete/:id', acrylicProductsController.deleteacrylicProducts);
 
 // bathroom-accessories endpoints
 router.post('/bathroom-accessories/create', upload.array('photos', 5), bathroomAccessoriesController.createBathroomAccessories);
@@ -1355,11 +1355,11 @@ router.put('/taps/update/:id', upload.array('photos', 5), tapsController.updateT
 router.delete('/taps/delete/:id', tapsController.deleteTaps);
 
 // washbasins endpoints
-router.post('/washbasins/create', upload.array('photos', 5), washbasinsController.createWashbasins);
-router.get('/washbasins/get', washbasinsController.getAllWashbasins);
-router.get('/washbasins/getOne/:id', washbasinsController.getOneWashbasins);
-router.put('/washbasins/update/:id', upload.array('photos', 5), washbasinsController.updateWashbasins);
-router.delete('/washbasins/delete/:id', washbasinsController.deleteWashbasins);
+router.post('/washbasins/create', upload.array('photos', 5), washbasinsController.createWashBasins);
+router.get('/washbasins/get', washbasinsController.getAllWashBasins);
+router.get('/washbasins/getOne/:id', washbasinsController.getOneWashBasins);
+router.put('/washbasins/update/:id', upload.array('photos', 5), washbasinsController.updateWashBasins);
+router.delete('/washbasins/delete/:id', washbasinsController.deleteWashBasins);
 
 // waterman-accessories endpoints
 router.post('/waterman-accessories/create', upload.array('photos', 5), WatermanAccessoriesController.createAccessories);

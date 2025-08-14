@@ -15,7 +15,7 @@ export default function ProductForm({ onSave }) {
   const [form, setForm] = useState({
     name: '',
     sku: 'N/A',
-    price: '',
+    fixPrice: '',
     discount: '',
     discountPrice: '',
     totalProduct: '',
@@ -34,8 +34,8 @@ export default function ProductForm({ onSave }) {
     const { name, value } = e.target;
     setForm(prev => {
       let updated = { ...prev, [name]: value };
-      if (name === 'price' || name === 'discount') {
-        const price = parseFloat(name === 'price' ? value : prev.price);
+      if (name === 'fixPrice' || name === 'discount') {
+        const price = parseFloat(name === 'fixPrice' ? value : prev.fixPrice);
         const discount = parseFloat(name === 'discount' ? value : prev.discount);
         updated.discountPrice = (!isNaN(price) && !isNaN(discount)) ? (price - (price * discount / 100)).toFixed(2) : '';
       }
@@ -140,11 +140,29 @@ export default function ProductForm({ onSave }) {
   // Submit
   const handleSubmit = async e => {
     e.preventDefault();
+    
+    // Validation
+    if (!form.name.trim()) { 
+      alert('Product name is required'); 
+      return; 
+    }
+    if (!form.fixPrice || parseFloat(form.fixPrice) <= 0) { 
+      alert('Valid fix price is required'); 
+      return; 
+    }
+    if (!form.totalProduct || parseFloat(form.totalProduct) <= 0) { 
+      alert('Valid total product is required'); 
+      return; 
+    }
     if (files.length === 0) {
       setPhotoError("Please upload at least 1 photo.");
       return;
     }
-    setPhotoError("");
+    if (files.length > 5) { 
+      setPhotoError('Maximum 5 photos allowed.'); 
+      return; 
+    }
+    
     setPhotoError("");
     const data = new FormData();
     Object.entries(form).forEach(([k, v]) => {
@@ -162,8 +180,19 @@ export default function ProductForm({ onSave }) {
       f.fieldValues.forEach(val => data.append('customFieldValue' + (idx+1), val));
     });
     files.forEach(f => data.append('photos', f));
-    const res = await fetch(`${API_BASE_URL}/sanitary/AcrylicProducts/create`, { method: 'POST', body: data });
-    if (res.ok) onSave && onSave();
+    
+    try {
+      const res = await fetch(`${API_BASE_URL}/sanitary/acrylic-products/create`, { method: 'POST', body: data });
+      if (res.ok) { 
+        alert('Product created successfully!'); 
+        onSave && onSave(); 
+      } else { 
+        const err = await res.json(); 
+        alert(err.error || 'Failed to create'); 
+      }
+    } catch (err) { 
+      alert('Network error'); 
+    }
   };
 
   return (
@@ -179,8 +208,8 @@ export default function ProductForm({ onSave }) {
           <Input name="sku" value={form.sku} onChange={handleChange} placeholder="SKU" />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Price</label>
-          <Input name="price" type="number" value={form.price} onChange={handleChange} placeholder="Price" required />
+          <label className="block text-sm font-medium mb-1">Fix Price</label>
+          <Input name="fixPrice" type="number" value={form.fixPrice} onChange={handleChange} placeholder="Fix Price" required />
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Discount (%)</label>

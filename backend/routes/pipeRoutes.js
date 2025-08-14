@@ -1,10 +1,15 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
+
+// Configure multer for handling FormData with files
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 const finolexPipes = require('../controllers/pipe/finolexPipesController');
 const ashirvadPipes = require('../controllers/pipe/ashirvadPipesController');
 const astralPipes = require('../controllers/pipe/astralPipesController');
-const nepulPipes = require('../controllers/pipe/nepulPipes');
+const nepulPipes = require('../controllers/pipe/nepulPipesController');
 const birlaPipes = require('../controllers/pipe/birlaPipesControllers');
 const princePipes = require('../controllers/pipe/princePipesControllers');
 const prakashPipes = require('../controllers/pipe/prakashPipesControllers');
@@ -14,10 +19,10 @@ const tsaPipes = require('../controllers/pipe/tsaPipesControllers');
 
 // Helper to register CRUD routes for a controller
 function registerCrudRoutes(basePath, controller, name) {
-  router.post(`/${basePath}/create`, controller[`create${name}`]);
+  router.post(`/${basePath}/create`, upload.array('photos', 5), controller[`create${name}`]);
   router.get(`/${basePath}/get`, controller[`getAll${name}`]);
   router.get(`/${basePath}/getOne/:id`, controller[`getOne${name}`]);
-  router.put(`/${basePath}/Update/:id`, controller[`update${name}`]);
+  router.put(`/${basePath}/Update/:id`, upload.array('photos', 5), controller[`update${name}`]);
   router.delete(`/${basePath}/delete/:id`, controller[`delete${name}`]);
 }
 

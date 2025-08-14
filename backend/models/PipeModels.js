@@ -12,6 +12,8 @@ const PipeProductSchema = new mongoose.Schema({
   discount: { type: Number, default: 0 },
   fixPrice: { type: Number, required: true },
   discountPrice: { type: Number },
+  minPrice: { type: Number, required: true },
+  maxPrice: { type: Number, required: true },
   totalProduct: { type: Number, required: true },
   category: { type: String, required: true },
   tags: [String],

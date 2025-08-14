@@ -21,41 +21,15 @@ export default function ProductForm({ onSave }) {
     discount: '',
     discountPrice: '',
     totalProduct: '',
-    category: 'BirlaPipes',
+    category: 'NepulPipes',
     description: '',
     tags: [],
-    variants: [], // { variantName: '', fixPrice: '', minPrice: '', maxPrice: '', discountPrice: '' }
+    variants: [] // { variantName: '', fixPrice: '', discountPrice: '' }
   });
   const [files, setFiles] = useState([]);
   const [preview, setPreview] = useState([]);
   const [photoError, setPhotoError] = useState("");
   const [tagInput, setTagInput] = useState("");
-
-  // Calculate price range from type options
-  const calculatePriceRange = () => {
-    let minPrice = Infinity;
-    let maxPrice = -Infinity;
-    
-    customFields.forEach(field => {
-      if (field.fieldName && field.fieldValues.length > 0) {
-        field.fieldValues.forEach(value => {
-          if (value && !isNaN(parseFloat(value))) {
-            const price = parseFloat(value);
-            if (price < minPrice) minPrice = price;
-            if (price > maxPrice) maxPrice = price;
-          }
-        });
-      }
-    });
-    
-    if (minPrice !== Infinity && maxPrice !== -Infinity) {
-      setForm(prev => ({
-        ...prev,
-        minPrice: minPrice.toString(),
-        maxPrice: maxPrice.toString()
-      }));
-    }
-  };
 
   // Discount price auto-calc
   const handleChange = e => {
@@ -70,6 +44,25 @@ export default function ProductForm({ onSave }) {
       return updated;
     });
   };
+  
+  // Auto-calculate min and max price from type options
+  const calculatePriceRange = () => {
+    const validRates = customFields
+      .filter(f => f.fieldName && f.fieldValues.some(v => v.trim()))
+      .map(f => parseFloat(f.fieldValues.find(v => v.trim()) || 0))
+      .filter(rate => !isNaN(rate) && rate > 0);
+    
+    if (validRates.length > 0) {
+      const minRate = Math.min(...validRates);
+      const maxRate = Math.max(...validRates);
+      
+      setForm(prev => ({
+        ...prev,
+        minPrice: minRate.toString(),
+        maxPrice: maxRate.toString()
+      }));
+    }
+  };
 
   // Custom Fields logic
   const handleCustomFieldNameChange = (idx, value) => {
@@ -78,7 +71,8 @@ export default function ProductForm({ onSave }) {
       updated[idx].fieldName = value;
       return updated;
     });
-    // Auto-calculate price range after a short delay
+    
+    // Auto-calculate price range when type options change
     setTimeout(calculatePriceRange, 100);
   };
   const handleCustomFieldValueChange = (fieldIdx, valueIdx, value) => {
@@ -87,7 +81,8 @@ export default function ProductForm({ onSave }) {
       updated[fieldIdx].fieldValues[valueIdx] = value;
       return updated;
     });
-    // Auto-calculate price range after a short delay
+    
+    // Auto-calculate price range when type options change
     setTimeout(calculatePriceRange, 100);
   };
   const handleAddCustomFieldValue = (fieldIdx) => {
@@ -104,13 +99,11 @@ export default function ProductForm({ onSave }) {
       if (updated[fieldIdx].fieldValues.length === 0) updated[fieldIdx].fieldValues = [''];
       return updated;
     });
-    // Auto-calculate price range after a short delay
-    setTimeout(calculatePriceRange, 100);
   };
 
   // Variants logic
   const handleAddVariant = () => {
-    setForm(prev => ({ ...prev, variants: [...prev.variants, { variantName: '', fixPrice: '', minPrice: '', maxPrice: '', discountPrice: '' }] }));
+    setForm(prev => ({ ...prev, variants: [...prev.variants, { variantName: '', fixPrice: '', discountPrice: '' }] }));
   };
   const handleVariantChange = (idx, field, value) => {
     setForm(prev => {
@@ -175,82 +168,85 @@ export default function ProductForm({ onSave }) {
   const handleSubmit = async e => {
     e.preventDefault();
     
-    // Validation
-    if (!form.name.trim()) {
-      alert('Product name is required');
+    // Validate required fields
+    if (!form.name || !form.name.trim()) {
+      setPhotoError("Product name is required.");
       return;
     }
-    if (!form.fixPrice || parseFloat(form.fixPrice) <= 0) {
-      alert('Valid fix price is required');
+    if (!form.fixPrice || isNaN(parseFloat(form.fixPrice))) {
+      setPhotoError("Valid price is required.");
       return;
     }
-    if (!form.minPrice || parseFloat(form.minPrice) <= 0) {
-      alert('Valid min price is required');
+    if (!form.minPrice || isNaN(parseFloat(form.minPrice))) {
+      setPhotoError("Valid min price is required.");
       return;
     }
-    if (!form.maxPrice || parseFloat(form.maxPrice) <= 0) {
-      alert('Valid max price is required');
+    if (!form.maxPrice || isNaN(parseFloat(form.maxPrice))) {
+      setPhotoError("Valid max price is required.");
       return;
     }
     if (parseFloat(form.maxPrice) < parseFloat(form.minPrice)) {
-      alert('Max price must be greater than or equal to min price');
+      setPhotoError("Max price must be greater than or equal to min price.");
       return;
     }
-    if (!form.totalProduct || parseFloat(form.totalProduct) <= 0) {
-      alert('Valid total product count is required');
+    if (!form.totalProduct || isNaN(parseInt(form.totalProduct))) {
+      setPhotoError("Valid total product count is required.");
       return;
     }
+    
     if (files.length === 0) {
       setPhotoError("Please upload at least 1 photo.");
       return;
     }
-    if (files.length > 5) {
-      setPhotoError("Maximum 5 photos allowed.");
+    
+    setPhotoError("");
+    const data = new FormData();
+    
+    // Add basic form fields (excluding variants and numeric fields handled separately)
+    Object.entries(form).forEach(([k, v]) => {
+      if (k === 'tags') {
+        v.forEach(val => data.append('tags', val));
+      } else if (k === 'name' || k === 'description' || k === 'category') {
+        data.append(k, v);
+      }
+      // Skip variants, fixPrice, minPrice, maxPrice, totalProduct, discount as they're handled separately
+    });
+    
+    // Map custom fields to type array structure
+    let typeArray;
+    try {
+      typeArray = customFields
+        .filter(f => f.fieldName && f.fieldValues.some(v => v.trim()))
+        .map(f => {
+          const rate = parseFloat(f.fieldValues.find(v => v.trim()) || 0);
+          if (isNaN(rate) || rate <= 0) {
+            throw new Error(`Invalid rate value for ${f.fieldName}`);
+          }
+          return {
+            fit: f.fieldName.trim(),
+            rate: rate
+          };
+        });
+      
+      if (typeArray.length === 0) {
+        setPhotoError("Please add at least one custom field with name and value.");
+        return;
+      }
+    } catch (error) {
+      setPhotoError(error.message);
       return;
     }
     
-    setPhotoError("");
+    // Ensure numeric fields are numbers
+    if (form.fixPrice) data.append('fixPrice', parseFloat(form.fixPrice));
+    if (form.minPrice) data.append('minPrice', parseFloat(form.minPrice));
+    if (form.maxPrice) data.append('maxPrice', parseFloat(form.maxPrice));
+    if (form.totalProduct) data.append('totalProduct', parseInt(form.totalProduct));
+    if (form.discount) data.append('discount', parseFloat(form.discount));
     
-    const data = new FormData();
+    data.append('type', JSON.stringify(typeArray));
     
-    // Add basic form fields
-    data.append('name', form.name);
-    data.append('fixPrice', form.fixPrice);
-    data.append('minPrice', form.minPrice);
-    data.append('maxPrice', form.maxPrice);
-    data.append('totalProduct', form.totalProduct);
-    data.append('category', form.category);
-    if (form.description) data.append('description', form.description);
-    if (form.discount) data.append('discount', form.discount);
-    if (form.discountPrice) data.append('discountPrice', form.discountPrice);
-    
-    // Add tags
-    if (form.tags.length > 0) {
-      data.append('tags', JSON.stringify(form.tags));
-    }
-    
-    // Add type array from custom fields
-    const typeArray = [];
-    customFields.forEach(field => {
-      if (field.fieldName && field.fieldValues.length > 0) {
-        field.fieldValues.forEach(value => {
-          if (value && value.trim()) {
-            typeArray.push({
-              fit: field.fieldName,
-              rate: parseFloat(value) || 0
-            });
-          }
-        });
-      }
-    });
-    
-    if (typeArray.length > 0) {
-      data.append('type', JSON.stringify(typeArray));
-    }
-    
-    // Add files
-    files.forEach(f => data.append('photos', f));
-    
+    // Debug: log what's being sent
     console.log('Form data being sent:', {
       name: form.name,
       fixPrice: form.fixPrice,
@@ -259,33 +255,17 @@ export default function ProductForm({ onSave }) {
       totalProduct: form.totalProduct,
       category: form.category,
       type: typeArray,
-      tags: form.tags,
-      filesCount: files.length
+      files: files.length
     });
     
-    try {
-      const res = await fetch(`${API_BASE_URL}/pipe/birla-pipes/create`, { 
-        method: 'POST', 
-        body: data 
-      });
-      
-      if (res.ok) {
-        alert('Product created successfully!');
-        onSave && onSave();
-      } else {
-        const errorData = await res.json();
-        alert(`Error: ${errorData.error || 'Failed to create product'}`);
-      }
-    } catch (error) {
-      console.error('Error creating product:', error);
-      alert('Error creating product. Please try again.');
-    }
+    files.forEach(f => data.append('photos', f));
+    const res = await fetch(`${API_BASE_URL}/pipe/nepul-pipes/create`, { method: 'POST', body: data });
+    if (res.ok) onSave && onSave();
   };
 
   return (
     <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-6 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
-      <h2 className="text-2xl font-bold mb-2 text-center">Add BirlaPipes Product</h2>
-      
+      <h2 className="text-2xl font-bold mb-2 text-center">Add NepulPipes Product</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium mb-1">Product Name</label>
@@ -296,12 +276,8 @@ export default function ProductForm({ onSave }) {
           <Input name="sku" value={form.sku} onChange={handleChange} placeholder="SKU" />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Fix Price</label>
-          <Input name="fixPrice" type="number" value={form.fixPrice} onChange={handleChange} placeholder="Fix Price" required />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Discount (%)</label>
-          <Input name="discount" type="number" value={form.discount} onChange={handleChange} placeholder="Discount (%)" />
+          <label className="block text-sm font-medium mb-1">Price</label>
+          <Input name="fixPrice" type="number" value={form.fixPrice} onChange={handleChange} placeholder="Price" required />
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Min Price</label>
@@ -311,36 +287,44 @@ export default function ProductForm({ onSave }) {
           <label className="block text-sm font-medium mb-1">Max Price</label>
           <Input name="maxPrice" type="number" value={form.maxPrice} onChange={handleChange} placeholder="Max Price" required />
         </div>
+        <div className="col-span-2">
+          <Button 
+            type="button" 
+            onClick={calculatePriceRange} 
+            className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1"
+          >
+            Auto-calculate from Type Options
+          </Button>
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Discount (%)</label>
+          <Input name="discount" type="number" value={form.discount} onChange={handleChange} placeholder="Discount (%)" />
+        </div>
         <div>
           <label className="block text-sm font-medium mb-1">Discounted Price (auto)</label>
           <Input name="discountPrice" type="number" value={form.discountPrice} readOnly />
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Total Product</label>
-          <Input name="totalProduct" type="number" value={form.totalProduct} onChange={handleChange} placeholder="Total Product" required />
+          <Input name="totalProduct" type="number" value={form.totalProduct} onChange={handleChange} placeholder="Total Product" />
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Category</label>
           <Input name="category" value={form.category} readOnly />
         </div>
       </div>
-      
-      {/* Type Options (Fit & Rate) */}
+      {/* Custom Fields - Type Options */}
       <div className="space-y-2">
-        <div className="flex justify-between items-center">
-          <label className="block text-sm font-medium">Type Options (Fit & Rate)</label>
-          <Button type="button" onClick={calculatePriceRange} className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1">
-            Auto-calculate from Type Options
-          </Button>
-        </div>
+        <label className="block text-sm font-medium">Type Options (Fit & Rate)</label>
+        <p className="text-xs text-gray-500 mb-2">Add at least one type option with fit name and rate value</p>
         {customFields.map((f, idx) => (
           <div key={idx} className="mb-2 border p-2 rounded">
             <div className="flex gap-2 items-center mb-1">
-              <Input className="w-1/3" placeholder="Fit Name" value={f.fieldName} onChange={e => handleCustomFieldNameChange(idx, e.target.value)} />
+              <Input className="w-1/3" placeholder="Fit Name (e.g., 20mm, 25mm)" value={f.fieldName} onChange={e => handleCustomFieldNameChange(idx, e.target.value)} />
             </div>
             {f.fieldValues.map((val, vIdx) => (
               <div key={vIdx} className="flex gap-2 items-center mb-1">
-                <Input className="w-1/2" placeholder="Rate (Price)" value={val} onChange={e => handleCustomFieldValueChange(idx, vIdx, e.target.value)} />
+                <Input className="w-1/2" type="number" placeholder="Rate (Price)" value={val} onChange={e => handleCustomFieldValueChange(idx, vIdx, e.target.value)} />
                 <Button type="button" onClick={() => handleRemoveCustomFieldValue(idx, vIdx)} className="bg-red-500 hover:bg-red-600 text-white px-2 py-1">Remove</Button>
               </div>
             ))}
@@ -348,7 +332,6 @@ export default function ProductForm({ onSave }) {
           </div>
         ))}
       </div>
-      
       {/* Variants Section */}
       <div className="space-y-2">
         <div className="flex justify-between items-center">
@@ -358,19 +341,17 @@ export default function ProductForm({ onSave }) {
         {form.variants.map((v, idx) => (
           <div key={idx} className="flex gap-2 items-center">
             <Input className="w-1/3" placeholder="Variant Name" value={v.variantName} onChange={e => handleVariantChange(idx, 'variantName', e.target.value)} />
-            <Input className="w-1/3" type="number" placeholder="Fix Price" value={v.fixPrice} onChange={e => handleVariantChange(idx, 'fixPrice', e.target.value)} />
+            <Input className="w-1/3" type="number" placeholder="Price" value={v.fixPrice} onChange={e => handleVariantChange(idx, 'fixPrice', e.target.value)} />
             <Input className="w-1/3" type="number" placeholder="Discounted Price (auto)" value={v.discountPrice} readOnly />
             <Button type="button" onClick={() => handleRemoveVariant(idx)} className="bg-red-500 hover:bg-red-600 text-white px-2 py-1">Remove</Button>
           </div>
         ))}
       </div>
-      
       {/* Description */}
       <div>
         <label className="block text-sm font-medium mb-1">Description</label>
         <Textarea name="description" value={form.description} onChange={handleChange} placeholder="Description" />
       </div>
-      
       {/* Images */}
       <div>
         <label className="block text-sm font-medium mb-1">Photos <span className="text-xs text-gray-400">(1-5 allowed)</span></label>
@@ -387,7 +368,6 @@ export default function ProductForm({ onSave }) {
           </div>
         )}
       </div>
-      
       {/* Tags */}
       <div>
         <label className="block text-sm font-medium mb-1">Tags</label>
@@ -404,7 +384,6 @@ export default function ProductForm({ onSave }) {
           ))}
         </div>
       </div>
-      
       <Button type="submit" className="w-full mt-4">Create Product</Button>
     </form>
   );

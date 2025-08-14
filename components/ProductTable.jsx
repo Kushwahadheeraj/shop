@@ -255,15 +255,21 @@ export default function ProductTable({ products, onEdit, onDelete, onView, categ
                       </TableCell>
                       <TableCell className="responsive-table-cell col-tags">
                         <div className="flex flex-wrap gap-1 content-height-limit">
-                          {product.tag && product.tag.slice(0, 2).map((tag, idx) => (
-                            <Badge key={idx} variant="secondary" className="text-xs badge-truncate" title={tag}>
-                              {tag}
-                            </Badge>
-                          ))}
-                          {product.tag && product.tag.length > 2 && (
-                            <Badge variant="outline" className="text-xs">
-                              +{product.tag.length - 2}
-                            </Badge>
+                          {product.tags && product.tags.length > 0 ? (
+                            <>
+                              {product.tags.slice(0, 2).map((tag, idx) => (
+                                <Badge key={idx} variant="secondary" className="text-xs badge-truncate" title={tag}>
+                                  {tag}
+                                </Badge>
+                              ))}
+                              {product.tags.length > 2 && (
+                                <Badge variant="outline" className="text-xs">
+                                  +{product.tags.length - 2}
+                                </Badge>
+                              )}
+                            </>
+                          ) : (
+                            <span className="text-gray-400 text-xs">No tags</span>
                           )}
                         </div>
                       </TableCell>

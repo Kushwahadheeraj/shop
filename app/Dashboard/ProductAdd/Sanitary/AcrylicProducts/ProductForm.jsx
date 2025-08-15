@@ -16,6 +16,8 @@ export default function ProductForm({ onSave }) {
     name: '',
     sku: 'N/A',
     fixPrice: '',
+    minPrice: '',
+    maxPrice: '',
     discount: '',
     discountPrice: '',
     totalProduct: '',
@@ -96,6 +98,28 @@ export default function ProductForm({ onSave }) {
       const updated = prev.variants.filter((_, i) => i !== idx);
       return { ...prev, variants: updated };
     });
+  };
+
+  // Calculate min/max price from variants
+  const calculatePriceRange = () => {
+    if (form.variants.length === 0) {
+      setForm(prev => ({ ...prev, minPrice: '', maxPrice: '' }));
+      return;
+    }
+    
+    const prices = form.variants
+      .map(v => parseFloat(v.price))
+      .filter(price => !isNaN(price) && price > 0);
+    
+    if (prices.length > 0) {
+      const minPrice = Math.min(...prices);
+      const maxPrice = Math.max(...prices);
+      setForm(prev => ({ 
+        ...prev, 
+        minPrice: minPrice.toString(), 
+        maxPrice: maxPrice.toString() 
+      }));
+    }
   };
 
   // Tags
@@ -212,6 +236,14 @@ export default function ProductForm({ onSave }) {
           <Input name="fixPrice" type="number" value={form.fixPrice} onChange={handleChange} placeholder="Fix Price" required />
         </div>
         <div>
+          <label className="block text-sm font-medium mb-1">Min Price</label>
+          <Input name="minPrice" type="number" value={form.minPrice} onChange={handleChange} placeholder="Min Price" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Max Price</label>
+          <Input name="maxPrice" type="number" value={form.maxPrice} onChange={handleChange} placeholder="Max Price" />
+        </div>
+        <div>
           <label className="block text-sm font-medium mb-1">Discount (%)</label>
           <Input name="discount" type="number" value={form.discount} onChange={handleChange} placeholder="Discount (%)" />
         </div>
@@ -250,7 +282,10 @@ export default function ProductForm({ onSave }) {
       <div className="space-y-2">
         <div className="flex justify-between items-center">
           <label className="block text-sm font-medium">Variants</label>
-          <Button type="button" onClick={handleAddVariant} className="bg-green-500 hover:bg-green-600 text-white px-3 py-1">Add Variant</Button>
+          <div className="flex gap-2">
+            <Button type="button" onClick={calculatePriceRange} className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1">Calculate Price Range</Button>
+            <Button type="button" onClick={handleAddVariant} className="bg-green-500 hover:bg-green-600 text-white px-3 py-1">Add Variant</Button>
+          </div>
         </div>
         {form.variants.map((v, idx) => (
           <div key={idx} className="flex gap-2 items-center">

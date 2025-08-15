@@ -607,10 +607,10 @@ router.delete('/corsa-bathroom-accessories-qubix/delete/:id', CorsaBATHROOMACCES
 
 // corsabathroomaccessoriessquare endpoints
 router.post('/corsa-bathroom-accessories-square/create', upload.array('photos', 5), CorsaBATHROOMACCESSORIESSquareController.createSquare);
-router.get('/corsa-bathroom-accessoriess-quare/get', CorsaBATHROOMACCESSORIESSquareController.getAllSquare);
+router.get('/corsa-bathroom-accessories-square/get', CorsaBATHROOMACCESSORIESSquareController.getAllSquare);
 router.get('/corsa-bathroom-accessories-square/getOne/:id', CorsaBATHROOMACCESSORIESSquareController.getOneSquare);
-router.put('/corsa-bathroom-accessorie-ssquare/update/:id', upload.array('photos', 5), CorsaBATHROOMACCESSORIESSquareController.updateSquare);
-router.delete('/corsa-bathroom-accessorie-ssquare/delete/:id', CorsaBATHROOMACCESSORIESSquareController.deleteSquare);
+router.put('/corsa-bathroom-accessories-square/update/:id', upload.array('photos', 5), CorsaBATHROOMACCESSORIESSquareController.updateSquare);
+router.delete('/corsa-bathroom-accessories-square/delete/:id', CorsaBATHROOMACCESSORIESSquareController.deleteSquare);
 
 // corsabathroomaccessoriessupreme endpoints
 router.post('/corsa-bathroom-accessories-supreme/create', upload.array('photos', 5), CorsaBATHROOMACCESSORIESSupremeController.createSupreme);

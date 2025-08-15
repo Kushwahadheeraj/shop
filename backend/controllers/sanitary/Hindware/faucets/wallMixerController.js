@@ -48,6 +48,27 @@ exports.createWallMixer = async (req, res) => {
     // Parse variants for min/max calculation support
     if (req.body.variants && typeof req.body.variants === 'string') {
       try { productData.variants = JSON.parse(req.body.variants); } catch (_) {}
+    
+    // Process Custom Fields
+    const customFields = [];
+    for (let i = 1; i <= 10; i++) { // Support up to 10 custom fields
+      const fieldName = req.body[`customFieldName${i}`];
+      const fieldValue = req.body[`customFieldValue${i}`];
+      
+      if (fieldName && fieldName.trim()) {
+        // Handle multiple values for the same field
+        const fieldValues = Array.isArray(fieldValue) ? fieldValue : [fieldValue];
+        customFields.push({
+          fieldName: fieldName.trim(),
+          fieldValues: fieldValues.filter(val => val && val.trim())
+        });
+      }
+    }
+    
+    if (customFields.length > 0) {
+      productData.customFields = customFields;
+    }
+
     }
 
     // Derive minPrice/maxPrice if not provided explicitly
@@ -109,7 +130,7 @@ exports.updateWallMixer = async (req, res) => {
     }
     // Parse variants
     if (req.body.variants && typeof req.body.variants === 'string') {
-      try { update.variants = JSON.parse(req.body.variants); } catch (_) {}
+      try { update.variants = JSON.parse(req.body.variants); } catch (_) {} 
     }
     // Derive/validate min/max
     const candidateUpdateRates = Array.isArray(update.variants)

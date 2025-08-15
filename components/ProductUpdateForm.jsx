@@ -13,6 +13,7 @@ import API_BASE_URL from "@/lib/apiConfig";
 
 // Function to map category display names to API endpoints
 const getCategoryEndpoint = (category) => {
+  // Special mappings for complex categories
   const categoryMap = {
     'Adhesives Products': 'adhesives',
     'Brush Products': 'brush',
@@ -43,7 +44,40 @@ const getCategoryEndpoint = (category) => {
     'Water Proofing Products': 'waterproofing'
   };
   
-  return categoryMap[category] || category.toLowerCase().replace(/\s+/g, '');
+  // Check if we have a direct mapping
+  if (categoryMap[category]) {
+    return categoryMap[category];
+  }
+  
+  // Handle Sanitary subcategories automatically
+  if (category.startsWith('Sanitary - ')) {
+    const subcategory = category.replace('Sanitary - ', '').replace(' Products', '');
+    
+    // Convert to kebab-case and handle special cases
+    let endpoint = subcategory
+      .replace(/([a-z])([A-Z])/g, '$1-$2') // camelCase to kebab-case
+      .replace(/\s+/g, '-') // spaces to hyphens
+      .toLowerCase();
+    
+    // Handle special cases
+    if (endpoint.includes('kitchensinks')) {
+      endpoint = endpoint.replace('kitchensinks', 'kitchen-sinks');
+    }
+    if (endpoint.includes('bathroomaccessories')) {
+      endpoint = endpoint.replace('bathroomaccessories', 'bathroom-accessories');
+    }
+    if (endpoint.includes('waterclosets')) {
+      endpoint = endpoint.replace('waterclosets', 'water-closets');
+    }
+    if (endpoint.includes('washbasins')) {
+      endpoint = endpoint.replace('washbasins', 'washbasins');
+    }
+    
+    return `sanitary/${endpoint}`;
+  }
+  
+  // Default fallback
+  return category.toLowerCase().replace(/\s+/g, '');
 };
 
 export default function ProductUpdateForm({ product, category, onUpdate, onClose }) {

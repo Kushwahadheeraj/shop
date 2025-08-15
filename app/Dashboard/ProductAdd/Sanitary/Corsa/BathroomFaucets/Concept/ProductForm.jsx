@@ -15,14 +15,17 @@ export default function ProductForm({ onSave }) {
   const [form, setForm] = useState({
     name: '',
     sku: 'N/A',
-    price: '',
+    fixPrice: '',
+    
+    minPrice: '',
+    maxPrice: '',
     discount: '',
     discountPrice: '',
     totalProduct: '',
     category: 'Concept',
     description: '',
     tags: [],
-    variants: [], // { variantName: '', price: '', discountPrice: '' }
+    variants: [], // { variantName: '', fixPrice: '', discountPrice: '' }
   });
   const [files, setFiles] = useState([]);
   const [preview, setPreview] = useState([]);
@@ -34,8 +37,8 @@ export default function ProductForm({ onSave }) {
     const { name, value } = e.target;
     setForm(prev => {
       let updated = { ...prev, [name]: value };
-      if (name === 'price' || name === 'discount') {
-        const price = parseFloat(name === 'price' ? value : prev.price);
+      if (name === 'fixPrice' || name === 'discount') {
+        const price = parseFloat(name === 'fixPrice' ? value : prev.fixPrice);
         const discount = parseFloat(name === 'discount' ? value : prev.discount);
         updated.discountPrice = (!isNaN(price) && !isNaN(discount)) ? (price - (price * discount / 100)).toFixed(2) : '';
       }
@@ -76,7 +79,7 @@ export default function ProductForm({ onSave }) {
 
   // Variants logic
   const handleAddVariant = () => {
-    setForm(prev => ({ ...prev, variants: [...prev.variants, { variantName: '', price: '', discountPrice: '' }] }));
+    setForm(prev => ({ ...prev, variants: [...prev.variants, { variantName: '', fixPrice: '', discountPrice: '' }] }));
   };
   const handleVariantChange = (idx, field, value) => {
     setForm(prev => {
@@ -95,8 +98,30 @@ export default function ProductForm({ onSave }) {
     setForm(prev => {
       const updated = prev.variants.filter((_, i) => i !== idx);
       return { ...prev, variants: updated };
-    });
+  });
   };
+  // Calculate min/max price from variants
+  const calculatePriceRange = () => {
+    if (form.variants.length === 0) {
+      setForm(prev => ({ ...prev, minPrice: '', maxPrice: '' }));
+      return;
+    }
+    
+    const prices = form.variants
+      .map(v => parseFloat(v.price))
+      .filter(price => !isNaN(price) && price > 0);
+    
+    if (prices.length > 0) {
+      const minPrice = Math.min(...prices);
+      const maxPrice = Math.max(...prices);
+      setForm(prev => ({ 
+        ...prev, 
+        minPrice: minPrice.toString(), 
+        maxPrice: maxPrice.toString() 
+      }));
+    }
+  };
+    
 
   // Tags
   const handleAddTag = () => {
@@ -179,10 +204,18 @@ export default function ProductForm({ onSave }) {
           <Input name="sku" value={form.sku} onChange={handleChange} placeholder="SKU" />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Price</label>
-          <Input name="price" type="number" value={form.price} onChange={handleChange} placeholder="Price" required />
+          <label className="block text-sm font-medium mb-1">Fix Price</label>
+          <Input name="fixPrice" type="number" value={form.fixPrice} onChange={handleChange} placeholder="Fix Price" required />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium mb-1">Min Price</label>
+          <Input name="minPrice" type="number" value={form.minPrice} onChange={handleChange} placeholder="Min Price" />
         </div>
         <div>
+          <label className="block text-sm font-medium mb-1">Max Price</label>
+          <Input name="maxPrice" type="number" value={form.maxPrice} onChange={handleChange} placeholder="Max Price" />
+        </div><div>
           <label className="block text-sm font-medium mb-1">Discount (%)</label>
           <Input name="discount" type="number" value={form.discount} onChange={handleChange} placeholder="Discount (%)" />
         </div>
@@ -221,12 +254,14 @@ export default function ProductForm({ onSave }) {
       <div className="space-y-2">
         <div className="flex justify-between items-center">
           <label className="block text-sm font-medium">Variants</label>
-          <Button type="button" onClick={handleAddVariant} className="bg-green-500 hover:bg-green-600 text-white px-3 py-1">Add Variant</Button>
-        </div>
-        {form.variants.map((v, idx) => (
+          <div className="flex gap-2">
+            <Button type="button" onClick={calculatePriceRange} className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1">Calculate Price Range</Button>
+            <Button type="button" onClick={handleAddVariant} className="bg-green-500 hover:bg-green-600 text-white px-3 py-1">Add Variant</Button>
+          </div>
+        </div>{form.variants.map((v, idx) => (
           <div key={idx} className="flex gap-2 items-center">
             <Input className="w-1/3" placeholder="Variant Name" value={v.variantName} onChange={e => handleVariantChange(idx, 'variantName', e.target.value)} />
-            <Input className="w-1/3" type="number" placeholder="Price" value={v.price} onChange={e => handleVariantChange(idx, 'price', e.target.value)} />
+            <Input className="w-1/3" type="number" placeholder="Fix Price" value={v.price} onChange={e => handleVariantChange(idx, 'price', e.target.value)} />
             <Input className="w-1/3" type="number" placeholder="Discounted Price (auto)" value={v.discountPrice} readOnly />
             <Button type="button" onClick={() => handleRemoveVariant(idx)} className="bg-red-500 hover:bg-red-600 text-white px-2 py-1">Remove</Button>
           </div>

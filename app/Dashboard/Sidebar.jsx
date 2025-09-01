@@ -2181,7 +2181,7 @@ const sections = [
               },
               {
                 name: 'Diamond Blades',
-                path: '/Dashboard/ProductAdd/Tools/DiamondBlades',
+                path: '/Dashboard/ProductAdd/Tools/abrasives/DiamondBlades',
               },
             ],
           },
@@ -4581,16 +4581,15 @@ const sections = [
         name: 'Tools',
         subItemsName: [
           {
-            name: 'abrasives',
-            path: '/Dashboard/ProductList/Tools/abrasives',
+            name: 'Abrasives',
             subItemsNameComponent: [
               {
                 name: 'Cut Off Wheel',
-                path: '/Dashboard/ProductList/Tools/abrasives/CutOffWheel',
+                path: '/Dashboard/ProductList/Tools/Abrasives/CutOffWheel',
               },
               {
                 name: 'Diamond Blades',
-                path: '/Dashboard/ProductList/Tools/DiamondBlades',
+                path: '/Dashboard/ProductList/Tools/Abrasives/DiamondBlades',
               },
             ],
           },

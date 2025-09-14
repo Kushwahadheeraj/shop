@@ -3,6 +3,8 @@ import "./globals.css";
 import UpdateWrapper from "@/components/UpdateWrapper";
 import { AuthProvider } from '../components/AuthContext';
 import ConditionalFooter from "@/components/ConditionalFooter";
+import Header from '@/components/header';
+import Navbar from '@/components/Navbar';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +29,11 @@ export default function RootLayout({ children }) {
             className={`${geistSans.variable} ${geistMono.variable} antialiased `}
           >
             <UpdateWrapper />
-            {children}
+            <Header />
+            <Navbar />
+            <main className="">
+              {children}
+            </main>
             <ConditionalFooter />
           </body>
         </html>

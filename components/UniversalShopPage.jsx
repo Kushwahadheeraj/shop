@@ -229,9 +229,9 @@ export default function UniversalShopPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <>
       {/* Breadcrumb Navigation */}
-      <div className="bg-white border-b border-gray-200 py-4">
+      <div className="bg-white border-b border-gray-200 py-4 mb-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex items-center space-x-2 text-sm">
             <Link href="/" className="text-gray-500 hover:text-gray-700">HOME</Link>
@@ -242,101 +242,12 @@ export default function UniversalShopPage() {
       </div>
 
       {/* Category Banner */}
-      <div className="relative h-64 bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center">
+      <div className="relative h-64 bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center mb-8">
         <div className="absolute inset-0 bg-black bg-opacity-20"></div>
         <h1 className="relative z-10 text-5xl font-bold text-white text-center px-4">{title}</h1>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar */}
-          <aside className="w-full lg:w-1/4 bg-white p-6 rounded-lg shadow-sm">
-            <div className="mb-8">
-              <div className="text-gray-800 font-bold text-lg mb-2">FILTER BY PRICE</div>
-              <div className="h-0.5 w-8 bg-gray-300 mb-4" />
-              <div className="space-y-4">
-                <div className="text-sm text-gray-600">
-                  Price: <span className="font-bold">₹0</span> — <span className="font-bold">₹10,290</span>
-                </div>
-                <button className="bg-gray-800 text-white font-bold px-6 py-2 rounded-full text-xs tracking-widest hover:bg-gray-700 transition-colors">
-                  FILTER
-                </button>
-              </div>
-            </div>
-            
-            <div>
-              <div className="text-gray-800 font-bold text-lg mb-2">BROWSE</div>
-              <div className="h-0.5 w-8 bg-gray-300 mb-4" />
-              <div className="space-y-0">
-                <button onClick={() => window.location.href = '/ShopPage/Adhesives'} className="w-full text-left py-3 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors font-medium">
-                  Adhesives
-                </button>
-                <div className="h-px bg-gray-200"></div>
-                <button onClick={() => window.location.href = '/ShopPage/Cements'} className="w-full text-left py-3 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors font-medium">
-                  Cements & POP
-                </button>
-                <div className="h-px bg-gray-200"></div>
-                <button onClick={() => window.location.href = '/ShopPage/Cleaning'} className="w-full text-left py-3 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors font-medium">
-                  Cleaning
-                </button>
-                <div className="h-px bg-gray-200"></div>
-                <button onClick={() => window.location.href = '/ShopPage/Dry'} className="w-full text-left py-3 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors font-medium">
-                  Dry Wall Gypsum Screws
-                </button>
-                <div className="h-px bg-gray-200"></div>
-                <button onClick={() => window.location.href = '/ShopPage/Electrical'} className="w-full text-left py-3 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors font-medium">
-                  Electrical Items
-                </button>
-                <div className="h-px bg-gray-200"></div>
-                <button onClick={() => window.location.href = '/ShopPage/Home'} className="w-full text-left py-3 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors font-medium">
-                  Home
-                </button>
-                <div className="h-px bg-gray-200"></div>
-                <button onClick={() => window.location.href = '/ShopPage/Hardware'} className="w-full text-left py-3 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors font-medium">
-                  House Hold Ladder
-                </button>
-                <div className="h-px bg-gray-200"></div>
-                <button onClick={() => window.location.href = '/ShopPage/Electrical'} className="w-full text-left py-3 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors font-medium">
-                  LED Luminaires
-                </button>
-                <div className="h-px bg-gray-200"></div>
-                <button onClick={() => window.location.href = '/ShopPage/Locks'} className="w-full text-left py-3 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors font-medium">
-                  Locks & accessories
-                </button>
-                <div className="h-px bg-gray-200"></div>
-                <button onClick={() => window.location.href = '/ShopPage/Cleaning'} className="w-full text-left py-3 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors font-medium">
-                  Mask & Sanitizers
-                </button>
-                <div className="h-px bg-gray-200"></div>
-                <button onClick={() => window.location.href = '/ShopPage/Paint'} className="w-full text-left py-3 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors font-medium">
-                  Paints
-                </button>
-                <div className="h-px bg-gray-200"></div>
-                <button onClick={() => window.location.href = '/ShopPage/Pipe'} className="w-full text-left py-3 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors font-medium">
-                  Pipes & Fittings
-                </button>
-                <div className="h-px bg-gray-200"></div>
-                <button onClick={() => window.location.href = '/ShopPage/Sanitary'} className="w-full text-left py-3 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors font-medium">
-                  Sanitary Ware & faucets
-                </button>
-                <div className="h-px bg-gray-200"></div>
-                <button onClick={() => window.location.href = '/ShopPage/Tools'} className="w-full text-left py-3 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors font-medium">
-                  Tools
-                </button>
-                <div className="h-px bg-gray-200"></div>
-                <button onClick={() => window.location.href = '/ShopPage/Uncategorized'} className="w-full text-left py-3 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors font-medium">
-                  Uncategorized
-                </button>
-                <div className="h-px bg-gray-200"></div>
-                <button onClick={() => window.location.href = '/ShopPage/WaterProofing'} className="w-full text-left py-3 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors font-medium">
-                  WaterProofing
-                </button>
-              </div>
-            </div>
-          </aside>
-
-          {/* Main Content */}
-          <main className="w-full lg:w-3/4">
+      {/* Main Content */}
             {/* Results Header */}
             <div className="flex justify-between items-center mb-6">
               <p className="text-gray-600">Showing 1-{products.length} of {products.length} results</p>
@@ -471,17 +382,14 @@ export default function UniversalShopPage() {
                 );
               })}
             </div>
-          </main>
-        </div>
 
-        {/* No Products Message */}
-        {products.length === 0 && (
-          <div className="text-center py-12">
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
-            <p className="text-gray-500">Try adjusting your search or filter criteria.</p>
-          </div>
-        )}
-      </div>
+      {/* No Products Message */}
+      {products.length === 0 && (
+        <div className="text-center py-12">
+          <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
+          <p className="text-gray-500">Try adjusting your search or filter criteria.</p>
+        </div>
+      )}
 
       {/* Product Detail Modal */}
       {console.log('Modal state:', { isModalOpen, selectedProduct })}
@@ -490,7 +398,7 @@ export default function UniversalShopPage() {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
       />
-    </div>
+    </>
   );
 }
 

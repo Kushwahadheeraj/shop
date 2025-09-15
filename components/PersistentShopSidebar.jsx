@@ -516,7 +516,7 @@ export default function PersistentShopSidebar() {
   };
 
   return (
-    <aside className="w-full lg:w-1/4 bg-white p-6 rounded-xl shadow-lg border border-gray-100 sticky top-24 h-fit">
+    <aside className="w-full mt-32 lg:w-1/4 bg-white p-6 rounded-xl shadow-lg border border-gray-100 sticky top-24 h-fit">
       <div className="mb-8">
         <div className="text-gray-800 font-bold text-lg mb-2">FILTER BY PRICE</div>
         <div className="h-0.5 w-8 bg-blue-500 mb-4" />

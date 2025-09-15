@@ -31,6 +31,7 @@ function buildEndpointFromSegments(segments) {
     fiber: 'fiber',
     fitting: 'fitting',
     hardware: 'hardware',
+    home: 'home',
     homedecor: 'homedecor',
     locks: 'locks',
     paint: 'paint',
@@ -87,95 +88,24 @@ export default function UniversalShopPage() {
           return;
         }
         
-        // Try to fetch from API first
-        try {
-          const res = await fetch(endpoint, { cache: 'no-store' });
-          if (res.ok) {
-            const json = await res.json();
-            if (isMounted) setData(json?.data || json || []);
-            return;
+        // Fetch data from API
+        const res = await fetch(endpoint, { 
+          cache: 'no-store',
+          headers: {
+            'Content-Type': 'application/json',
           }
-        } catch (apiError) {
-          console.log('API not available, using mock data');
+        });
+        
+        if (!res.ok) {
+          throw new Error(`API request failed: ${res.status} ${res.statusText}`);
         }
         
-        // Fallback to mock data if API is not available
-        const mockData = [
-          {
-            _id: '1',
-            name: "Apacra Glass Marking White Pencil Pack of 2",
-            price: 15.00,
-            mrp: 20.00,
-            photos: [{ url: "https://via.placeholder.com/300x300?text=Apacra+Pencil" }],
-            rating: 4,
-            stock: 10
-          },
-          {
-            _id: '2',
-            name: "Araldite Karpenter Synthetic Resin Adhesive Wood Glue",
-            price: 700.00,
-            mrp: 1250.00,
-            photos: [{ url: "https://via.placeholder.com/300x300?text=Araldite+Karpenter" }],
-            rating: 5,
-            stock: 5
-          },
-          {
-            _id: '3',
-            name: "Araldite Kesar 4 Plus 1.8kg",
-            price: 1105.00,
-            mrp: 1250.00,
-            photos: [{ url: "https://via.placeholder.com/300x300?text=Araldite+Kesar" }],
-            rating: 4.5,
-            stock: 8
-          },
-          {
-            _id: '4',
-            name: "Araldite Mechanic Epoxy Adhesive 5g",
-            price: 30.00,
-            mrp: 40.00,
-            photos: [{ url: "https://via.placeholder.com/300x300?text=Araldite+Mechanic" }],
-            rating: 4,
-            stock: 15
-          },
-          {
-            _id: '5',
-            name: "Asian Paints acrYCRIL Fabseal 60gm",
-            price: 110.00,
-            mrp: 120.00,
-            photos: [{ url: "https://via.placeholder.com/300x300?text=Asian+Paints" }],
-            rating: 3.5,
-            stock: 0
-          },
-          {
-            _id: '6',
-            name: "Astral Adhesive Amrow",
-            price: 100.00,
-            mrp: 120.00,
-            photos: [{ url: "https://via.placeholder.com/300x300?text=Astral+Amrow" }],
-            rating: 5,
-            stock: 12
-          },
-          {
-            _id: '7',
-            name: "Astral Adhesive Bearing Retainer 944",
-            price: 190.00,
-            mrp: 200.00,
-            photos: [{ url: "https://via.placeholder.com/300x300?text=Astral+Retainer" }],
-            rating: 4,
-            stock: 0
-          },
-          {
-            _id: '8',
-            name: "Astral Adhesive Bearing Retainer TL 944",
-            price: 170.00,
-            mrp: 200.00,
-            photos: [{ url: "https://via.placeholder.com/300x300?text=Astral+TL" }],
-            rating: 4,
-            stock: 0
-          }
-        ];
+        const json = await res.json();
+        const apiData = json?.data || json || [];
         
-        if (isMounted) setData(mockData);
+        if (isMounted) {
+          setData(Array.isArray(apiData) ? apiData : []);
+        }
       } catch (err) {
         if (isMounted) setError(err?.message || 'Failed to load');
       } finally {
@@ -205,8 +135,20 @@ export default function UniversalShopPage() {
       <div className="min-h-screen bg-gray-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-red-600 mb-4">Error: {error}</h1>
-            {endpoint && <p className="text-gray-600">Endpoint: {endpoint}</p>}
+            <h1 className="text-2xl font-bold text-red-600 mb-4">Error Loading Products</h1>
+            <p className="text-gray-600 mb-2">{error}</p>
+            {endpoint && (
+              <div className="mt-4 p-4 bg-gray-100 rounded-lg">
+                <p className="text-sm text-gray-700">API Endpoint: {endpoint}</p>
+                <p className="text-sm text-gray-500 mt-1">Make sure the backend server is running on port 5000</p>
+              </div>
+            )}
+            <button 
+              onClick={() => window.location.reload()} 
+              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
+              Retry
+            </button>
           </div>
         </div>
       </div>
@@ -217,13 +159,11 @@ export default function UniversalShopPage() {
   const products = Array.isArray(data) ? data : [];
 
   const handleProductClick = (product) => {
-    console.log('Product clicked:', product);
     setSelectedProduct(product);
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
-    console.log('Closing modal');
     setIsModalOpen(false);
     setSelectedProduct(null);
   };
@@ -231,7 +171,7 @@ export default function UniversalShopPage() {
   return (
     <>
       {/* Breadcrumb Navigation */}
-      <div className="bg-white border-b border-gray-200 py-4 mb-6">
+      <div className="bg-white border-b mt-32 border-gray-200 py-4 mb-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex items-center space-x-2 text-sm">
             <Link href="/" className="text-gray-500 hover:text-gray-700">HOME</Link>
@@ -250,18 +190,13 @@ export default function UniversalShopPage() {
       {/* Main Content */}
             {/* Results Header */}
             <div className="flex justify-between items-center mb-6">
-              <p className="text-gray-600">Showing 1-{products.length} of {products.length} results</p>
+              <p className="text-gray-600">
+                {products.length > 0 
+                  ? `Showing 1-${products.length} of ${products.length} results` 
+                  : 'No products found'
+                }
+              </p>
               <div className="flex items-center gap-4">
-                <button 
-                  onClick={() => {
-                    console.log('Test button clicked');
-                    setSelectedProduct(products[0] || { name: 'Test Product', price: 100 });
-                    setIsModalOpen(true);
-                  }}
-                  className="bg-blue-500 text-white px-4 py-2 rounded text-sm"
-                >
-                  Test Modal
-                </button>
                 <select className="border border-gray-300 rounded-md px-3 py-2 text-sm">
                   <option>Default sorting</option>
                   <option>Sort by popularity</option>
@@ -292,7 +227,6 @@ export default function UniversalShopPage() {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      console.log('Card clicked for product:', item);
                       handleProductClick(item);
                     }}
                   >
@@ -371,7 +305,6 @@ export default function UniversalShopPage() {
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          console.log('Button clicked for product:', item);
                           handleProductClick(item);
                         }}
                       >
@@ -392,7 +325,6 @@ export default function UniversalShopPage() {
       )}
 
       {/* Product Detail Modal */}
-      {console.log('Modal state:', { isModalOpen, selectedProduct })}
       <ProductDetailModal 
         product={selectedProduct}
         isOpen={isModalOpen}

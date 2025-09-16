@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import UpdateWrapper from "@/components/UpdateWrapper";
 import { AuthProvider } from '../components/AuthContext';
+import { CartProvider } from '../components/CartContext';
 import ConditionalFooter from "@/components/ConditionalFooter";
 import Header from '@/components/header';
 import Navbar from '@/components/Navbar';
@@ -24,19 +25,21 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
       <AuthProvider>
-        <html lang="en">
-          <body
-            className={`${geistSans.variable} ${geistMono.variable} antialiased `}
-          >
-            <UpdateWrapper />
-            <Header />
-            <Navbar />
-            <main className="">
-              {children}
-            </main>
-            <ConditionalFooter />
-          </body>
-        </html>
+        <CartProvider>
+          <html lang="en">
+            <body
+              className={`${geistSans.variable} ${geistMono.variable} antialiased `}
+            >
+              <UpdateWrapper />
+              <Header />
+              <Navbar />
+              <main className="">
+                {children}
+              </main>
+              <ConditionalFooter />
+            </body>
+          </html>
+        </CartProvider>
       </AuthProvider>
   );
 }

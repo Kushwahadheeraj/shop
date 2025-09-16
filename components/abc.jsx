@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Logo from '@/public/logo.png';
@@ -19,8 +19,6 @@ export default function Header() {
   const [hover, setHover] = useState(false);
   const [username, setUsername] = useState('');
   const [userOpen, setUserOpen] = useState(false);
-  const [allOpen, setAllOpen] = useState(false);
-  const allRef = useRef(null);
 
   useEffect(() => {
     const load = async () => {
@@ -44,16 +42,6 @@ export default function Header() {
     return () => window.removeEventListener('euser-auth', onAuth);
   }, []);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (allRef.current && !allRef.current.contains(event.target)) {
-        setAllOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
   const logoutUser = () => {
     localStorage.removeItem('euser_token');
     localStorage.removeItem('euser_username');
@@ -67,7 +55,7 @@ export default function Header() {
     <>
 
       <header className='fixed top-0 left-0 w-full z-50 h-16 md:h-24 bg-white border-b shadow'>
-        <div className='w-full max-w-[1280px] mx-auto h-full flex items-center justify-between px-1 md:px-2'>
+        <div className='w-full max-w-[1280px] mx-auto h-full flex items-center justify-between px-3 md:px-2'>
           {/* Left: Hamburger, Logo, Brand */}
           <div className='flex items-center gap-3'>
             {/* Hamburger menu icon */}
@@ -101,71 +89,17 @@ export default function Header() {
             </Link>
           </div>
           {/* Hide on mobile: Search and Login/Register */}
-          <div className='hidden md:flex items-center flex-none md:w-[400px] lg:w-[480px] mx-4 lg:mx-6'>
+          <div className='hidden md:flex items-center flex-1 max-w-3xl mx-6 lg:mx-8'>
             <div className='flex items-center w-full'>
-              {/* Small All chip with image */}
-              <div className='relative' ref={allRef}>
-                <button onClick={() => setAllOpen((v) => !v)} className='h-8 px-2 rounded-full text-gray-400 text-sm  transition-colors shadow-md flex items-center font-medium' aria-haspopup='true' aria-expanded={allOpen}>
-                  <span>All</span>
-                  <svg className='ml-1 w-3 h-6' fill='currentColor' viewBox='0 0 20 20'>
-                    <path d='M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.586l3.71-3.356a.75.75 0 1 1 1.02 1.1l-4.25 3.85a.75.75 0 0 1-1.02 0l-4.25-3.85a.75.75 0 0 1 .02-1.06z' />
-                  </svg>
-                </button>
-                {/* Dropdown Menu */}
-                <div className={`absolute top-full left-0 w-48 bg-white border border-gray-200 shadow-xl z-50 ${allOpen ? 'block' : 'hidden'}`}>
-                  <div className=''>
-                    {/* <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer flex items-center border-b border-gray-100'>
-                      
-                      <span className='text-sm font-medium text-gray-600 hover:text-white'>All</span>
-                    </div> */}
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>Adhesives</span>
-                    </div>
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>Cements & POP</span>
-                    </div>
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>Cleaning</span>
-                    </div>
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>Dry Wall Gypsum Screws</span>
-                    </div>
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>Electrical Items</span>
-                    </div>
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>House Hold Ladder</span>
-                    </div>
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>Locks & accessories</span>
-                    </div>
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>Mask & Sanitizers</span>
-                    </div>
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>Paints</span>
-                    </div>
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>Pipes & Fittings</span>
-                    </div>
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>Sanitary Ware & faucets</span>
-                    </div>
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>Tools</span>
-                    </div>
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>Uncategorized</span>
-                    </div>
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>WaterProofing</span>
-                    </div>
-                  </div>
-                </div>
+              {/* Small All chip */}
+              <div className='h-11 px-4 rounded-full bg-white border border-gray-300 shadow-sm flex items-center text-gray-700 text-sm'>
+                <select className='bg-transparent focus:outline-none'>
+                  <option>All</option>
+                </select>
               </div>
               <div className='w-2'></div>
               {/* Big search pill */}
-              <div className='flex-1 h-8 rounded-full bg-gray-50 border border-gray-300 shadow-sm flex items-center'>
+              <div className='flex-1 h-11 rounded-full bg-gray-50 border border-gray-300 shadow-sm flex items-center'>
                 <input
                   type='text'
                   placeholder='Search...'
@@ -191,9 +125,9 @@ export default function Header() {
           <div className='hidden md:flex items-center gap-4 whitespace-nowrap'>
             {username ? (
               <div className='relative' onMouseEnter={() => setUserOpen(true)} onMouseLeave={() => setUserOpen(false)}>
-                <button className='bg-yellow-400 hover:bg-yellow-500 text-white font-bold h-8 px-2 rounded-full transition flex items-center gap-2 uppercase tracking-wide text-sm shadow-md max-w-[360px] overflow-hidden'>
+                <button className='bg-yellow-400 hover:bg-yellow-500 text-white font-bold h-11 px-6 rounded-full transition flex items-center gap-2 uppercase tracking-wide text-sm shadow-md max-w-[360px] overflow-hidden'>
                   <span className='truncate'>{String(username).toUpperCase()}</span>
-                  <span className='inline-block text-white text-base leading-none'>👤</span>
+                  <span className='inline-block text-base leading-none'>👤</span>
                 </button>
                 {userOpen && (
                   <div className='absolute right-0 top-full mt-2 w-[22rem] bg-white rounded-xl border shadow-2xl text-[15px] z-[1000] cursor-default'>
@@ -212,14 +146,14 @@ export default function Header() {
               </div>
             ) : (
               <>
-                <button  onClick={() => setShowLogin(true)} className='bg-yellow-400 hover:bg-yellow-500 text-white font-bold h-8 px-2 rounded-full transition shadow-md uppercase tracking-wide text-sm'>Login / Register</button>
+                <button  onClick={() => setShowLogin(true)} className='bg-yellow-400 hover:bg-yellow-500 text-white font-bold h-11 px-6 rounded-full transition shadow-md uppercase tracking-wide text-sm'>Login / Register</button>
                 <LoginRegisterModal open={showLogin} onClose={() => setShowLogin(false)} />
               </>
             )}
             <span className='h-8 border-l border-gray-300'></span>
             <div className='relative' onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
               <Link href='/cart' className='relative block'>
-                <p className='bg-yellow-400 hover:bg-yellow-500 text-white font-bold h-8 px-2 rounded-full flex items-center justify-center gap-2 transition shadow-md uppercase tracking-wide text-sm'>
+                <p className='bg-yellow-400 hover:bg-yellow-500 text-white font-bold h-11 px-5 rounded-full flex items-center justify-center gap-2 transition shadow-md uppercase tracking-wide text-sm'>
                   <span>CART</span>
                   <svg width='18' height='18' fill='none' stroke='currentColor' strokeWidth='2' viewBox='0 0 24 24'>
                     <circle cx='9' cy='21' r='1.5' />
@@ -228,7 +162,7 @@ export default function Header() {
                   </svg>
                 </p>
                 {count > 0 && (
-                  <span className='absolute -top-2 -right-2 bg-black text-white text-xs rounded-full px-1 py-0.5'>{count}</span>
+                  <span className='absolute -top-2 -right-2 bg-black text-white text-xs rounded-full px-1.5 py-0.5'>{count}</span>
                 )}
               </Link>
               <CartPreview open={hover} />

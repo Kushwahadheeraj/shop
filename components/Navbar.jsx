@@ -1,4 +1,5 @@
-import React from 'react';
+'use client';
+import React, { useState } from 'react';
 
 const navItems = [
   { label: 'HOME', href: '/' },
@@ -14,13 +15,20 @@ const navItems = [
 ];
 
 export default function Navbar() {
+  const [openMenu, setOpenMenu] = useState(null);
   return (
-    <nav className="fixed top-24 left-0 w-full z-40 h-12 bg-black text-white lg:visible lg:!flex lg:basis-auto md:hidden hidden">
+    <nav className="fixed top-24 left-0 w-full z-40 h-8 bg-black text-white lg:visible lg:!flex lg:basis-auto md:hidden hidden">
       <ul className='flex items-center px-2 py-2'>
         {navItems.map((item) => (
-          <li key={item.label} className='relative group px-3'>
+          <li key={item.label} className='relative px-3'>
             <a
               href={item.href}
+              onClick={(e) => {
+                if (item.hasDropdown) {
+                  e.preventDefault();
+                  setOpenMenu((prev) => (prev === item.label ? null : item.label));
+                }
+              }}
               className={`text-sm px-1 py-2 rounded-full transition-all duration-300
                 ${
                   item.active
@@ -42,7 +50,7 @@ export default function Navbar() {
 
             {/* Mega Menu for PAINTS */}
             {item.label === 'PAINTS' && (
-              <div className='absolute top-full left-0 w-[70rem] bg-white text-black shadow-lg p-6 hidden group-hover:grid grid-cols-5 gap-2 z-50'>
+              <div className={`absolute top-full left-0 w-[70rem] bg-white text-black shadow-lg p-6 ${openMenu === 'PAINTS' ? 'grid' : 'hidden'} grid-cols-5 gap-2 z-50`}>
                 {/* Column 1 */}
                 <div>
                   <h4 className='font-bold mb-2'>EMULSION</h4>
@@ -159,7 +167,7 @@ export default function Navbar() {
             )}
             {/* Mega Menu for PAINTS */}
             {item.label === 'ELECTRICALS' && (
-              <div className='absolute top-full left-0 w-[70rem] bg-white text-black shadow-lg p-6 hidden group-hover:grid grid-cols-6 gap-2 z-50'>
+              <div className={`absolute top-full left-0 w-[70rem] bg-white text-black shadow-lg p-6 ${openMenu === 'ELECTRICALS' ? 'grid' : 'hidden'} grid-cols-6 gap-2 z-50`}>
                 {/* Column 1 */}
                 <div>
                   <h4 className='font-bold mb-2'>LIGHTING</h4>
@@ -365,7 +373,7 @@ export default function Navbar() {
               </div>
             )}
             {item.label === 'SANITARY WARE & FAUCETS' && (
-              <div className='absolute top-full left-0 w-[20rem] bg-white text-black shadow-lg p-6 hidden group-hover:grid  gap-2 z-50'>
+              <div className={`absolute top-full left-0 w-[20rem] bg-white text-black shadow-lg p-6 ${openMenu === 'SANITARY WARE & FAUCETS' ? 'grid' : 'hidden'}  gap-2 z-50`}>
                 {/* Column 1 */}
                 <ul className='submenu'>
                   <li>
@@ -405,7 +413,7 @@ export default function Navbar() {
               </div>
             )}
             {item.label === 'TOOLS' && (
-              <div className='absolute top-full left-0 w-[15rem] bg-white text-black shadow-lg p-6 hidden group-hover:grid  gap-2 z-50'>
+              <div className={`absolute top-full left-0 w-[15rem] bg-white text-black shadow-lg p-6 ${openMenu === 'TOOLS' ? 'grid' : 'hidden'}  gap-2 z-50`}>
                 {/* Column 1 */}
                 <ul>
                   <li>

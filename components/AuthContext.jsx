@@ -113,7 +113,7 @@ export function AuthProvider({ children }) {
   const logout = () => {
     localStorage.removeItem('token');
     setUser(null);
-    router.push('/login/seller');
+    router.push('/');
   };
 
   const isAuthenticated = () => {

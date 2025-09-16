@@ -4,27 +4,67 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import API_BASE_URL from "@/lib/apiConfig";
 
 export default function LoginRegisterModal({ open, onClose }) {
   const [login, setLogin] = useState({ username: "", password: "", remember: false });
   const [register, setRegister] = useState({ username: "", email: "", password: "" });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
 
   if (!open) return null;
 
-  const handleClose = () => {
-    onClose();
+  const finish = () => {
+    onClose?.();
     router.push("/");
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('euser-auth'));
+    }
   };
 
-  // Simulate login/register and redirect
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    handleClose();
+    try {
+      setLoading(true); setError("");
+      const res = await fetch(`${API_BASE_URL}/euser/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usernameOrEmail: login.username, password: login.password })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.message || 'Login failed');
+      localStorage.setItem('euser_token', data.token);
+      if (data?.user) localStorage.setItem('euser', JSON.stringify(data.user));
+      if (data?.user?.username) localStorage.setItem('euser_username', data.user.username);
+      finish();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
-  const handleRegister = (e) => {
+
+  const handleRegister = async (e) => {
     e.preventDefault();
-    handleClose();
+    try {
+      setLoading(true); setError("");
+      const res = await fetch(`${API_BASE_URL}/euser/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(register)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.message || 'Registration failed');
+      localStorage.setItem('euser_token', data.token);
+      if (data?.user) localStorage.setItem('euser', JSON.stringify(data.user));
+      if (data?.user?.username) localStorage.setItem('euser_username', data.user.username);
+      finish();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -33,7 +73,7 @@ export default function LoginRegisterModal({ open, onClose }) {
         {/* Close Button */}
         <button
           className="absolute top-2 right-2 text-2xl text-gray-400 hover:text-black"
-          onClick={handleClose}
+          onClick={finish}
         >
           &times;
         </button>
@@ -60,6 +100,7 @@ export default function LoginRegisterModal({ open, onClose }) {
                 placeholder=""
               />
             </div>
+            {error && <div className="text-sm text-red-600">{error}</div>}
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"
@@ -69,7 +110,7 @@ export default function LoginRegisterModal({ open, onClose }) {
               />
               <label htmlFor="remember" className="text-sm">Remember me</label>
             </div>
-            <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-white font-bold text-lg py-2">LOG IN</Button>
+            <Button disabled={loading} className="w-full bg-yellow-400 hover:bg-yellow-500 text-white font-bold text-lg py-2">{loading ? 'Please wait...' : 'LOG IN'}</Button>
             <Link href="/forgot-password" className="text-xs text-gray-600 hover:underline block mt-2">Lost your password?</Link>
           </form>
         </div>
@@ -106,7 +147,8 @@ export default function LoginRegisterModal({ open, onClose }) {
             <p className="text-xs text-gray-500">
               Your personal data will be used to support your experience throughout this website, to manage access to your account, and for other purposes described in our <Link href="/privacy-policy" className="underline">privacy policy</Link>.
             </p>
-            <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-white font-bold text-lg py-2">REGISTER</Button>
+            {error && <div className="text-sm text-red-600">{error}</div>}
+            <Button disabled={loading} className="w-full bg-yellow-400 hover:bg-yellow-500 text-white font-bold text-lg py-2">{loading ? 'Please wait...' : 'REGISTER'}</Button>
           </form>
         </div>
         {/* Seller Login Redirect */}

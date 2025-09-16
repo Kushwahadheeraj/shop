@@ -4,7 +4,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import API_BASE_URL from '@/lib/apiConfig';
+import { getApiEndpoint } from '@/lib/apiMapping';
 import ProductDetailModal from './ProductDetailModal';
+import PersistentShopSidebar from '@/components/PersistentShopSidebar';
+import { useCart } from '@/components/CartContext';
 
 function toKebabCase(input) {
   const withSpaces = String(input)
@@ -21,41 +24,22 @@ function toKebabCase(input) {
 function buildEndpointFromSegments(segments) {
   if (!segments || segments.length === 0) return null;
 
-  const topLevelToApiBase = {
-    adhesives: 'adhesives',
-    brush: 'brush',
-    cements: 'cements',
-    cleaning: 'cleaning',
-    dry: 'dry',
-    electrical: 'electrical',
-    fiber: 'fiber',
-    fitting: 'fitting',
-    hardware: 'hardware',
-    home: 'home',
-    homedecor: 'homedecor',
-    locks: 'locks',
-    paint: 'paint',
-    pipe: 'pipe',
-    pvcmats: 'pvcmats',
-    roofer: 'roofer',
-    sanitary: 'sanitary',
-    tools: 'tools',
-    uncategorized: 'uncategorized',
-    waterproofing: 'waterproofing',
-  };
+  // Use the comprehensive API mapping
+  const apiPath = getApiEndpoint(segments);
+  if (!apiPath) return null;
 
-  const top = toKebabCase(segments[0]);
-  const apiBase = topLevelToApiBase[top];
-  if (!apiBase) return null;
+  return `${API_BASE_URL}/${apiPath}`;
+}
 
-  const subPath = segments
-    .slice(1)
-    .map((s) => toKebabCase(s))
-    .filter(Boolean)
-    .join('-');
-
-  const suffix = subPath ? `/${subPath}` : '';
-  return `${API_BASE_URL}/${apiBase}${suffix}/get`;
+function resolveImageUrl(item) {
+  const photos = item && item.photos;
+  if (Array.isArray(photos) && photos.length > 0) {
+    const first = photos[0];
+    if (typeof first === 'string') return first;
+    if (first && typeof first === 'object' && first.url) return first.url;
+  }
+  if (typeof photos === 'string') return photos;
+  return item?.image || item?.img || item?.photo || item?.thumbnail || null;
 }
 
 export default function UniversalShopPage() {
@@ -65,6 +49,17 @@ export default function UniversalShopPage() {
   const [error, setError] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { addItem } = useCart() || { addItem: () => {} };
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = mobileOpen ? 'hidden' : previousOverflow;
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [mobileOpen]);
 
   const shopSegments = useMemo(() => {
     if (!pathname) return [];
@@ -75,6 +70,15 @@ export default function UniversalShopPage() {
   }, [pathname]);
 
   const endpoint = useMemo(() => buildEndpointFromSegments(shopSegments), [shopSegments]);
+
+  const displayTitle = useMemo(() => {
+    const last = shopSegments[shopSegments.length - 1] || shopSegments[0] || 'SHOP';
+    return String(last)
+      .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+      .replace(/[^a-zA-Z0-9]+/g, ' ')
+      .trim()
+      .toUpperCase();
+  }, [shopSegments]);
 
   useEffect(() => {
     let isMounted = true;
@@ -170,53 +174,87 @@ export default function UniversalShopPage() {
 
   return (
     <>
-      {/* Breadcrumb Navigation */}
-      <div className="bg-white border-b mt-32 border-gray-200 py-4 mb-6">
+      {/* Header row */}
+      <div className="bg-white border-b lg:mt-32 mt-16 border-gray-200 py-3 mb-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center space-x-2 text-sm">
-            <Link href="/" className="text-gray-500 hover:text-gray-700">HOME</Link>
-            <span className="text-gray-400">/</span>
-            <span className="text-gray-900 font-medium">{title}</span>
-          </nav>
+          <div className="hidden md:flex items-center justify-between">
+            <nav className="flex items-center space-x-2 text-sm">
+              <Link href="/" className="text-gray-500 hover:text-gray-700">HOME</Link>
+              <span className="text-gray-400">/</span>
+              <span className="text-gray-900 font-semibold">{title}</span>
+            </nav>
+            <div className="flex items-center gap-6">
+              <p className="text-gray-600 text-sm">
+                {products.length > 0 
+                  ? `Showing 1–${Math.min(products.length, 12)} of ${products.length} results` 
+                  : 'No products found'}
+              </p>
+              <select className="border border-gray-300 rounded-md px-3 py-2 text-sm">
+                <option>Default sorting</option>
+                <option>Sort by popularity</option>
+                <option>Sort by average rating</option>
+                <option>Sort by latest</option>
+                <option>Sort by price: low to high</option>
+                <option>Sort by price: high to low</option>
+              </select>
+            </div>
+          </div>
+          <div className="md:hidden">
+            <nav className="flex items-center justify-center space-x-2 text-xs">
+              <Link href="/" className="text-gray-500 hover:text-gray-700">HOME</Link>
+              <span className="text-gray-400">/</span>
+              <span className="text-gray-900 font-semibold">{title}</span>
+            </nav>
+            <button onClick={() => setMobileOpen(true)} className="mt-2 flex items-center justify-center gap-2 text-gray-600 text-xs w-full">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path d="M3 5h18M6 12h12M10 19h4" />
+              </svg>
+              <span>FILTER</span>
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Category Banner */}
-      <div className="relative h-64 bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center mb-8">
+      {/* Mobile sorting centered */}
+      <div className="md:hidden flex justify-center mb-3">
+              <select className="border border-gray-300 rounded-md px-3 py-2 text-xs w-40 text-gray-700">
+                <option>Default sorting</option>
+                <option>Popularity</option>
+                <option>Avg rating</option>
+                <option>Latest</option>
+                <option>Price: low to high</option>
+                <option>Price: high to low</option>
+              </select>
+            </div>
+
+      {/* Category Banner - compact on mobile */}
+      <div className="relative h-32 md:h-64 bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center mb-4 md:mb-8">
         <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-        <h1 className="relative z-10 text-5xl font-bold text-white text-center px-4">{title}</h1>
+        <h1 className="relative z-10 text-2xl md:text-5xl font-bold text-white text-center px-4">{displayTitle}</h1>
       </div>
 
       {/* Main Content */}
-            {/* Results Header */}
-            <div className="flex justify-between items-center mb-6">
-              <p className="text-gray-600">
+            {/* Results Header (mobile only) */}
+            {/* <div className="md:hidden flex justify-between items-center mb-4">
+              <p className="text-gray-600 text-xs">
                 {products.length > 0 
-                  ? `Showing 1-${products.length} of ${products.length} results` 
+                  ? `Showing 1-${Math.min(products.length, 12)} of ${products.length} results` 
                   : 'No products found'
                 }
               </p>
-              <div className="flex items-center gap-4">
-                <select className="border border-gray-300 rounded-md px-3 py-2 text-sm">
-                  <option>Default sorting</option>
-                  <option>Sort by popularity</option>
-                  <option>Sort by average rating</option>
-                  <option>Sort by latest</option>
-                  <option>Sort by price: low to high</option>
-                  <option>Sort by price: high to low</option>
-                </select>
-              </div>
-            </div>
+            </div> */}
 
-            {/* Products Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            
+
+            {/* Products Grid - two columns on mobile to match reference */}
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
               {products.map((item) => {
                 const key = item?._id || item?.id || `${Math.random()}`;
                 const name = item?.name || item?.title || 'Unnamed Product';
                 const originalPrice = item?.mrp || item?.originalPrice;
                 const salePrice = item?.price || item?.salePrice;
                 const discount = originalPrice && salePrice ? Math.round(((originalPrice - salePrice) / originalPrice) * 100) : 0;
-                const img = item?.photos?.[0]?.url || item?.image || item?.photo || null;
+                const img = resolveImageUrl(item);
                 const rating = item?.rating || 5;
                 const isOutOfStock = item?.stock === 0 || item?.quantity === 0;
                 
@@ -305,6 +343,7 @@ export default function UniversalShopPage() {
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
+                          addItem(item, 1);
                           handleProductClick(item);
                         }}
                       >
@@ -330,6 +369,27 @@ export default function UniversalShopPage() {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
       />
+
+      {mobileOpen && (
+        <div className="fixed inset-0 md:hidden z-50">
+          <div
+            className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+            onClick={() => setMobileOpen(false)}
+          />
+          <div className="absolute left-0 top-0 h-full w-72 bg-white transform transition-transform duration-300 translate-x-0 relative z-10">
+            <button
+              onClick={() => setMobileOpen(false)}
+              aria-label="Close filter"
+              className="absolute top-2 right-2 w-6 h-6 rounded-full text-black flex items-center justify-center bg-transparent"
+            >
+              ×
+            </button>
+            <div className="p-0 pt-2">
+              <PersistentShopSidebar forceMobile />
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

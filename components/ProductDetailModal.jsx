@@ -3,13 +3,24 @@
 import React from 'react';
 import { X } from 'lucide-react';
 
+function resolveImageUrl(item) {
+  const photos = item && item.photos;
+  if (Array.isArray(photos) && photos.length > 0) {
+    const first = photos[0];
+    if (typeof first === 'string') return first;
+    if (first && typeof first === 'object' && first.url) return first.url;
+  }
+  if (typeof photos === 'string') return photos;
+  return item?.image || item?.img || item?.photo || item?.thumbnail || null;
+}
+
 export default function ProductDetailModal({ product, isOpen, onClose }) {
   if (!isOpen || !product) return null;
 
   const originalPrice = product?.mrp || product?.originalPrice;
   const salePrice = product?.price || product?.salePrice;
   const discount = originalPrice && salePrice ? Math.round(((originalPrice - salePrice) / originalPrice) * 100) : 0;
-  const img = product?.photos?.[0]?.url || product?.image || product?.photo || null;
+  const img = resolveImageUrl(product);
   const rating = product?.rating || 5;
   const isOutOfStock = product?.stock === 0 || product?.quantity === 0;
 

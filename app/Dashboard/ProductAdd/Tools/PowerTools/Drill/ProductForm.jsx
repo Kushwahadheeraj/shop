@@ -147,22 +147,22 @@ export default function ProductForm({ onSave }) {
     setPhotoError("");
     setPhotoError("");
     const data = new FormData();
-    Object.entries(form).forEach(([k, v]) => {
-      if (k === 'tags') {
-        v.forEach(val => data.append('tags', val));
-      } else if (k === 'variants') {
-        data.append(k, JSON.stringify(v));
-      } else {
-        data.append(k, v);
-      }
-    });
+    data.append('name', form.name);
+    data.append('description', form.description || '');
+    data.append('fixPrice', form.price || '');
+    data.append('discount', form.discount || '');
+    if (form.discountPrice) data.append('discountPrice', form.discountPrice);
+    data.append('totalProduct', form.totalProduct || '');
+    data.append('category', 'Drill');
+    (form.tags || []).forEach(val => data.append('tags', val));
+    data.append('variants', JSON.stringify(form.variants || []));
     // Add custom fields
     customFields.forEach((f, idx) => {
       data.append('customFieldName' + (idx+1), f.fieldName);
       f.fieldValues.forEach(val => data.append('customFieldValue' + (idx+1), val));
     });
     files.forEach(f => data.append('photos', f));
-          const res = await fetch(`${API_BASE_URL}/tools/powertools/drill/create`, { method: 'POST', body: data });
+    const res = await fetch(`${API_BASE_URL}/tools/powertools/drill/create`, { method: 'POST', body: data });
     if (res.ok) onSave && onSave();
   };
 

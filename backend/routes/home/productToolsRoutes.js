@@ -1,9 +1,18 @@
 const express = require('express');
+const router = express.Router();
 const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
-const router = express.Router();
 const productToolsController = require('../../controllers/home/productToolsController');
+const controller = require('../../controllers/home/productToolsController');
+
+router.get('/selected-categories', controller.getSelectedCategories);
+router.post('/select-categories', controller.selectCategories);
+router.get('/get', controller.getAll);
+
+module.exports = router;
+
+
 
 // ProductTools routes
 router.post('/create', upload.array('images', 8), productToolsController.createProductTool);

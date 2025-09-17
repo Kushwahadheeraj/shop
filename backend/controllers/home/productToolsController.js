@@ -1,6 +1,110 @@
+const ProductToolsModel = require('../../models/ProductToolsModel');
+const ToolsModels = require('../../models/ToolsModels');
 const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
-const ProductToolsModel = require('../../models/ProductToolsModel');
+
+// Get selected categories
+exports.getSelectedCategories = async (req, res) => {
+  try {
+    const cats = await ProductToolsModel.distinct('category');
+    const filtered = cats.filter(c => typeof c === 'string' && c.trim().length > 0);
+    res.status(200).json({ success: true, count: filtered.length, data: filtered });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error fetching selected categories', error: error.message });
+  }
+};
+
+// Select categories: copy first product from main ToolsModels into ProductToolsModel
+exports.selectCategories = async (req, res) => {
+  try {
+    let { categories } = req.body;
+    if (!categories) categories = [];
+    if (typeof categories === 'string') {
+      try { categories = JSON.parse(categories); } catch { categories = String(categories).split(',').map(s => s.trim()).filter(Boolean); }
+    }
+    if (!Array.isArray(categories)) categories = [];
+
+    const results = [];
+    for (const cat of categories) {
+      if (!cat) continue;
+      const exists = await ProductToolsModel.findOne({ category: cat });
+      if (exists) {
+        results.push({ category: cat, status: 'exists', id: exists._id });
+        continue;
+      }
+      const src = await ToolsModels.findOne({ category: cat }).sort({ createdAt: 1 });
+      if (!src) {
+        results.push({ category: cat, status: 'not_found' });
+        continue;
+      }
+      const doc = new ProductToolsModel({
+        name: src.name,
+        description: src.description,
+        category: src.category,
+        minPrice: src.fixPrice ?? src.discountPrice ?? undefined,
+        maxPrice: src.fixPrice ?? undefined,
+        price: src.fixPrice ?? src.discountPrice ?? undefined,
+        discount: src.discount ?? 0,
+        brand: src.brand,
+        images: Array.isArray(src.photos) && src.photos.length > 0 ? [src.photos[0]] : [],
+        tags: Array.isArray(src.tag) ? src.tag : (src.tag ? [src.tag] : [])
+      });
+      await doc.save();
+      results.push({ category: cat, status: 'created', id: doc._id });
+    }
+
+    res.status(200).json({ success: true, data: results });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error selecting categories', error: error.message });
+  }
+};
+
+// Get all product tools for home (mirror electrical behaviour)
+exports.getAll = async (req, res) => {
+  try {
+    const { categories, firstPerCategory } = req.query;
+    if (firstPerCategory === 'true') {
+      let categoryList = [];
+      if (categories) {
+        try {
+          const parsed = JSON.parse(categories);
+          if (Array.isArray(parsed)) categoryList = parsed;
+        } catch {
+          categoryList = String(categories).split(',').map(s => s.trim()).filter(Boolean);
+        }
+      }
+      if (categoryList.length === 0) {
+        categoryList = await ToolsModels.distinct('category');
+      }
+      const results = await Promise.all(
+        categoryList.map(async (cat) => {
+          const doc = await ToolsModels.findOne({ category: cat }).sort({ createdAt: 1 });
+          return doc ? { category: cat, product: doc } : { category: cat, product: null };
+        })
+      );
+      return res.status(200).json({ success: true, data: results.filter(r => r.product) });
+    }
+
+    const filter = {};
+    if (categories) {
+      try {
+        const parsed = JSON.parse(categories);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          filter.category = { $in: parsed };
+        }
+      } catch {
+        const list = String(categories).split(',').map(s => s.trim()).filter(Boolean);
+        if (list.length > 0) filter.category = { $in: list };
+      }
+    }
+    const products = await ProductToolsModel.find(filter).sort({ createdAt: -1 });
+    res.status(200).json({ success: true, count: products.length, data: products });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error fetching home product tools', error: error.message });
+  }
+};
+
+
 
 // Upload image to Cloudinary
 function uploadToCloudinary(buffer) {

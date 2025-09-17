@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import API_BASE_URL from "@/lib/apiConfig";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -79,11 +80,6 @@ export default function ProductForm({ onSave }) {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    if (files.length === 0) {
-      setPhotoError("Please upload at least 1 photo.");
-      return;
-    }
-    setPhotoError("");
     if (photos.length === 0) {
       setPhotoError("At least one photo is required.");
       return;
@@ -96,10 +92,9 @@ export default function ProductForm({ onSave }) {
     formData.append("discountPrice", discountPrice);
     formData.append("totalProduct", totalProduct);
     formData.append("category", category);
-    tag.forEach(tag => formData.append("tag", tag));
+    tags.forEach(tag => formData.append("tags", tag));
     photos.forEach(photo => formData.append("photos", photo));
-    // TODO: Update API endpoint for each product type
-    const res = await fetch(`${API_BASE_URL}/tools/brush/create`, { method: 'POST', body: data });
+    const res = await fetch(`${API_BASE_URL}/tools/brush/create`, { method: 'POST', body: formData });
     if (res.ok) onSave && onSave();
   };
 

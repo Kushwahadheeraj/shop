@@ -3,21 +3,28 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { FiChevronDown } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
-import Image from "next/image";
+// import Image from "next/image";
 
-const navItems = [
-  { label: "HOME", href: "/" },
-  { label: "SHOP", href: "/Shop" },
-  { label: "PAINTS", href: "#", hasDropdown: true },
-  { label: "ELECTRICALS", href: "#", hasDropdown: true },
-  { label: "SANITARY WARE & FAUCETS", href: "#", hasDropdown: true },
-  { label: "CEMENTS & POP", href: "#" },
-  { label: "ADHESIVE", href: "#" },
-  { label: "CLEANING", href: "#" },
-  { label: "TOOLS", href: "#", hasDropdown: true },
-  { label: "TRACKING", href: "/Tracking" },
-  { label: "MY ACCOUNT", href: "/AccountDetails" },
-];
+const getNavItems = (isLoggedIn) => {
+  const baseItems = [
+    { label: "HOME", href: "/" },
+    { label: "SHOP", href: "/Shop" },
+    { label: "PAINTS", href: "#", hasDropdown: true },
+    { label: "ELECTRICALS", href: "#", hasDropdown: true },
+    { label: "SANITARY WARE & FAUCETS", href: "#", hasDropdown: true },
+    { label: "CEMENTS & POP", href: "#" },
+    { label: "ADHESIVE", href: "#" },
+    { label: "CLEANING", href: "#" },
+    { label: "TOOLS", href: "#", hasDropdown: true },
+  ];
+
+  if (isLoggedIn) {
+    baseItems.push({ label: "TRACKING", href: "/Tracking" });
+    baseItems.push({ label: "MY ACCOUNT", href: "/AccountDetails" });
+  }
+  
+  return baseItems;
+};
 
 const submenus = {
   PAINTS: [
@@ -74,6 +81,21 @@ export default function Sidebar({ open, onClose }) {
   const asideRef = useRef(null);
   const [allOpen, setAllOpen] = useState(false);
   const allRef = useRef(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Check if user is logged in
+  useEffect(() => {
+    const checkLoginStatus = () => {
+      const token = localStorage.getItem('euser_token');
+      setIsLoggedIn(!!token);
+    };
+    
+    checkLoginStatus();
+    window.addEventListener('euser-auth', checkLoginStatus);
+    return () => window.removeEventListener('euser-auth', checkLoginStatus);
+  }, []);
+
+  const navItems = getNavItems(isLoggedIn);
 
   const folderMap = {
     "Uncategorized": "Uncategorized",

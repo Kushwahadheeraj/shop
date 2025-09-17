@@ -201,7 +201,7 @@ export default function ProductForm() {
   };
 
   const isFormValid = () => {
-    return form.name && form.price && files.length >= 1;
+    return form.name && files.length >= 1;
   };
 
   const handleSubmit = async (e) => {
@@ -407,7 +407,7 @@ export default function ProductForm() {
 
           {/* Price */}
           <div>
-            <label className="block text-sm font-medium mb-2">Price (₹) *</label>
+            <label className="block text-sm font-medium mb-2">Price (₹) </label>
             <Input
               type="number"
               name="price"
@@ -415,7 +415,6 @@ export default function ProductForm() {
               onChange={handleChange}
               placeholder="0.00"
               step="0.01"
-              required
             />
           </div>
 

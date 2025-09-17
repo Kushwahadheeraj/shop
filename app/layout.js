@@ -4,8 +4,8 @@ import UpdateWrapper from "@/components/UpdateWrapper";
 import { AuthProvider } from '../components/AuthContext';
 import { CartProvider } from '../components/CartContext';
 import ConditionalFooter from "@/components/ConditionalFooter";
-import Header from '@/components/header';
-import Navbar from '@/components/Navbar';
+import ConditionalHeader from "@/components/ConditionalHeader";
+import ConditionalNavbar from "@/components/ConditionalNavbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,8 +31,8 @@ export default function RootLayout({ children }) {
               className={`${geistSans.variable} ${geistMono.variable} antialiased `}
             >
               <UpdateWrapper />
-              <Header />
-              <Navbar />
+              <ConditionalHeader />
+              <ConditionalNavbar />
               <main className="">
                 {children}
               </main>

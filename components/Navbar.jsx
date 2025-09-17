@@ -1,21 +1,44 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const navItems = [
-  { label: 'HOME', href: '/' },
-  { label: 'SHOP', href: '/Shop' },
-  { label: 'PAINTS', href: '#', hasDropdown: true },
-  { label: 'ELECTRICALS', href: '#', hasDropdown: true },
-  { label: 'SANITARY WARE & FAUCETS', href: '#', hasDropdown: true },
-  { label: 'CEMENTS & POP', href: '#' },
-  { label: 'ADHESIVE', href: '#' },
-  { label: 'CLEANING', href: '#' },
-  { label: 'TOOLS', href: '#', hasDropdown: true },
-  { label: 'TRACKING', href: '/Tracking' },
-];
+const getNavItems = (isLoggedIn) => {
+  const baseItems = [
+    { label: 'HOME', href: '/' },
+    { label: 'SHOP', href: '/Shop' },
+    { label: 'PAINTS', href: '#', hasDropdown: true },
+    { label: 'ELECTRICALS', href: '#', hasDropdown: true },
+    { label: 'SANITARY WARE & FAUCETS', href: '#', hasDropdown: true },
+    { label: 'CEMENTS & POP', href: '#' },
+    { label: 'ADHESIVE', href: '#' },
+    { label: 'CLEANING', href: '#' },
+    { label: 'TOOLS', href: '#', hasDropdown: true },
+  ];
+
+  if (isLoggedIn) {
+    baseItems.push({ label: 'TRACKING', href: '/Tracking' });
+  }
+
+  return baseItems;
+};
 
 export default function Navbar() {
   const [openMenu, setOpenMenu] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Check if user is logged in
+  useEffect(() => {
+    const checkLoginStatus = () => {
+      const token = localStorage.getItem('euser_token');
+      setIsLoggedIn(!!token);
+    };
+    
+    checkLoginStatus();
+    window.addEventListener('euser-auth', checkLoginStatus);
+    return () => window.removeEventListener('euser-auth', checkLoginStatus);
+  }, []);
+
+  const navItems = getNavItems(isLoggedIn);
+
   return (
     <nav className="fixed top-24 left-0 w-full z-40 h-8 bg-black text-white lg:visible lg:!flex lg:basis-auto md:hidden hidden">
       <ul className='flex items-center px-2 py-2'>

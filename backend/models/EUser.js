@@ -7,6 +7,7 @@ const eUserSchema = new mongoose.Schema({
   password: { type: String, required: true, minlength: 6 },
   name: { type: String, trim: true },
   phone: { type: String, trim: true },
+  avatar: { type: String, default: '' },
   status: { type: String, default: 'active' },
 }, { timestamps: true });
 

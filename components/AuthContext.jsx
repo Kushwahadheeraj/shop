@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import API_BASE_URL from "@/lib/apiConfig";
+import { performLogout } from '@/lib/logout';
 
 const AuthContext = createContext();
 
@@ -111,9 +112,9 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
     setUser(null);
-    router.push('/');
+    // Use centralized logout function
+    performLogout();
   };
 
   const isAuthenticated = () => {

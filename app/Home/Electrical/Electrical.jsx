@@ -1,9 +1,11 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useCart } from "@/components/CartContext";
 import API_BASE_URL from "@/lib/apiConfig";
 
 export default function Electricals() {
+  const { addItem } = useCart();
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -158,11 +160,26 @@ export default function Electricals() {
               </div>
               {/* Button */}
               {product.stockStatus !== "out_of_stock" && (
-                <Link href={`/product/${product.id}`} passHref>
-                  <button className="mt-auto bg-[#f5c242] hover:bg-[#f2b51b] text-black font-semibold py-2 rounded transition w-full">
-                    {product.hasOptions ? 'SELECT OPTIONS' : 'ADD TO CART'}
-                  </button>
-                </Link>
+                <button 
+                  onClick={() => {
+                    if (product.hasOptions) {
+                      // Navigate to product page for options
+                      window.location.href = `/product/${product.id}`;
+                    } else {
+                      // Add to cart directly
+                      addItem({
+                        id: product.id,
+                        name: product.name,
+                        price: product.currentPrice || product.price,
+                        image: product.image,
+                        thumbnail: product.image
+                      });
+                    }
+                  }}
+                  className="mt-auto bg-[#f5c242] hover:bg-[#f2b51b] text-black font-semibold py-2 rounded transition w-full"
+                >
+                  {product.hasOptions ? 'SELECT OPTIONS' : 'ADD TO CART'}
+                </button>
               )}
               {product.stockStatus === "out_of_stock_read_more" && (
                 <Link href={`/product/${product.id}`} passHref>

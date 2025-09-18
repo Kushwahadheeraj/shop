@@ -10,6 +10,7 @@ import LoginRegisterModal from "@/components/LoginRegisterModal";
 import { useCart } from '@/components/CartContext';
 import CartPreview from '@/components/CartPreview';
 import API_BASE_URL from '@/lib/apiConfig';
+import { performLogout } from '@/lib/logout';
 
 
 export default function Header() {
@@ -55,12 +56,9 @@ export default function Header() {
   }, []);
 
   const logoutUser = () => {
-    localStorage.removeItem('euser_token');
-    localStorage.removeItem('euser_username');
-    localStorage.removeItem('euser');
     setUsername('');
-    // Redirect to home page after logout
-    window.location.href = '/';
+    // Use centralized logout function
+    performLogout();
   };
 
   return (

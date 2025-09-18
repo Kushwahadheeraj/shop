@@ -55,3 +55,66 @@ exports.me = async (req, res) => {
     res.status(500).json({ message: 'Failed to load profile' });
   }
 };
+
+exports.updateProfile = async (req, res) => {
+  try {
+    const userId = req.user?.id || req.euserId || req.sellerId;
+    const { name, phone, avatar } = req.body;
+    
+    const updateData = {};
+    if (name) updateData.name = name;
+    if (phone) updateData.phone = phone;
+    if (avatar) updateData.avatar = avatar;
+    
+    const user = await EUser.findByIdAndUpdate(
+      userId, 
+      updateData, 
+      { new: true, select: '-password' }
+    );
+    
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    
+    res.json({ 
+      success: true, 
+      message: 'Profile updated successfully', 
+      user 
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to update profile' });
+  }
+};
+
+exports.changePassword = async (req, res) => {
+  try {
+    const userId = req.user?.id || req.euserId || req.sellerId;
+    const { oldPassword, newPassword } = req.body;
+    
+    if (!oldPassword || !newPassword) {
+      return res.status(400).json({ message: 'Old password and new password are required' });
+    }
+    
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: 'New password must be at least 6 characters long' });
+    }
+    
+    const user = await EUser.findById(userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    
+    // Verify old password
+    const isOldPasswordValid = await user.comparePassword(oldPassword);
+    if (!isOldPasswordValid) {
+      return res.status(400).json({ message: 'Old password is incorrect' });
+    }
+    
+    // Update password
+    user.password = newPassword;
+    await user.save();
+    
+    res.json({ 
+      success: true, 
+      message: 'Password updated successfully' 
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to update password' });
+  }
+};

@@ -7,7 +7,7 @@ import API_BASE_URL from "@/lib/apiConfig";
 export default function ProductForm() {
   const [form, setForm] = useState({
     title: '',
-    offer: '',
+    description: '',
   });
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -51,7 +51,7 @@ export default function ProductForm() {
 
     const data = new FormData();
     data.append('title', form.title);
-    data.append('offer', form.offer);
+    data.append('description', form.description);
     data.append('image', file);
 
     try {
@@ -62,7 +62,7 @@ export default function ProductForm() {
       
       if (res.ok) {
         alert('Offer created successfully!');
-        setForm({ title: '', offer: 'Offer' });
+        setForm({ title: '', description: 'Offer' });
         setFile(null);
         setPreview(null);
       } else {
@@ -93,12 +93,12 @@ export default function ProductForm() {
 
       {/* Offer Type */}
       <div>
-        <label className="block text-sm font-medium mb-2">Offer Type</label>
+        <label className="block text-sm font-medium mb-2">Description</label>
         <Input 
-          name="offer" 
-          value={form.offer} 
+          name="description" 
+          value={form.description} 
           onChange={handleChange} 
-          placeholder="Enter offer type" 
+          placeholder="Enter offer description" 
           className="w-full bg-gray-50"
         />
       </div>
@@ -148,7 +148,7 @@ export default function ProductForm() {
               />
             )}
             <h3 className="text-lg font-bold mb-2">{form.title || 'Offer Title'}</h3>
-            <p className="text-gray-600 text-sm">{form.offer}</p>
+            <p className="text-gray-600 text-sm">{form.description}</p>
           </div>
         </div>
       </div>

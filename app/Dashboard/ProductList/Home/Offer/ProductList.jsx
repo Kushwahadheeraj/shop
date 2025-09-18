@@ -158,7 +158,7 @@ export default function ProductList() {
                 <tr className="bg-gray-50">
                   <th className="border border-gray-200 px-4 py-2 text-left">Image</th>
                   <th className="border border-gray-200 px-4 py-2 text-left">Title</th>
-                  <th className="border border-gray-200 px-4 py-2 text-left">Offer Type</th>
+                  <th className="border border-gray-200 px-4 py-2 text-left">Description</th>
                   <th className="border border-gray-200 px-4 py-2 text-left">Created Date</th>
                   <th className="border border-gray-200 px-4 py-2 text-left">Actions</th>
                 </tr>
@@ -189,7 +189,7 @@ export default function ProductList() {
                         {offer.title}
                       </td>
                       <td className="border border-gray-200 px-4 py-2">
-                        {offer.offer}
+                        {offer.description}
                       </td>
                       <td className="border border-gray-200 px-4 py-2 text-sm text-gray-600">
                         {formatDate(offer.createdAt)}

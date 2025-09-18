@@ -32,7 +32,7 @@ const ImageSlider = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       nextSlide();
-    }, 80000); // Change slide every 3 seconds
+    }, 10000); // Change slide every 10 seconds
 
     return () => clearInterval(interval); // Cleanup on unmount
   }, [currentIndex]);

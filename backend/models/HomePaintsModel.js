@@ -22,10 +22,9 @@ const HomePaintsSchema = new mongoose.Schema({
     type: String,
     trim: true
   }],
-  price: { 
-    type: Number,
-    required: true
-  },
+  // pricing
+  price: { type: Number }, // base/original
+  fixPrice: { type: Number },
   originalPrice: { 
     type: Number
   },
@@ -36,6 +35,10 @@ const HomePaintsSchema = new mongoose.Schema({
   discountPrice: {
     type: Number
   },
+  discountPercent: { type: Number },
+  minPrice: { type: Number },
+  maxPrice: { type: Number },
+  totalProduct: { type: Number, default: 0 },
   brand: { 
     type: String, 
     trim: true
@@ -48,6 +51,11 @@ const HomePaintsSchema = new mongoose.Schema({
     type: String, 
     trim: true
   },
+  variants: [{
+    variantName: { type: String },
+    fixPrice: { type: Number },
+    discountPrice: { type: Number }
+  }],
   isActive: { 
     type: Boolean, 
     default: true
@@ -56,23 +64,29 @@ const HomePaintsSchema = new mongoose.Schema({
   timestamps: true 
 });
 
-// Pre-save middleware to calculate discount price
+// Pre-save middleware to calculate discount price / percent
 HomePaintsSchema.pre('save', function(next) {
-  if (this.price && this.discount) {
-    this.discountPrice = this.price - (this.price * this.discount / 100);
-  } else if (this.price) {
-    this.discountPrice = this.price;
+  const base = this.fixPrice ?? this.price;
+  if (base && this.discount) {
+    this.discountPrice = base - (base * this.discount / 100);
+    this.discountPercent = this.discount;
+  } else if (base) {
+    this.discountPrice = base;
+    this.discountPercent = 0;
   }
   next();
 });
 
-// Pre-update middleware to calculate discount price
+// Pre-update middleware to calculate discount price / percent
 HomePaintsSchema.pre('findOneAndUpdate', function(next) {
   const update = this.getUpdate();
-  if (update.price && update.discount) {
-    update.discountPrice = update.price - (update.price * update.discount / 100);
-  } else if (update.price) {
-    update.discountPrice = update.price;
+  const base = update.fixPrice ?? update.price;
+  if (base && update.discount) {
+    update.discountPrice = base - (base * update.discount / 100);
+    update.discountPercent = update.discount;
+  } else if (base) {
+    update.discountPrice = base;
+    update.discountPercent = 0;
   }
   next();
 });

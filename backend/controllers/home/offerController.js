@@ -25,7 +25,7 @@ exports.createOffer = async (req, res) => {
 
     const offerData = {
       title: req.body.title,
-      offer: req.body.offer,
+      description: req.body.description,
       image: imageUrl
     };
 
@@ -111,7 +111,7 @@ exports.updateOffer = async (req, res) => {
   try {
     let updateData = {
       title: req.body.title,
-      offer: req.body.offer
+      description: req.body.description
     };
     
     // Handle image upload if provided

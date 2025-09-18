@@ -19,37 +19,37 @@ function uploadToCloudinary(buffer) {
 exports.createHomeElectrical = async (req, res) => {
   try {
     let imageUrl = '';
-    
-    // Handle photos upload if provided
+    // Allow both single file 'image' and no file (URL provided)
     if (req.file) {
       imageUrl = await uploadToCloudinary(req.file.buffer);
+    } else if (req.body.image) {
+      imageUrl = req.body.image;
     }
 
-    // Handle tags array - if tags is sent as multiple values, it will be an array
-    let tags = [];
-    if (req.body.tags) {
-      // If tags is already an array, use it directly
-      if (Array.isArray(req.body.tags)) {
-        tags = req.body.tags;
-      } else {
-        // If tags is a single value, convert to array
-        tags = [req.body.tags];
-      }
-    }
+    const toArray = (v) => v == null ? [] : (Array.isArray(v) ? v : [v]);
 
-    const productData = {
+    const product = new HomeElectricalModel({
       name: req.body.name,
       description: req.body.description,
       category: req.body.category,
       price: req.body.price,
       originalPrice: req.body.originalPrice,
+      minPrice: req.body.minPrice,
+      maxPrice: req.body.maxPrice,
       discount: req.body.discount,
+      fixPrice: req.body.fixPrice,
+      discountPrice: req.body.discountPrice,
       brand: req.body.brand,
-      image: imageUrl,
-      tags: tags
-    };
-
-    const product = new HomeElectricalModel(productData);
+      totalProduct: req.body.totalProduct,
+      sku: req.body.sku,
+      tag: toArray(req.body.tag || req.body.tags),
+      colour: toArray(req.body.colour || req.body.colors),
+      way: req.body.way,
+      packageContents: req.body.packageContents,
+      amps: Array.isArray(req.body.amps) ? req.body.amps : [],
+      photos: toArray(req.body.photos),
+      image: imageUrl
+    });
     const savedProduct = await product.save();
     
     res.status(201).json({
@@ -192,12 +192,23 @@ exports.selectCategories = async (req, res) => {
         name: src.name,
         description: src.description,
         category: src.category,
-        price: src.fixPrice ?? src.discountPrice ?? src.price ?? undefined,
-        originalPrice: src.price ?? undefined,
+        price: src.price,
+        originalPrice: src.price,
+        minPrice: src.minPrice,
+        maxPrice: src.maxPrice,
         discount: src.discount ?? 0,
+        fixPrice: src.fixPrice,
+        discountPrice: src.discountPrice,
         brand: src.brand,
-        image: Array.isArray(src.photos) && src.photos.length > 0 ? src.photos[0] : '',
-        tags: Array.isArray(src.tag) ? src.tag : (src.tag ? [src.tag] : [])
+        totalProduct: src.totalProduct,
+        sku: src.sku,
+        tag: Array.isArray(src.tag) ? src.tag : (src.tag ? [src.tag] : []),
+        colour: src.colour,
+        way: src.way,
+        packageContents: src.packageContents,
+        amps: src.amps,
+        photos: src.photos,
+        image: Array.isArray(src.photos) && src.photos.length > 0 ? src.photos[0] : ''
       });
       await doc.save();
       results.push({ category: cat, status: 'created', id: doc._id });

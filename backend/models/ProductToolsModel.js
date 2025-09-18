@@ -18,6 +18,7 @@ const ProductToolsSchema = new mongoose.Schema({
     type: String, 
     trim: true
   },
+  brand: { type: String, trim: true },
   tags: [{
     type: String,
     trim: true
@@ -31,17 +32,16 @@ const ProductToolsSchema = new mongoose.Schema({
   maxPrice: { 
     type: Number
   },
+  fixPrice: { type: Number },
   discount: { 
     type: Number, 
     default: 0
   },
+  discountPrice: { type: Number },
+  totalProduct: { type: Number, default: 0 },
   rating: { 
     type: Number, 
     default: 0
-  },
-  brand: { 
-    type: String, 
-    trim: true
   },
   specifications: { 
     type: String, 

@@ -53,7 +53,11 @@ exports.createHomePaint = async (req, res) => {
       images: imageUrls,
       tags: tags,
       colors: colors,
-      price: parseFloat(req.body.price) || 0,
+      price: parseFloat(req.body.price) || undefined,
+      fixPrice: parseFloat(req.body.fixPrice) || undefined,
+      minPrice: parseFloat(req.body.minPrice) || undefined,
+      maxPrice: parseFloat(req.body.maxPrice) || undefined,
+      totalProduct: parseInt(req.body.totalProduct, 10) || 0,
       discount: parseFloat(req.body.discount) || 0
     };
 
@@ -139,11 +143,17 @@ exports.selectCategories = async (req, res) => {
         description: src.description,
         category: src.category,
         brand: src.brand,
-        price: src.fixPrice ?? 0,
-        discount: (typeof src.discountPercent === 'number' ? src.discountPercent : (src.discount || 0)),
+        price: src.price,
+        fixPrice: src.fixPrice,
+        minPrice: src.minPrice,
+        maxPrice: src.maxPrice,
+        totalProduct: src.totalProduct,
+        discount: src.discountPercent ?? src.discount ?? 0,
+        discountPrice: src.discountPrice,
+        discountPercent: src.discountPercent,
         tags: Array.isArray(src.tags) ? src.tags : (src.tags ? [src.tags] : []),
         colors: Array.isArray(src.colors) ? src.colors : [],
-        images: Array.isArray(src.photos) && src.photos.length > 0 ? [src.photos[0]] : [],
+        images: Array.isArray(src.photos) ? src.photos : [],
         isActive: true
       });
       await doc.save();

@@ -8,45 +8,45 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { useRef, useEffect } from "react";
-
-const brands = [
-  { name: "Havells", image: "/brands/havells.png" },
-  { name: "Stanley", image: "/brands/stanley.png" },
-  { name: "Philips", image: "/brands/philips.png" },
-  { name: "Finolex", image: "/brands/finolex.png" },
-  { name: "Anchor", image: "/brands/anchor.png" },
-  { name: "Fevicol", image: "/brands/fevicol.png" },
-  { name: "Asian Paints", image: "/brands/asianpaints.png" },
-  { name: "Bosch", image: "/brands/bosch.png" },
-  { name: "Crompton", image: "/brands/crompton.png" },
-  { name: "Godrej", image: "/brands/godrej.png" },
-  { name: "Havmor", image: "/brands/havmor.png" },
-  { name: "Jindal", image: "/brands/jindal.png" },
-  { name: "Pidilite", image: "/brands/pidilite.png" },
-  { name: "Polycab", image: "/brands/polycab.png" },
-  { name: "RR Kabel", image: "/brands/rrkabel.png" },
-  { name: "Schneider", image: "/brands/schneider.png" },
-  { name: "Usha", image: "/brands/usha.png" },
-  { name: "V-Guard", image: "/brands/vguard.png" },
-  { name: "Venus", image: "/brands/venus.png" },
-  { name: "Wipro", image: "/brands/wipro.png" },
-];
+import { useRef, useEffect, useState } from "react";
+import API_BASE_URL from "@/lib/apiConfig";
 
 export default function Brands() {
   const carouselRef = useRef(null);
+  const [brands, setBrands] = useState([]);
+
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/home/brands/get`);
+        const json = await res.json();
+        let list = [];
+        if (json && json.success && Array.isArray(json.data)) list = json.data;
+        else if (Array.isArray(json)) list = json;
+        if (!mounted) return;
+        setBrands(list.map(b => ({ _id: b._id, name: b.name, image: b.logo })));
+      } catch (e) {
+        if (!mounted) return;
+        setBrands([]);
+      }
+    };
+    load();
+    return () => { mounted = false };
+  }, []);
 
   // Autoplay effect
   useEffect(() => {
     const interval = setInterval(() => {
       if (carouselRef.current) {
-        // Find the next button and click it
         const nextBtn = carouselRef.current.querySelector('[data-carousel-next]');
         if (nextBtn) nextBtn.click();
       }
-    }, 2000); // Change slide every 2 seconds
+    }, 2000);
     return () => clearInterval(interval);
   }, []);
+
+  if (brands.length === 0) return null;
 
   return (
     <div className="w-full mx-auto py-10 px-2">
@@ -61,7 +61,7 @@ export default function Brands() {
         >
           <CarouselContent>
             {brands.map((brand, index) => (
-              <CarouselItem key={index} className="md:basis-1/4 lg:basis-1/6">
+              <CarouselItem key={brand._id || index} className="md:basis-1/4 lg:basis-1/6">
                 <div className="p-2">
                   <Card className="flex items-center justify-center h-32">
                     <CardContent className="flex items-center justify-center h-full w-full p-2">

@@ -9,7 +9,7 @@ import Items from "./Items/items";
 import Paints from "./Paints/paints";
 import Service from "./Service/Service";
 import PopularTools from "./Tools/PopularTools";
-import Tools from "./Tools/Tools";
+import OfferProduct from "./OfferProduct/OfferProduct";
 
 export default function Home() {
   return (
@@ -20,7 +20,7 @@ export default function Home() {
           <Paints />
           <Items />
           <Electricals />
-          <Tools/>
+          <OfferProduct/>
           <PopularTools />
           <Categories />
           <PopularProducts />

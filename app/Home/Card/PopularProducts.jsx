@@ -1,4 +1,6 @@
+"use client";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
@@ -8,65 +10,57 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
-
-const products = [
-  {
-    discount: "-25%",
-    image: "/opcolite.png", // Replace with your actual image path
-    category: "STAINERS/THINNERS",
-    name: "Asian Paints Apcolite Paint Remover",
-    price: "₹800.00 – ₹2600.00",
-    originalPrice: "",
-    buttonText: "Select Options",
-  },
-  {
-    discount: "17%",
-    image: "/faucet.png", // Replace with your actual image path
-    category: "FAUCETS",
-    name: "Hindware Avior Pillar Cock Tall",
-    price: "₹2,988.00",
-    originalPrice: "₹3,600.00",
-    buttonText: "Add to Cart",
-  },
-  {
-    discount: "-13%",
-    image: "/epoxy.png", // Replace with your actual image path
-    category: "WATERPROOFING",
-    name: "Asian Paints SmartCare Epoxy TileBlock",
-    price: "₹812.00 – ₹2,238.00",
-    originalPrice: "",
-    buttonText: "Select Options",
-  },
-  {
-    discount: "-30%",
-    image: "/woodstain.png", // Replace with your actual image path
-    category: "STAINERS/THINNERS",
-    name: "Sheenlac Wood Stain 100ml",
-    price: "₹170.00",
-    originalPrice: "₹200.00",
-    buttonText: "Select Options",
-  },
-  {
-    discount: "-31%",
-    image: "/tones.png", // Replace with your actual image path
-    category: "STAINERS/THINNERS",
-    name: "Asian Paints WoodTech Tones Wood Stainer Walnut 100ml",
-    price: "₹95.00",
-    originalPrice: "₹135.00",
-    buttonText: "Add to Cart",
-  },
-  {
-    discount: "-33%",
-    image: "/adapter.png", // Replace with your actual image path
-    category: "ADAPTORS",
-    name: "Havells Reo 6 A 3 Pin Multipurpose Adaptor (6 Pin) Blue – AHREWDX065",
-    price: "₹39.00",
-    originalPrice: "₹59.00",
-    buttonText: "Add to Cart",
-  },
-];
+import API_BASE_URL from "@/lib/apiConfig";
 
 export default function PopularProducts() {
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/home/popularproducts/get`);
+        const json = await res.json();
+        let list = [];
+        if (json && json.success && Array.isArray(json.data)) list = json.data;
+        else if (Array.isArray(json)) list = json;
+        else if (json && Array.isArray(json.products)) list = json.products;
+        if (!mounted) return;
+        setItems(list);
+      } catch (e) {
+        if (!mounted) return;
+        setItems([]);
+      }
+    };
+    load();
+    return () => { mounted = false };
+  }, []);
+  if (items.length === 0) {
+    return null;
+  }
+
+  const products = items.map((p) => {
+    const img = p.images?.[0] || p.image || "/placeholder-image.jpg";
+    const category = p.category || p.subCategory || '';
+    const name = p.name || p.title || '';
+    const base = p.fixPrice ?? p.price ?? p.mrp ?? null;
+    const discount = p.discount ?? null;
+    const discountPrice = p.discountPrice ?? (discount != null && base != null ? (Number(base) - (Number(base) * Number(discount) / 100)) : null);
+    const originalPrice = discountPrice ? (base ? `₹${Number(base).toFixed(2)}` : '') : '';
+    const price = discountPrice ? `₹${Number(discountPrice).toFixed(2)}` : (base != null ? `₹${Number(base).toFixed(2)}` : '');
+    const badge = (typeof discount === 'number' ? `-${discount}%` : (p.discount || '')) || '';
+    return {
+      _id: p._id || name,
+      image: img,
+      category,
+      name,
+      price,
+      originalPrice,
+      discount: badge,
+      buttonText: p.buttonText || 'Add to Cart',
+    };
+  });
+
   return (
     <div className="w-full mx-auto py-10 px-2">
       <h2 className="text-2xl font-bold mb-6">Popular products</h2>
@@ -78,14 +72,16 @@ export default function PopularProducts() {
         className="w-full"
       >
         <CarouselContent>
-          {products.map((product, index) => (
-            <CarouselItem key={index} className="md:basis-1/3 lg:basis-1/6">
+          {products.map((product) => (
+            <CarouselItem key={product._id} className="md:basis-1/3 lg:basis-1/6">
               <div className="p-1">
                 <Card>
                   <CardContent className="flex flex-col items-center justify-center p-1 relative">
-                    <div className="absolute top-2 left-2 bg-black text-white text-xs font-bold rounded-full w-12 h-10 flex items-center justify-center">
-                      {product.discount}
-                    </div>
+                    {product.discount && (
+                      <div className="absolute top-2 left-2 bg-black text-white text-xs font-bold rounded-full w-12 h-10 flex items-center justify-center">
+                        {product.discount}
+                      </div>
+                    )}
                     <Image
                       src={product.image}
                       alt={product.name}

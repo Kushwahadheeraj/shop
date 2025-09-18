@@ -1,5 +1,7 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
@@ -9,53 +11,39 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
-
-const categories = [
-  {
-    image: "/paints.jpg",
-    title: "Asian Paints",
-    items: ["Interior Paints", "Exterior Paints", "Wood & Metal", "Painting Tools"],
-    link: "/paints",
-  },
-  {
-    image: "/electrical.jpg",
-    title: "Electricals",
-    items: ["Fans", "Lights", "MCB", "Motors/Water Pumps"],
-    link: "/electricals",
-  },
-  {
-    image: "/tools.jpg",
-    title: "Tools",
-    items: ["Screw Driver", "Hammers", "Power Tools", "Tool Kit Set"],
-    link: "/tools",
-  },
-  {
-    image: "/sanitaryware.jpg",
-    title: "Fittings",
-    items: ["Parryware", "Watertec", "Hindware", "Corsa"],
-    link: "/fittings",
-  },
-  {
-    image: "/wallpaper.jpeg",
-    title: "Home Decor",
-    items: ["Wallpaper", "Curtains", "Clocks", "Mirrors"],
-    link: "/decor",
-  },
-  {
-    image: "/locks.jpeg",
-    title: "Hardware Parts",
-    items: ["Locks & Latches", "Brackets", "Hinges", "Screws & Nails"],
-    link: "/hardware",
-  },
-  {
-    image: "/roofer.jpg",
-    title: "Roofer",
-    items: ["Roofing Sheets", "Waterproofing", "Gutters", "Ventilators"],
-    link: "/roofer",
-  },
-];
+import API_BASE_URL from "@/lib/apiConfig";
 
 export default function Categories() {
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/home/categories/get`);
+        const json = await res.json();
+        let list = [];
+        if (json && json.success && Array.isArray(json.data)) list = json.data;
+        else if (Array.isArray(json)) list = json;
+        if (!mounted) return;
+        setCategories(list.map(c => ({
+          _id: c._id,
+          image: c.image,
+          title: c.title || c.name,
+          items: c.items || c.points || [],
+          link: c.link || '#',
+        })));
+      } catch (e) {
+        if (!mounted) return;
+        setCategories([]);
+      }
+    };
+    load();
+    return () => { mounted = false };
+  }, []);
+
+  if (categories.length === 0) return null;
+
   return (
     <div className="w-full mx-auto py-10 px-4">
       <h2 className="text-3xl font-bold mb-6">Categories</h2>
@@ -68,7 +56,7 @@ export default function Categories() {
       >
         <CarouselContent>
           {categories.map((category, index) => (
-            <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/4">
+            <CarouselItem key={category._id || index} className="md:basis-1/2 lg:basis-1/4">
               <div className="p-1">
                 <Card className="overflow-hidden">
                   <CardContent className="p-0">

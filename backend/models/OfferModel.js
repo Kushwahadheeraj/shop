@@ -10,7 +10,7 @@ const OfferSchema = new mongoose.Schema({
     type: String, 
     required: true
   },
-  offer: { 
+  description: { 
     type: String, 
     required: true,
     trim: true

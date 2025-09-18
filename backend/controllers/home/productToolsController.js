@@ -41,13 +41,20 @@ exports.selectCategories = async (req, res) => {
         name: src.name,
         description: src.description,
         category: src.category,
-        minPrice: src.fixPrice ?? src.discountPrice ?? undefined,
-        maxPrice: src.fixPrice ?? undefined,
-        price: src.fixPrice ?? src.discountPrice ?? undefined,
-        discount: src.discount ?? 0,
         brand: src.brand,
+        tags: Array.isArray(src.tags) ? src.tags : (Array.isArray(src.tag) ? src.tag : (src.tag ? [src.tag] : [])),
         images: Array.isArray(src.photos) && src.photos.length > 0 ? [src.photos[0]] : [],
-        tags: Array.isArray(src.tag) ? src.tag : (src.tag ? [src.tag] : [])
+        price: src.price,
+        minPrice: src.minPrice,
+        maxPrice: src.maxPrice,
+        fixPrice: src.fixPrice,
+        discount: src.discount ?? 0,
+        discountPrice: src.discountPrice,
+        totalProduct: src.totalProduct,
+        rating: 0,
+        specifications: src.description,
+        variants: [],
+        customFields: []
       });
       await doc.save();
       results.push({ category: cat, status: 'created', id: doc._id });

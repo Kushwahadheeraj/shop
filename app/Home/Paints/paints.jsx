@@ -1,9 +1,11 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useCart } from "@/components/CartContext";
 import API_BASE_URL from "@/lib/apiConfig";
 
 export default function Paints() {
+  const { addItem } = useCart();
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -105,11 +107,21 @@ export default function Paints() {
                 </div>
               )}
               {/* Button */}
-              <Link href={`/product/${product.id}`} passHref>
-                <button className="mt-auto cursor-pointer bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-2 rounded transition w-full">
-                  SELECT OPTIONS
-                </button>
-              </Link>
+              <button 
+                onClick={() => {
+                  // Add to cart directly
+                  addItem({
+                    id: product.id,
+                    name: product.name,
+                    price: product.currentPrice || product.price,
+                    image: product.image,
+                    thumbnail: product.image
+                  });
+                }}
+                className="mt-auto cursor-pointer bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-2 rounded transition w-full"
+              >
+                ADD TO CART
+              </button>
             </div>
           </div>
         ))}

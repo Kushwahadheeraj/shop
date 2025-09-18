@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { useCart } from "@/components/CartContext";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
@@ -14,6 +15,7 @@ import API_BASE_URL from "@/lib/apiConfig";
 import { Star } from "lucide-react";
 
 export default function PopularTools() {
+  const { addItem } = useCart();
   const [tools, setTools] = useState([]);
   const [expanded, setExpanded] = useState({});
 
@@ -133,7 +135,19 @@ export default function PopularTools() {
                         )}
                         {tool.price}
                       </p>
-                      <Button variant="outline" className="mt-4 border-yellow-400 text-yellow-600 hover:bg-yellow-400 hover:text-white">
+                      <Button 
+                        onClick={() => {
+                          addItem({
+                            id: tool.id,
+                            name: tool.name,
+                            price: tool.price,
+                            image: tool.image,
+                            thumbnail: tool.image
+                          });
+                        }}
+                        variant="outline" 
+                        className="mt-4 border-yellow-400 text-yellow-600 hover:bg-yellow-400 hover:text-white"
+                      >
                         {tool.buttonText}
                       </Button>
                     </div>

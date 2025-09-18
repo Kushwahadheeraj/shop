@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { useCart } from "@/components/CartContext";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
@@ -13,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import API_BASE_URL from "@/lib/apiConfig";
 
 export default function PopularProducts() {
+  const { addItem } = useCart();
   const [items, setItems] = useState([]);
 
   useEffect(() => {
@@ -101,6 +103,15 @@ export default function PopularProducts() {
                         {product.price}
                       </p>
                       <Button
+                        onClick={() => {
+                          addItem({
+                            id: product._id,
+                            name: product.name,
+                            price: product.price,
+                            image: product.image,
+                            thumbnail: product.image
+                          });
+                        }}
                         variant="outline"
                         className="mt-4 border-yellow-400 text-yellow-600 hover:bg-yellow-400 hover:text-white"
                       >

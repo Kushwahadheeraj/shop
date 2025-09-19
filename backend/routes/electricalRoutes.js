@@ -221,6 +221,18 @@ crudRoutesSimple('circulardeepbox', circularDeepBox);
 crudRoutesSimple('circularsurfacebox', circularSurfaceBox);
 crudRoutesSimple('rigidtype', rigidType);
 
+// General route to get all electrical products
+router.get('/', async (req, res) => {
+  try {
+    const ElectricalModels = require('../models/ElectricalModels');
+    const products = await ElectricalModels.find({});
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching electrical products:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;
 // Aggregate endpoints
 router.get('/categories', aggregate.getElectricalCategoriesWithData);

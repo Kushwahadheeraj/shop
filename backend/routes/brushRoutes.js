@@ -13,4 +13,16 @@ router.get('/getOne/:id', brushController.getOneBrush);
 router.put('/Update/:id', upload.array('photos', 5), brushController.updateBrush);
 router.delete('/delete/:id', brushController.deleteBrush);
 
+// General route to get all brush products
+router.get('/', async (req, res) => {
+  try {
+    const BrushModels = require('../models/BrushModels');
+    const products = await BrushModels.find({});
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching brush products:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;

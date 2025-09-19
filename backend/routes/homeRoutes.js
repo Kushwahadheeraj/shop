@@ -42,4 +42,16 @@ router.use('/imageslider/sanitaryimage', sanitaryImageRoutes);
 router.use('/imageslider/faucetimage', faucetImageRoutes);
 router.use('/imageslider/electricimage', electricImageRoutes);
 
+// General route to get all home products
+router.get('/', async (req, res) => {
+  try {
+    const HomeModels = require('../models/HomeModels');
+    const products = await HomeModels.find({});
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching home products:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;

@@ -13,4 +13,16 @@ router.get('/getOne/:id', hardwareController.getOneHardware);
 router.put('/Update/:id', upload.array('photos', 5), hardwareController.updateHardware);
 router.delete('/delete/:id', hardwareController.deleteHardware);
 
+// General route to get all hardware products
+router.get('/', async (req, res) => {
+  try {
+    const HardwareModels = require('../models/HardwareModels');
+    const products = await HardwareModels.find({});
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching hardware products:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;

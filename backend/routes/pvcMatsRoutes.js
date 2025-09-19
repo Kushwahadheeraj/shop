@@ -19,4 +19,16 @@ router.get('/floor/getOne/:id', floorController.getOneFloor);
 router.put('/floor/Update/:id', upload.array('photos', 5), floorController.updateFloor);
 router.delete('/floor/delete/:id', floorController.deleteFloor);
 
+// General route to get all pvc mats products
+router.get('/', async (req, res) => {
+  try {
+    const PvcMatsModels = require('../models/PvcMatsModels');
+    const products = await PvcMatsModels.find({});
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching pvc mats products:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;

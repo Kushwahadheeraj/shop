@@ -16,7 +16,64 @@ router.post('/', async (req, res) => {
       }
     }
 
+    // Create order first
     const order = await Order.create({ clientOrderId, userId, items, totals, address, paymentMethod: paymentMethod || 'prepaid' });
+
+    // After successful order creation, decrement inventory quantities per item
+    // We attempt to find the product by _id across known collections and decrement totalProduct safely
+    try {
+      const productModels = [
+        '../models/ElectricalModels',
+        '../models/AdhesivesModels',
+        '../models/LocksModels',
+        '../models/PaintModels',
+        '../models/SanitaryModels',
+        '../models/ToolsModels',
+        '../models/HardwareModels',
+        '../models/HomeModels',
+        '../models/HomeDecorModels',
+        '../models/PipeModels',
+        '../models/PvcMatsModels',
+        '../models/RooferModels',
+        '../models/UncategorizedModels',
+        '../models/WaterProofingModels',
+        '../models/BrushModels',
+        '../models/CementsModels',
+        '../models/CleaningModels',
+        '../models/DryModels',
+        '../models/FiberModels',
+        '../models/FittingModels'
+      ].map((p) => {
+        try { return require(p); } catch { return null; }
+      }).filter(Boolean);
+
+      const clampNonNegative = (n) => (n < 0 ? 0 : n);
+
+      // For each item, try decrement in the first collection that matches the productId
+      for (const item of items) {
+        const productId = item.productId || item._id; // fallback
+        const qty = Number(item.quantity || 1);
+        if (!productId || !qty) continue;
+
+        for (const Model of productModels) {
+          try {
+            // Read current value first to compute clamped decrement
+            const existing = await Model.findById(productId).lean();
+            if (!existing) continue;
+            const current = Number(existing.totalProduct || 0);
+            const next = clampNonNegative(current - qty);
+            await Model.findByIdAndUpdate(productId, { $set: { totalProduct: next } });
+            break; // stop after first match
+          } catch {
+            // try next model
+          }
+        }
+      }
+    } catch (invErr) {
+      // Log and proceed without failing order creation
+      console.error('Inventory decrement error:', invErr);
+    }
+
     res.json({ ok: true, data: order });
   } catch (err) {
     res.status(500).json({ error: err.message || 'Failed to create order' });

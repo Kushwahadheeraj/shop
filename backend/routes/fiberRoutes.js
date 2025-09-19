@@ -13,4 +13,16 @@ router.get('/getOne/:id', fiberController.getOneFiber);
 router.put('/Update/:id', upload.array('photos', 5), fiberController.updateFiber);
 router.delete('/delete/:id', fiberController.deleteFiber);
 
+// General route to get all fiber products
+router.get('/', async (req, res) => {
+  try {
+    const FiberModels = require('../models/FiberModels');
+    const products = await FiberModels.find({});
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching fiber products:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;

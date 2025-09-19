@@ -58,4 +58,16 @@ router.get('/teen-sheet/getOne/:id', teenSheetController.getOneTeenSheet);
 router.put('/teen-sheet/Update/:id', upload.array('photos', 5), teenSheetController.updateTeenSheet);
 router.delete('/teen-sheet/delete/:id', teenSheetController.deleteTeenSheet);
 
+// General route to get all roofer products
+router.get('/', async (req, res) => {
+  try {
+    const RooferModels = require('../models/RooferModels');
+    const products = await RooferModels.find({});
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching roofer products:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;

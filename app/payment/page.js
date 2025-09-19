@@ -10,11 +10,25 @@ export default function PaymentPage() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('upi');
   const [upiId, setUpiId] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
+  const [pending, setPending] = useState(null);
 
-  // Calculate totals
-  const subtotal = items.reduce((sum, item) => sum + (Number(item.price || item.salePrice || 0) * (item.quantity || 1)), 0);
-  const platformFee = 7;
-  const totalAmount = subtotal + platformFee;
+  // Load canonical totals from pending payload
+  useEffect(() => {
+    try {
+      const raw = typeof window !== 'undefined' ? localStorage.getItem('pending_order_payload') : null;
+      if (raw) {
+        const payload = JSON.parse(raw);
+        setPending(payload);
+      }
+    } catch {}
+  }, []);
+
+  const fallbackSubtotal = items.reduce((sum, item) => sum + (Number(item.price || item.salePrice || 0) * (item.quantity || 1)), 0);
+  const subtotal = pending?.totals?.subtotal ?? fallbackSubtotal;
+  const platformFee = pending?.totals?.platformFee ?? 7;
+  const shipping = pending?.totals?.shipping ?? 0;
+  const discount = pending?.coupon?.discount ?? 0;
+  const totalAmount = pending?.totals?.grandTotal ?? Math.max(0, fallbackSubtotal + platformFee + shipping - discount);
 
   const currency = (amount) => `₹${amount.toLocaleString()}`;
 
@@ -398,7 +412,16 @@ export default function PaymentPage() {
                   <span>Price ({items.length} item{items.length !== 1 ? 's' : ''})</span>
                   <span className="font-semibold">{currency(subtotal)}</span>
                 </div>
-                
+                {discount > 0 && (
+                  <div className="flex justify-between items-center">
+                    <span>Coupon Discount</span>
+                    <span className="font-semibold text-green-600">- {currency(discount)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between items-center">
+                  <span>Delivery Fee</span>
+                  <span className="font-semibold">{currency(shipping)}</span>
+                </div>
                 <div className="flex justify-between items-center">
                   <span>Platform Fee</span>
                   <span className="font-semibold">{currency(platformFee)}</span>

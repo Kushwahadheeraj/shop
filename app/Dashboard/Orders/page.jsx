@@ -118,8 +118,13 @@ export default function OrdersPage() {
   return (
     <div className="max-w-7xl mx-auto p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-gray-800">Orders</h1>
-        <p className="text-gray-500 text-sm">View orders, update tracking, and print invoice</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-800">Orders</h1>
+            <p className="text-gray-500 text-sm">View orders, update tracking, and print invoice</p>
+          </div>
+          <a href="/Dashboard/Orders/Delivered" className="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700">All delivered orders</a>
+        </div>
       </div>
 
       <div className="bg-white p-4 rounded-lg shadow mb-6">
@@ -178,7 +183,7 @@ export default function OrdersPage() {
                 ) : orders.length === 0 ? (
                   <tr><td colSpan={5} className="px-6 py-8 text-center text-gray-500">No orders found</td></tr>
                 ) : (
-                  orders.map((o) => (
+                  orders.filter((o) => o.status !== 'delivered').map((o) => (
                     <tr key={o._id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 text-sm text-gray-900">
                         <div>#{o._id.slice(-6)}</div>
@@ -223,6 +228,7 @@ export default function OrdersPage() {
                 <div className="container">
                   <div className="title">Kushwaha Hardware</div>
                   <div className="subtitle">Invoice</div>
+                  <div className="meta">Payment Method: {selected.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Prepaid (Online)'}</div>
                   <div className="meta">Invoice ID: #{selected._id?.slice(-6)} | Date: {new Date(selected.createdAt).toLocaleString()}</div>
                   <hr />
                   <div style={{display:'flex',justifyContent:'space-between',marginTop:8}}>
@@ -257,7 +263,8 @@ export default function OrdersPage() {
                   </table>
                   <div className="totals">
                     <div>Subtotal: ₹{selected.totals?.subtotal?.toFixed(2) ?? '0.00'}</div>
-                    <div>Shipping: ₹{selected.totals?.shipping?.toFixed(2) ?? '0.00'}</div>
+                    <div>Delivery Fee: ₹{selected.totals?.shipping?.toFixed(2) ?? '0.00'}</div>
+                    <div>Platform Fee: ₹{selected.totals?.platformFee?.toFixed(2) ?? '0.00'}</div>
                     <div><strong>Grand Total: ₹{selected.totals?.grandTotal?.toFixed(2) ?? '0.00'}</strong></div>
                   </div>
                   <div className="center meta" style={{marginTop:12}}>Thank you for shopping with Kushwaha Hardware</div>
@@ -274,8 +281,10 @@ export default function OrdersPage() {
                 </div>
                 <div className="border rounded-md p-3">
                   <div className="font-medium mb-2">Order Summary</div>
+                  <div className="text-xs text-gray-600 mb-1">Payment Method: <span className="font-medium">{selected.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Prepaid (Online)'}</span></div>
                   <div className="text-sm">Subtotal: ₹{selected.totals?.subtotal?.toFixed(2) ?? '0.00'}</div>
-                  <div className="text-sm">Shipping: ₹{selected.totals?.shipping?.toFixed(2) ?? '0.00'}</div>
+                  <div className="text-sm">Delivery Fee: ₹{selected.totals?.shipping?.toFixed(2) ?? '0.00'}</div>
+                  <div className="text-sm">Platform Fee: ₹{selected.totals?.platformFee?.toFixed(2) ?? '0.00'}</div>
                   <div className="text-sm font-semibold">Grand Total: ₹{selected.totals?.grandTotal?.toFixed(2) ?? '0.00'}</div>
                 </div>
               </div>

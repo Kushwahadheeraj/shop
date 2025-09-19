@@ -81,13 +81,13 @@ export default function CartPage() {
             <div className="flex justify-between pt-3 border-t"><span className="text-gray-600">Total</span><span className="font-bold">₹{Number(total).toLocaleString()}</span></div>
           </div>
           <button onClick={handleCheckout} className="w-full mt-4 bg-gray-900 hover:bg-black text-white font-semibold py-2 rounded-md">PROCEED TO CHECKOUT</button>
-          <div className="mt-4">
+          {/* <div className="mt-4">
             <div className="flex items-center gap-2 text-sm font-semibold"><span>Coupon</span></div>
             <div className="flex gap-2 mt-2">
               <input className="flex-1 border rounded-md px-3 py-2 text-sm" placeholder="Coupon code" />
               <button className="px-4 py-2 bg-gray-100 border rounded-md text-sm">Apply coupon</button>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
       <LoginRegisterModal open={showLogin} onClose={() => setShowLogin(false)} />

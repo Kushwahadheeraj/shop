@@ -34,6 +34,7 @@ export default function OrderSuccessPage() {
         if (!raw) return;
         const payload = JSON.parse(raw);
         if (!payload?.userId || !payload?.address || !Array.isArray(payload?.items)) return;
+        if (!payload?.paymentMethod) payload.paymentMethod = 'prepaid';
         const res = await fetch(`${API_BASE_URL}/orders`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

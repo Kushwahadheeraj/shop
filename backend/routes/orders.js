@@ -5,7 +5,7 @@ const router = express.Router();
 // Create order
 router.post('/', async (req, res) => {
   try {
-    const { userId, items, totals, address, clientOrderId } = req.body || {};
+    const { userId, items, totals, address, clientOrderId, paymentMethod } = req.body || {};
     if (!userId) return res.status(400).json({ error: 'userId required' });
     if (!items || !Array.isArray(items) || items.length === 0) return res.status(400).json({ error: 'items required' });
 
@@ -16,7 +16,7 @@ router.post('/', async (req, res) => {
       }
     }
 
-    const order = await Order.create({ clientOrderId, userId, items, totals, address });
+    const order = await Order.create({ clientOrderId, userId, items, totals, address, paymentMethod: paymentMethod || 'prepaid' });
     res.json({ ok: true, data: order });
   } catch (err) {
     res.status(500).json({ error: err.message || 'Failed to create order' });

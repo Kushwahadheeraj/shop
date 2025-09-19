@@ -12,9 +12,11 @@ const orderSchema = new mongoose.Schema({
       thumbnail: String,
     }
   ],
+  paymentMethod: { type: String, enum: ['prepaid', 'cod'], default: 'prepaid' },
   totals: {
     subtotal: Number,
     shipping: Number,
+    platformFee: Number,
     grandTotal: Number,
   },
   address: {

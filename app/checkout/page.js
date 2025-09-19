@@ -132,8 +132,23 @@ export default function CheckoutPage() {
     }, 0);
   }, [items]);
 
-  const shipping = 0;
-  const grandTotal = subtotal + shipping;
+  const computeDeliveryFee = (amount) => {
+    const a = Number(amount || 0);
+    if (a >= 15000) return 0;
+    if (a >= 2000 && a <= 14999) return 350;
+    if (a >= 600 && a <= 1999) return 150;
+    if (a >= 100 && a <= 599) return 70;
+    return 70; // default small orders
+  };
+
+  const platformFee = 7;
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponCode, setCouponCode] = useState("");
+  const [couponError, setCouponError] = useState("");
+  const discountAmount = appliedCoupon?.discount || 0;
+  const netAfterDiscount = Math.max(0, subtotal - discountAmount);
+  const shipping = computeDeliveryFee(netAfterDiscount);
+  const grandTotal = Math.max(0, netAfterDiscount + shipping + platformFee);
 
   const update = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
   const updateNewAddress = (key) => (e) => setNewAddress((a) => ({ ...a, [key]: e.target.value }));
@@ -353,11 +368,13 @@ export default function CheckoutPage() {
         quantity: it.quantity || 1,
         thumbnail: it.thumbnail || it.image || it.img || null,
       })),
-      totals: { subtotal, shipping, grandTotal },
+      totals: { subtotal, shipping, platformFee, grandTotal },
+      paymentMethod: 'prepaid',
       address: {
         ...selected,
         email: form.email || emailFromUser,
       },
+      coupon: appliedCoupon ? { code: appliedCoupon.code, discount: appliedCoupon.discount } : undefined,
     };
 
     try {
@@ -742,6 +759,20 @@ export default function CheckoutPage() {
                   Order confirmation email will be sent to {form.email || 'your email'}
                 </div>
                 
+                {/* Totals (mirrors PRICE DETAILS) */}
+                <div className="border rounded-lg p-4 bg-white shadow-sm mb-4">
+                  <h4 className="font-semibold text-gray-900 mb-3">Order Charges</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between"><span>Subtotal</span><span className="font-semibold">{currency(subtotal)}</span></div>
+                    {discountAmount > 0 && (
+                      <div className="flex justify-between"><span>Coupon Discount</span><span className="font-semibold text-green-600">- {currency(discountAmount)}</span></div>
+                    )}
+                    <div className="flex justify-between"><span>Delivery Fee</span><span className="font-semibold">{currency(shipping)}</span></div>
+                    <div className="flex justify-between"><span>Platform Fee</span><span className="font-semibold">{currency(platformFee)}</span></div>
+                    <div className="border-t pt-2 flex justify-between font-bold text-base"><span>Total Payable</span><span>{currency(grandTotal)}</span></div>
+                  </div>
+                </div>
+
                 {/* Continue Button */}
                 <button
                   type="button"
@@ -782,14 +813,65 @@ export default function CheckoutPage() {
                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
                   </svg>
                 </div>
-                <span className="font-semibold">₹7</span>
+                <span className="font-semibold">{currency(platformFee)}</span>
+              </div>
+
+              {discountAmount > 0 && (
+                <div className="flex justify-between items-center">
+                  <span>Coupon Discount</span>
+                  <span className="font-semibold text-green-600">- {currency(discountAmount)}</span>
+                </div>
+              )}
+
+              <div className="flex justify-between items-center">
+                <span>Delivery Fee</span>
+                <span className="font-semibold">{currency(shipping)}</span>
               </div>
 
               <div className="border-t border-dashed border-gray-300 pt-3">
                 <div className="flex justify-between items-center font-bold text-lg">
                   <span>Total Payable</span>
-                  <span>{currency(grandTotal + 7)}</span>
+                  <span>{currency(grandTotal)}</span>
                 </div>
+              </div>
+
+              {/* Coupon Apply */}
+              <div className="mt-4">
+                <div className="flex gap-2">
+                  <input
+                    value={couponCode}
+                    onChange={(e)=>{ setCouponCode(e.target.value); setCouponError(""); }}
+                    placeholder="Enter coupon code"
+                    className="flex-1 border px-3 py-2 text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (!couponCode.trim()) return;
+                      try {
+                        const res = await fetch(`${API_BASE_URL}/coupons/validate`, {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ code: couponCode, orderAmount: subtotal })
+                        });
+                        const data = await res.json();
+                        if (!res.ok || !data.success) throw new Error(data.message || 'Invalid coupon');
+                        setAppliedCoupon({ code: data.data.code, discount: data.data.discount });
+                        setCouponError("");
+                      } catch (e) {
+                        setAppliedCoupon(null);
+                        setCouponError(e.message || 'Invalid coupon');
+                      }
+                    }}
+                    className="px-3 py-2 bg-blue-600 text-white text-sm rounded"
+                  >Apply</button>
+                </div>
+                {appliedCoupon && (
+                  <div className="text-green-600 text-sm mt-2">Applied {appliedCoupon.code}: -{currency(appliedCoupon.discount)}</div>
+                )}
+                {couponError && (
+                  <div className="text-red-600 text-sm mt-2">{couponError}</div>
+                )}
               </div>
 
               {totalSavings > 0 && (

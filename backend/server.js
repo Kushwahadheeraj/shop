@@ -28,6 +28,7 @@ const uncategorizedRoutes = require('./routes/uncategorizedRoutes');
 const waterProofingRoutes = require('./routes/waterProofingRoutes');
 const euserRoutes = require('./routes/euserRoutes');
 const ordersRoutes = require('./routes/orders');
+const couponRoutes = require('./routes/couponRoutes');
 
 const app = express();
 
@@ -48,6 +49,7 @@ connectDB();
 app.use('/api/seller', sellerRoutes);
 app.use('/api/euser', euserRoutes);
 app.use('/api/orders', ordersRoutes);
+app.use('/api/coupons', couponRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/adhesives', adhesivesRoutes);
 app.use('/api/brush', brushRoutes);

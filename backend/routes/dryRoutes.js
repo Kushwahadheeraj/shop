@@ -13,4 +13,16 @@ router.get('/getOne/:id', dryController.getOneDry);
 router.put('/Update/:id', upload.array('photos', 5), dryController.updateDry);
 router.delete('/delete/:id', dryController.deleteDry);
 
+// General route to get all dry products
+router.get('/', async (req, res) => {
+  try {
+    const DryModels = require('../models/DryModels');
+    const products = await DryModels.find({});
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching dry products:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;

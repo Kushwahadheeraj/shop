@@ -1607,4 +1607,16 @@ router.put('/water-tec-valves/update/:id', upload.array('photos', 5), WaterTecVa
 router.delete('/water-tec-valves/delete/:id', WaterTecValvesController.deleteValves);
 
 
+// General route to get all sanitary products
+router.get('/', async (req, res) => {
+  try {
+    const SanitaryModels = require('../models/SanitaryModels');
+    const products = await SanitaryModels.find({});
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching sanitary products:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;

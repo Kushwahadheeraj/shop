@@ -485,4 +485,16 @@ router.put('/wood-metal/Update/:id',upload.array('photos', 5), woodMetalControll
 router.delete('/wood-metal/delete/:id', woodMetalController.deleteWoodMetal);
 
 
+// General route to get all paint products
+router.get('/', async (req, res) => {
+  try {
+    const PaintModels = require('../models/PaintModels');
+    const products = await PaintModels.find({});
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching paint products:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;

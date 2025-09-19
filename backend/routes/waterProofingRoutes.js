@@ -25,4 +25,16 @@ router.get('/interiors/getOne/:id', InteriorsController.getOneInteriors);
 router.put('/interiors/Update/:id', upload.array('photos', 5), InteriorsController.updateInteriors);
 router.delete('/interiors/delete/:id', InteriorsController.deleteInteriors);
 
+// General route to get all water proofing products
+router.get('/', async (req, res) => {
+  try {
+    const WaterProofingModels = require('../models/WaterProofingModels');
+    const products = await WaterProofingModels.find({});
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching water proofing products:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;

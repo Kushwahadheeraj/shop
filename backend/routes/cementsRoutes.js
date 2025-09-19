@@ -13,4 +13,16 @@ router.get('/getOne/:id', cementsController.getOneCements);
 router.put('/Update/:id', upload.array('photos', 5), cementsController.updateCements);
 router.delete('/delete/:id', cementsController.deleteCements);
 
+// General route to get all cements products
+router.get('/', async (req, res) => {
+  try {
+    const CementsModels = require('../models/CementsModels');
+    const products = await CementsModels.find({});
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching cements products:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;

@@ -307,4 +307,16 @@ router.get('/abrasives/diamondBlades/getOne/:id', diamondBladesController.getOne
 router.put('/abrasives/diamondBlades/Update/:id', upload.array('photos', 5), diamondBladesController.updateDiamondBlades);
 router.delete('/abrasives/diamondBlades/delete/:id', diamondBladesController.deleteDiamondBlades);
 
+// General route to get all tools products
+router.get('/', async (req, res) => {
+  try {
+    const ToolsModels = require('../models/ToolsModels');
+    const products = await ToolsModels.find({});
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching tools products:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;

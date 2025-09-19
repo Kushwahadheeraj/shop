@@ -43,4 +43,16 @@ registerCrudRoutes('tsa-pipes', tsaPipes, 'TsaPipes');
 
 
 
+// General route to get all pipe products
+router.get('/', async (req, res) => {
+  try {
+    const PipeModels = require('../models/PipeModels');
+    const products = await PipeModels.find({});
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching pipe products:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router; 

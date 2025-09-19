@@ -314,4 +314,16 @@ crudRoutes('padlocks/premium-padlocks', premiumPadlocksController, 'PremiumPadlo
 crudRoutes('padlocks/padlocks', padlocksController, 'Padlocks');
 crudRoutes('padlocks/disc-padlocks', discPadlocksController, 'DiscPadlocks');
 
+// General route to get all locks products
+router.get('/', async (req, res) => {
+  try {
+    const LocksModels = require('../models/LocksModels');
+    const products = await LocksModels.find({});
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching locks products:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;

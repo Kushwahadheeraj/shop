@@ -118,3 +118,88 @@ exports.changePassword = async (req, res) => {
     res.status(500).json({ message: 'Failed to update password' });
   }
 };
+
+// List e-users with optional search and date range
+exports.list = async (req, res) => {
+  try {
+    const { q, from, to, limit, skip } = req.query || {};
+
+    const filter = {};
+    if (q && q.trim()) {
+      const regex = new RegExp(q.trim(), 'i');
+      filter.$or = [
+        { username: regex },
+        { email: regex },
+        { name: regex },
+        { phone: regex },
+      ];
+    }
+
+    if (from || to) {
+      filter.createdAt = {};
+      if (from) filter.createdAt.$gte = new Date(from);
+      if (to) filter.createdAt.$lte = new Date(to);
+    }
+
+    const query = EUser.find(filter)
+      .select('-password')
+      .sort({ createdAt: -1 })
+      .skip(Number(skip) || 0)
+      .limit(Math.min(Number(limit) || 200, 500));
+
+    const [users, total] = await Promise.all([
+      query,
+      EUser.countDocuments(filter),
+    ]);
+
+    const mapped = users.map(u => ({
+      id: u._id,
+      username: u.username,
+      name: u.name,
+      email: u.email,
+      phone: u.phone,
+      avatar: u.avatar,
+      status: u.status,
+      createdAt: u.createdAt,
+    }));
+
+    res.json({ total, users: mapped });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to load users' });
+  }
+};
+
+// Stats for predefined windows
+exports.stats = async (req, res) => {
+  try {
+    const now = new Date();
+
+    const startOf = (date) => new Date(date);
+
+    const ranges = {
+      '1d': new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000),
+      '3d': new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000),
+      '1w': new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
+      '15d': new Date(now.getTime() - 15 * 24 * 60 * 60 * 1000),
+      '30d': new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000),
+      '6m': new Date(new Date(now).setMonth(now.getMonth() - 6)),
+      '1y': new Date(new Date(now).setFullYear(now.getFullYear() - 1)),
+    };
+
+    const total = await EUser.countDocuments({});
+
+    const entries = await Promise.all(
+      Object.entries(ranges).map(async ([key, start]) => {
+        const count = await EUser.countDocuments({ createdAt: { $gte: start } });
+        return [key, count];
+      })
+    );
+
+    const stats = Object.fromEntries(entries);
+    stats.total = total;
+
+    res.json(stats);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to load stats' });
+  }
+};

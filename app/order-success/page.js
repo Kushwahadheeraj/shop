@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import API_BASE_URL from "@/lib/apiConfig";
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function OrderSuccessPage() {
   const router = useRouter();
   const [deliveryDate, setDeliveryDate] = useState('');
+  const [posted, setPosted] = useState(false);
 
   useEffect(() => {
     // Calculate delivery date (3 days from now)
@@ -22,6 +24,31 @@ export default function OrderSuccessPage() {
     };
     setDeliveryDate(delivery.toLocaleDateString('en-US', options));
   }, []);
+
+  useEffect(() => {
+    // Create order immediately after successful payment using pending payload
+    const postOrder = async () => {
+      if (posted) return;
+      try {
+        const raw = typeof window !== 'undefined' ? localStorage.getItem('pending_order_payload') : null;
+        if (!raw) return;
+        const payload = JSON.parse(raw);
+        if (!payload?.userId || !payload?.address || !Array.isArray(payload?.items)) return;
+        const res = await fetch(`${API_BASE_URL}/orders`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (res.ok) {
+          setPosted(true);
+          try { localStorage.removeItem('pending_order_payload'); } catch {}
+          // Optional: dispatch event so dashboards can refresh
+          try { window.dispatchEvent(new Event('orders-updated')); } catch {}
+        }
+      } catch {}
+    };
+    postOrder();
+  }, [posted]);
 
   return (
     <div className="min-h-screen mt-36 bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center p-4">

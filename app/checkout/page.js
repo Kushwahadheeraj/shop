@@ -305,6 +305,68 @@ export default function CheckoutPage() {
     }
   };
 
+  const isAddressComplete = (addr) => {
+    if (!addr) return false;
+    const required = [
+      addr.firstName,
+      addr.lastName,
+      addr.street,
+      addr.city,
+      addr.state,
+      addr.pin,
+      addr.phone,
+      form.email || addr.email,
+    ];
+    return required.every((v) => !!String(v || '').trim());
+  };
+
+  const proceedToPayment = () => {
+    // Prevent double click
+    if (typeof window !== 'undefined') {
+      if (window.__checkout_navigating__) return;
+      window.__checkout_navigating__ = true;
+      setTimeout(() => { try { delete window.__checkout_navigating__; } catch {} }, 5000);
+    }
+    const selected = addresses.find((a) => a.id === selectedAddressId);
+    if (!selected) {
+      alert('Please select a delivery address first');
+      return;
+    }
+    if (!isAddressComplete(selected)) {
+      alert('Please fill complete address (name, street, city, state, PIN, phone)');
+      return;
+    }
+
+    const raw = typeof window !== 'undefined' ? localStorage.getItem('euser') : null;
+    const user = raw ? JSON.parse(raw) : null;
+    const userId = user?._id || user?.id;
+    const emailFromUser = user?.email || '';
+
+    const clientOrderId = `co_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
+    const payload = {
+      clientOrderId,
+      userId,
+      items: (items || []).map((it) => ({
+        productId: it._id || it.id,
+        name: it.name || it.title,
+        price: Number(it.price || it.salePrice || 0),
+        quantity: it.quantity || 1,
+        thumbnail: it.thumbnail || it.image || it.img || null,
+      })),
+      totals: { subtotal, shipping, grandTotal },
+      address: {
+        ...selected,
+        email: form.email || emailFromUser,
+      },
+    };
+
+    try {
+      localStorage.setItem('pending_order_payload', JSON.stringify(payload));
+    } catch {}
+
+    router.push('/payment');
+  };
+
   return (
     <div className="min-h-screen mt-36 bg-white py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -683,7 +745,7 @@ export default function CheckoutPage() {
                 {/* Continue Button */}
                 <button
                   type="button"
-                  onClick={() => router.push('/payment')}
+                  onClick={proceedToPayment}
                   className="w-full bg-orange-500 text-white py-3 px-4 rounded font-semibold text-lg"
                 >
                   CONTINUE

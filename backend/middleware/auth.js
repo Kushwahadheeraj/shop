@@ -10,7 +10,9 @@ module.exports = function (req, res, next) {
       if (err) {
         return res.status(401).json({ message: 'Invalid or expired token' });
       }
-      req.sellerId = decoded.id;
+      console.log('Decoded token:', decoded);
+      req.sellerId = decoded.id || decoded._id || decoded.userId;
+      console.log('Set sellerId to:', req.sellerId);
       next();
     });
   } catch (error) {

@@ -30,6 +30,8 @@ const euserRoutes = require('./routes/euserRoutes');
 const ordersRoutes = require('./routes/orders');
 const couponRoutes = require('./routes/couponRoutes');
 const categoryCountRoutes = require('./routes/categoryCountRoutes');
+const billRoutes = require('./routes/billRoutes');
+const shopRoutes = require('./routes/shopRoutes');
 
 const app = express();
 
@@ -53,6 +55,8 @@ app.use('/api/orders', ordersRoutes);
 app.use('/api/coupons', couponRoutes);
 app.use('/api/category-count', categoryCountRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/bills', billRoutes);
+app.use('/api/shops', shopRoutes);
 app.use('/api/adhesives', adhesivesRoutes);
 app.use('/api/brush', brushRoutes);
 app.use('/api/cements', cementsRoutes);

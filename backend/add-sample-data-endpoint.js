@@ -1,24 +1,22 @@
+const express = require('express');
 const mongoose = require('mongoose');
 const Bill = require('./models/Bill');
 const Shop = require('./models/Shop');
 
-// Use the same connection string as server.js
-mongoose.connect('mongodb+srv://kushwaha:123456789@cluster0.cbzehqw.mongodb.net/shop?retryWrites=true&w=majority', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+const app = express();
+
+// Use the same connection as server.js
+require('dotenv').config();
+const connectDB = require('./config/db');
 
 async function addSampleData() {
   try {
-    console.log('🔍 Connecting to MongoDB Atlas...');
+    console.log('🔍 Connecting to MongoDB...');
     
-    // Wait for connection
-    await new Promise((resolve, reject) => {
-      mongoose.connection.once('open', resolve);
-      mongoose.connection.on('error', reject);
-    });
+    // Connect to database
+    await connectDB();
     
-    console.log('✅ Connected to MongoDB Atlas');
+    console.log('✅ Connected to MongoDB');
     
     // Clear existing data
     await Bill.deleteMany({});
@@ -106,11 +104,14 @@ async function addSampleData() {
       totalAmount: b.pricing.totalAmount
     })));
     
+    console.log('✅ Sample data added successfully!');
+    
   } catch (error) {
     console.error('❌ Error:', error);
   } finally {
     mongoose.connection.close();
     console.log('🔌 Database connection closed');
+    process.exit(0);
   }
 }
 

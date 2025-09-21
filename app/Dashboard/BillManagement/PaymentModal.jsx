@@ -6,7 +6,10 @@ const PaymentModal = ({ bill, isOpen, onClose, onSave }) => {
     amount: '',
     method: 'cash',
     paymentDate: new Date().toISOString().split('T')[0],
-    notes: ''
+    notes: '',
+    customerName: '',
+    billId: '',
+    transactionId: ''
   });
 
   const [errors, setErrors] = useState({});
@@ -41,6 +44,11 @@ const PaymentModal = ({ bill, isOpen, onClose, onSave }) => {
 
     if (amount > remainingAmount) {
       newErrors.amount = `Amount cannot exceed remaining balance of ₹${remainingAmount}`;
+    }
+    
+    // For combined bills, allow any amount up to total remaining
+    if (bill.isCombinedBill && amount > remainingAmount) {
+      newErrors.amount = `Amount cannot exceed total remaining balance of ₹${remainingAmount}`;
     }
 
     if (!formData.method) {
@@ -137,8 +145,20 @@ const PaymentModal = ({ bill, isOpen, onClose, onSave }) => {
           <div className="text-sm text-gray-600 space-y-1">
             <p><span className="font-medium">Bill:</span> {bill.billNumber}</p>
             <p><span className="font-medium">Shop:</span> {bill.shopName}</p>
-            <p><span className="font-medium">Total Amount:</span> {formatCurrency(bill.pricing?.totalAmount || 0)}</p>
-            <p><span className="font-medium">Paid Amount:</span> {formatCurrency(bill.payment?.paidAmount || 0)}</p>
+            {bill.isCombinedBill ? (
+              <>
+                <p><span className="font-medium">Total Remaining Amount:</span> {formatCurrency(bill.pricing?.totalAmount || 0)}</p>
+                <p><span className="font-medium">Bills Count:</span> {bill.originalBills?.length || 0} bills</p>
+                <p className="text-xs text-blue-600">
+                  💡 Payment will be distributed across all remaining bills automatically
+                </p>
+              </>
+            ) : (
+              <>
+                <p><span className="font-medium">Total Amount:</span> {formatCurrency(bill.pricing?.totalAmount || 0)}</p>
+                <p><span className="font-medium">Paid Amount:</span> {formatCurrency(bill.payment?.paidAmount || 0)}</p>
+              </>
+            )}
             <p className="text-lg font-bold text-red-600">
               <span className="font-medium">Remaining:</span> {formatCurrency(remainingAmount)}
             </p>
@@ -235,6 +255,57 @@ const PaymentModal = ({ bill, isOpen, onClose, onSave }) => {
             />
           </div>
 
+          {/* Additional Information Section */}
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+            <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+              <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+              Additional Information (Optional)
+            </h4>
+            <div className="space-y-4">
+              {/* Customer Name */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Customer Name
+                </label>
+                <input
+                  type="text"
+                  value={formData.customerName}
+                  onChange={(e) => handleInputChange('customerName', e.target.value)}
+                  placeholder="Enter customer name"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                />
+              </div>
+
+              {/* Bill ID */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Bill ID
+                </label>
+                <input
+                  type="text"
+                  value={formData.billId}
+                  onChange={(e) => handleInputChange('billId', e.target.value)}
+                  placeholder="Enter bill ID"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                />
+              </div>
+
+              {/* Transaction ID */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Transaction ID
+                </label>
+                <input
+                  type="text"
+                  value={formData.transactionId}
+                  onChange={(e) => handleInputChange('transactionId', e.target.value)}
+                  placeholder="Enter transaction ID"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                />
+              </div>
+            </div>
+          </div>
+
           {/* AI Scanning Button */}
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
             <div className="flex items-center space-x-2 mb-2">
@@ -270,6 +341,32 @@ const PaymentModal = ({ bill, isOpen, onClose, onSave }) => {
                 <span className="text-gray-600">Previous Paid:</span>
                 <span className="font-medium text-gray-900">{formatCurrency(bill.payment?.paidAmount || 0)}</span>
               </div>
+              
+              {/* Additional Information - Only show if filled */}
+              {(formData.customerName || formData.billId || formData.transactionId) && (
+                <div className="border-t border-gray-300 pt-2 mt-2">
+                  <div className="text-xs text-gray-500 mb-2 font-medium">Additional Information:</div>
+                  {formData.customerName && (
+                    <div className="flex justify-between py-1">
+                      <span className="text-gray-600">Customer:</span>
+                      <span className="font-medium text-gray-900">{formData.customerName}</span>
+                    </div>
+                  )}
+                  {formData.billId && (
+                    <div className="flex justify-between py-1">
+                      <span className="text-gray-600">Bill ID:</span>
+                      <span className="font-medium text-gray-900">{formData.billId}</span>
+                    </div>
+                  )}
+                  {formData.transactionId && (
+                    <div className="flex justify-between py-1">
+                      <span className="text-gray-600">Transaction ID:</span>
+                      <span className="font-medium text-gray-900">{formData.transactionId}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+              
               <div className="border-t border-gray-300 pt-2 mt-2">
                 <div className="flex justify-between font-bold text-base py-1">
                   <span className="text-gray-800">New Total Paid:</span>

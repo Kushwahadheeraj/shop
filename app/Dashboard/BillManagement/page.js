@@ -39,6 +39,7 @@ const BillManagementPage = () => {
       console.log('🔄 Loading real data from database...');
       
       try {
+        // Try to fetch data from API
         await fetchShops();
         await fetchBills();
         await fetchStats();
@@ -47,8 +48,10 @@ const BillManagementPage = () => {
       }
     };
     
+    // Load real data from database
     loadRealData();
   }, []);
+
 
   // Redirect if not authenticated or not a seller
   useEffect(() => {
@@ -112,24 +115,11 @@ const BillManagementPage = () => {
       if (data.success) {
         const shops = data.data.shops || [];
         setShops(shops);
-        console.log('✅ ===== SHOPS FETCHED FROM API =====');
+        console.log('✅ Shops set successfully:', shops);
         console.log('✅ Number of shops:', shops.length);
-        console.log('✅ Raw API response:', JSON.stringify(data, null, 2));
-        console.log('✅ Shops array:', JSON.stringify(shops, null, 2));
         
         if (shops.length === 0) {
           console.log('⚠️ No shops found in database');
-        } else {
-          // Show each shop's details
-          shops.forEach((shop, index) => {
-            console.log(`✅ Shop ${index + 1} Details:`, {
-              id: shop._id,
-              name: shop.name,
-              address: shop.address,
-              contact: shop.contact,
-              email: shop.email
-            });
-          });
         }
       } else {
         console.error('❌ API returned error:', data.message);
@@ -191,30 +181,12 @@ const BillManagementPage = () => {
       if (data.success && data.data) {
         const bills = data.data.bills || [];
         setBills(bills);
-        console.log('✅ ===== BILLS FETCHED FROM API =====');
+        console.log('✅ Bills fetched successfully:', bills);
         console.log('✅ Number of bills:', bills.length);
-        console.log('✅ Raw API response:', JSON.stringify(data, null, 2));
-        console.log('✅ Bills array:', JSON.stringify(bills, null, 2));
         
         if (bills.length === 0) {
           console.log('⚠️ No bills found in database');
         } else {
-          // Show each bill's details
-          bills.forEach((bill, index) => {
-            console.log(`✅ Bill ${index + 1} Details:`, {
-              id: bill._id,
-              billNumber: bill.billNumber,
-              shopName: bill.shopName,
-              shopId: bill.shopId,
-              totalAmount: bill.pricing?.totalAmount,
-              paidAmount: bill.payment?.paidAmount,
-              remainingAmount: bill.payment?.remainingAmount,
-              billDate: bill.billDate,
-              status: bill.status,
-              paymentStatus: bill.payment?.status
-            });
-          });
-          
           // Calculate stats from the fetched bills
           console.log('🔍 Calculating stats from fetched bills...');
           const calculatedStats = calculateStatsFromBills(bills);
@@ -284,136 +256,70 @@ const BillManagementPage = () => {
     }
   };
 
-  // Calculate stats from your data
-  const calculateStats = () => {
-    let filteredBills = bills;
+  // Calculate stats from local bills data
+  const calculateStatsFromBills = (billsData, currentSelectedShop = selectedShop, currentSearchTerm = searchTerm, currentFilterDateRange = filterDateRange) => {
+    console.log('🔍 Calculating stats from bills data:', billsData.length, 'bills');
+    console.log('🔍 Bills data sample:', billsData.slice(0, 2)); // Show first 2 bills for debugging
+    console.log('🔍 Current filters:', { currentSelectedShop, currentSearchTerm, currentFilterDateRange });
     
-    // Filter by selected shop
-    if (selectedShop) {
-      const selectedShopName = shops.find(s => s._id === selectedShop)?.name;
-      filteredBills = bills.filter(bill => bill.shopName === selectedShopName);
+    let filteredBills = billsData;
+    
+    // Filter by selected shop if any (only if a shop is actually selected)
+    if (currentSelectedShop && currentSelectedShop !== '') {
+      const selectedShopName = shops.find(s => s._id === currentSelectedShop)?.name;
+      filteredBills = billsData.filter(bill => bill.shopName === selectedShopName);
+      console.log('🔍 Filtered bills for shop:', selectedShopName, '=', filteredBills.length);
+    } else {
+      console.log('🔍 No shop selected - showing all bills:', billsData.length);
     }
     
-    // Filter by date range
-    if (filterDateRange) {
-      const { startDate, endDate } = getDateRange(filterDateRange);
+    // Filter by search term if any
+    if (currentSearchTerm) {
+      filteredBills = filteredBills.filter(bill => 
+        bill.billNumber.toLowerCase().includes(currentSearchTerm.toLowerCase()) ||
+        bill.shopName.toLowerCase().includes(currentSearchTerm.toLowerCase())
+      );
+      console.log('🔍 Filtered bills by search term:', currentSearchTerm, '=', filteredBills.length);
+    }
+    
+    // Filter by date range if selected
+    if (currentFilterDateRange) {
+      const { startDate, endDate } = getDateRange(currentFilterDateRange);
       if (startDate && endDate) {
         filteredBills = filteredBills.filter(bill => {
           const billDate = new Date(bill.billDate);
           return billDate >= new Date(startDate) && billDate <= new Date(endDate);
         });
-      }
-    }
-    
-    // Calculate stats from your data
-    const totalBills = filteredBills.length;
-    const totalAmount = filteredBills.reduce((sum, bill) => sum + (bill.pricing?.totalAmount || 0), 0);
-    const paidAmount = filteredBills.reduce((sum, bill) => sum + (bill.payment?.paidAmount || 0), 0);
-    const remainingAmount = filteredBills.reduce((sum, bill) => sum + (bill.payment?.remainingAmount || 0), 0);
-    
-    console.log('🔍 Calculating stats from your data:', {
-      selectedShop,
-      filteredBillsCount: filteredBills.length,
-      totalBills,
-      totalAmount,
-      paidAmount,
-      remainingAmount
-    });
-    
-    setStats({
-      totalBills,
-      totalAmount,
-      paidAmount,
-      remainingAmount
-    });
-  };
-
-  // Calculate stats from local bills data
-  const calculateStatsFromBills = (billsData) => {
-    console.log('🔍 ===== CALCULATING STATS FROM BILLS DATA =====');
-    console.log('🔍 Total bills received:', billsData.length);
-    console.log('🔍 All bills data:', JSON.stringify(billsData, null, 2));
-    
-    let filteredBills = billsData;
-    
-    // Filter by selected shop if any
-    if (selectedShop) {
-      const selectedShopName = shops.find(s => s._id === selectedShop)?.name;
-      console.log('🔍 Selected shop ID:', selectedShop);
-      console.log('🔍 Selected shop name:', selectedShopName);
-      console.log('🔍 Available shops:', shops.map(s => ({ id: s._id, name: s.name })));
-      
-      filteredBills = billsData.filter(bill => {
-        const matches = bill.shopName === selectedShopName;
-        console.log(`🔍 Bill ${bill.billNumber} (${bill.shopName}) matches shop "${selectedShopName}":`, matches);
-        return matches;
-      });
-      console.log('🔍 Filtered bills for shop:', selectedShopName, '=', filteredBills.length);
-    }
-    
-    // Filter by date range if selected
-    if (filterDateRange) {
-      const { startDate, endDate } = getDateRange(filterDateRange);
-      console.log('🔍 Date range filter:', { filterDateRange, startDate, endDate });
-      if (startDate && endDate) {
-        filteredBills = filteredBills.filter(bill => {
-          const billDate = new Date(bill.billDate);
-          const inRange = billDate >= new Date(startDate) && billDate <= new Date(endDate);
-          console.log(`🔍 Bill ${bill.billNumber} date ${bill.billDate} in range ${startDate} to ${endDate}:`, inRange);
-          return inRange;
-        });
         console.log('🔍 Filtered bills by date range:', filteredBills.length);
       }
     }
     
-    console.log('🔍 ===== FINAL FILTERED BILLS =====');
-    console.log('🔍 Number of bills after filtering:', filteredBills.length);
-    filteredBills.forEach((bill, index) => {
-      console.log(`🔍 Bill ${index + 1}:`, {
-        id: bill._id,
-        billNumber: bill.billNumber,
-        shopName: bill.shopName,
-        totalAmount: bill.pricing?.totalAmount,
-        paidAmount: bill.payment?.paidAmount,
-        remainingAmount: bill.payment?.remainingAmount,
-        billDate: bill.billDate
-      });
-    });
-    
     // Calculate totals from all bills
     const totalBills = filteredBills.length;
-    console.log('🔍 ===== CALCULATING TOTALS =====');
-    
-    let runningTotal = 0;
-    const totalAmount = filteredBills.reduce((sum, bill) => {
+    const totalAmount = roundCurrency(filteredBills.reduce((sum, bill) => {
       const amount = bill.pricing?.totalAmount || 0;
-      runningTotal += amount;
-      console.log(`💰 Bill ${bill.billNumber}: totalAmount = ${amount} | Running total = ${runningTotal}`);
+      console.log(`💰 Bill ${bill.billNumber}: totalAmount = ${amount}`);
       return sum + amount;
-    }, 0);
+    }, 0));
     
-    let runningPaid = 0;
-    const paidAmount = filteredBills.reduce((sum, bill) => {
+    const paidAmount = roundCurrency(filteredBills.reduce((sum, bill) => {
       const amount = bill.payment?.paidAmount || 0;
-      runningPaid += amount;
-      console.log(`💳 Bill ${bill.billNumber}: paidAmount = ${amount} | Running paid = ${runningPaid}`);
+      console.log(`💳 Bill ${bill.billNumber}: paidAmount = ${amount}`);
       return sum + amount;
-    }, 0);
+    }, 0));
     
-    let runningRemaining = 0;
-    const remainingAmount = filteredBills.reduce((sum, bill) => {
+    const remainingAmount = roundCurrency(filteredBills.reduce((sum, bill) => {
       const amount = bill.payment?.remainingAmount || 0;
-      runningRemaining += amount;
-      console.log(`📊 Bill ${bill.billNumber}: remainingAmount = ${amount} | Running remaining = ${runningRemaining}`);
+      console.log(`📊 Bill ${bill.billNumber}: remainingAmount = ${amount}`);
       return sum + amount;
-    }, 0);
+    }, 0));
     
-    console.log('🔍 ===== FINAL CALCULATED STATS =====');
-    console.log('📊 Total Bills:', totalBills);
-    console.log('📊 Total Amount:', totalAmount);
-    console.log('📊 Paid Amount:', paidAmount);
-    console.log('📊 Remaining Amount:', remainingAmount);
-    console.log('🔍 ===== END CALCULATION =====');
+    console.log('📊 Final calculated stats:', {
+      totalBills,
+      totalAmount,
+      paidAmount,
+      remainingAmount
+    });
     
     return {
       totalBills,
@@ -471,7 +377,7 @@ const BillManagementPage = () => {
       console.error('Error fetching stats:', error);
       // Fallback: calculate from local bills data
       console.log('⚠️ Stats API error, calculating from local bills data');
-      const calculatedStats = calculateStatsFromBills(bills);
+      const calculatedStats = calculateStatsFromBills(bills, selectedShop, searchTerm, filterDateRange);
       setStats(calculatedStats);
     }
   };
@@ -479,19 +385,22 @@ const BillManagementPage = () => {
 
   // This useEffect is now handled by the loadRealData useEffect above
 
-  // Recalculate stats whenever bills or selectedShop changes
+  // Recalculate stats whenever bills, selectedShop, searchTerm, or filterDateRange changes
   useEffect(() => {
     if (bills.length > 0) {
-      console.log('🔄 Recalculating stats due to bills or shop change...');
+      console.log('🔄 Recalculating stats due to bills, shop, search, or date change...');
       console.log('🔍 Current selected shop:', selectedShop);
+      console.log('🔍 Current search term:', searchTerm);
+      console.log('🔍 Current date range:', filterDateRange);
       console.log('🔍 Current bills count:', bills.length);
       
-      const calculatedStats = calculateStatsFromBills(bills);
+      const calculatedStats = calculateStatsFromBills(bills, selectedShop, searchTerm, filterDateRange);
       setStats(calculatedStats);
       
       console.log('📊 Updated stats:', calculatedStats);
     }
-  }, [bills, selectedShop, filterDateRange]);
+  }, [bills, selectedShop, searchTerm, filterDateRange] 
+);
 
   const handleSaveBill = async (billData) => {
     try {
@@ -607,13 +516,51 @@ const BillManagementPage = () => {
   };
 
   const handleAddPaymentFromRemaining = () => {
-    // Get the first bill from selected shop for payment
-    const selectedShopName = shops.find(s => s._id === selectedShop)?.name;
-    const shopBill = bills.find(bill => bill.shopName === selectedShopName);
-    if (shopBill) {
-      setSelectedBill(shopBill);
-      setShowPaymentModal(true);
+    // Get all bills from selected shop (or all bills if no shop selected)
+    let shopBills = bills;
+    
+    if (selectedShop && selectedShop !== '') {
+      const selectedShopName = shops.find(s => s._id === selectedShop)?.name;
+      shopBills = bills.filter(bill => bill.shopName === selectedShopName);
     }
+    
+    // Get bills with remaining amount (sorted by bill date)
+    const billsWithRemaining = shopBills
+      .filter(bill => {
+        const remaining = (bill.pricing?.totalAmount || 0) - (bill.payment?.paidAmount || 0);
+        return remaining > 0;
+      })
+      .sort((a, b) => new Date(a.billDate) - new Date(b.billDate));
+    
+    if (billsWithRemaining.length === 0) {
+      alert('No bills with remaining amount found!');
+      return;
+    }
+    
+    // Create a special bill object that represents all remaining bills
+    const totalRemainingAmount = billsWithRemaining.reduce((sum, bill) => {
+      return sum + ((bill.pricing?.totalAmount || 0) - (bill.payment?.paidAmount || 0));
+    }, 0);
+    
+    const combinedBill = {
+      _id: 'combined-remaining',
+      billNumber: `All Remaining Bills (${billsWithRemaining.length})`,
+      shopName: selectedShop && selectedShop !== '' ? 
+        shops.find(s => s._id === selectedShop)?.name : 'All Shops',
+      pricing: {
+        totalAmount: totalRemainingAmount
+      },
+      payment: {
+        paidAmount: 0,
+        remainingAmount: totalRemainingAmount
+      },
+      billDate: new Date(),
+      isCombinedBill: true,
+      originalBills: billsWithRemaining
+    };
+    
+    setSelectedBill(combinedBill);
+    setShowPaymentModal(true);
   };
 
   const handleSavePayment = async (paymentData) => {
@@ -625,6 +572,12 @@ const BillManagementPage = () => {
       }
       
       console.log('🔍 Adding payment with data:', paymentData);
+      
+      // Check if this is a combined bill payment
+      if (paymentData.billId === 'combined-remaining' && selectedBill?.isCombinedBill) {
+        await handleCombinedBillPayment(paymentData, token);
+        return;
+      }
       
       const response = await fetch(`/api/bills/${paymentData.billId}/payment`, {
         method: 'POST',
@@ -661,6 +614,90 @@ const BillManagementPage = () => {
       }
     } catch (error) {
       console.error('❌ Error adding payment:', error);
+      throw error;
+    }
+  };
+
+  const handleCombinedBillPayment = async (paymentData, token) => {
+    try {
+      const paymentAmount = paymentData.amount;
+      const remainingBills = selectedBill.originalBills;
+      let remainingPayment = paymentAmount;
+      let processedBills = [];
+      
+      console.log('🔄 Processing combined bill payment:', {
+        totalPayment: paymentAmount,
+        billsCount: remainingBills.length
+      });
+      
+      // Process each bill in order (oldest first)
+      for (const bill of remainingBills) {
+        if (remainingPayment <= 0) break;
+        
+        const billRemaining = (bill.pricing?.totalAmount || 0) - (bill.payment?.paidAmount || 0);
+        const paymentForThisBill = Math.min(remainingPayment, billRemaining);
+        
+        if (paymentForThisBill > 0) {
+          const billPaymentData = {
+            ...paymentData,
+            billId: bill._id,
+            amount: paymentForThisBill,
+            previousPaidAmount: bill.payment?.paidAmount || 0,
+            newPaidAmount: (bill.payment?.paidAmount || 0) + paymentForThisBill,
+            notes: `${paymentData.notes || ''} (Part of combined payment: ₹${paymentAmount})`.trim()
+          };
+          
+          console.log(`💳 Processing payment for bill ${bill.billNumber}:`, {
+            billRemaining,
+            paymentForThisBill,
+            remainingPayment
+          });
+          
+          const response = await fetch(`/api/bills/${bill._id}/payment`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(billPaymentData)
+          });
+          
+          const data = await response.json();
+          
+          if (response.status === 401) {
+            localStorage.removeItem('token');
+            router.push('/login/seller');
+            throw new Error('Session expired. Please log in again.');
+          }
+          
+          if (data.success) {
+            remainingPayment -= paymentForThisBill;
+            processedBills.push({
+              billNumber: bill.billNumber,
+              amount: paymentForThisBill,
+              remaining: billRemaining - paymentForThisBill
+            });
+            console.log(`✅ Payment processed for bill ${bill.billNumber}`);
+          } else {
+            console.error(`❌ Error processing payment for bill ${bill.billNumber}:`, data.message);
+            throw new Error(`Failed to process payment for bill ${bill.billNumber}: ${data.message}`);
+          }
+        }
+      }
+      
+      // Refresh data
+      await fetchBills();
+      await fetchStats();
+      
+      // Show success message with details
+      const successMessage = `Payment of ₹${paymentAmount} processed successfully!\n\n` +
+        `Processed ${processedBills.length} bills:\n` +
+        processedBills.map(b => `• ${b.billNumber}: ₹${b.amount} (Remaining: ₹${b.remaining})`).join('\n');
+      
+      alert(successMessage);
+      
+    } catch (error) {
+      console.error('❌ Error processing combined bill payment:', error);
       throw error;
     }
   };
@@ -742,26 +779,23 @@ const BillManagementPage = () => {
   };
 
   const formatCurrency = (amount) => {
+    // Round to 2 decimal places to avoid floating point precision issues
+    const roundedAmount = Math.round((amount + Number.EPSILON) * 100) / 100;
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR'
-    }).format(amount);
+    }).format(roundedAmount);
+  };
+
+  // Helper function to round currency values for calculations
+  const roundCurrency = (amount) => {
+    return Math.round((amount + Number.EPSILON) * 100) / 100;
   };
 
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString('en-IN');
   };
 
-  const getStatusColor = (status) => {
-    const colors = {
-      draft: 'bg-gray-100 text-gray-800',
-      sent: 'bg-blue-100 text-blue-800',
-      paid: 'bg-green-100 text-green-800',
-      overdue: 'bg-red-100 text-red-800',
-      cancelled: 'bg-gray-100 text-gray-800'
-    };
-    return colors[status] || 'bg-gray-100 text-gray-800';
-  };
 
   return (
     <div className="space-y-6">
@@ -770,7 +804,20 @@ const BillManagementPage = () => {
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Bill Management</h1>
           <p className="text-gray-600">Manage your bills and shop transactions</p>
-          
+          <div className="text-sm text-gray-500 space-y-1">
+            <p>Shops loaded: {shops.length}</p>
+            <p>Bills loaded: {bills.length}</p>
+            <p>Stats: Total {formatCurrency(stats.totalAmount)} | Paid {formatCurrency(stats.paidAmount)} | Remaining {formatCurrency(stats.remainingAmount)}</p>
+            <p className="text-xs text-blue-600">
+              {bills.length === 0 ? 'No data found' : 'Data loaded from database'}
+            </p>
+            <p className="text-xs text-gray-500">
+              {(selectedShop && selectedShop !== '') || searchTerm || filterDateRange ? 
+                `Showing filtered results (${stats.totalBills} bills)` : 
+                `Showing all results (${stats.totalBills} bills)`
+              }
+            </p>
+          </div>
         </div>
         <div className="flex gap-3">
           <button
@@ -784,7 +831,6 @@ const BillManagementPage = () => {
           >
             🔄 Refresh Data
           </button>
-         
           <button
             onClick={() => setShowAddShopForm(true)}
             className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
@@ -821,7 +867,7 @@ const BillManagementPage = () => {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">
-                Total Bills {selectedShop ? `(${shops.find(s => s._id === selectedShop)?.name || 'Selected Shop'})` : '(All Shops)'}
+                Total Bills {selectedShop && selectedShop !== '' ? `(${shops.find(s => s._id === selectedShop)?.name || 'Selected Shop'})` : '(All Shops)'}
               </p>
               <p className="text-2xl font-semibold text-gray-900">{stats.totalBills}</p>
             </div>
@@ -901,7 +947,7 @@ const BillManagementPage = () => {
                 // Recalculate stats immediately when shop changes
                 if (bills.length > 0) {
                   setTimeout(() => {
-                    const calculatedStats = calculateStatsFromBills(bills);
+                    const calculatedStats = calculateStatsFromBills(bills, e.target.value, searchTerm, filterDateRange);
                     setStats(calculatedStats);
                     console.log('📊 Stats updated for shop change:', calculatedStats);
                   }, 100);
@@ -935,7 +981,7 @@ const BillManagementPage = () => {
                 // Recalculate stats when date range changes
                 if (bills.length > 0) {
                   setTimeout(() => {
-                    const calculatedStats = calculateStatsFromBills(bills);
+                    const calculatedStats = calculateStatsFromBills(bills, selectedShop, searchTerm, e.target.value);
                     setStats(calculatedStats);
                     console.log('📊 Stats updated for date range change:', calculatedStats);
                   }, 100);
@@ -963,7 +1009,19 @@ const BillManagementPage = () => {
                 type="text"
                 placeholder="Search bills..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  console.log('🔍 Search term changed to:', e.target.value);
+                  setSearchTerm(e.target.value);
+                  
+                  // Recalculate stats when search term changes
+                  if (bills.length > 0) {
+                    setTimeout(() => {
+                      const calculatedStats = calculateStatsFromBills(bills, selectedShop, e.target.value, filterDateRange);
+                      setStats(calculatedStats);
+                      console.log('📊 Stats updated for search term change:', calculatedStats);
+                    }, 100);
+                  }
+                }}
                 className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
@@ -980,7 +1038,7 @@ const BillManagementPage = () => {
                 // Recalculate stats when filters are cleared
                 if (bills.length > 0) {
                   setTimeout(() => {
-                    const calculatedStats = calculateStatsFromBills(bills);
+                    const calculatedStats = calculateStatsFromBills(bills, '', '', '');
                     setStats(calculatedStats);
                     console.log('📊 Stats updated after clearing filters:', calculatedStats);
                   }, 100);
@@ -1017,8 +1075,8 @@ const BillManagementPage = () => {
           // Filter bills based on selected shop and search term
           let filteredBills = bills;
           
-          // Filter by selected shop
-          if (selectedShop) {
+          // Filter by selected shop (only if a shop is actually selected)
+          if (selectedShop && selectedShop !== '') {
             const selectedShopName = shops.find(s => s._id === selectedShop)?.name;
             filteredBills = bills.filter(bill => bill.shopName === selectedShopName);
           }
@@ -1050,6 +1108,7 @@ const BillManagementPage = () => {
             filteredCount: filteredBills.length,
             filteredBills: filteredBills.map(b => ({ id: b._id, shop: b.shopName, amount: b.pricing?.totalAmount }))
           });
+          
           
           if (filteredBills.length === 0) {
             return (

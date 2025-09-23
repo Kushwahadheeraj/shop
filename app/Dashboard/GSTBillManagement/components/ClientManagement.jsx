@@ -47,7 +47,7 @@ const GST_STATE_CODES = [
 const baseInput = 'w-full h-10 px-3 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500';
 const label = 'block text-sm font-medium text-gray-700 mb-2';
 
-const ClientManagement = ({ onClose, onSelectClient }) => {
+const ClientManagement = ({ onClose, onSelectClient, initialClient, mode = 'add' }) => {
   const [form, setForm] = useState({
     businessName: '',
     industry: '',
@@ -67,6 +67,7 @@ const ClientManagement = ({ onClose, onSelectClient }) => {
   });
 
   const set = (k, v) => setForm(prev => ({ ...prev, [k]: v }));
+  // GSTIN auto-lookup temporarily disabled per request
 
   const addCustomField = () => {
     set('customFields', [
@@ -83,6 +84,30 @@ const ClientManagement = ({ onClose, onSelectClient }) => {
     set('customFields', form.customFields.filter(cf => cf.id !== id));
   };
 
+  // Prefill when editing
+  React.useEffect(() => {
+    if (!initialClient) return;
+    setForm(prev => ({
+      ...prev,
+      businessName: initialClient.name || initialClient.businessName || '',
+      country: initialClient.country || 'India',
+      city: initialClient.city || '',
+      stateName: initialClient.stateName || '',
+      stateCode: initialClient.stateCode || '',
+      gstin: initialClient.gstin || '',
+      pan: initialClient.pan || '',
+      alias: initialClient.alias || '',
+      uniqueKey: initialClient.uniqueKey || '',
+      email: initialClient.email || '',
+      phone: initialClient.phone || '',
+      showEmailInInvoice: !!initialClient.showEmailInInvoice,
+      showPhoneInInvoice: !!initialClient.showPhoneInInvoice,
+      customFields: (initialClient.customFields || []).map((x, i) => ({ id: x.id || i + 1, label: x.label || '', value: x.value || '' }))
+    }));
+  }, [initialClient]);
+
+  // Auto-lookup disabled
+
   const save = async () => {
     const token = localStorage.getItem('token');
     await fetch('http://localhost:5000/api/clients', {
@@ -98,7 +123,7 @@ const ClientManagement = ({ onClose, onSelectClient }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-3xl max-h-[95vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b">
-          <h3 className="text-lg font-semibold text-gray-900">Add New Client</h3>
+          <h3 className="text-lg font-semibold text-gray-900">{mode === 'edit' ? 'Edit Client' : 'Add New Client'}</h3>
           <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-600"><X className="h-5 w-5" /></button>
         </div>
 
@@ -117,18 +142,18 @@ const ClientManagement = ({ onClose, onSelectClient }) => {
                 <option>Electronics</option>
                 <option>Other</option>
             </select>
-          </div>
+            </div>
             <div>
               <label className={label}>Select Country*</label>
               <select className={baseInput} value={form.country} onChange={e=>set('country', e.target.value)}>
                 <option>India</option>
               </select>
-        </div>
+            </div>
             <div>
               <label className={label}>City/Town</label>
               <input className={baseInput} value={form.city} onChange={e=>set('city', e.target.value)} placeholder="City/Town Name" />
-                    </div>
-                  </div>
+          </div>
+        </div>
 
           {/* Collapsible placeholders matching screenshot order */}
           <div className="space-y-6">
@@ -137,9 +162,24 @@ const ClientManagement = ({ onClose, onSelectClient }) => {
               <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                   <label className={label}>Business GSTIN</label>
-                  <input className={baseInput} maxLength={15} onChange={(e)=>set('gstin', (e.target.value || '').toUpperCase())} placeholder="Business GSTIN (Optional)" />
-                  <p className="text-xs text-purple-600 mt-2">Check GST Type <span className="text-yellow-500">●</span></p>
-                      </div>
+                  <div className="flex gap-2">
+                    <input className={baseInput + ' flex-1'} value={form.gstin} maxLength={15} onChange={(e)=>set('gstin', (e.target.value || '').toUpperCase())} placeholder="Business GSTIN (Optional)" />
+                    <button type="button" onClick={async()=>{
+                      try{
+                        const r = await fetch('/api/gstin-lookup', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ gstin: form.gstin })});
+                        const d = await r.json();
+                        const n = d?.normalized || {};
+                        if(n.name){ set('businessName', n.name); }
+                        if(n.pan){ set('pan', n.pan); }
+                        if(n.stateName){ set('stateName', n.stateName); const f = GST_STATE_CODES.find(s=>s.name===n.stateName); set('stateCode', f?f.code:(n.stateCode||'')); }
+                        if(n.city){ set('city', n.city); }
+                        if(n.pincode){ set('pincode', String(n.pincode)); }
+                        if(n.addressString){ set('street', n.addressString); }
+                        alert('GST details fetched');
+                      }catch{ alert('GST lookup failed'); }
+                    }} className="px-3 min-w-[110px] border border-gray-300 rounded-md text-sm">Check</button>
+          </div>
+        </div>
                       <div>
                   <label className={label}>Business PAN Number</label>
                   <input className={baseInput} placeholder="Business PAN Number (Optional)" />
@@ -156,8 +196,8 @@ const ClientManagement = ({ onClose, onSelectClient }) => {
                     <input type="radio" name="ctype" className="text-purple-600 focus:ring-purple-500" />
                     <span>Company</span>
                   </label>
+                    </div>
                   </div>
-                </div>
               <div className="mt-6">
                 <label className={label}>Tax Treatment</label>
                 <select className={baseInput} defaultValue="">
@@ -169,42 +209,42 @@ const ClientManagement = ({ onClose, onSelectClient }) => {
                   <option>Overseas</option>
                   <option>Special Economic Zone</option>
                 </select>
-            </div>
+                    </div>
             </details>
 
             <details className="group" open>
               <summary className="cursor-pointer text-gray-900 font-medium flex items-center justify-between">Address <span className="text-gray-400 text-sm">(optional)</span></summary>
               <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
+                      <div>
                   <label className={label}>Select Country</label>
                   <select className={baseInput} value={form.country} onChange={(e)=>set('country', e.target.value)}>
                     <option>India</option>
                   </select>
-                </div>
-                <div>
+                      </div>
+                      <div>
                   <label className={label}>State Name</label>
                   <select className={baseInput} value={form.stateName} onChange={(e)=>{const n=e.target.value; const f=GST_STATE_CODES.find(s=>s.name===n); set('stateName', n); set('stateCode', f?f.code:'');}}>
                     <option value="">Select State</option>
                     {GST_STATE_CODES.map(s=> <option key={s.code} value={s.name}>{s.name}</option>)}
                   </select>
-              </div>
+                      </div>
                   <div>
                   <label className={label}>State GST Code</label>
                   <input className={baseInput + ' bg-gray-50'} value={form.stateCode || ''} readOnly placeholder="" />
-                  </div>
+                    </div>
                   <div>
                   <label className={label}>City/Town</label>
                   <input className={baseInput} value={form.city} onChange={(e)=>set('city', e.target.value)} placeholder="City/Town Name" />
-                  </div>
+                      </div>
                   <div>
                   <label className={label}>Postal Code / Zip Code</label>
                   <input className={baseInput} value={form.pincode || ''} onChange={(e)=>set('pincode', e.target.value)} placeholder="Postal Code / Zip Code" />
-                </div>
+                  </div>
                 <div className="md:col-span-2">
                   <label className={label}>Street Address</label>
                   <input className={baseInput} value={form.street || ''} onChange={(e)=>set('street', e.target.value)} placeholder="Street Address" />
                 </div>
-                  </div>
+              </div>
             </details>
 
             <details className="group" open>
@@ -238,8 +278,8 @@ const ClientManagement = ({ onClose, onSelectClient }) => {
                     <input type="checkbox" checked={form.showPhoneInInvoice} onChange={(e)=>set('showPhoneInInvoice', e.target.checked)} />
                     <span>Show Phone in Invoice</span>
                     </label>
-                </div>
-              </div>
+                  </div>
+                  </div>
               <div className="mt-4 space-y-3">
                 {form.customFields.map(cf => (
                   <div key={cf.id} className="grid grid-cols-1 md:grid-cols-3 gap-3 items-center">
@@ -259,14 +299,14 @@ const ClientManagement = ({ onClose, onSelectClient }) => {
                   </div>
                 ))}
                 <button type="button" onClick={addCustomField} className="text-sm text-purple-600">+ Add Custom Fields</button>
-                </div>
+                  </div>
             </details>
 
             <details className="group" open>
               <summary className="cursor-pointer text-gray-900 font-medium flex items-center justify-between">Account Details <span className="text-gray-400 text-sm">(optional)</span></summary>
               <div className="mt-4 p-4 rounded-md bg-gray-50 border border-gray-100 text-gray-700 text-sm">
                 Enable Advanced Accounting to create or link ledger. <button type="button" className="text-purple-600 hover:underline">Enable Now</button>
-              </div>
+                  </div>
             </details>
                 </div>
 

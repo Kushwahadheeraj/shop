@@ -606,8 +606,8 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
             </div>
             {!isEditingSubtitle && !formData.subtitle && (
               <button type="button" onClick={()=>setIsEditingSubtitle(true)} className="flex items-center justify-center space-x-1 text-purple-600 cursor-pointer mt-2 mx-auto">
-                <Plus className="h-3 w-3 text-orange-500" />
-                <span className="text-sm">Add Subtitle</span>
+              <Plus className="h-3 w-3 text-orange-500" />
+              <span className="text-sm">Add Subtitle</span>
               </button>
             )}
             {(isEditingSubtitle || formData.subtitle) && (
@@ -620,7 +620,7 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
                   className="px-3 py-1 border-b border-purple-500 focus:outline-none text-sm"
                 />
                 <button type="button" onClick={()=>setIsEditingSubtitle(false)} className="text-sm text-gray-500">Done</button>
-              </div>
+            </div>
             )}
           </div>
 
@@ -629,7 +629,7 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
             <div className="w-full">
               <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-6 items-start">
                 {/* Left: Invoice No */}
-                <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-3">
                 <label className="text-sm font-medium text-gray-700 border-b border-dashed border-gray-300 pb-1">Invoice No*</label>
                 <div className="flex flex-col">
                   <div className="flex items-center space-x-2">
@@ -659,52 +659,52 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
                       placeholder="0001"
                       className="w-20 text-sm text-gray-900 border-b border-purple-500 pb-1 focus:outline-none"
                     />
-                  </div>
+                </div>
                   {prevInvoiceDisplay ? (
                     <span className="text-xs text-gray-500 mt-1">Last No: {prevInvoiceDisplay}</span>
                   ) : null}
                   {errors.invoiceNumber && <span className="text-xs text-red-600 mt-1">{errors.invoiceNumber}</span>}
-                </div>
+              </div>
               </div>
                 {/* Right: Dates stack */}
                 <div className="flex flex-col space-y-4 justify-self-end w-auto">
-                  <div className="flex items-center space-x-3">
-                    <label className="text-sm font-medium text-gray-700 border-b border-dashed border-gray-300 pb-1">Invoice Date*</label>
-                    <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-3">
+                <label className="text-sm font-medium text-gray-700 border-b border-dashed border-gray-300 pb-1">Invoice Date*</label>
+                <div className="flex items-center space-x-2">
                       <input
                         type="date"
                         value={formData.invoiceDate}
                         onChange={(e)=>handleInputChange('invoiceDate', e.target.value)}
                         className="text-sm text-gray-900 border-b border-purple-500 pb-1 focus:outline-none"
                       />
-                      <Calendar className="h-3 w-3 text-gray-400" />
-                    </div>
+                  <Calendar className="h-3 w-3 text-gray-400" />
+                </div>
                     {errors.invoiceDate && <span className="text-xs text-red-600">{errors.invoiceDate}</span>}
-                  </div>
+              </div>
                   {showDueDate ? (
-                    <div className="flex items-center space-x-3">
-                      <label className="text-sm font-medium text-gray-700 border-b border-dashed border-gray-300 pb-1">Due Date</label>
-                      <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-3">
+                <label className="text-sm font-medium text-gray-700 border-b border-dashed border-gray-300 pb-1">Due Date</label>
+                <div className="flex items-center space-x-2">
                         <input
                           type="date"
                           value={formData.dueDate}
                           onChange={(e)=>handleInputChange('dueDate', e.target.value)}
                           className="text-sm text-gray-900 border-b border-purple-500 pb-1 focus:outline-none"
                         />
-                        <Calendar className="h-3 w-3 text-gray-400" />
+                    <Calendar className="h-3 w-3 text-gray-400" />
                         <button type="button" onClick={()=>setShowDueDate(false)} className="text-gray-400 hover:text-gray-600">
                           <X className="h-3 w-3" />
                         </button>
-                      </div>
-                    </div>
+                  </div>
+                </div>
                   ) : (
                     <button type="button" onClick={()=>setShowDueDate(true)} className="text-sm text-purple-600 inline-flex items-center space-x-2">
                       <Plus className="h-3 w-3 text-orange-500" />
                       <span>Add Due Date</span>
                     </button>
                   )}
-                </div>
               </div>
+            </div>
 
               {/* Add More Fields - inline under the row */}
               <div className="mt-3">
@@ -731,15 +731,15 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
                         <button type="button" onClick={()=>setHeaderExtraFields(prev=>prev.filter(x=>x.id!==f.id))} className="text-gray-400 hover:text-gray-600">
                           <X className="h-4 w-4" />
                         </button>
-                      </div>
+                </div>
                     ))}
-                  </div>
-                )}
-              </div>
             </div>
+                )}
+          </div>
+        </div>
 
           <div className="flex items-center space-x-4"></div>
-        </div>
+                    </div>
 
           
                   </div>
@@ -1087,7 +1087,7 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
                           >
                             {QUANTITY_UNITS.map(u => <option key={u} value={u}>{u}</option>)}
                           </select>
-                        </div>
+                  </div>
                   <div>
                     <input
                       type="number"
@@ -1341,6 +1341,8 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
         {/* Client Management Modal */}
         {showClientManagement && (
           <ClientManagement
+            mode={selectedClient ? 'edit' : 'add'}
+            initialClient={selectedClient || null}
             onClose={() => setShowClientManagement(false)}
             onSelectClient={handleClientSelect}
             selectedClientId={selectedClient?.id}

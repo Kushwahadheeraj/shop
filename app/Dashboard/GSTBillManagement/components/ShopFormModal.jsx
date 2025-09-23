@@ -68,6 +68,7 @@ const ShopFormModal = ({ isOpen, mode = 'add', initialShop, onClose, onSaved }) 
   }));
 
   const set = (k, v) => setForm(prev => ({ ...prev, [k]: v }));
+  // GSTIN lookup temporarily disabled per request
 
   const save = async () => {
     try {
@@ -127,6 +128,8 @@ const ShopFormModal = ({ isOpen, mode = 'add', initialShop, onClose, onSaved }) 
     }
   }, [mode, initialShop, isOpen]);
 
+  // Auto-lookup disabled
+
   if (!isOpen) return null;
 
   return (
@@ -157,8 +160,23 @@ const ShopFormModal = ({ isOpen, mode = 'add', initialShop, onClose, onSaved }) 
             <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className={label}>Business GSTIN</label>
-                <input className={baseInput} maxLength={15} value={form.gstin} onChange={e=>set('gstin', e.target.value.toUpperCase())} placeholder="Business GSTIN (Optional)" />
-                <button type="button" className="text-sm text-purple-600 mt-2">Check GST Type <span className="text-yellow-500">●</span></button>
+                <div className="flex gap-2">
+                  <input className={baseInput + ' flex-1'} maxLength={15} value={form.gstin} onChange={e=>set('gstin', e.target.value.toUpperCase())} placeholder="Business GSTIN (Optional)" />
+                  <button type="button" onClick={async()=>{
+                    try{
+                      const r = await fetch('/api/gstin-lookup', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ gstin: form.gstin })});
+                      const d = await r.json();
+                      const n = d?.normalized || {};
+                      if(n.name){ set('name', n.name); }
+                      if(n.pan){ set('pan', n.pan); }
+                      if(n.stateName){ set('state', n.stateName); const f = GST_STATE_CODES.find(s=>s.name===n.stateName); set('stateCode', f?f.code:(n.stateCode||'')); }
+                      if(n.city){ set('city', n.city); }
+                      if(n.pincode){ set('pincode', String(n.pincode)); }
+                      if(n.addressString){ set('street', n.addressString); }
+                      alert('GST details fetched');
+                    }catch{ alert('GST lookup failed'); }
+                  }} className="px-3 min-w-[110px] border border-gray-300 rounded-md text-sm">Check</button>
+                </div>
               </div>
               <div>
                 <label className={label}>Business PAN Number</label>

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { X, Save, Plus, Trash2, Calculator, Calendar, Edit, Upload, ChevronDown, RefreshCw, Pen, Paperclip, FileText, StickyNote, Info, Phone, Settings, Users, Package, DollarSign, Mail, Printer, Download, Eye, Clock, CheckCircle, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { X, Save, Plus, Trash2, Calculator, Calendar, Edit, Upload, ChevronDown, RefreshCw, Pen, Paperclip, FileText, StickyNote, Info, Phone, Settings, Users, Package, DollarSign, Mail, Printer, Download, Eye, Clock, CheckCircle, AlertCircle, Search } from 'lucide-react';
 import ClientManagement from './components/ClientManagement';
 import ShopFormModal from './components/ShopFormModal';
 import ProductCatalog from './components/ProductCatalog';
@@ -47,6 +47,7 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
     { name: 'Others Territory', code: '97' },
     { name: 'Center Jurisdiction', code: '99' }
   ];
+  const QUANTITY_UNITS = ['pcs', 'kg', 'g', 'liter', 'ml', 'dozen', 'box', 'meter', 'cm', 'foot', 'set', 'bundle'];
   const [formData, setFormData] = useState({
     shopId: '',
     customerName: '',
@@ -59,13 +60,15 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
     dueDate: new Date().toISOString().split('T')[0],
     items: [{
       name: '',
-      hsnSac: '0',
+      hsnSac: '',
       quantity: 1,
+      unit: 'pcs',
       unitPrice: 1,
       gstRate: 0,
       amount: 1,
       cgst: 0,
       sgst: 0,
+      igst: 0,
       total: 1
     }],
     notes: '',
@@ -101,6 +104,114 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
   const [gstShops, setGstShops] = useState([]);
   const [selectedGSTShop, setSelectedGSTShop] = useState(null);
   const [isEditingShop, setIsEditingShop] = useState(false);
+  const [isEditingSubtitle, setIsEditingSubtitle] = useState(false);
+  const [expandedItemIndex, setExpandedItemIndex] = useState(null);
+  const [showHSNModal, setShowHSNModal] = useState(false);
+  const [hsnForRow, setHsnForRow] = useState(null);
+  const [hsnList, setHsnList] = useState([]);
+  const [hsnQuery, setHsnQuery] = useState('');
+  const [hsnPage, setHsnPage] = useState(1);
+  const [hsnPageSize, setHsnPageSize] = useState(50);
+
+  const filteredHSN = useMemo(() => {
+    const q = (hsnQuery || '').toLowerCase().trim();
+    const res = (!q ? hsnList : hsnList.filter((x) =>
+      String(x.code || x.hsn || '').toLowerCase().includes(q) ||
+      String(x.description || x.desc || '').toLowerCase().includes(q)
+    ));
+    return res;
+  }, [hsnQuery, hsnList]);
+
+  const displayedHSN = useMemo(() => {
+    const start = (hsnPage - 1) * hsnPageSize;
+    return filteredHSN.slice(start, start + hsnPageSize);
+  }, [filteredHSN, hsnPage, hsnPageSize]);
+
+  const openHSNModal = async (rowIndex) => {
+    setHsnForRow(rowIndex);
+    try {
+      if (!hsnList.length) {
+        const res = await fetch('/api/hsn-codes');
+        const data = await res.json();
+        // accept either {data: [...]} or array
+        const list = Array.isArray(data) ? data : (data.data || data.items || []);
+        // normalize to {code, description}
+        const normalized = list.map((x) => ({
+          code: x.code || x.hsn || x.HSN || '',
+          description: x.description || x.desc || x.name || ''
+        }));
+        setHsnList(normalized);
+      }
+    } catch {}
+    setShowHSNModal(true);
+  };
+  const [showTaxConfig, setShowTaxConfig] = useState(false);
+  const [taxType, setTaxType] = useState('GST (India)');
+  const [placeOfSupply, setPlaceOfSupply] = useState('Uttar Pradesh');
+  const [gstType, setGstType] = useState('CGST_SGST'); // 'IGST' or 'CGST_SGST'
+  const [reverseCharge, setReverseCharge] = useState(false);
+  const [discountType, setDiscountType] = useState('fixed'); // 'fixed' | 'percent'
+  const [discountValue, setDiscountValue] = useState(0);
+  const [additionalCharges, setAdditionalCharges] = useState(0);
+  const [signatureDataUrl, setSignatureDataUrl] = useState('');
+  const [signatureLabel, setSignatureLabel] = useState('Authorised Signatory');
+  const [showSignatureModal, setShowSignatureModal] = useState(false);
+  const [isSignatureCollapsed, setIsSignatureCollapsed] = useState(false);
+  const [headerExtraFields, setHeaderExtraFields] = useState([]); // {id,label,value}
+  const [showDueDate, setShowDueDate] = useState(true);
+  const canvasRef = React.useRef(null);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [tempSignature, setTempSignature] = useState('');
+  const onSignatureUpload = async (file) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const data = reader.result?.toString() || '';
+      setSignatureDataUrl(data);
+      setTempSignature(data);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const startDraw = (e) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    setIsDrawing(true);
+    const ctx = canvas.getContext('2d');
+    ctx.strokeStyle = '#4f46e5';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+  };
+  const draw = (e) => {
+    if (!isDrawing) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+    ctx.lineTo(x, y);
+    ctx.stroke();
+  };
+  const endDraw = () => setIsDrawing(false);
+  const clearCanvas = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  };
+  const saveCanvas = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const data = canvas.toDataURL('image/png');
+    setSignatureDataUrl(data);
+    setTempSignature(data);
+  };
 
   useEffect(() => {
     (async () => {
@@ -134,6 +245,35 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
     const addr = c.address && c.address.trim() ? c.address : `${c.street || ''}${c.street ? ', ' : ''}${c.city || ''}${c.city ? ', ' : ''}${c.stateName || ''}${c.stateName ? ', ' : ''}${c.country || ''}${c.pincode ? `, ${c.pincode}` : ''}${c.stateCode ? ` (code-${c.stateCode})` : ''}`;
     return addr.trim();
   };
+
+  // Invoice number helpers (prefix KH&TH/MM-YY/ + user sequence)
+  const [invoicePrefixCode, setInvoicePrefixCode] = useState('KH&TH');
+  const [invoicePeriod, setInvoicePeriod] = useState(() => {
+    const d = new Date();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yy = String(d.getFullYear()).slice(-2);
+    return `${mm}-${yy}`;
+  });
+  useEffect(() => {
+    // Keep period in sync with invoice date by default
+    const d = formData.invoiceDate ? new Date(formData.invoiceDate) : new Date();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yy = String(d.getFullYear()).slice(-2);
+    setInvoicePeriod(`${mm}-${yy}`);
+  }, [formData.invoiceDate]);
+  const invoicePrefix = useMemo(() => `${invoicePrefixCode}/${invoicePeriod}/`, [invoicePrefixCode, invoicePeriod]);
+  const currentSeq = useMemo(() => {
+    const raw = (formData.invoiceNumber || '').startsWith(invoicePrefix)
+      ? (formData.invoiceNumber || '').slice(invoicePrefix.length)
+      : (formData.invoiceNumber || '');
+    return raw.replace(/[^0-9]/g, '');
+  }, [formData.invoiceNumber, invoicePrefix]);
+  const prevInvoiceDisplay = useMemo(() => {
+    if (!currentSeq) return '';
+    const n = Math.max(0, (parseInt(currentSeq, 10) || 0) - 1);
+    const pad = Math.max(currentSeq.length, 4);
+    return `${invoicePrefix}${String(n).padStart(pad, '0')}`;
+  }, [currentSeq, invoicePrefix]);
   const [shopForm, setShopForm] = useState({
     name: '',
     gstin: '',
@@ -203,25 +343,31 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
       const unitPrice = field === 'unitPrice' ? (parseFloat(value) || 0) : (parseFloat(newItems[index].unitPrice) || 0);
       const amount = quantity * unitPrice;
       const gstRate = parseFloat(newItems[index].gstRate) || 0;
-      const cgst = (amount * gstRate / 100) / 2;
-      const sgst = (amount * gstRate / 100) / 2;
-      const total = amount + (amount * gstRate / 100);
+      const gstAmount = amount * gstRate / 100;
+      const cgst = gstType === 'CGST_SGST' ? gstAmount / 2 : 0;
+      const sgst = gstType === 'CGST_SGST' ? gstAmount / 2 : 0;
+      const igst = gstType === 'IGST' ? gstAmount : 0;
+      const total = amount + gstAmount;
       
       newItems[index].amount = amount;
       newItems[index].cgst = cgst;
       newItems[index].sgst = sgst;
+      newItems[index].igst = igst;
       newItems[index].total = total;
     }
 
     if (field === 'gstRate') {
       const gstRate = parseFloat(value) || 0;
       const amount = newItems[index].amount || 0;
-      const cgst = (amount * gstRate / 100) / 2;
-      const sgst = (amount * gstRate / 100) / 2;
-      const total = amount + (amount * gstRate / 100);
+      const gstAmount = amount * gstRate / 100;
+      const cgst = gstType === 'CGST_SGST' ? gstAmount / 2 : 0;
+      const sgst = gstType === 'CGST_SGST' ? gstAmount / 2 : 0;
+      const igst = gstType === 'IGST' ? gstAmount : 0;
+      const total = amount + gstAmount;
       
       newItems[index].cgst = cgst;
       newItems[index].sgst = sgst;
+      newItems[index].igst = igst;
       newItems[index].total = total;
     }
 
@@ -247,13 +393,15 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
       ...prev,
       items: [...prev.items, {
         name: '',
-        hsnSac: '0',
+        hsnSac: '',
         quantity: 1,
+        unit: 'pcs',
         unitPrice: 1,
         gstRate: 0,
         amount: 1,
         cgst: 0,
         sgst: 0,
+        igst: 0,
         total: 1
       }]
     }));
@@ -262,13 +410,15 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
   const addItemFromCatalog = (product) => {
     const newItem = {
       name: product.name,
-      hsnSac: product.hsnSac,
+      hsnSac: product.hsnSac || '',
       quantity: 1,
+      unit: product.unit || 'pcs',
       unitPrice: product.unitPrice,
       gstRate: product.gstRate,
       amount: product.unitPrice,
-      cgst: (product.unitPrice * product.gstRate / 100) / 2,
-      sgst: (product.unitPrice * product.gstRate / 100) / 2,
+      cgst: gstType==='CGST_SGST' ? (product.unitPrice * product.gstRate / 100) / 2 : 0,
+      sgst: gstType==='CGST_SGST' ? (product.unitPrice * product.gstRate / 100) / 2 : 0,
+      igst: gstType==='IGST' ? (product.unitPrice * product.gstRate / 100) : 0,
       total: product.unitPrice + (product.unitPrice * product.gstRate / 100)
     };
     
@@ -305,14 +455,22 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
     const subtotal = formData.items.reduce((sum, item) => sum + (item.amount || 0), 0);
     const totalCGST = formData.items.reduce((sum, item) => sum + (item.cgst || 0), 0);
     const totalSGST = formData.items.reduce((sum, item) => sum + (item.sgst || 0), 0);
-    const totalGST = totalCGST + totalSGST;
-    const grandTotal = subtotal + totalGST;
+    const totalIGST = formData.items.reduce((sum, item) => sum + (item.igst || 0), 0);
+    const totalGST = totalCGST + totalSGST + totalIGST;
+    const computedDiscount = discountType === 'percent'
+      ? (subtotal * (parseFloat(discountValue) || 0)) / 100
+      : (parseFloat(discountValue) || 0);
+    const otherCharges = parseFloat(additionalCharges) || 0;
+    const grandTotal = Math.max(0, subtotal - computedDiscount) + totalGST + otherCharges;
 
     return {
       subtotal: Math.round((subtotal + Number.EPSILON) * 100) / 100,
       totalCGST: Math.round((totalCGST + Number.EPSILON) * 100) / 100,
       totalSGST: Math.round((totalSGST + Number.EPSILON) * 100) / 100,
+      totalIGST: Math.round((totalIGST + Number.EPSILON) * 100) / 100,
       totalGST: Math.round((totalGST + Number.EPSILON) * 100) / 100,
+      discount: Math.round((computedDiscount + Number.EPSILON) * 100) / 100,
+      otherCharges: Math.round((otherCharges + Number.EPSILON) * 100) / 100,
       grandTotal: Math.round((grandTotal + Number.EPSILON) * 100) / 100
     };
   };
@@ -390,11 +548,54 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
     }).format(amount);
   };
 
+  // Convert number to words in Indian numbering system (Rupees only)
+  const numberToWords = (num) => {
+    const a = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+    const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+    const toWordsBelowThousand = (n) => {
+      let str = '';
+      if (n > 99) {
+        str += a[Math.floor(n / 100)] + ' Hundred ';
+        n = n % 100;
+      }
+      if (n > 19) {
+        str += b[Math.floor(n / 10)] + (n % 10 ? ' ' + a[n % 10] : '');
+      } else if (n > 0) {
+        str += a[n];
+      }
+      return str.trim();
+    };
+    if (num === 0) return 'Zero';
+    let n = Math.floor(Math.abs(num));
+    const parts = [];
+    const units = [
+      { d: 10000000, l: 'Crore' },
+      { d: 100000, l: 'Lakh' },
+      { d: 1000, l: 'Thousand' },
+      { d: 100, l: 'Hundred' }
+    ];
+    for (const u of units) {
+      if (n >= u.d) {
+        const q = Math.floor(n / u.d);
+        parts.push((u.d === 100 ? a[q] : toWordsBelowThousand(q)) + ' ' + u.l);
+        n = n % u.d;
+      }
+    }
+    if (n > 0) parts.push(toWordsBelowThousand(n));
+    return parts.join(' ').trim();
+  };
+
   const totals = calculateTotals();
 
   return (
     <div className="fixed inset-0 bg-gray-100 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-7xl max-h-[95vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-7xl max-h-[95vh] overflow-y-auto relative">
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+        >
+          <X className="h-5 w-5" />
+        </button>
         {/* Header */}
         <div className="p-6 border-b bg-white">
           {/* Centered GST Invoice Title */}
@@ -403,67 +604,196 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
               <h1 className="text-2xl font-bold text-gray-900 border-b-2 border-dashed border-gray-300 pb-1">GST Invoice</h1>
               <Edit className="h-4 w-4 text-gray-500 cursor-pointer" />
             </div>
-            <div className="flex items-center justify-center space-x-1 text-purple-600 cursor-pointer mt-2">
-              <Plus className="h-3 w-3 text-orange-500" />
-              <span className="text-sm">Add Subtitle</span>
-            </div>
+            {!isEditingSubtitle && !formData.subtitle && (
+              <button type="button" onClick={()=>setIsEditingSubtitle(true)} className="flex items-center justify-center space-x-1 text-purple-600 cursor-pointer mt-2 mx-auto">
+                <Plus className="h-3 w-3 text-orange-500" />
+                <span className="text-sm">Add Subtitle</span>
+              </button>
+            )}
+            {(isEditingSubtitle || formData.subtitle) && (
+              <div className="mt-2 flex items-center justify-center space-x-2">
+                <input
+                  type="text"
+                  value={formData.subtitle || ''}
+                  onChange={(e)=>handleInputChange('subtitle', e.target.value)}
+                  placeholder="Enter subtitle"
+                  className="px-3 py-1 border-b border-purple-500 focus:outline-none text-sm"
+                />
+                <button type="button" onClick={()=>setIsEditingSubtitle(false)} className="text-sm text-gray-500">Done</button>
+              </div>
+            )}
           </div>
 
           {/* Invoice Details in Column Layout with Logo */}
           <div className="flex items-start justify-between">
-            <div className="flex flex-col space-y-4">
-              <div className="flex items-center space-x-3">
+            <div className="w-full">
+              <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-6 items-start">
+                {/* Left: Invoice No */}
+                <div className="flex items-center space-x-3">
                 <label className="text-sm font-medium text-gray-700 border-b border-dashed border-gray-300 pb-1">Invoice No*</label>
                 <div className="flex flex-col">
-                  <span className="text-sm text-gray-900 border-b border-purple-500 pb-1">1328</span>
-                  <span className="text-xs text-gray-500 mt-1">Last No: 1327 (Sep 20, 2025)</span>
-                </div>
-              </div>
-              
-              <div className="flex items-center space-x-3">
-                <label className="text-sm font-medium text-gray-700 border-b border-dashed border-gray-300 pb-1">Invoice Date*</label>
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-900 border-b border-purple-500 pb-1">Sep 21, 2025</span>
-                  <Calendar className="h-3 w-3 text-gray-400" />
-                </div>
-              </div>
-              
-              <div className="flex items-center space-x-3">
-                <label className="text-sm font-medium text-gray-700 border-b border-dashed border-gray-300 pb-1">Due Date</label>
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-900 border-b border-purple-500 pb-1">Oct 06, 2025</span>
-                  <div className="flex space-x-1">
-                    <Calendar className="h-3 w-3 text-gray-400" />
-                    <Settings className="h-3 w-3 text-gray-400 cursor-pointer" />
-                    <X className="h-3 w-3 text-gray-400 cursor-pointer" />
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="text"
+                      value={invoicePrefixCode}
+                      onChange={(e)=>setInvoicePrefixCode(e.target.value.toUpperCase())}
+                      className="w-20 text-sm text-gray-900 border-b border-purple-500 pb-1 focus:outline-none uppercase"
+                    />
+                    <span className="text-sm text-gray-900">/</span>
+                    <input
+                      type="text"
+                      value={invoicePeriod}
+                      onChange={(e)=>setInvoicePeriod(e.target.value)}
+                      placeholder="MM-YY"
+                      className="w-16 text-sm text-gray-900 border-b border-purple-500 pb-1 focus:outline-none"
+                    />
+                    <span className="text-sm text-gray-900">/</span>
+                    <input
+                      type="text"
+                      value={currentSeq}
+                      onChange={(e)=>{
+                        const digits = e.target.value.replace(/[^0-9]/g,'');
+                        const padded = digits.padStart(Math.max(4, digits.length), '0');
+                        handleInputChange('invoiceNumber', `${invoicePrefix}${padded}`);
+                      }}
+                      placeholder="0001"
+                      className="w-20 text-sm text-gray-900 border-b border-purple-500 pb-1 focus:outline-none"
+                    />
                   </div>
+                  {prevInvoiceDisplay ? (
+                    <span className="text-xs text-gray-500 mt-1">Last No: {prevInvoiceDisplay}</span>
+                  ) : null}
+                  {errors.invoiceNumber && <span className="text-xs text-red-600 mt-1">{errors.invoiceNumber}</span>}
                 </div>
+              </div>
+                {/* Right: Dates stack */}
+                <div className="flex flex-col space-y-4 justify-self-end w-auto">
+                  <div className="flex items-center space-x-3">
+                    <label className="text-sm font-medium text-gray-700 border-b border-dashed border-gray-300 pb-1">Invoice Date*</label>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="date"
+                        value={formData.invoiceDate}
+                        onChange={(e)=>handleInputChange('invoiceDate', e.target.value)}
+                        className="text-sm text-gray-900 border-b border-purple-500 pb-1 focus:outline-none"
+                      />
+                      <Calendar className="h-3 w-3 text-gray-400" />
+                    </div>
+                    {errors.invoiceDate && <span className="text-xs text-red-600">{errors.invoiceDate}</span>}
+                  </div>
+                  {showDueDate ? (
+                    <div className="flex items-center space-x-3">
+                      <label className="text-sm font-medium text-gray-700 border-b border-dashed border-gray-300 pb-1">Due Date</label>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="date"
+                          value={formData.dueDate}
+                          onChange={(e)=>handleInputChange('dueDate', e.target.value)}
+                          className="text-sm text-gray-900 border-b border-purple-500 pb-1 focus:outline-none"
+                        />
+                        <Calendar className="h-3 w-3 text-gray-400" />
+                        <button type="button" onClick={()=>setShowDueDate(false)} className="text-gray-400 hover:text-gray-600">
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button type="button" onClick={()=>setShowDueDate(true)} className="text-sm text-purple-600 inline-flex items-center space-x-2">
+                      <Plus className="h-3 w-3 text-orange-500" />
+                      <span>Add Due Date</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Add More Fields - inline under the row */}
+              <div className="mt-3">
+                <button type="button" onClick={()=>setHeaderExtraFields(prev=>[...prev,{id:Date.now(),label:'',value:''}])} className="text-sm text-purple-600 inline-flex items-center space-x-2">
+                  <Plus className="h-3 w-3 text-orange-500" />
+                  <span>Add More Fields</span>
+                </button>
+                {headerExtraFields.length>0 && (
+                  <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {headerExtraFields.map(f=> (
+                      <div key={f.id} className="flex items-center space-x-3">
+                        <input
+                          value={f.label}
+                          onChange={(e)=>setHeaderExtraFields(prev=>prev.map(x=>x.id===f.id?{...x,label:e.target.value}:x))}
+                          placeholder="Label"
+                          className="w-28 text-sm text-gray-700 border-b border-dashed border-gray-300 pb-1 focus:outline-none"
+                        />
+                        <input
+                          value={f.value}
+                          onChange={(e)=>setHeaderExtraFields(prev=>prev.map(x=>x.id===f.id?{...x,value:e.target.value}:x))}
+                          placeholder="Value"
+                          className="flex-1 text-sm text-gray-900 border-b border-purple-500 pb-1 focus:outline-none"
+                        />
+                        <button type="button" onClick={()=>setHeaderExtraFields(prev=>prev.filter(x=>x.id!==f.id))} className="text-gray-400 hover:text-gray-600">
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
-          <div className="flex items-center space-x-4">
-              <div className="border-2 border-dashed border-purple-300 rounded-lg p-3 text-center min-w-[200px]">
-                <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-                  <Upload className="h-4 w-4 text-purple-600" />
-                </div>
-                <p className="text-xs text-gray-600 font-medium">Add Business Logo</p>
-                <p className="text-xs text-gray-500">Resolution up to 1080x1080px.</p>
-                <p className="text-xs text-gray-500">PNG or JPEG file.</p>
-            </div>
-            <button
-              onClick={onClose}
-              className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
+          <div className="flex items-center space-x-4"></div>
         </div>
 
-          <div className="flex items-center justify-center space-x-1 text-purple-600 cursor-pointer text-sm mt-4">
-            <Plus className="h-3 w-3 text-purple-600" />
-            <span>Add More Fields</span>
-                    </div>
+          
                   </div>
+                  
+        {/* Configure Tax Modal */}
+        {showTaxConfig && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
+              <div className="flex items-center justify-between p-4 border-b">
+                <h3 className="text-lg font-semibold">Configure Tax</h3>
+                <button onClick={()=>setShowTaxConfig(false)} className="p-1 text-gray-400 hover:text-gray-600"><X className="h-5 w-5" /></button>
+              </div>
+              <div className="p-4 space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">1. Select Tax Type*</label>
+                  <select className="w-full h-10 px-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500" value={taxType} onChange={(e)=>setTaxType(e.target.value)}>
+                    <option>GST (India)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">2. Place of Supply*</label>
+                  <select className="w-full h-10 px-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500" value={placeOfSupply} onChange={(e)=>setPlaceOfSupply(e.target.value)}>
+                    {GST_STATE_CODES.map(s=> <option key={s.code} value={s.name}>{s.name}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">3. GST Type*</label>
+                  <div className="flex items-center space-x-8">
+                    <label className="flex items-center space-x-2">
+                      <input type="radio" name="gstType" checked={gstType==='IGST'} onChange={()=>setGstType('IGST')} />
+                      <span>IGST</span>
+                    </label>
+                    <label className="flex items-center space-x-2">
+                      <input type="radio" name="gstType" checked={gstType==='CGST_SGST'} onChange={()=>setGstType('CGST_SGST')} />
+                      <span>CGST & SGST</span>
+                    </label>
+                  </div>
+                  <button type="button" className="text-sm text-purple-600 mt-3">+ Add Cess</button>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">4. Other Options</label>
+                  <label className="inline-flex items-center space-x-2 text-sm text-gray-700">
+                    <input type="checkbox" checked={reverseCharge} onChange={(e)=>setReverseCharge(e.target.checked)} />
+                    <span>Is Reverse Charge Applicable?</span>
+                  </label>
+                </div>
+                <div className="flex items-center justify-end space-x-3">
+                  <button type="button" onClick={()=>setShowTaxConfig(false)} className="px-4 py-2 border border-gray-300 rounded-md">Cancel</button>
+                  <button type="button" onClick={()=>{ setShowTaxConfig(false); setFormData(prev=>({ ...prev, items: prev.items.map(it=>{ const amount = (parseFloat(it.quantity)||0) * (parseFloat(it.unitPrice)||0); const rate = parseFloat(it.gstRate)||0; const gstAmt = amount*rate/100; return { ...it, amount, cgst: gstType==='CGST_SGST'?gstAmt/2:0, sgst: gstType==='CGST_SGST'?gstAmt/2:0, igst: gstType==='IGST'?gstAmt:0, total: amount+gstAmt }; }) })); }} className="px-4 py-2 bg-purple-600 text-white rounded-md">Save Changes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
                   
         <form onSubmit={handleSubmit} className="p-6">
           {/* Main Content */}
@@ -552,14 +882,14 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
                 <div className="space-y-4">
                   {/* Client select dropdown */}
                   <div className="relative">
-                    <button
-                      type="button"
+                          <button
+                            type="button"
                       onClick={() => setShowClientDropdown(v => !v)}
                       className="w-full h-12 px-4 border border-gray-300 rounded-lg flex items-center justify-between text-left focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                    >
+                          >
                       <span className="text-gray-800">{selectedClient?.name || 'Select a Client'}</span>
                       <ChevronDown className={`h-4 w-4 transition-transform ${showClientDropdown ? 'rotate-180' : ''}`} />
-                    </button>
+                          </button>
                     {showClientDropdown && (
                       <div className="absolute z-10 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-64 overflow-auto">
                         {clients.map(c => (
@@ -585,23 +915,23 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
                             <span className="text-xs text-gray-500">{c.phone || c.email || ''}</span>
                           </button>
                         ))}
-                      </div>
+                        </div>
                     )}
-                  </div>
+                      </div>
 
                   {/* When no client selected show message box like image */}
                   {!selectedClient && (
                     <div className="bg-white p-6 rounded-lg border border-gray-200 text-center">
                       <p className="text-gray-600 mb-3">Select Client/Business from the list</p>
                       <p className="text-gray-500 text-sm mb-5">OR</p>
-                      <button
-                        type="button"
-                        onClick={() => setShowClientManagement(true)}
+                    <button
+                      type="button"
+                          onClick={() => setShowClientManagement(true)}
                         className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors inline-flex items-center space-x-2"
-                      >
+                        >
                         <Plus className="h-4 w-4" />
                         <span>Add New Client</span>
-                      </button>
+                        </button>
                     </div>
                   )}
 
@@ -611,9 +941,9 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
                       <div className="flex items-center justify-between mb-3">
                         <span className="text-sm font-medium text-gray-700">Business details</span>
                         <div className="flex items-center space-x-2">
-                          <button
-                            type="button"
-                            onClick={() => setShowClientManagement(true)}
+                        <button
+                          type="button"
+                          onClick={() => setShowClientManagement(true)}
                             className="text-purple-600 hover:text-purple-700 text-sm flex items-center space-x-1"
                           >
                             <Edit className="h-3 w-3" />
@@ -625,7 +955,7 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
                             className="text-gray-400 hover:text-gray-600"
                           >
                             <X className="h-3 w-3" />
-                          </button>
+                    </button>
                         </div>
                       </div>
                       <div className="space-y-2 text-sm text-gray-600">
@@ -639,7 +969,7 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
                           <span className="text-gray-600">PAN</span>
                           <span>{selectedClient.pan || '-'}</span>
                         </div>
-                      </div>
+                  </div>
                     </div>
                   )}
                 </div>
@@ -653,7 +983,7 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-3">Currency*</label>
                   <div className="flex items-center space-x-3">
-                    <button className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">
+                  <button type="button" onClick={()=>setShowTaxConfig(true)} className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">
                       <span className="text-purple-600 font-bold">%</span>
                       <span>Configure GST</span>
                     </button>
@@ -682,52 +1012,64 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
           {/* Items Table */}
           <div className="mb-8">
             <div className="bg-purple-600 text-white p-4 rounded-t-lg">
-              <div className="grid grid-cols-9 gap-4 text-sm font-medium">
-                <div>Item</div>
+              <div className={`grid ${gstType==='IGST' ? 'grid-cols-10' : 'grid-cols-11'} gap-4 text-sm font-medium`}>
+                <div className="col-span-2">Item</div>
                 <div>HSN/SAC</div>
                 <div>GST Rate</div>
                 <div>Quantity</div>
+                <div>Unit</div>
                 <div>Rate</div>
                 <div>Amount</div>
-                <div>CGST</div>
-                <div>SGST</div>
+                {gstType==='IGST' ? (<div>IGST</div>) : (<><div>CGST</div><div>SGST</div></>)}
                 <div>Total</div>
               </div>
             </div>
             
             <div className="border border-gray-300 rounded-b-lg">
-              {formData.items.map((item, index) => (
-                <div key={index} className="grid grid-cols-9 gap-4 p-4 border-b border-gray-200 last:border-b-0">
-                  <div>
+              {formData.items.map((item, index) => {
+                const isExpanded = expandedItemIndex === index;
+                return (
+                  <div key={index} className={`grid ${isExpanded ? 'grid-cols-1' : (gstType==='IGST' ? 'grid-cols-10' : 'grid-cols-11')} gap-4 p-4 border-b border-gray-200 last:border-b-0`}>
+                    <div className={`${isExpanded ? 'col-span-1' : 'col-span-2'}`}>
                     <input
                       type="text"
                       value={item.name}
                       onChange={(e) => handleItemChange(index, 'name', e.target.value)}
+                        onFocus={() => setExpandedItemIndex(index)}
+                        onBlur={() => setExpandedItemIndex(null)}
                       placeholder="Name/SKU Id (Required)"
-                      className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
+                        className={`w-full ${isExpanded ? 'h-12 px-3' : 'px-2'} py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-purple-500 focus:border-purple-500`}
                     />
                   </div>
+                    {isExpanded ? null : (
+                      <>
                   <div>
+                          <div className="relative">
                     <input
                       type="text"
                       value={item.hsnSac}
                       onChange={(e) => handleItemChange(index, 'hsnSac', e.target.value)}
-                      className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
+                              placeholder="#"
+                              className="w-full pr-8 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-purple-500 focus:border-purple-500 placeholder:text-gray-400"
                     />
+                            <button type="button" onClick={()=>openHSNModal(index)} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700">
+                              <Search className="h-4 w-4" />
+                            </button>
+                          </div>
                   </div>
                   <div>
-                    <select
+                          <select
                       value={item.gstRate}
                       onChange={(e) => handleItemChange(index, 'gstRate', e.target.value)}
                       className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
-                    >
-                      <option value={0}>0%</option>
-                      <option value={3}>3%</option>
-                      <option value={5}>5%</option>
-                      <option value={12}>12%</option>
-                      <option value={18}>18%</option>
-                      <option value={28}>28%</option>
-                    </select>
+                          >
+                            <option value={0}>0%</option>
+                            <option value={3}>3%</option>
+                            <option value={5}>5%</option>
+                            <option value={12}>12%</option>
+                            <option value={18}>18%</option>
+                            <option value={28}>28%</option>
+                          </select>
                   </div>
                   <div>
                     <input
@@ -737,6 +1079,15 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
                       className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
                     />
                   </div>
+                        <div>
+                          <select
+                            value={item.unit || 'pcs'}
+                            onChange={(e)=>handleItemChange(index, 'unit', e.target.value)}
+                            className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
+                          >
+                            {QUANTITY_UNITS.map(u => <option key={u} value={u}>{u}</option>)}
+                          </select>
+                        </div>
                   <div>
                     <input
                       type="number"
@@ -753,22 +1104,20 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
                       className="w-full px-2 py-1 border border-gray-300 rounded text-sm bg-gray-50"
                     />
                   </div>
+                        {gstType==='IGST' ? (
                   <div>
-                    <input
-                      type="text"
-                      value={formatCurrency(item.cgst)}
-                      readOnly
-                      className="w-full px-2 py-1 border border-gray-300 rounded text-sm bg-gray-50"
-                    />
+                            <input type="text" value={formatCurrency(item.igst)} readOnly className="w-full px-2 py-1 border border-gray-300 rounded text-sm bg-gray-50" />
                   </div>
+                        ) : (
+                          <>
                   <div>
-                    <input
-                      type="text"
-                      value={formatCurrency(item.sgst)}
-                      readOnly
-                      className="w-full px-2 py-1 border border-gray-300 rounded text-sm bg-gray-50"
-                    />
+                              <input type="text" value={formatCurrency(item.cgst)} readOnly className="w-full px-2 py-1 border border-gray-300 rounded text-sm bg-gray-50" />
                   </div>
+                            <div>
+                              <input type="text" value={formatCurrency(item.sgst)} readOnly className="w-full px-2 py-1 border border-gray-300 rounded text-sm bg-gray-50" />
+                            </div>
+                          </>
+                        )}
                   <div className="flex items-center space-x-2">
                     <input
                       type="text"
@@ -786,20 +1135,14 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
                       </button>
                     )}
                   </div>
+                      </>
+                    )}
                 </div>
-              ))}
+                );
+              })}
               
               {/* Add Item Row */}
               <div className="p-4 border-t-2 border-dashed border-gray-300">
-                <div className="flex items-center space-x-4 text-sm text-gray-600 mb-4">
-                  <span className="cursor-pointer hover:text-purple-600">Add Description</span>
-                  <span className="cursor-pointer hover:text-purple-600">Add Thumbnail</span>
-                  <span className="cursor-pointer hover:text-purple-600">Duplicate</span>
-                  <select className="px-2 py-1 border border-gray-300 rounded hover:border-purple-500">
-                    <option>Product</option>
-                  </select>
-                  <span className="cursor-pointer hover:text-purple-600">Select Sales Ledger</span>
-                </div>
                 <div className="flex space-x-2">
                   <button
                     type="button"
@@ -809,140 +1152,16 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
                     <Plus className="h-4 w-4" />
                     <span>Add New Line</span>
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowProductCatalog(true)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 flex items-center space-x-2"
-                  >
-                    <Package className="h-4 w-4" />
-                    <span>Add from Catalog</span>
-                  </button>
-                  <button
-                    type="button"
-                    className="px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 flex items-center space-x-1"
-                  >
-                    <span>Add New Group</span>
-                    <span className="text-orange-500">🔥</span>
-                  </button>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Totals and Options */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             {/* Left Column - Additional Options */}
-            {/* <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="addMoreFields"
-                  checked={formData.addMoreFields}
-                  onChange={(e) => handleInputChange('addMoreFields', e.target.checked)}
-                  className="text-purple-600"
-                />
-                <label htmlFor="addMoreFields" className="text-sm text-gray-700">Add More Fields</label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="showTotalInWords"
-                  checked={formData.showTotalInWords}
-                  onChange={(e) => handleInputChange('showTotalInWords', e.target.checked)}
-                  className="text-purple-600"
-                />
-                <label htmlFor="showTotalInWords" className="text-sm text-gray-700">Show Total in Words</label>
-              </div>
-              <div className="flex space-x-2">
-                <button type="button" className="flex items-center space-x-1 px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">
-                  <Pen className="h-4 w-4" />
-                  <span>Add Signature</span>
-                </button>
-                <button type="button" className="flex items-center space-x-1 px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">
-                  <Paperclip className="h-4 w-4" />
-                  <span>Add Attachments</span>
-                </button>
-              </div>
-            </div> */}
-
-            {/* Middle Column - Additional Elements */}
-            {/* <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-2">
-                <button type="button" className="flex items-center space-x-1 px-3 py-2 border-2 border-dashed border-gray-300 rounded-lg text-sm hover:bg-gray-50">
-                  <FileText className="h-4 w-4" />
-                  <span>Add Terms & Conditions</span>
-                </button>
-                <button type="button" className="flex items-center space-x-1 px-3 py-2 border-2 border-dashed border-gray-300 rounded-lg text-sm hover:bg-gray-50">
-                  <StickyNote className="h-4 w-4" />
-                  <span>Add Notes</span>
-                </button>
-                <button type="button" className="flex items-center space-x-1 px-3 py-2 border-2 border-dashed border-gray-300 rounded-lg text-sm hover:bg-gray-50">
-                  <Info className="h-4 w-4" />
-                  <span>Add Additional Info</span>
-                </button>
-                <button type="button" className="flex items-center space-x-1 px-3 py-2 border-2 border-dashed border-gray-300 rounded-lg text-sm hover:bg-gray-50">
-                  <Phone className="h-4 w-4" />
-                  <span>Add Contact Details</span>
-                </button>
-              </div>
-              
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="flex items-center space-x-2 mb-2">
-                  <input
-                    type="checkbox"
-                    id="recurring"
-                    className="text-gray-400"
-                  />
-                  <label htmlFor="recurring" className="text-sm font-medium text-gray-700">This is a Recurring invoice</label>
-                </div>
-                <p className="text-xs text-gray-600">A draft invoice will be created with the same details every next period.</p>
-              </div>
-            </div> */}
-
-            {/* Right Column - Totals and Payment Status */}
             <div className="space-y-4">
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Amount:</span>
-                    <span className="font-medium">{formatCurrency(totals.subtotal)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">SGST:</span>
-                    <span className="font-medium">{formatCurrency(totals.totalSGST)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">CGST:</span>
-                    <span className="font-medium">{formatCurrency(totals.totalCGST)}</span>
-                  </div>
-                  <div className="text-purple-600 cursor-pointer text-sm">
-                    Add Discounts/Additional Charges
-                    </div>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id="hideTotals"
-                      checked={formData.hideTotals}
-                      onChange={(e) => handleInputChange('hideTotals', e.target.checked)}
-                      className="text-purple-600"
-                    />
-                    <label htmlFor="hideTotals" className="text-sm text-gray-700">Hide Totals</label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id="summarizeQuantity"
-                      checked={formData.summarizeTotalQuantity}
-                      onChange={(e) => handleInputChange('summarizeTotalQuantity', e.target.checked)}
-                      className="text-gray-400"
-                    />
-                    <label htmlFor="summarizeQuantity" className="text-sm text-gray-700">Summarize Total Quantity</label>
-                  </div>
-                </div>
-              </div>
-
-              {/* Payment Status */}
-              <div className="bg-white p-4 rounded-lg border border-gray-200">
+           <div className="bg-white w-60 p-4 rounded-lg border border-gray-200">
                 <h4 className="font-medium text-gray-900 mb-3">Payment Status</h4>
                 <div className="space-y-3">
                   <div>
@@ -979,170 +1198,124 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
                     />
                     <label htmlFor="recurring" className="text-sm text-gray-700">Recurring Invoice</label>
                   </div>
+                  </div>
                 </div>
               </div>
 
-              {/* Quick Actions */}
-              <div className="bg-white p-4 rounded-lg border border-gray-200">
-                <h4 className="font-medium text-gray-900 mb-3">Quick Actions</h4>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50"
-                  >
-                    <Mail className="h-4 w-4" />
-                    <span>Send Email</span>
-                  </button>
-                  <button
-                    type="button"
-                    className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50"
-                  >
-                    <Printer className="h-4 w-4" />
-                    <span>Print</span>
-                  </button>
-                  <button
-                    type="button"
-                    className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50"
-                  >
-                    <Download className="h-4 w-4" />
-                    <span>Download PDF</span>
-                  </button>
-                  <button
-                    type="button"
-                    className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50"
-                  >
-                    <Eye className="h-4 w-4" />
-                    <span>Preview</span>
-                  </button>
+            {/* Right Column - Totals and Payment Status */}
+            <div className="space-y-4">
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Amount</span>
+                    <span className="font-medium">{formatCurrency(totals.subtotal)}</span>
                 </div>
+                  {gstType==='IGST' ? (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">IGST</span>
+                      <span className="font-medium">{formatCurrency(totals.totalIGST)}</span>
               </div>
+                  ) : (
+                    <>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">SGST</span>
+                        <span className="font-medium">{formatCurrency(totals.totalSGST)}</span>
             </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">CGST</span>
+                        <span className="font-medium">{formatCurrency(totals.totalCGST)}</span>
           </div>
-
-          {/* Advanced Options */}
-          {/* <div className="bg-gray-50 p-6 rounded-lg mb-8">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Advanced options</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Select HSN column view</label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
-                  <option>Default</option>
+                    </>
+                  )}
+                  <div className="grid grid-cols-[1fr_auto] gap-2 items-center text-sm">
+                    <div className="text-gray-600">Discount</div>
+                    <div className="flex items-center space-x-2">
+                      <input type="number" value={discountValue} onChange={(e)=>setDiscountValue(e.target.value)} className="w-24 h-8 px-2 border rounded" />
+                      <select value={discountType} onChange={(e)=>setDiscountType(e.target.value)} className="h-8 px-2 border rounded text-xs">
+                        <option value="fixed">Fixed</option>
+                        <option value="percent">%</option>
                 </select>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Display Unit as</label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
-                  <option>Merge with quantity</option>
-                </select>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Show tax summary in invoice</label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
-                  <option>Do not show</option>
-                </select>
+                  <div className="grid grid-cols-[1fr_auto] gap-2 items-center text-sm">
+                    <div className="text-gray-600">Additional Charges</div>
+                    <input type="number" value={additionalCharges} onChange={(e)=>setAdditionalCharges(e.target.value)} className="w-24 h-8 px-2 border rounded" />
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Total (INR)</span>
+                    <span className="font-semibold">{formatCurrency(totals.grandTotal)}</span>
+                  </div>
+                  <div className="pt-2 border-t mt-2">
+                    <div className="text-xs text-gray-600">Total (in words)</div>
+                    <div className="text-sm text-purple-700 font-medium">{numberToWords(Math.round(totals.grandTotal))} Rupees Only</div>
+                  </div>
               </div>
             </div>
             
-            <div className="mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="hidePlaceOfSupply"
-                  checked={formData.hidePlaceOfSupply}
-                  onChange={(e) => handleInputChange('hidePlaceOfSupply', e.target.checked)}
-                  className="text-purple-600"
-                />
-                <label htmlFor="hidePlaceOfSupply" className="text-sm text-gray-700">Hide place/country of supply</label>
+              {/* Signature */}
+              <div className="bg-white p-4 rounded-lg border border-gray-200">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-medium text-gray-900">Signature</h4>
+                  <button type="button" onClick={()=>setIsSignatureCollapsed(v=>!v)} className="text-gray-500 hover:text-gray-700">
+                    <ChevronDown className={`h-4 w-4 transition-transform ${isSignatureCollapsed ? '-rotate-90' : ''}`} />
+                  </button>
               </div>
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="showHSNSummary"
-                  checked={formData.showHSNSummary}
-                  onChange={(e) => handleInputChange('showHSNSummary', e.target.checked)}
-                  className="text-purple-600"
-                />
-                <label htmlFor="showHSNSummary" className="text-sm text-gray-700">Show HSN summary in invoice</label>
+                {!isSignatureCollapsed && (
+                <div className="space-y-3">
+                  <label className="block">
+                    <input type="file" accept="image/*" className="hidden" onChange={(e)=>onSignatureUpload(e.target.files?.[0])} />
+                    <div className="h-32 border-2 border-dashed rounded flex flex-col items-center justify-center text-sm text-gray-700 cursor-pointer hover:bg-purple-50">
+                      {signatureDataUrl ? (
+                        <img src={signatureDataUrl} alt="Signature" className="max-h-28 object-contain" />
+                      ) : (
+                        <>
+                          <Upload className="h-6 w-6 text-purple-600 mb-1" />
+                          <span>Upload</span>
+                        </>
+                      )}
               </div>
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="showOriginalImages"
-                  checked={formData.showOriginalImages}
-                  onChange={(e) => handleInputChange('showOriginalImages', e.target.checked)}
-                  className="text-gray-400"
-                />
-                <label htmlFor="showOriginalImages" className="text-sm text-gray-700">Add original images in line items</label>
+                  </label>
+                  <div className="grid grid-cols-1 gap-2">
+                    <label className="px-3 py-2 border-2 border-dashed rounded text-sm text-gray-700 cursor-pointer inline-flex items-center justify-center space-x-2">
+                      <Upload className="h-4 w-4 text-purple-600" />
+                      <span>Upload Signature</span>
+                      <input type="file" accept="image/*" className="hidden" onChange={(e)=>onSignatureUpload(e.target.files?.[0])} />
+                    </label>
+                    <button type="button" onClick={()=>setShowSignatureModal(true)} className="px-3 py-2 border-2 border-dashed rounded text-sm text-gray-700 inline-flex items-center justify-center space-x-2">
+                      <Pen className="h-4 w-4 text-purple-600" />
+                      <span>Use Signature Pad</span>
+                    </button>
               </div>
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="showThumbnails"
-                  checked={formData.showThumbnails}
-                  onChange={(e) => handleInputChange('showThumbnails', e.target.checked)}
-                  className="text-gray-400"
-                />
-                <label htmlFor="showThumbnails" className="text-sm text-gray-700">Show thumbnails in separate column</label>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Add signature label</label>
+                    <input value={signatureLabel} onChange={(e)=>setSignatureLabel(e.target.value)} className="w-full h-9 px-3 border rounded" />
               </div>
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="showDescriptionFullWidth"
-                  checked={formData.showDescriptionFullWidth}
-                  onChange={(e) => handleInputChange('showDescriptionFullWidth', e.target.checked)}
-                  className="text-gray-400"
-                />
-                <label htmlFor="showDescriptionFullWidth" className="text-sm text-gray-700">Show description in full width</label>
               </div>
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="hideSubtotalForGroups"
-                  checked={formData.hideSubtotalForGroups}
-                  onChange={(e) => handleInputChange('hideSubtotalForGroups', e.target.checked)}
-                  className="text-gray-400"
-                />
-                <label htmlFor="hideSubtotalForGroups" className="text-sm text-gray-700">Hide subtotal for group items</label>
+                )}
               </div>
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="showSKU"
-                  checked={formData.showSKU}
-                  onChange={(e) => handleInputChange('showSKU', e.target.checked)}
-                  className="text-gray-400"
-                />
-                <label htmlFor="showSKU" className="text-sm text-gray-700">Show SKU in invoice</label>
+
+              {/* Payment Status */}
+             
+
+             
               </div>
             </div>
-          </div> */}
+
+          
 
           {/* Footer */}
           <div className="flex items-center justify-between pt-6 border-t border-gray-200">
+            <div className="flex items-center space-x-4"> </div>
+             
+            
+          
             <div className="flex items-center space-x-4">
-              <button
-                type="button"
-                onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}
-                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium flex items-center space-x-2"
-              >
-                <Settings className="h-4 w-4" />
-                <span>Advanced Options</span>
-              </button>
             <button
               type="button"
               onClick={onClose}
               className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
             >
               Save As Draft
-            </button>
-            </div>
-            <div className="flex items-center space-x-4">
-              <button
-                type="button"
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center space-x-2"
-              >
-                <Eye className="h-4 w-4" />
-                <span>Preview</span>
               </button>
             <button
               type="submit"
@@ -1181,6 +1354,83 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
             onSelectProduct={addItemFromCatalog}
             selectedProductId={selectedProduct?.id}
           />
+        )}
+
+        {/* HSN Modal */}
+        {showHSNModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
+              <div className="flex items-center justify-between p-4 border-b bg-purple-700 text-white">
+                <h3 className="text-lg font-semibold">HSN/SAC List</h3>
+                <button onClick={()=>setShowHSNModal(false)} className="p-1 text-white/80 hover:text-white"><X className="h-5 w-5" /></button>
+              </div>
+              <div className="p-4 space-y-4">
+                <div>
+                  <label className="block text-sm text-gray-700 mb-1">Select HSN/SAC to apply</label>
+                  <div className="relative">
+                    <input value={hsnQuery} onChange={(e)=>setHsnQuery(e.target.value)} placeholder="Search items" className="w-full h-10 px-3 pr-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500" />
+                    <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                  </div>
+                </div>
+                <div className="flex items-center justify-between text-xs text-gray-600">
+                  <div>Showing {(hsnPage-1)*hsnPageSize+1} to {Math.min(hsnPage*hsnPageSize, filteredHSN.length)} items of {filteredHSN.length} items</div>
+                  <div className="flex items-center space-x-2">
+                    <button type="button" disabled={hsnPage===1} onClick={()=>setHsnPage(p=>Math.max(1,p-1))} className="px-2 py-1 border rounded disabled:opacity-40">{'<'}
+                    </button>
+                    <span className="px-2 py-1 border rounded bg-white">{hsnPage}</span>
+                    <button type="button" disabled={hsnPage*hsnPageSize>=filteredHSN.length} onClick={()=>setHsnPage(p=>p+1)} className="px-2 py-1 border rounded disabled:opacity-40">{'>'}
+                    </button>
+                    <select value={hsnPageSize} onChange={(e)=>{setHsnPageSize(parseInt(e.target.value)||50); setHsnPage(1);}} className="ml-2 h-8 px-2 border rounded">
+                      <option value={50}>50</option>
+                      <option value={100}>100</option>
+                      <option value={200}>200</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="border rounded-md overflow-auto max-h-[60vh]">
+                  <div className="grid grid-cols-[160px_1fr] px-4 py-2 bg-gray-50 text-sm font-medium text-gray-700 border-b">
+                    <div>HSN Code</div>
+                    <div>Description</div>
+                  </div>
+                  <div>
+                    {displayedHSN.map((row, i) => (
+                      <button key={i} type="button" onClick={()=>{ if(hsnForRow!=null){ handleItemChange(hsnForRow, 'hsnSac', row.code); } setShowHSNModal(false); }} className="w-full grid grid-cols-[160px_1fr] px-4 py-3 text-left hover:bg-purple-50 border-b">
+                        <div className="font-mono text-sm text-gray-800">{row.code}</div>
+                        <div className="text-sm text-gray-700">{row.description}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Signature Modal */}
+        {showSignatureModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg">
+              <div className="flex items-center justify-between p-4 border-b">
+                <h3 className="text-lg font-semibold">Signature Pad</h3>
+                <button onClick={()=>setShowSignatureModal(false)} className="p-1 text-gray-400 hover:text-gray-600"><X className="h-5 w-5" /></button>
+              </div>
+              <div className="p-4">
+                <div className="border rounded p-2">
+                  <canvas ref={canvasRef} width={560} height={200}
+                    onMouseDown={startDraw} onMouseMove={draw} onMouseUp={endDraw} onMouseLeave={endDraw}
+                    onTouchStart={startDraw} onTouchMove={draw} onTouchEnd={endDraw}
+                    className="w-full h-48 bg-white rounded" />
+                  <div className="flex justify-between items-center mt-2">
+                    <div className="text-xs text-gray-500">Draw your signature. Click Save to use.</div>
+                    <div className="flex space-x-2">
+                      <button type="button" onClick={clearCanvas} className="px-3 py-1 border rounded text-sm">Clear</button>
+                      <button type="button" onClick={()=>{ saveCanvas(); setShowSignatureModal(false); }} className="px-3 py-1 bg-purple-600 text-white rounded text-sm">Save</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
 
         {/* Add/Edit Business Modal (componentized) */}

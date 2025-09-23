@@ -4824,9 +4824,10 @@ const sections = [
   { name: 'User List', path: '/Dashboard/EUserList' },
   { name: 'Seller List', path: '/Dashboard/SellerList' },
   { name: 'Category List', path: '/Dashboard/CategoryList' },
-  { name: 'Brand List', path: '/Dashboard/BrandList' },
   { name: 'Coupon List', path: '/Dashboard/Coupons' },
   { name: 'Bill Management', path: '/Dashboard/BillManagement' },
+  { name: 'GST Bill Management', path: '/Dashboard/GSTBillManagement' },
+  { name: 'HSN', path: '/Dashboard/HSN' },
 ];
 
 // Add this helper function at the top (after imports):

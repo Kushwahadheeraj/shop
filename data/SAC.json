@@ -1,0 +1,740 @@
+[
+    {
+        "code": "441070",
+        "description": "ACCOMODATION IN HOTELS/ INN/ GUEST HOUSE/ CLUB OR CAMP SITE ETC. SERVICE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440013",
+        "description": "ADVERTISING AGENCY",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440362",
+        "description": "AIR TRANSPORT OF PASSENGER",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440032",
+        "description": "AIR TRAVEL AGENCY",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440258",
+        "description": "AIRPORT SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440072",
+        "description": "ARCHITECTS SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440418",
+        "description": "ASSET MANAGEMENT",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440346",
+        "description": "ATM OPERATIONS",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440370",
+        "description": "AUCTIONEERS SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440173",
+        "description": "BANKING AND FINANCIAL",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440209",
+        "description": "BEAUTY PARLOURS",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440165",
+        "description": "BROADCASTING SERVICE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440254",
+        "description": "BUSINESS AND EXHIBITION SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440225",
+        "description": "BUSINESS AUXILIARY SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440366",
+        "description": "BUSINESS SUPPORT SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440217",
+        "description": "CABLE OPERATORS",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440189",
+        "description": "CARGO HANDLING SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440092",
+        "description": "CHARTERED ACCOUNTANTS",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440318",
+        "description": "CLEANING SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440045",
+        "description": "CLEARING AND FORWARDING AGENCY",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440229",
+        "description": "COMMERCIAL TRAINING & COACHING",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440100",
+        "description": "COMPANY SECRETARIES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440334",
+        "description": "CONSTRUCTION OF RES. COMPLEX",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440290",
+        "description": "CONSTRUCTION SERVICES IN RESPECT OF COMMERCIAL OR INDUSTRIAL BUILDINGS AND CIVIL STRUCTURES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440057",
+        "description": "CONSULTING ENGINEER",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440133",
+        "description": "CONVENTION SERVICE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440613",
+        "description": "COPYRIGHT SERVICE TRANSFER TEMPORARILY OR PERMIT USE OR ENJOYMENT",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440460",
+        "description": "COSMETICS & PLASTIC SURGERY SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440096",
+        "description": "COST ACCOUNTANTS",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440014",
+        "description": "COURIER AGENCY",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440394",
+        "description": "CREDIT CARD RELATED SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440088",
+        "description": "CREDIT RATING AGENCIES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440026",
+        "description": "CUSTOM HOUSE AGENT",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440422",
+        "description": "DESIGN SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440414",
+        "description": "DEVELOPMENT AND SUPPLY OF CONTENT SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440310",
+        "description": "DREDGING SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440221",
+        "description": "DRY CLEANING SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440610",
+        "description": "ELECTRICITY EXCHANGE SERVICE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440233",
+        "description": "ERECTION,COMMISSIONING AND INSTALLATION",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440197",
+        "description": "EVENT MANAGEMENT SERVICE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440149",
+        "description": "FACSIMILE SERVICES (FAX)",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440213",
+        "description": "FASHION DESIGNER SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440282",
+        "description": "FORWARD CONTRACT SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440237",
+        "description": "FRANCHISE SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440005",
+        "description": "GENERAL INSURANCE BUSINESS",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440067",
+        "description": "GOODS TRANSPORT OPERATORS",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440205",
+        "description": "HEALTH CLUB AND FITNESS CENTER",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440598",
+        "description": "HEALTH SERVICES BY A CLINICAL ESTABLISHMENT, HEALTH CHECKUP/DIAGNOSIS ETC.",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440452",
+        "description": "INFORMATION TECHNOLOGY SOFTWARE SERVICE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440169",
+        "description": "INSURANCE AUXILIARY",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440278",
+        "description": "INTELLECTUAL PROPERTY SERVICES OTHER THAN COPYRIGHT",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440076",
+        "description": "INTERIOR DECORATORS/ DESIGNER’S SERVICE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440241",
+        "description": "INTERNET CAFE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440382",
+        "description": "INTERNET TELECOMMUNICATION/ (TELEPHONY) SERVICE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440137",
+        "description": "LEASED CIRCUITS",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440480",
+        "description": "LEGAL CONSULTANCY SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440185",
+        "description": "LIFE INSURANCE SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440330",
+        "description": "MAILING LIST COMPILATION",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440601",
+        "description": "MAINTENANCE OF MEDICAL RECORDS SERVICE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440245",
+        "description": "MAINTENANCE OR REPAIR SERVICE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440116",
+        "description": "MANAGEMENT CONSULTANTS",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440035",
+        "description": "MANDAP KEEPER SAC codePage 1 of 535 SACServices",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440060",
+        "description": "MANPOWER RECRUITMENT AGENCY",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440112",
+        "description": "MARKET RESEARCH AGENCY",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440322",
+        "description": "MEMBERSHIP OF CLUBS",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440402",
+        "description": "MINING SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440153",
+        "description": "ONLINE INFORMATION AND DATA",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440274",
+        "description": "OPINION POLL SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "441480",
+        "description": "OTHER TAXABLE SERVICES – OTHER THAN THE ONES MENTIONED",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440051",
+        "description": "OUTDOOR CATERING",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440326",
+        "description": "PACKAGING SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440015",
+        "description": "PAGER SERVICES (RADIO PAGING)",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440054",
+        "description": "PANDAL OR SHAMIANA SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440607",
+        "description": "PERMITTING COMMERCIAL USE OR EXPLOITATION OF EVENTS SERVICE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440129",
+        "description": "PHOTOGRAPHY SERVICE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440177",
+        "description": "PORT SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440286",
+        "description": "PROGRAMME PRODUCER SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440604",
+        "description": "PROMOTION OR MARKETING OF BRAND OF GOODS OR SERVICES OR EVENTS SERVICE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440595",
+        "description": "PROMOTION, MARKETING, ORGANISING OR ASSISTING IN ORGANISING GAMES OF CHANCE INCLUDING LOTTERY, ETC.",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440374",
+        "description": "PUBLIC RELATION MANAGEMENT SERVICE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440201",
+        "description": "RAIL TRAVEL AGENT",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440104",
+        "description": "REAL ESTATE AGENT",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440434",
+        "description": "RECOGNISED ASSOCIATION OR REGISTERED ASSOCIATION COMMONLY KNOWN AS COMMODITY EXCHANGE SERVICE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440350",
+        "description": "RECOVERY AGENT",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440338",
+        "description": "REGISTRAR TO AN ISSUE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440048",
+        "description": "RENT A CAB OPERATORS",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440406",
+        "description": "RENTING OF IMMOVABLE PROPERTY SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440181",
+        "description": "REPAIR, RECONDITIONING, RESTORATION OR DECORATION OR ANY SIMILAR SERVICES OF ANY MOTOR VEHICLE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "441067",
+        "description": "RESTAURANT SERVICE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440354",
+        "description": "SALE OF SPACE OR TIME SLOT FOR ADVERTISEMENT",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440125",
+        "description": "SCIENTIFIC AND TECHNICAL CONSULTANCY",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440108",
+        "description": "SECURITY / DETECTIVE AGENCIES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440442",
+        "description": "SERVICES PROVIDED BY A PROCESSING AND CLEARINGHOUSE IN RELATION TO SECURTITIES, GOODS AND FORWARD CONTRACTS",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440430",
+        "description": "SERVICES PROVIDED BY AN INSURER OF LIFE INSURANCE UNDER UNIT LINKED INSURANCE PLAN (ULIP)",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440438",
+        "description": "SERVICESPROVIDEDBYRECOGNISEDORREGISTEREDASSOCIATIONSINRELATIONTOCLEARANCEORSETTLEMENTOFTRANSACTIONSIN GOODS OR FORWARD CONTRACTS",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440342",
+        "description": "SHARE TRANSFER AGENT",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440378",
+        "description": "SHIP MANAGEMENT SERVICE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440306",
+        "description": "SITE PREPARATION AND CLEARANCE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440161",
+        "description": "SOUND RECORDING SERVICE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440616",
+        "description": "SPECIAL SERVICES PROVIDED BY BUILDERS",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440358",
+        "description": "SPONSORSHIP SERVICE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440029",
+        "description": "STEAMER AGENT",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440008",
+        "description": "STOCK BROKER",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440193",
+        "description": "STORAGE AND WAREHOUSE SERVICE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440445",
+        "description": "SUPPLY OF TANGIBLE GOODS FOR USE SERVICE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440270",
+        "description": "SURVEY AND EXPLORATION OF MINERAL",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440314",
+        "description": "SURVEY AND MAP MAKING",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440249",
+        "description": "TECHNICAL TESTING,INSPECTION, CERTIFICATION",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440398",
+        "description": "TELECOMMUNICATION SERVICES",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440141",
+        "description": "TELEGRAPH SERVICE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440003",
+        "description": "TELEPHONE SERVICE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440145",
+        "description": "TELEX SERVICE",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440063",
+        "description": "TOUR OPERATOR",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440386",
+        "description": "TRANSPORT BY CRUISE SHIPS",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440266",
+        "description": "TRANSPORT OF GOODS BY AIR",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440470",
+        "description": "TRANSPORTOFGOODSBYCOASTALSHIPPING(SERVICESBYWAYOFTRANSPORTATIONOFGOODSBYINLANDWATERWAYSISPLACEDIN THE NEGATIVE LIST)",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440302",
+        "description": "TRANSPORT OF GOODS BY PIPELINE OR OTHER CONDUIT",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440390",
+        "description": "TRANSPORT OF GOODS BY RAIL",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440262",
+        "description": "TRANSPORT OF GOODS BY ROAD",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440294",
+        "description": "TRAVEL AGENTS (OTHER THAN AIR/RAIL TRAVEL AGENTS)",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440084",
+        "description": "UNDER WRITERS",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440157",
+        "description": "VIDEO TAPE PRODUCTION",
+        "gstRate": null,
+        "category": null
+      },
+      {
+        "code": "440410",
+        "description": "WORKS CONTRACT SERVICES",
+        "gstRate": null,
+        "category": null
+      }
+]

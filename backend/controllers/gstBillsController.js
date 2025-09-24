@@ -1,5 +1,6 @@
 const GSTBill = require('../models/GSTBill');
 const Shop = require('../models/Shop');
+const GSTShop = require('../models/GSTShop');
 
 // Get all GST bills
 const getGSTBills = async (req, res) => {
@@ -74,7 +75,7 @@ const getGSTBill = async (req, res) => {
     const gstBill = await GSTBill.findOne({ 
       _id: id, 
       sellerId 
-    }).populate('shopId', 'name address');
+    }).populate('shopId', 'name address email phone gstin pan stateName stateCode city pincode country street');
 
     if (!gstBill) {
       return res.status(404).json({
@@ -83,9 +84,18 @@ const getGSTBill = async (req, res) => {
       });
     }
 
+    // Fallback: if bill doesn't have shop phone/email, copy from populated shopId
+    const billObj = gstBill.toObject();
+    if ((!billObj.shopPhone || !billObj.shopEmail || !billObj.shopGST || !billObj.shopPAN) && billObj.shopId) {
+      billObj.shopPhone = billObj.shopPhone || billObj.shopId.phone || '';
+      billObj.shopEmail = billObj.shopEmail || billObj.shopId.email || '';
+      billObj.shopGST = billObj.shopGST || billObj.shopId.gstin || '';
+      billObj.shopPAN = billObj.shopPAN || billObj.shopId.pan || '';
+    }
+
     res.json({
       success: true,
-      data: { gstBill }
+      data: { gstBill: billObj }
     });
 
   } catch (error) {
@@ -109,11 +119,21 @@ const createGSTBill = async (req, res) => {
       billData.invoiceNumber = `GST-${String(count + 1).padStart(6, '0')}`;
     }
 
-    // Get shop details
-    const shop = await Shop.findById(billData.shopId);
+    // Get shop details (support both legacy Shop and GSTShop)
+    let shop = null;
+    try { shop = await Shop.findById(billData.shopId); } catch {}
+    if (!shop) {
+      try { shop = await GSTShop.findById(billData.shopId); } catch {}
+    }
     if (shop) {
-      billData.shopName = shop.name;
-      billData.shopAddress = shop.address;
+      billData.shopName = shop.name || shop.businessName || billData.shopName || '';
+      billData.shopAddress = shop.address || `${shop.street || ''}${shop.street ? ', ' : ''}${shop.city || ''}${shop.city ? ', ' : ''}${shop.stateName || ''}${shop.stateName ? ', ' : ''}${shop.country || ''}${shop.pincode ? `, ${shop.pincode}` : ''}`;
+      billData.shopGST = shop.gstin || '';
+      billData.shopPAN = shop.pan || '';
+      billData.shopPhone = shop.phone || '';
+      billData.shopEmail = shop.email || '';
+      billData.shopStateName = shop.stateName || shop.state || '';
+      billData.shopStateCode = shop.stateCode || '';
     }
 
     const gstBill = new GSTBill(billData);
@@ -127,10 +147,15 @@ const createGSTBill = async (req, res) => {
 
   } catch (error) {
     console.error('Error creating GST bill:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error creating GST bill'
-    });
+    // Duplicate invoice number
+    if (error && (error.code === 11000 || String(error.message || '').includes('duplicate key'))) {
+      return res.status(409).json({ success: false, message: 'Invoice number already exists. Please change the last number.' });
+    }
+    // Mongoose validation errors
+    if (error && error.name === 'ValidationError') {
+      return res.status(400).json({ success: false, message: 'Validation failed', details: error.errors });
+    }
+    res.status(500).json({ success: false, message: 'Error creating GST bill' });
   }
 };
 

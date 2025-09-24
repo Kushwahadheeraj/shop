@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart3, TrendingUp, DollarSign, Users, Package, Calendar, Download, Filter, RefreshCw, Eye, FileText, PieChart, LineChart } from 'lucide-react';
+import { BarChart3, TrendingUp, DollarSign, Users, Package, Calendar, Download, Filter, RefreshCw, Eye, FileText, PieChart, LineChart, X, CheckCircle } from 'lucide-react';
 
 const AnalyticsDashboard = ({ onClose, bills = [] }) => {
   const [dateRange, setDateRange] = useState('30');

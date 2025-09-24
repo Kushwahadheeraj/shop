@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Filter, Download, Eye, Edit, Trash2, Calendar, DollarSign, Building2, CreditCard, History, Receipt, X, FileText, Printer, BarChart3 } from 'lucide-react';
+import { Plus, Search, Filter, Download, Eye, Edit, Trash2, Calendar, DollarSign, Building2, CreditCard, History, Receipt, X, FileText, Printer, BarChart3, Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../../components/AuthContext';
 import AddGSTBillForm from './AddGSTBillForm';
@@ -8,6 +8,7 @@ import GSTBillViewModal from './GSTBillViewModal';
 import EditGSTBillForm from './EditGSTBillForm';
 import InvoiceTemplates from './components/InvoiceTemplates';
 import AnalyticsDashboard from './components/AnalyticsDashboard';
+import ContactsManager from './components/ContactsManager';
 
 const GSTBillManagementPage = () => {
   const router = useRouter();
@@ -17,6 +18,7 @@ const GSTBillManagementPage = () => {
   const [showEditGSTBillForm, setShowEditGSTBillForm] = useState(false);
   const [showInvoiceTemplates, setShowInvoiceTemplates] = useState(false);
   const [showAnalyticsDashboard, setShowAnalyticsDashboard] = useState(false);
+  const [showContacts, setShowContacts] = useState(false);
   const [selectedBill, setSelectedBill] = useState(null);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [shops, setShops] = useState([]);
@@ -96,15 +98,15 @@ const GSTBillManagementPage = () => {
     );
   }
 
-  // Fetch shops
+  // Fetch GST shops only (GST module uses dedicated shops)
   const fetchShops = async () => {
     try {
       setShopsLoading(true);
       const token = localStorage.getItem('token');
-      console.log('🔑 Token for shops API:', token ? 'Present' : 'Missing');
-      console.log('🔗 Shops API URL: http://localhost:5000/api/shops');
+      console.log('🔑 Token for GST shops API:', token ? 'Present' : 'Missing');
+      console.log('🔗 GST Shops API URL: /api/gst-shops');
       
-      const response = await fetch('http://localhost:5000/api/shops', {
+      const response = await fetch('/api/gst-shops', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -125,7 +127,7 @@ const GSTBillManagementPage = () => {
       }
       
       if (data.success) {
-        const shops = data.data.shops || [];
+        const shops = data.data || [];
         console.log('✅ Shops data extracted:', shops);
         console.log('✅ Number of shops:', shops.length);
         setShops(shops);
@@ -555,7 +557,7 @@ const GSTBillManagementPage = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">GST Bill Management</h1>
-          <p className="text-gray-600">Manage your GST bills and invoices</p>
+          {/* <p className="text-gray-600">Manage your GST bills and invoices</p>
           <div className="text-sm text-gray-500 space-y-1">
             <p>Shops loaded: {shops.length}</p>
             <p>GST Bills loaded: {gstBills.length}</p>
@@ -569,7 +571,7 @@ const GSTBillManagementPage = () => {
                 `Showing all results (${stats.totalBills} bills)`
               }
             </p>
-          </div>
+          </div> */}
         </div>
         <div className="flex gap-3">
           <button
@@ -582,6 +584,13 @@ const GSTBillManagementPage = () => {
             className="flex items-center gap-2 px-4 py-2 border border-blue-300 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors"
           >
             🔄 Refresh Data
+          </button>
+          <button
+            onClick={() => setShowContacts(true)}
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <Users className="w-4 h-4" />
+            Contacts
           </button>
           <button
             onClick={() => setShowAnalyticsDashboard(true)}
@@ -687,7 +696,7 @@ const GSTBillManagementPage = () => {
               </option>
               {shops.map(shop => (
                 <option key={shop._id} value={shop._id}>
-                  {shop.name} - {shop.address}
+                  {shop.name} - {(shop.street||'')}{shop.city?`, ${shop.city}`:''}{shop.stateName?`, ${shop.stateName}`:''}
                 </option>
               ))}
             </select>
@@ -972,6 +981,10 @@ const GSTBillManagementPage = () => {
           onClose={() => setShowAnalyticsDashboard(false)}
           bills={gstBills}
         />
+      )}
+
+      {showContacts && (
+        <ContactsManager isOpen={showContacts} onClose={()=>setShowContacts(false)} />
       )}
     </div>
   );

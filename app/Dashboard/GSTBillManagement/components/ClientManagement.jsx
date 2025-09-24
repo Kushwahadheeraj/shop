@@ -110,13 +110,21 @@ const ClientManagement = ({ onClose, onSelectClient, initialClient, mode = 'add'
 
   const save = async () => {
     const token = localStorage.getItem('token');
-    await fetch('http://localhost:5000/api/clients', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-      body: JSON.stringify({ name: form.businessName, country: form.country, city: form.city, stateName: form.stateName, stateCode: form.stateCode, gstin: form.gstin, pan: form.pan, alias: form.alias, email: form.email, phone: form.phone })
-    });
-    onSelectClient({ name: form.businessName, address: '', country: form.country, city: form.city });
-    onClose();
+    const payload = { name: form.businessName, country: form.country, city: form.city, stateName: form.stateName, stateCode: form.stateCode, gstin: form.gstin, pan: form.pan, alias: form.alias, email: form.email, phone: form.phone };
+    try {
+      let res;
+      if (mode === 'edit' && initialClient?._id) {
+        res = await fetch(`/api/clients/${initialClient._id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(payload) });
+      } else {
+        res = await fetch('/api/clients', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(payload) });
+      }
+      const data = await res.json();
+      const saved = data?.data?.client || data?.client || payload;
+      onSelectClient({ name: saved.name || form.businessName, address: saved.address || '', country: saved.country || form.country, city: saved.city || form.city, stateName: saved.stateName || form.stateName, stateCode: saved.stateCode || form.stateCode, gstin: saved.gstin || form.gstin, email: saved.email || form.email, phone: saved.phone || form.phone });
+      onClose();
+    } catch (e) {
+      alert('Failed to save client');
+    }
   };
 
   return (

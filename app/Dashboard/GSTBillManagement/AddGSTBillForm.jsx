@@ -112,6 +112,7 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
   const [hsnQuery, setHsnQuery] = useState('');
   const [hsnPage, setHsnPage] = useState(1);
   const [hsnPageSize, setHsnPageSize] = useState(50);
+  const [lastInvoiceNumber, setLastInvoiceNumber] = useState('');
 
   const filteredHSN = useMemo(() => {
     const q = (hsnQuery || '').toLowerCase().trim();
@@ -224,6 +225,21 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
           // Auto-select default if available, otherwise keep previous selection
           const def = d.data.find(x=>x.isDefault);
           if (def) { setSelectedGSTShop(def); handleInputChange('shopId', def._id); }
+        }
+      } catch {}
+    })();
+  }, []);
+
+  // Fetch last invoice number (latest) so user can see previous number
+  useEffect(() => {
+    (async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch('/api/gst-bills', { headers: { 'Authorization': `Bearer ${token}` } });
+        const data = await res.json();
+        const list = data?.data?.gstBills || data?.data || data?.gstBills || [];
+        if (Array.isArray(list) && list.length > 0) {
+          setLastInvoiceNumber(list[0].invoiceNumber || '');
         }
       } catch {}
     })();
@@ -531,12 +547,11 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
         grandTotal: totals.grandTotal,
         shopName: shops.find(s => s._id === formData.shopId)?.name || ''
       };
-      
-      await onSave(billData);
-      onClose();
+      // Defer saving until bank details added; store draft and go to bank step
+      sessionStorage.setItem('pending_gst_bill', JSON.stringify(billData));
+      window.location.href = '/Dashboard/GSTBillManagement/BankDetails';
     } catch (error) {
-      console.error('Error saving GST bill:', error);
-    } finally {
+      console.error('Error preparing GST bill:', error);
       setLoading(false);
     }
   };
@@ -640,28 +655,22 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
                       className="w-20 text-sm text-gray-900 border-b border-purple-500 pb-1 focus:outline-none uppercase"
                     />
                     <span className="text-sm text-gray-900">/</span>
-                    <input
-                      type="text"
-                      value={invoicePeriod}
-                      onChange={(e)=>setInvoicePeriod(e.target.value)}
-                      placeholder="MM-YY"
-                      className="w-16 text-sm text-gray-900 border-b border-purple-500 pb-1 focus:outline-none"
-                    />
+                    <span className="w-16 text-sm text-gray-900 border-b border-purple-500 pb-1 select-none inline-block text-center">{invoicePeriod}</span>
                     <span className="text-sm text-gray-900">/</span>
                     <input
                       type="text"
                       value={currentSeq}
                       onChange={(e)=>{
                         const digits = e.target.value.replace(/[^0-9]/g,'');
-                        const padded = digits.padStart(Math.max(4, digits.length), '0');
-                        handleInputChange('invoiceNumber', `${invoicePrefix}${padded}`);
+                        handleInputChange('invoiceNumber', `${invoicePrefix}${digits}`);
                       }}
                       placeholder="0001"
-                      className="w-20 text-sm text-gray-900 border-b border-purple-500 pb-1 focus:outline-none"
+                      maxLength={6}
+                      className="w-24 text-sm text-gray-900 border-b border-purple-500 pb-1 focus:outline-none"
                     />
                 </div>
-                  {prevInvoiceDisplay ? (
-                    <span className="text-xs text-gray-500 mt-1">Last No: {prevInvoiceDisplay}</span>
+                  {(lastInvoiceNumber || prevInvoiceDisplay) ? (
+                    <span className="text-xs text-gray-500 mt-1">Last No: {lastInvoiceNumber || prevInvoiceDisplay}</span>
                   ) : null}
                   {errors.invoiceNumber && <span className="text-xs text-red-600 mt-1">{errors.invoiceNumber}</span>}
               </div>

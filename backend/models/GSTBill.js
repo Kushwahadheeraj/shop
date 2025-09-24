@@ -11,6 +11,11 @@ const itemSchema = new mongoose.Schema({
     trim: true,
     default: ''
   },
+  hsnSac: {
+    type: String,
+    trim: true,
+    default: ''
+  },
   quantity: {
     type: Number,
     required: true,
@@ -32,7 +37,10 @@ const itemSchema = new mongoose.Schema({
     type: Number,
     required: true,
     min: 0
-  }
+  },
+  cgst: { type: Number, default: 0 },
+  sgst: { type: Number, default: 0 },
+  igst: { type: Number, default: 0 }
 });
 
 const gstBillSchema = new mongoose.Schema({
@@ -59,7 +67,22 @@ const gstBillSchema = new mongoose.Schema({
     trim: true,
     default: ''
   },
+  shopStateName: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  shopStateCode: {
+    type: String,
+    trim: true,
+    default: ''
+  },
   shopGST: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  shopPAN: {
     type: String,
     trim: true,
     default: ''
@@ -173,6 +196,13 @@ const gstBillSchema = new mongoose.Schema({
     type: Number,
     default: 0,
     min: 0
+  },
+
+  // Linked bank account
+  bankAccountId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'BankAccount',
+    default: null
   },
 
   // Timestamps

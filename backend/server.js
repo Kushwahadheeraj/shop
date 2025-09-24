@@ -33,6 +33,7 @@ const categoryCountRoutes = require('./routes/categoryCountRoutes');
 const billRoutes = require('./routes/billRoutes');
 const shopRoutes = require('./routes/shopRoutes');
 const gstBillsRoutes = require('./routes/gstBillsRoutes');
+const bankAccountsRoutes = require('./routes/bankAccountsRoutes');
 const gstShopsRoutes = require('./routes/gstShopsRoutes');
 const clientsRoutes = require('./routes/clientsRoutes');
 
@@ -63,6 +64,7 @@ app.use('/api/shops', shopRoutes);
 app.use('/api/gst-shops', gstShopsRoutes);
 app.use('/api/gst-bills', gstBillsRoutes);
 app.use('/api/clients', clientsRoutes);
+app.use('/api/bank-accounts', bankAccountsRoutes);
 app.use('/api/adhesives', adhesivesRoutes);
 app.use('/api/brush', brushRoutes);
 app.use('/api/cements', cementsRoutes);

@@ -1,11 +1,13 @@
 import * as React from "react"
-import { cn } from "@/lib/utils"
+
+// Fallback cn function if utils is not available
+const cn = (...classes) => classes.filter(Boolean).join(' ')
 
 const Card = React.forwardRef(({ className, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      "rounded-lg border bg-card text-card-foreground shadow-sm",
+      "rounded-lg border bg-white text-gray-900 shadow-sm",
       className
     )}
     {...props}

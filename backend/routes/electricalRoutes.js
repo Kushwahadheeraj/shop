@@ -150,7 +150,7 @@ crudRoutes('switchAndSocket', switchAndSocket);
 crudRoutes('sockets', sockets);
 crudRoutes('rotarySwitch', rotarySwitch);
 crudRoutes('regulators', regulators);
-crudRoutes('pvCClips', pvCClips);
+crudRoutes('pVCClips', pvCClips);
 crudRoutes('powerStrips', powerStrips);
 crudRoutes('plug', plug);
 crudRoutes('pinTop', pinTop);

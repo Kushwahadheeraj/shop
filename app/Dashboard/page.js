@@ -1,137 +1,416 @@
 "use client";
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../components/AuthContext';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { Button } from '../../components/ui/button';
+import { Select } from '../../components/ui/select';
+import { 
+  Users, 
+  ShoppingCart, 
+  TrendingUp, 
+  TrendingDown,
+  Package,
+  DollarSign,
+  BarChart3,
+  Activity
+} from 'lucide-react';
+import MonthlyChart from './components/MonthlyChart';
+import AreaChart from './components/AreaChart';
 
 export default function DashboardPage() {
   const { isAuthenticated, isSeller, loading, user } = useAuth();
   const router = useRouter();
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loadingData, setLoadingData] = useState(true);
+  const [selectedPeriod, setSelectedPeriod] = useState('30');
+  const [currentView, setCurrentView] = useState('user'); // 'user' or 'product'
+
+  // Fetch dashboard data
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoadingData(true);
+        const token = localStorage.getItem('token');
+        const response = await fetch(`/api/dashboard/analytics?view=${currentView}&period=${selectedPeriod}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          console.log('Dashboard API response:', result);
+          if (result.success) {
+            setDashboardData(result.data);
+          } else {
+            console.error('API returned error:', result.error);
+            // Set default data structure to prevent crashes
+            setDashboardData({
+              users: { total: 0, new: 0, active: 0, growth: 0 },
+              orders: { total: 0, deliveries: 0, growth: 0 },
+              products: { total: 0, new: 0, active: 0, growth: 0 },
+              sales: { total: 0, growth: 0 },
+              revenue: 0,
+              monthlyData: [],
+              areaData: [],
+              topProducts: []
+            });
+          }
+        } else {
+          console.error('Failed to fetch dashboard data:', response.status, response.statusText);
+          // Set default data structure
+          setDashboardData({
+            users: { total: 0, new: 0, active: 0, growth: 0 },
+            orders: { total: 0, deliveries: 0, growth: 0 },
+            products: { total: 0, new: 0, active: 0, growth: 0 },
+            sales: { total: 0, growth: 0 },
+            revenue: 0,
+            monthlyData: [],
+            areaData: [],
+            topProducts: []
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+        // Set default data structure
+        setDashboardData({
+          users: { total: 0, new: 0, active: 0, growth: 0 },
+          orders: { total: 0, deliveries: 0, growth: 0 },
+          products: { total: 0, new: 0, active: 0, growth: 0 },
+          sales: { total: 0, growth: 0 },
+          revenue: 0,
+          monthlyData: [],
+          areaData: [],
+          topProducts: []
+        });
+      } finally {
+        setLoadingData(false);
+      }
+    };
+
+    if (isAuthenticated() && isSeller()) {
+      fetchDashboardData();
+    }
+  }, [isAuthenticated, isSeller, selectedPeriod, currentView]);
 
   // Show loading while checking authentication
-  if (loading) {
+  if (loading || loadingData) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-8 h-8 border-4 border-yellow-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">Loading dashboard...</p>
         </div>
       </div>
     );
   }
 
-  // Don't render if not authenticated or not a seller
+  // Redirect if not authenticated or not a seller
   if (!isAuthenticated() || !isSeller()) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <p className="text-gray-600">Access denied. Only sellers can access this dashboard.</p>
-        </div>
-      </div>
-    );
+    router.push('/login');
+    return null;
   }
 
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  const formatNumber = (num) => {
+    return new Intl.NumberFormat('en-IN').format(num || 0);
+  };
+
+  // Fallback data structure
+  const defaultData = {
+    users: { total: 0, new: 0, active: 0, growth: 0 },
+    orders: { total: 0, deliveries: 0, growth: 0 },
+    products: { total: 0, new: 0, active: 0, growth: 0 },
+    sales: { total: 0, growth: 0 },
+    revenue: 0,
+    monthlyData: [],
+    areaData: [],
+    topProducts: []
+  };
+
+  const data = dashboardData || defaultData;
+
   return (
-    <div className="space-y-6">
-      {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-lg">
-        <h1 className="text-3xl font-bold mb-2">
-          Welcome back, {user?.username || "Seller"}!
-        </h1>
-        <p className="text-blue-100">
-          Manage your products, track orders, and grow your business from your seller dashboard.
-        </p>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            <div className="flex items-center space-x-4">
+              <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+              <div className="flex space-x-2">
+                <Button
+                  variant={currentView === 'user' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setCurrentView('user')}
+                  className={currentView === 'user' ? 'bg-yellow-600 hover:bg-yellow-700' : ''}
+                >
+                  <Users className="w-4 h-4 mr-2" />
+                  User Analytics
+                </Button>
+                <Button
+                  variant={currentView === 'product' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setCurrentView('product')}
+                  className={currentView === 'product' ? 'bg-yellow-600 hover:bg-yellow-700' : ''}
+                >
+                  <Package className="w-4 h-4 mr-2" />
+                  Product Analytics
+                </Button>
       </div>
-
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-          <div className="flex items-center">
-            <div className="p-3 bg-blue-100 rounded-full">
-              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-              </svg>
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Products</p>
-              <p className="text-2xl font-semibold text-gray-900">0</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-          <div className="flex items-center">
-            <div className="p-3 bg-green-100 rounded-full">
-              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Active Orders</p>
-              <p className="text-2xl font-semibold text-gray-900">0</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-          <div className="flex items-center">
-            <div className="p-3 bg-yellow-100 rounded-full">
-              <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Revenue</p>
-              <p className="text-2xl font-semibold text-gray-900">₹0</p>
+            <div className="flex items-center space-x-4">
+              <Select value={selectedPeriod} onChange={(e) => setSelectedPeriod(e.target.value)}>
+                <option value="7">Last 7 days</option>
+                <option value="30">Last 30 days</option>
+                <option value="90">Last 90 days</option>
+                <option value="365">Last year</option>
+              </Select>
+              <div className="text-sm text-gray-500">
+                Welcome back, {user?.name || 'Seller'}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-        <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors text-center">
-            <svg className="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-            <p className="text-sm font-medium text-gray-600">Add New Product</p>
-          </button>
-          
-          <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors text-center">
-            <svg className="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-            </svg>
-            <p className="text-sm font-medium text-gray-600">View Orders</p>
-          </button>
-          
-          <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-colors text-center">
-            <svg className="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-            <p className="text-sm font-medium text-gray-600">Edit Profile</p>
-          </button>
-          
-          <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-colors text-center">
-            <svg className="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            <p className="text-sm font-medium text-gray-600">Settings</p>
-          </button>
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {currentView === 'user' ? (
+          <>
+            {/* User Analytics Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{formatNumber(data.users?.total)}</div>
+                  <p className="text-xs text-muted-foreground">
+                    <span className="text-green-600 flex items-center">
+                      <TrendingUp className="w-3 h-3 mr-1" />
+                      +{data.users?.growth}% from last month
+                    </span>
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">New Users</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{formatNumber(data.users?.new)}</div>
+                  <p className="text-xs text-muted-foreground">
+                    This month
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Active Users</CardTitle>
+                  <Activity className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{formatNumber(data.users?.active || 0)}</div>
+                  <p className="text-xs text-muted-foreground">
+                    Currently active
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
+                  <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{formatNumber(data.orders?.total || 0)}</div>
+                  <p className="text-xs text-muted-foreground">
+                    <span className="text-green-600 flex items-center">
+                      <TrendingUp className="w-3 h-3 mr-1" />
+                      +{data.orders?.growth || 0}% from last month
+                    </span>
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Charts Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              {/* Monthly Chart */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Daily Orders</CardTitle>
+                  <CardDescription>
+                    Orders over the last {selectedPeriod} days
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <MonthlyChart data={data.monthlyData || []} />
+                </CardContent>
+              </Card>
+
+              {/* Area Chart */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Orders vs Deliveries</CardTitle>
+                  <CardDescription>
+                    Monthly comparison of orders and deliveries
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <AreaChart data={data.areaData || []} />
+                </CardContent>
+              </Card>
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Product Analytics Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total Products</CardTitle>
+                  <Package className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{formatNumber(data.products?.total || 0)}</div>
+                  <p className="text-xs text-muted-foreground">
+                    <span className="text-green-600 flex items-center">
+                      <TrendingUp className="w-3 h-3 mr-1" />
+                      +{data.products?.growth || 0}% from last month
+                    </span>
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">New Products</CardTitle>
+                  <Package className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{formatNumber(data.products?.new || 0)}</div>
+                  <p className="text-xs text-muted-foreground">
+                    This month
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Active Products</CardTitle>
+                  <Activity className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{formatNumber(data.products?.active || 0)}</div>
+                  <p className="text-xs text-muted-foreground">
+                    Currently selling
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+                  <DollarSign className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{formatCurrency(data.revenue || 0)}</div>
+                  <p className="text-xs text-muted-foreground">
+                    <span className="text-green-600 flex items-center">
+                      <TrendingUp className="w-3 h-3 mr-1" />
+                      +{data.sales?.growth || 0}% from last month
+                    </span>
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Charts Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              {/* Monthly Sales Chart */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Daily Sales</CardTitle>
+                  <CardDescription>
+                    Sales over the last {selectedPeriod} days
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <MonthlyChart data={data.monthlyData || []} />
+                </CardContent>
+              </Card>
+
+              {/* Area Chart */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Sales vs Revenue</CardTitle>
+                  <CardDescription>
+                    Monthly comparison of sales and revenue
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <AreaChart data={data.areaData || []} />
+                </CardContent>
+              </Card>
+            </div>
+          </>
+        )}
+
+        {/* Top Selling Products */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Top Selling Products</CardTitle>
+            <CardDescription>
+              Your best performing products this {selectedPeriod} days
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {data.topProducts?.length > 0 ? (
+                dashboardData.topProducts.map((product, index) => (
+                  <div key={index} className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                        <span className="text-sm font-medium text-yellow-800">{product.id}</span>
+          </div>
+                      <div>
+                        <p className="text-sm font-medium">{product.name}</p>
+                        <p className="text-xs text-gray-500">{formatNumber(product.sales)} units sold</p>
         </div>
       </div>
-
-      {/* Recent Activity */}
-      <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-        <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
+                    <div className="text-right">
+                      <p className="text-sm font-medium">{formatCurrency(product.revenue)}</p>
+                      <p className="text-xs text-gray-500">{formatNumber(product.sales)} sales</p>
+        </div>
+      </div>
+                ))
+              ) : (
         <div className="text-center py-8 text-gray-500">
-          <svg className="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-          </svg>
-          <p>No recent activity to show</p>
-          <p className="text-sm">Start by adding your first product!</p>
+                  <div className="w-12 h-12 mx-auto mb-2 bg-yellow-100 rounded-full flex items-center justify-center">
+                    <span className="text-2xl">📊</span>
+                  </div>
+                  <p>No product data available</p>
+                </div>
+              )}
         </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

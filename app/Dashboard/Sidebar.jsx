@@ -4827,7 +4827,6 @@ const sections = [
   { name: 'Coupon List', path: '/Dashboard/Coupons' },
   { name: 'Bill Management', path: '/Dashboard/BillManagement' },
   { name: 'GST Bill Management', path: '/Dashboard/GSTBillManagement' },
-  { name: 'HSN', path: '/Dashboard/HSN' },
 ];
 
 // Add this helper function at the top (after imports):

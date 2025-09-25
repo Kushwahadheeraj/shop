@@ -117,7 +117,7 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
     setShowAIScanner(true);
   };
 
-  const handleAIScanComplete = (scannedData) => {
+  const handleAIScanComplete = async (scannedData) => {
     // Find matching shop or create a new one
     const matchingShop = shops.find(shop => 
       shop.name.toLowerCase().includes(scannedData.shopName.toLowerCase()) ||
@@ -137,6 +137,54 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
     // If no matching shop found, suggest creating one
     if (!matchingShop) {
       alert(`Shop "${scannedData.shopName}" not found. Please add this shop first or select an existing shop.`);
+    }
+
+    // Auto-save when we have meaningful structured data
+    try {
+      const items = Array.isArray(scannedData.items) ? scannedData.items.map(it => ({
+        name: it.name || '',
+        quantity: parseFloat(it.quantity) || 0,
+        unitPrice: parseFloat(it.unitPrice) || 0,
+        category: it.category || '',
+        description: it.description || ''
+      })) : [];
+
+      const hasItems = items.some(it => it.name && it.quantity > 0);
+      const sub = items.reduce((s, it) => s + (it.quantity * it.unitPrice), 0);
+      const gstRate = typeof scannedData?.pricing?.gstRate === 'number' ? scannedData.pricing.gstRate : 0;
+      const gstAmount = typeof scannedData?.pricing?.gstAmount === 'number' ? scannedData.pricing.gstAmount : Math.max(0, sub * (gstRate/100));
+      const discount = typeof scannedData?.pricing?.discount === 'number' ? scannedData.pricing.discount : 0;
+      const totalAmount = typeof scannedData?.pricing?.totalAmount === 'number' ? scannedData.pricing.totalAmount : Math.max(0, sub + gstAmount - discount);
+
+      if (hasItems) {
+        setIsSubmitting(true);
+        const processedData = {
+          ...formData,
+          shopId: matchingShop ? matchingShop._id : '',
+          items,
+          pricing: {
+            subtotal: Math.round((sub + Number.EPSILON) * 100) / 100,
+            gstRate,
+            gstAmount: Math.round((gstAmount + Number.EPSILON) * 100) / 100,
+            totalAmount: Math.round((totalAmount + Number.EPSILON) * 100) / 100,
+            discount: Math.round((discount + Number.EPSILON) * 100) / 100,
+          },
+          payment: {
+            method: scannedData?.payment?.method || 'cash',
+            status: scannedData?.payment?.status || 'pending',
+            paidAmount: parseFloat(scannedData?.payment?.paidAmount) || 0,
+          },
+          billDate: scannedData.billDate || formData.billDate,
+          description: scannedData.description || formData.description,
+        };
+
+        await onSave(processedData);
+        onClose();
+      }
+    } catch (e) {
+      // ignore auto-save failure; user can still review and submit manually
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -301,7 +349,7 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
                     <input
                       type="text"
                       placeholder="Item name"
-                      value={item.name}
+                  value={item.name || ''}
                       onChange={(e) => handleItemChange(index, 'name', e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
@@ -310,7 +358,7 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
                     <input
                       type="number"
                       placeholder="Qty"
-                      value={item.quantity}
+                      value={item.quantity ?? ''}
                       onChange={(e) => handleItemChange(index, 'quantity', e.target.value)}
                       min="1"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -320,7 +368,7 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
                     <input
                       type="number"
                       placeholder="Unit Price"
-                      value={item.unitPrice}
+                      value={item.unitPrice ?? ''}
                       onChange={(e) => handleItemChange(index, 'unitPrice', e.target.value)}
                       min="0"
                       step="0.01"
@@ -331,7 +379,7 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
                     <input
                       type="text"
                       placeholder="Category"
-                      value={item.category}
+                      value={item.category || ''}
                       onChange={(e) => handleItemChange(index, 'category', e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
@@ -370,7 +418,7 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
                 </label>
                 <input
                   type="number"
-                  value={formData.pricing.gstRate}
+                  value={formData.pricing.gstRate ?? 0}
                   onChange={(e) => handleNestedInputChange('pricing', 'gstRate', parseFloat(e.target.value) || 0)}
                   min="0"
                   max="100"
@@ -398,7 +446,7 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
                 </label>
                 <input
                   type="number"
-                  value={formData.pricing.discount}
+                  value={formData.pricing.discount ?? 0}
                   onChange={(e) => handleNestedInputChange('pricing', 'discount', e.target.value)}
                   min="0"
                   step="0.01"
@@ -411,7 +459,7 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
                 </label>
                 <input
                   type="number"
-                  value={formData.payment.paidAmount}
+                  value={formData.payment.paidAmount ?? 0}
                   onChange={(e) => handleNestedInputChange('payment', 'paidAmount', e.target.value)}
                   min="0"
                   step="0.01"
@@ -442,7 +490,7 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
                 </label>
                 <input
                   type="date"
-                  value={formData.dueDate}
+                  value={formData.dueDate || ''}
                   onChange={(e) => handleInputChange('dueDate', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
@@ -457,7 +505,7 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
               <input
                 type="text"
                 placeholder="Enter description"
-                value={formData.description}
+                value={formData.description || ''}
                 onChange={(e) => handleInputChange('description', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />

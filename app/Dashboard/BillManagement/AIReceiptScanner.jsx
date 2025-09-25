@@ -26,56 +26,153 @@ const AIReceiptScanner = ({ onScanComplete, onClose }) => {
     setScanResult(null);
 
     try {
-      // Simulate AI processing delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // Mock AI scanning result - in real implementation, this would call an AI service
-      const mockResult = {
-        shopName: 'Sample Shop',
-        shopAddress: '123 Main Street, City, State',
-        items: [
-          {
-            name: 'Electrical Wire 2.5mm',
-            quantity: 2,
-            unitPrice: 150.00,
-            category: 'Electrical',
-            description: 'Copper wire 2.5mm'
-          },
-          {
-            name: 'Switch Socket',
-            quantity: 4,
-            unitPrice: 75.00,
-            category: 'Electrical',
-            description: 'Single pole switch'
-          },
-          {
-            name: 'MCB 16A',
-            quantity: 1,
-            unitPrice: 450.00,
-            category: 'Electrical',
-            description: 'Miniature Circuit Breaker'
-          }
-        ],
+      // Convert file to base64 safely using FileReader to avoid call stack overflow
+      const base64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const result = reader.result || '';
+            const b64 = typeof result === 'string' && result.includes(',') ? result.split(',')[1] : '';
+            resolve(b64);
+          } catch (e) { reject(e); }
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      const res = await fetch('/api/ai/scan-receipt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: file.name, mimeType: file.type, base64 })
+      });
+      let data;
+      try { data = await res.json(); } catch { data = null; }
+      if (!res.ok && (!data || !data.raw)) {
+        const msg = data?.message || `Scan API error (${res.status})`;
+        setError(msg);
+        setScanResult({
+          shopName: '', shopAddress: '', billDate: new Date().toISOString().split('T')[0],
+          items: [], pricing: { subtotal: 0, gstAmount: 0, totalAmount: 0 },
+          payment: { method: '', status: '', paidAmount: 0 }, description: msg
+        });
+        return;
+      }
+      if (!data?.success) {
+        if (data?.raw) {
+          setError('Could not fully extract fields. Showing AI text output below.');
+          setScanResult({
+            shopName: '',
+            shopAddress: '',
+            billDate: new Date().toISOString().split('T')[0],
+            items: [],
+            pricing: { subtotal: 0, gstAmount: 0, totalAmount: 0 },
+            payment: { method: '', status: '', paidAmount: 0 },
+            description: data.raw
+          });
+          return;
+        }
+        const msg = data?.message || 'No structured data returned. Try a clearer image.';
+        setError(msg);
+        setScanResult({
+          shopName: '', shopAddress: '', billDate: new Date().toISOString().split('T')[0],
+          items: [], pricing: { subtotal: 0, gstAmount: 0, totalAmount: 0 },
+          payment: { method: '', status: '', paidAmount: 0 }, description: msg
+        });
+        return;
+      }
+      const result = data.data || {};
+      const rawText = data.raw || '';
+      // Normalize output minimal shape expected by form
+      const normalized = {
+        shopName: result.shopName || '',
+        shopAddress: result.shopAddress || '',
+        billDate: result.billDate || new Date().toISOString().split('T')[0],
+        items: Array.isArray(result.items) ? result.items.map(it => ({
+          name: it.name || '',
+          quantity: Number(it.quantity) || 1,
+          unitPrice: Number(it.unitPrice) || 0,
+          category: it.category || '',
+          description: it.description || ''
+        })) : [],
         pricing: {
-          subtotal: 1050.00,
-          gstRate: 18,
-          gstAmount: 189.00,
-          totalAmount: 1239.00,
-          discount: 0
+          subtotal: Number(result?.pricing?.subtotal) || 0,
+          gstRate: Number(result?.pricing?.gstRate) || undefined,
+          gstAmount: Number(result?.pricing?.gstAmount) || 0,
+          discount: Number(result?.pricing?.discount) || 0,
+          totalAmount: Number(result?.pricing?.totalAmount) || 0
         },
-        payment: {
-          method: 'cash',
-          status: 'pending',
-          paidAmount: 0
-        },
-        billDate: new Date().toISOString().split('T')[0],
-        description: 'Electrical items purchase'
+        payment: result.payment || { method: '', status: '', paidAmount: 0 },
+        description: result.description || ''
       };
 
-      setScanResult(mockResult);
+      // Heuristic fallback: derive minimal fields from raw text if structured data is empty
+      if ((normalized.items.length === 0) && typeof rawText === 'string' && rawText.trim().length > 0) {
+        const lines = rawText.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+        // Shop name guess: first non-empty line (avoid words like 'TAX INVOICE')
+        const skipWords = /invoice|bill|receipt|tax|gst/i;
+        const firstName = (lines.find(l=>!skipWords.test(l) && l.length>2) || '').slice(0, 64);
+        // Total amount guess (pick last matching number after keywords)
+        let total = 0;
+        const totalRegex = /(grand\s*total|total\s*amount|amount\s*payable|net\s*amount)[^\d]*(\d+[\,\d]*\.?\d*)/ig;
+        let m; let lastNum = null;
+        while ((m = totalRegex.exec(rawText)) !== null) {
+          const n = parseFloat(String(m[2]).replace(/,/g,''));
+          if (!isNaN(n)) lastNum = n;
+        }
+        if (lastNum != null) total = lastNum;
+        // Subtotal guess
+        let subtotal = 0;
+        const subRegex = /(subtotal|amount\s*before\s*tax)[^\d]*(\d+[\,\d]*\.?\d*)/ig;
+        const sm = subRegex.exec(rawText);
+        if (sm && sm[2]) subtotal = parseFloat(sm[2].replace(/,/g,'')) || 0;
+        // GST amount guess
+        let gstAmount = 0;
+        const gstRegex = /(gst|igst|cgst|sgst)[^\d]*(\d+[\,\d]*\.?\d*)/ig;
+        let g;
+        while ((g = gstRegex.exec(rawText)) !== null) {
+          const n = parseFloat(String(g[2]).replace(/,/g,''));
+          if (!isNaN(n)) gstAmount = Math.max(gstAmount, n);
+        }
+        // Try to infer items from lines patterns like:
+        //  "Item Name x2 150", "Item Name 2 x 150", "Item Name 2 150", "Item Name qty:2 rate:150"
+        const parsedItems = [];
+        const itemRegexes = [
+          /^(.*?)[\s\-\–\|\:]+x\s*(\d+(?:\.\d+)?)\s+(\d+(?:[\,]\d+)?(?:\.\d+)?)$/i,
+          /^(.*?)[\s\-\–\|\:]+(\d+(?:\.\d+)?)\s*x\s*(\d+(?:[\,]\d+)?(?:\.\d+)?)$/i,
+          /^(.*?)[\s\-\–\|\:]+qty\s*[:\-]?\s*(\d+(?:\.\d+)?)\s+rate\s*[:\-]?\s*(\d+(?:[\,]\d+)?(?:\.\d+)?)$/i,
+          /^(.*?)[\s\-\–\|\:]+(\d+(?:\.\d+)?)\s+(\d+(?:[\,]\d+)?(?:\.\d+)?)$/i,
+        ];
+        for (const ln of lines) {
+          let matched = false;
+          for (const rx of itemRegexes) {
+            const m = rx.exec(ln);
+            if (m) {
+              const name = (m[1] || '').trim().replace(/\s{2,}/g,' ');
+              const qty = parseFloat(String(m[2]).replace(/,/g,'')) || 1;
+              const rate = parseFloat(String(m[3]).replace(/,/g,'')) || 0;
+              if (name && qty>0) {
+                parsedItems.push({ name, quantity: qty, unitPrice: rate, category: '', description: '' });
+                matched = true;
+                break;
+              }
+            }
+          }
+          if (parsedItems.length >= 20) break;
+        }
+
+        if (normalized.items.length === 0 && parsedItems.length > 0) {
+          normalized.items = parsedItems;
+        }
+
+        normalized.shopName = normalized.shopName || firstName;
+        normalized.pricing.totalAmount = normalized.pricing.totalAmount || total;
+        normalized.pricing.subtotal = normalized.pricing.subtotal || subtotal;
+        normalized.pricing.gstAmount = normalized.pricing.gstAmount || gstAmount;
+        normalized.description = normalized.description || rawText;
+      }
+      setScanResult(normalized);
     } catch (error) {
       console.error('Error processing image:', error);
-      setError('Failed to process the image. Please try again.');
+      setError(error?.message || 'Failed to process the image. Please try again.');
     } finally {
       setIsScanning(false);
     }
@@ -204,6 +301,11 @@ const AIReceiptScanner = ({ onScanComplete, onClose }) => {
                         <span>₹{(item.quantity * item.unitPrice).toFixed(2)}</span>
                       </div>
                     ))}
+                    {scanResult.items.length === 0 && scanResult.description ? (
+                      <div className="text-xs text-gray-600 whitespace-pre-wrap p-2 border rounded bg-white/50">
+                        {scanResult.description}
+                      </div>
+                    ) : null}
                   </div>
                 </div>
 

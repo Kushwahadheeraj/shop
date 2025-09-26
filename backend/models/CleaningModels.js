@@ -8,7 +8,7 @@ const CleaningProductSchema = new mongoose.Schema({
   totalProduct: { type: Number, required: true },
   sku: { type: String, default: 'N/A' },
   category: { type: String, default: 'Cleaning' },
-  tag: [String],
+  tags: [String],
   description: String,
   photos: [String],
 }, { timestamps: true });

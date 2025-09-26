@@ -9,13 +9,15 @@ const sizeSchema = new mongoose.Schema({
 const DryProductSchema = new mongoose.Schema({
   name: { type: String, required: true },
   sku: { type: String, default: 'N/A' },
+  fixPrice: { type: Number },
   minPrice: { type: Number, required: true },
   maxPrice: { type: Number, required: true },
   discount: { type: Number, default: 0 },
+  discountPrice: { type: Number },
   description: String,
   totalProduct: { type: Number, required: true },
   category: { type: String, default: 'Dry' },
-  tag: [String],
+  tags: [String],
   sizes: [sizeSchema],
   photos: [String],
 }, { timestamps: true });

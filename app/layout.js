@@ -1,8 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import UpdateWrapper from "@/components/UpdateWrapper";
-import { AuthProvider } from '../components/AuthContext';
-import { CartProvider } from '../components/CartContext';
+import ClientAuthProvider from '../components/ClientAuthProvider';
+import ClientCartProvider from '../components/ClientCartProvider';
 import ConditionalFooter from "@/components/ConditionalFooter";
 import ConditionalHeader from "@/components/ConditionalHeader";
 import ConditionalNavbar from "@/components/ConditionalNavbar";
@@ -24,12 +24,10 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-      <AuthProvider>
-        <CartProvider>
-          <html lang="en">
-            <body
-              className={`${geistSans.variable} ${geistMono.variable} antialiased `}
-            >
+      <html lang="en">
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+          <ClientAuthProvider>
+            <ClientCartProvider>
               <UpdateWrapper />
               <ConditionalHeader />
               <ConditionalNavbar />
@@ -37,10 +35,10 @@ export default function RootLayout({ children }) {
                 {children}
               </main>
               <ConditionalFooter />
-            </body>
-          </html>
-        </CartProvider>
-      </AuthProvider>
+            </ClientCartProvider>
+          </ClientAuthProvider>
+        </body>
+      </html>
   );
 }
 

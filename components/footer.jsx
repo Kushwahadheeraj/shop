@@ -1,4 +1,3 @@
-import AppStore from '@/public/appstore.png';
 import Image from 'next/image';
 export default function Footer() {
   return (
@@ -54,7 +53,7 @@ export default function Footer() {
             <h3 className="font-bold mb-2 tracking-wide">DOWNLOAD OUR APP</h3>
             <div className="w-8 border-b-2 border-gray-400 mb-2"></div>
             <div className="flex flex-col gap-2 mt-2">
-              <Image src={AppStore} alt="App Store" className="w-32" />
+              <Image src="/appstore.png" alt="App Store" width={128} height={40} className="w-32 h-auto" />
               {/* Google Play Button */}
               {/* <div className="bg-black border border-gray-600 rounded-lg px-3 py-2 flex items-center gap-2 w-32">
                 <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">

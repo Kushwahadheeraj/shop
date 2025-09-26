@@ -5,8 +5,8 @@ const brushProductSchema = new mongoose.Schema({
   photos: [String], // URLs or file paths
   description: String,
   rate: Number,
-  min: Number,
-  max: Number,
+  minPrice: Number,
+  maxPrice: Number,
   discount: { type: Number, default: 0 },
   fixPrice: { type: Number, required: true },
   discountPrice: { type: Number, required: true },

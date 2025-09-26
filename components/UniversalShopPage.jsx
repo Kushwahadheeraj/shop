@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import API_BASE_URL from '@/lib/apiConfig';
 import { getApiEndpoint } from '@/lib/apiMapping';
@@ -32,18 +32,100 @@ function buildEndpointFromSegments(segments) {
 }
 
 function resolveImageUrl(item) {
-  const photos = item && item.photos;
+  if (!item) return null;
+
+  const normalizeUrl = (raw) => {
+    if (!raw) return null;
+    let url = String(raw).trim().replace(/\\/g, '/');
+    if (!url) return null;
+    if (url.startsWith('data:')) return url;
+    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+    if (url.startsWith('//')) return `https:${url}`;
+    const ORIGIN = API_BASE_URL.replace(/\/api\/?$/, '');
+    if (url.startsWith('/')) return `${ORIGIN}${url}`;
+    // If bare filename or folder+filename, assume stored under /uploads
+    if (!/^[a-zA-Z]+:\/\//.test(url) && !url.startsWith('uploads/') && !url.startsWith('public/')) {
+      return `${ORIGIN}/uploads/${url}`;
+    }
+    // Common case: "uploads/..."
+    return `${ORIGIN}/${url}`;
+  };
+
+  // 1) photos array (string or object with url)
+  // photos used everywhere in backend
+  let photos = item.photos || item.images || item.imageUrls;
+  // Sometimes stored as comma-separated string
+  if (typeof photos === 'string' && photos.includes(',')) {
+    photos = photos.split(',').map((s) => s.trim()).filter(Boolean);
+  }
   if (Array.isArray(photos) && photos.length > 0) {
     const first = photos[0];
-    if (typeof first === 'string') return first;
-    if (first && typeof first === 'object' && first.url) return first.url;
+    if (typeof first === 'string') return normalizeUrl(first);
+    if (first && typeof first === 'object') {
+      const objCandidates = [
+        first.url,
+        first.secure_url,
+        first.src,
+        first.path,
+        first.Location,
+        first.location,
+        first.href
+      ].filter(Boolean);
+      if (objCandidates.length > 0) return normalizeUrl(objCandidates[0]);
+    }
   }
-  if (typeof photos === 'string') return photos;
-  return item?.image || item?.img || item?.photo || item?.thumbnail || null;
+
+  // 2) photos as string
+  if (typeof photos === 'string') {
+    return normalizeUrl(photos);
+  }
+
+  // 3) other single-value fields
+  const imageFields = ['image', 'img', 'photo', 'thumbnail', 'imageUrl', 'image_url', 'cover', 'primaryImage'];
+  for (const field of imageFields) {
+    if (item[field]) {
+      const v = item[field];
+      if (typeof v === 'string') return normalizeUrl(v);
+      if (v && typeof v === 'object') {
+        const objCandidates = [v.url, v.secure_url, v.src, v.path, v.Location, v.location, v.href].filter(Boolean);
+        if (objCandidates.length > 0) return normalizeUrl(objCandidates[0]);
+      }
+    }
+  }
+
+  // 4) Deep scan: find first string that looks like an image URL anywhere in the object
+  try {
+    const isImageString = (s) => typeof s === 'string' && /(\.png|\.jpg|\.jpeg|\.webp|\.gif)(\?.*)?$/i.test(s.trim());
+    // Check shallow values
+    for (const key of Object.keys(item)) {
+      const val = item[key];
+      if (isImageString(val)) return normalizeUrl(val);
+      if (Array.isArray(val)) {
+        for (const v of val) {
+          if (isImageString(v)) return normalizeUrl(v);
+          if (v && typeof v === 'object') {
+            for (const k2 of Object.keys(v)) {
+              const vv = v[k2];
+              if (isImageString(vv)) return normalizeUrl(vv);
+            }
+          }
+        }
+      }
+      if (val && typeof val === 'object') {
+        for (const k2 of Object.keys(val)) {
+          const vv = val[k2];
+          if (isImageString(vv)) return normalizeUrl(vv);
+        }
+      }
+    }
+  } catch {}
+
+  return null;
 }
 
 export default function UniversalShopPage() {
   const pathname = usePathname();
+  const router = useRouter();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -163,8 +245,27 @@ export default function UniversalShopPage() {
   const products = Array.isArray(data) ? data : [];
 
   const handleProductClick = (product) => {
-    setSelectedProduct(product);
-    setIsModalOpen(true);
+    // Debug: Log the product structure
+    console.log('Product clicked:', {
+      product,
+      _id: product._id,
+      id: product.id,
+      name: product.name
+    });
+    
+    // Navigate to product details page
+    // Persist the product as a fallback if API lookup fails on details page
+    try {
+      if (typeof window !== 'undefined') {
+        window.sessionStorage.setItem('selectedProduct', JSON.stringify(product));
+      }
+    } catch {}
+
+    const productId = product._id || product.id;
+    const categoryHint = product.category || product.Category || product?.type || '';
+    console.log('Navigating to product ID:', productId, 'category:', categoryHint);
+    const query = categoryHint ? `?cat=${encodeURIComponent(String(categoryHint))}` : '';
+    router.push(`/product/${productId}${query}`);
   };
 
   const handleCloseModal = () => {
@@ -184,6 +285,12 @@ export default function UniversalShopPage() {
               <span className="text-gray-900 font-semibold">{title}</span>
             </nav>
             <div className="flex items-center gap-6">
+              <button
+                onClick={() => router.push('/all-products')}
+                className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors text-sm"
+              >
+                View All Products
+              </button>
               <p className="text-gray-600 text-sm">
                 {products.length > 0 
                   ? `Showing 1–${Math.min(products.length, 12)} of ${products.length} results` 
@@ -251,17 +358,55 @@ export default function UniversalShopPage() {
               {products.map((item) => {
                 const key = item?._id || item?.id || `${Math.random()}`;
                 const name = item?.name || item?.title || 'Unnamed Product';
-                const originalPrice = item?.mrp || item?.originalPrice;
-                const salePrice = item?.price || item?.salePrice;
-                const discount = originalPrice && salePrice ? Math.round(((originalPrice - salePrice) / originalPrice) * 100) : 0;
+                // Robust price resolution across models
+                // Check if product has options/variants
+                const hasOptions = !!(
+                  item?.variants?.length > 0 ||
+                  item?.colors?.length > 0 ||
+                  item?.amps?.length > 0 ||
+                  item?.weights?.length > 0 ||
+                  item?.sizes?.length > 0 ||
+                  item?.type?.length > 0 ||
+                  item?.customFields?.length > 0 ||
+                  (item?.minPrice && item?.maxPrice && item?.minPrice !== item?.maxPrice)
+                );
+
+                // Price resolution
+                const originalPriceRaw =
+                  item?.mrp ?? item?.originalPrice ?? item?.price ?? item?.fixPrice ?? item?.minPrice ?? 0;
+                const salePriceRaw =
+                  item?.discountPrice ?? item?.salePrice ?? item?.fixPrice ?? item?.price ?? item?.minPrice ?? 0;
+                const originalPrice = Number(originalPriceRaw) || 0;
+                const salePrice = Number(salePriceRaw) || 0;
+                const discount = originalPrice > 0 && salePrice > 0 && salePrice < originalPrice
+                  ? Math.round(((originalPrice - salePrice) / originalPrice) * 100)
+                  : (Number(item?.discount) || 0);
+
+                // Check if product has min-max pricing
+                const hasMinMaxPricing = item?.minPrice && item?.maxPrice && item?.minPrice !== item?.maxPrice;
+                const minPrice = Number(item?.minPrice) || 0;
+                const maxPrice = Number(item?.maxPrice) || 0;
                 const img = resolveImageUrl(item);
                 const rating = item?.rating || 5;
                 const isOutOfStock = item?.stock === 0 || item?.quantity === 0;
                 
+                // Temporary debug - remove after fixing
+                if (item?.name === 'Pidilite Fevicol Probond') {
+                  console.log('Debug for Pidilite Fevicol Probond:', {
+                    item,
+                    img,
+                    photos: item?.photos,
+                    image: item?.image,
+                    img_field: item?.img,
+                    photo: item?.photo,
+                    thumbnail: item?.thumbnail
+                  });
+                }
+                
                 return (
                   <div 
                     key={key} 
-                    className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow relative cursor-pointer" 
+                    className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-lg transition-all duration-300 relative cursor-pointer group" 
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -285,19 +430,59 @@ export default function UniversalShopPage() {
                     )}
 
                     {/* Product Image */}
-                    <div className="aspect-square bg-gray-100 flex items-center justify-center p-4">
+                    <div className="aspect-square bg-gray-100 overflow-hidden relative">
                       {img ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img 
-                          src={img} 
+                          src={img}
                           alt={name} 
-                          className="w-full h-full object-contain"
+                          className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
+                          loading="lazy"
+                          decoding="async"
+                          onLoad={(e) => {
+                            // Ensure image is visible and fallback hidden
+                            e.currentTarget.style.display = 'block';
+                            const fallback = e.currentTarget.parentElement.querySelector('.fallback-image');
+                            if (fallback) fallback.style.display = 'none';
+                          }}
+                          onError={(e) => {
+                            console.warn('Image failed, trying uploads prefix fallback for:', img);
+                            if (img && typeof img === 'string' && !img.startsWith('http')) {
+                              const ORIGIN = API_BASE_URL.replace(/\/api\/?$/, '');
+                              const candidate = img.startsWith('/') ? `${ORIGIN}${img}` : `${ORIGIN}/${img}`;
+                              if (candidate !== e.target.src) {
+                                e.target.src = candidate;
+                                return;
+                              }
+                            }
+                            e.target.style.display = 'none';
+                            // Show fallback
+                            const fallback = e.target.parentElement.querySelector('.fallback-image');
+                            if (fallback) fallback.style.display = 'flex';
+                          }}
                         />
                       ) : (
-                        <div className="w-full h-full bg-gray-200 rounded flex items-center justify-center">
-                          <span className="text-gray-400">No Image</span>
+                        <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                          <div className="text-center">
+                            <div className="text-gray-300 text-6xl mb-2">📦</div>
+                            <span className="text-gray-400 text-sm font-medium">No Image Available</span>
+                          </div>
                         </div>
                       )}
+                      
+                      {/* Hover Overlay with Quick View Button */}
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-end justify-center pb-4 pointer-events-none">
+                        <button 
+                          className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-lg font-semibold opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0 pointer-events-auto"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleProductClick(item);
+                          }}
+                        >
+                          QUICK VIEW
+                        </button>
+                      </div>
                     </div>
 
                     {/* Product Info */}
@@ -322,14 +507,29 @@ export default function UniversalShopPage() {
 
                       {/* Price */}
                       <div className="flex items-center space-x-2 mb-3">
-                        {originalPrice && originalPrice !== salePrice && (
-                          <span className="text-gray-500 line-through text-sm">
-                            ₹{originalPrice.toLocaleString()}
-                          </span>
+                        {hasMinMaxPricing ? (
+                          <div className="flex flex-col">
+                            <span className="text-lg font-bold text-gray-900">
+                              ₹{minPrice.toLocaleString('en-IN')} - ₹{maxPrice.toLocaleString('en-IN')}
+                            </span>
+                            <span className="text-xs text-gray-500">Price Range</span>
+                          </div>
+                        ) : (
+                          <>
+                            {originalPrice > 0 && salePrice > 0 && originalPrice !== salePrice && (
+                              <span className="text-gray-500 line-through text-sm">
+                                ₹{originalPrice.toLocaleString('en-IN')}
+                              </span>
+                            )}
+                            <span className="text-lg font-bold text-gray-900">
+                              {salePrice > 0
+                                ? `₹${salePrice.toLocaleString('en-IN')}`
+                                : originalPrice > 0
+                                  ? `₹${originalPrice.toLocaleString('en-IN')}`
+                                  : 'Price on request'}
+                            </span>
+                          </>
                         )}
-                        <span className="text-lg font-bold text-gray-900">
-                          ₹{salePrice?.toLocaleString() || '0'}
-                        </span>
                       </div>
 
                       {/* Action Button */}
@@ -343,11 +543,23 @@ export default function UniversalShopPage() {
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          addItem(item, 1);
-                          handleProductClick(item);
+                          if (hasOptions) {
+                            // For products with options, just open the modal
+                            handleProductClick(item);
+                          } else {
+                            // For simple products, add directly to cart
+                            const priceToUse = hasMinMaxPricing ? minPrice : (salePrice > 0 ? salePrice : originalPrice);
+                            addItem({ ...item, price: priceToUse }, 1);
+                            handleProductClick(item);
+                          }
                         }}
                       >
-                        {isOutOfStock ? 'READ MORE' : 'ADD TO CART'}
+                        {isOutOfStock 
+                          ? 'READ MORE' 
+                          : hasOptions 
+                            ? 'SELECT OPTIONS' 
+                            : 'ADD TO CART'
+                        }
                       </button>
                     </div>
                   </div>

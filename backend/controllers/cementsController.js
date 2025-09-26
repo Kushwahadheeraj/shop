@@ -79,22 +79,22 @@ exports.createCements = async (req, res) => {
     );
     if (shouldLog) console.log('[Cements] Uploaded URLs:', photoUrls);
 
-    let { weights, tag, ...rest } = req.body;
+    let { weights, tags, ...rest } = req.body;
 
     // Coerce and sanitize weights
     const coercedWeights = coerceWeights(weights);
     const finalWeights = sanitizeWeights(coercedWeights);
 
-    // Ensure tag is an array
-    if (typeof tag === 'string') {
-      try { tag = JSON.parse(tag); } catch { tag = [tag]; }
+    // Ensure tags is an array
+    if (typeof tags === 'string') {
+      try { tags = JSON.parse(tags); } catch { tags = [tags]; }
     }
-    if (!Array.isArray(tag)) tag = tag ? [tag] : [];
+    if (!Array.isArray(tags)) tags = tags ? [tags] : [];
 
     const productData = {
       ...rest,
       weights: finalWeights,
-      tag,
+      tags,
       photos: photoUrls,
       category: rest.category || 'Cements'
     };
@@ -128,11 +128,11 @@ exports.updateCements = async (req, res) => {
       update.weights = sanitizeWeights(coerceWeights(update.weights));
     }
 
-    if (update.tag && typeof update.tag === 'string') {
-      try { update.tag = JSON.parse(update.tag); } catch { update.tag = [update.tag]; }
+    if (update.tags && typeof update.tags === 'string') {
+      try { update.tags = JSON.parse(update.tags); } catch { update.tags = [update.tags]; }
     }
-    if (update.tag && !Array.isArray(update.tag)) {
-      update.tag = [update.tag];
+    if (update.tags && !Array.isArray(update.tags)) {
+      update.tags = [update.tags];
     }
 
     if (req.files && req.files.length > 0) {

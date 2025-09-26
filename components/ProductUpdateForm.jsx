@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Edit, Save, X, Plus, Trash2 } from "lucide-react";
 import API_BASE_URL from "@/lib/apiConfig";
+import { colorOptions } from "@/lib/colorOptions";
 
 // Function to map category display names to API endpoints
 const getCategoryEndpoint = (category) => {
@@ -80,17 +81,146 @@ const getCategoryEndpoint = (category) => {
   return category.toLowerCase().replace(/\s+/g, '');
 };
 
+// Try to derive the correct Paint update sub-endpoint from product data
+const getPaintUpdateSubEndpoint = (product) => {
+  // Prefer explicit slug fields if present
+  const candidates = [
+    product?.endpointSlug,
+    product?.categorySlug,
+    product?.subCategorySlug,
+    product?.subCategory,
+    product?.category,
+  ].filter(Boolean);
+
+  let raw = candidates[0] || '';
+  console.log('Raw category from product:', raw);
+
+  // Normalize camelCase/PascalCase to kebab-case
+  let slug = String(raw)
+    .replace(/([a-z])([A-Z])/g, '$1-$2')
+    .replace(/\s+/g, '-')
+    .toLowerCase();
+  
+  console.log('Normalized slug:', slug);
+
+  // Known special cases mapping (extend as needed)
+  if (["satinenamel", "satin-enamel"].includes(slug)) {
+    return "enamel-satin-enamel";
+  }
+  if (["exterioremulsion", "exterior-emulsion"].includes(slug)) {
+    return "emulsion-exterior-emulsion";
+  }
+  if (["interioremulsion", "interior-emulsion"].includes(slug)) {
+    return "emulsion-interior-emulsion";
+  }
+  if (["exteriorpaints", "exterior-paints", "exteriorpaintsproducts", "exterior-paints-products"].includes(slug)) {
+    return "exterior-paints";
+  }
+  if (["interiorpaints", "interior-paints"].includes(slug)) {
+    return "interior-paints";
+  }
+  if (["floorpaints", "floor-paints"].includes(slug)) {
+    return "floor-paints";
+  }
+  if (["acrylicemulsionpaint", "acrylic-emulsion-paint"].includes(slug)) {
+    return "acrylic-emulsion-paint";
+  }
+  if (["aspapaints", "aspa-paints"].includes(slug)) {
+    return "aspa-paints";
+  }
+  if (["spraypaints", "spray-paints"].includes(slug)) {
+    return "spray-paints";
+  }
+  if (["paintingtools", "painting-tools"].includes(slug)) {
+    return "painting-tools";
+  }
+  if (["brushesrollerspaintbrushes", "brushes-rollers-paint-brushes"].includes(slug)) {
+    return "brushes-rollers-paint-brushes";
+  }
+  if (["brushesrollersspraypaints", "brushes-rollers-spray-paints"].includes(slug)) {
+    return "brushes-rollers-spray-paints";
+  }
+
+  // Fallback: return slug as-is
+  return slug;
+};
+
+// Try to derive the correct Electrical sub-endpoint from product data
+const getElectricalUpdateSubEndpoint = (product) => {
+  const text = [
+    product?.endpointSlug,
+    product?.categorySlug,
+    product?.subCategorySlug,
+    product?.subCategory,
+    product?.type,
+    product?.category,
+    product?.name,
+  ]
+    .filter(Boolean)
+    .join(' ') // merge for easier includes checks
+    .toLowerCase();
+
+  // Common mappings for Electrical routes
+  if (text.includes('adaptor')) return 'adaptors';
+  if (text.includes('switch and socket')) return 'switchAndSocket';
+  if (text.includes('switch plate')) return 'switchPlates';
+  if (text.includes('switches')) return 'switches';
+  if (text.includes('socket')) return 'sockets';
+  if (text.includes('plug')) return 'plug';
+  if (text.includes('pin top')) return 'pinTop';
+  if (text.includes('power strip')) return 'powerStrips';
+  if (text.includes('mcb')) return 'mCB';
+  if (text.includes('main switch')) return 'mainSwitch';
+  if (text.includes('fuse')) return 'kITKATFuses';
+  if (text.includes('pvc clip')) return 'pVCClips';
+  if (text.includes('indicator')) return 'indicator';
+  if (text.includes('holder')) return 'holders';
+  if (text.includes('regulator')) return 'regulators';
+  if (text.includes('rotary switch')) return 'rotarySwitch';
+  if (text.includes('door bell')) return 'doorBells';
+  if (text.includes('distribution board')) return 'distributionBoards';
+  if (text.includes('dimmer')) return 'dimmer';
+  if (text.includes('light')) return 'lights';
+
+  // Wires / cables
+  if (text.includes('wire') && text.includes('cable')) return 'wiresAndCables';
+  if (text.includes('flexible') && text.includes('wire')) return 'flexibleWires';
+  if (text.includes('flexible') && text.includes('conduit')) return 'flexibleConduit';
+
+  // Fans
+  if (text.includes('fan')) return 'fan';
+
+  // Earthing / ELCB / RCCB
+  if (text.includes('elcb') || text.includes('rccb')) return 'eLCBsRCCBs';
+  if (text.includes('earthing')) return 'earthingAccessories';
+
+  // Others catch-all
+  if (text.includes('other')) return 'others';
+
+  return '';
+};
+
 export default function ProductUpdateForm({ product, category, onUpdate, onClose }) {
+  // 3 custom fields, each with a name and multiple values (same as Add form)
+  const [customFields, setCustomFields] = useState([
+    { fieldName: '', fieldValues: [''] },
+    { fieldName: '', fieldValues: [''] },
+    { fieldName: '', fieldValues: [''] },
+  ]);
   const [form, setForm] = useState({
     name: '',
     sku: '',
+    fixPrice: '',
     minPrice: '',
     maxPrice: '',
     discount: '',
+    discountPrice: '',
     description: '',
     totalProduct: '',
     category: '',
-    tag: [],
+    tags: [],
+    colors: [],
+    variants: [], // { variantName: '', fixPrice: '', discountPrice: '' }
     weights: [],
     photos: []
   });
@@ -100,6 +230,8 @@ export default function ProductUpdateForm({ product, category, onUpdate, onClose
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [tagInput, setTagInput] = useState("");
+  const [colorInput, setColorInput] = useState("");
 
   // Initialize form with product data
   useEffect(() => {
@@ -107,17 +239,28 @@ export default function ProductUpdateForm({ product, category, onUpdate, onClose
       setForm({
         name: product.name || '',
         sku: product.sku || '',
+        fixPrice: product.fixPrice || '',
         minPrice: product.minPrice || '',
         maxPrice: product.maxPrice || '',
         discount: product.discount || '',
+        discountPrice: product.discountPrice || '',
         description: product.description || '',
         totalProduct: product.totalProduct || '',
         category: product.category || category,
-        tag: product.tags || [],
+        tags: product.tags || product.tag || [],
+        colors: product.colors || [],
+        variants: product.variants || [],
         weights: product.weights || [],
         photos: product.photos || []
       });
       setPreview(product.photos || []);
+      
+      // Initialize custom fields from product data
+      setCustomFields([
+        { fieldName: product.customFieldName1 || '', fieldValues: product.customFieldValue1 || [''] },
+        { fieldName: product.customFieldName2 || '', fieldValues: product.customFieldValue2 || [''] },
+        { fieldName: product.customFieldName3 || '', fieldValues: product.customFieldValue3 || [''] },
+      ]);
     }
   }, [product, category]);
 
@@ -136,23 +279,103 @@ export default function ProductUpdateForm({ product, category, onUpdate, onClose
   //   return true;
   // };
 
+  // Discount price auto-calc (same as Add form)
   const handleChange = e => {
     const { name, value } = e.target;
-    let updatedForm = { ...form, [name]: value };
-    
-    // If discount changes, update all weights' discountPrice
-    if (name === 'discount') {
-      const discount = parseFloat(value);
-      updatedForm.weights = updatedForm.weights.map(w => {
-        const price = parseFloat(w.price);
-        return {
-          ...w,
-          discountPrice: (!isNaN(price) && !isNaN(discount)) ? (price - (price * discount / 100)).toFixed(2) : ''
-        };
-      });
+    setForm(prev => {
+      let updated = { ...prev, [name]: value };
+      if (name === 'fixPrice' || name === 'discount') {
+        const price = parseFloat(name === 'fixPrice' ? value : prev.fixPrice);
+        const discount = parseFloat(name === 'discount' ? value : prev.discount);
+        updated.discountPrice = (!isNaN(price) && !isNaN(discount)) ? (price - (price * discount / 100)).toFixed(2) : '';
+      }
+      return updated;
+    });
+  };
+
+  // Custom Fields logic (same as Add form)
+  const handleCustomFieldNameChange = (idx, value) => {
+    setCustomFields(prev => {
+      const updated = [...prev];
+      updated[idx].fieldName = value;
+      return updated;
+    });
+  };
+  const handleCustomFieldValueChange = (fieldIdx, valueIdx, value) => {
+    setCustomFields(prev => {
+      const updated = [...prev];
+      updated[fieldIdx].fieldValues[valueIdx] = value;
+      return updated;
+    });
+  };
+  const handleAddCustomFieldValue = (fieldIdx) => {
+    setCustomFields(prev => {
+      const updated = [...prev];
+      updated[fieldIdx].fieldValues.push('');
+      return updated;
+    });
+  };
+  const handleRemoveCustomFieldValue = (fieldIdx, valueIdx) => {
+    setCustomFields(prev => {
+      const updated = [...prev];
+      updated[fieldIdx].fieldValues = updated[fieldIdx].fieldValues.filter((_, i) => i !== valueIdx);
+      if (updated[fieldIdx].fieldValues.length === 0) updated[fieldIdx].fieldValues = [''];
+      return updated;
+    });
+  };
+
+  // Variants logic (same as Add form)
+  const handleAddVariant = () => {
+    setForm(prev => ({ ...prev, variants: [...prev.variants, { variantName: '', fixPrice: '', discountPrice: '' }] }));
+  };
+  const handleVariantChange = (idx, field, value) => {
+    setForm(prev => {
+      const updated = [...prev.variants];
+      updated[idx][field] = value;
+      // auto discountPrice
+      if (field === 'fixPrice' || field === 'discount') {
+        const price = parseFloat(field === 'fixPrice' ? value : updated[idx].fixPrice);
+        const discount = parseFloat(form.discount);
+        updated[idx].discountPrice = (!isNaN(price) && !isNaN(discount)) ? (price - (price * discount / 100)).toFixed(2) : '';
+      }
+      return { ...prev, variants: updated };
+    });
+  };
+  const handleRemoveVariant = idx => {
+    setForm(prev => {
+      const updated = prev.variants.filter((_, i) => i !== idx);
+      return { ...prev, variants: updated };
+    });
+  };
+
+  // Tags (same as Add form)
+  const handleAddTag = () => {
+    const tag = tagInput.trim();
+    if (tag && !form.tags.includes(tag)) {
+      setForm(prev => ({ ...prev, tags: [...prev.tags, tag] }));
     }
-    
-    setForm(updatedForm);
+    setTagInput("");
+  };
+  const handleRemoveTag = idx => {
+    setForm(prev => {
+      const updated = prev.tags.filter((_, i) => i !== idx);
+      return { ...prev, tags: updated };
+    });
+  };
+
+  // Colors (same as Add form)
+  const handleAddColor = () => {
+    const color = colorInput.trim();
+    if (color && !form.colors.includes(color)) {
+      setForm(prev => ({ ...prev, colors: [...prev.colors, color] }));
+    }
+    setColorInput("");
+  };
+  const handleRemoveColor = idx => {
+    setForm(prev => {
+      const updated = prev.colors.filter((_, i) => i !== idx);
+      return { ...prev, colors: updated };
+    });
   };
 
   // Handle weight row change
@@ -234,17 +457,36 @@ export default function ProductUpdateForm({ product, category, onUpdate, onClose
     setError("");
     
     try {
-      const formToSubmit = { ...form };
       const data = new FormData();
-      
-      Object.entries(formToSubmit).forEach(([k, v]) => {
-        if (k === 'tag') {
-          v.forEach(val => data.append('tag', val));
+      Object.entries(form).forEach(([k, v]) => {
+        if (k === 'tags' || k === 'tag') {
+          // Send to both 'tag' and 'tags' fields for universal compatibility
+          v.forEach(val => {
+            data.append('tag', val);
+            data.append('tags', val);
+          });
+        } else if (k === 'colors') {
+          v.forEach(val => data.append('colors', val));
+        } else if (k === 'variants') {
+          // Handle variants array properly - send as individual fields (same as Add form)
+          if (v && v.length > 0) {
+            v.forEach((variant, idx) => {
+              data.append(`variants[${idx}][variantName]`, variant.variantName || '');
+              data.append(`variants[${idx}][fixPrice]`, variant.fixPrice || '');
+              data.append(`variants[${idx}][discountPrice]`, variant.discountPrice || '');
+            });
+          }
         } else if (k === 'photos') {
           // Don't append existing photos here
         } else {
           data.append(k, v);
         }
+      });
+      
+      // Add custom fields (same as Add form)
+      customFields.forEach((f, idx) => {
+        data.append('customFieldName' + (idx+1), f.fieldName);
+        f.fieldValues.forEach(val => data.append('customFieldValue' + (idx+1), val));
       });
       
       // Filter out invalid weights and add as JSON string
@@ -260,10 +502,56 @@ export default function ProductUpdateForm({ product, category, onUpdate, onClose
       // Add new files
       files.forEach(f => data.append('photos', f));
       
-      const res = await fetch(`${API_BASE_URL}/${getCategoryEndpoint(category)}/update/${product._id}`, { 
-        method: 'PUT', 
-        body: data 
-      });
+      // Build endpoint
+      let base = `${API_BASE_URL}/${getCategoryEndpoint(category)}`;
+      
+      // Debug logging
+      console.log('Category:', category);
+      console.log('Product category:', product?.category);
+      console.log('Base endpoint:', base);
+      console.log('Form tags being sent:', form.tags);
+      
+      // Paint routes use specific slugs and 'Update' with capital U
+      // Check if this is a paint-related category (more flexible check)
+      if (base.endsWith('/paint') || category?.toLowerCase().includes('paint') || product?.category?.toLowerCase().includes('paint')) {
+        const sub = getPaintUpdateSubEndpoint(product);
+        console.log('Paint sub-endpoint:', sub);
+        if (sub) {
+          base = `${API_BASE_URL}/paint/${sub}`;
+        } else {
+          // If no sub-endpoint found, try to construct from product category
+          const productCategory = product?.category || category;
+          if (productCategory) {
+            const slug = String(productCategory)
+              .replace(/([a-z])([A-Z])/g, '$1-$2')
+              .replace(/\s+/g, '-')
+              .toLowerCase();
+            base = `${API_BASE_URL}/paint/${slug}`;
+            console.log('Constructed paint endpoint from product category:', base);
+          }
+        }
+      }
+
+      // Electrical routes are segmented under /electrical/<sub>
+      if (base.endsWith('/electrical') || category === 'Electrical Products' || product?.category?.toLowerCase() === 'adaptors') {
+        const subElec = getElectricalUpdateSubEndpoint(product);
+        console.log('Electrical sub-endpoint:', subElec);
+        if (subElec) {
+          base = `${API_BASE_URL}/electrical/${subElec}`;
+        }
+      }
+
+      // Some paint routes use '/Update/:id' (capital U). Try capital U first, then fallback to lowercase 'update'
+      let url = `${base}/Update/${product._id}`;
+      console.log('Trying URL:', url);
+      let res = await fetch(url, { method: 'PUT', body: data });
+      if (!res.ok) {
+        // Fallback attempt: lowercase 'update'
+        url = `${base}/update/${product._id}`;
+        console.log('Fallback URL:', url);
+        res = await fetch(url, { method: 'PUT', body: data });
+      }
+      
       
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
@@ -337,7 +625,18 @@ export default function ProductUpdateForm({ product, category, onUpdate, onClose
                 />
               </div>
               <div>
-                <Label htmlFor="minPrice">Min Price *</Label>
+              <Label htmlFor="fixPrice">Price</Label>
+              <Input 
+                id="fixPrice"
+                name="fixPrice" 
+                type="number" 
+                value={form.fixPrice} 
+                onChange={handleChange} 
+                placeholder="Price" 
+              />
+            </div>
+              <div>
+                <Label htmlFor="minPrice">Min Price</Label>
                 <Input 
                   id="minPrice"
                   name="minPrice" 
@@ -345,11 +644,10 @@ export default function ProductUpdateForm({ product, category, onUpdate, onClose
                   value={form.minPrice} 
                   onChange={handleChange} 
                   placeholder="Min Price" 
-                  required 
                 />
               </div>
               <div>
-                <Label htmlFor="maxPrice">Max Price *</Label>
+                <Label htmlFor="maxPrice">Max Price</Label>
                 <Input 
                   id="maxPrice"
                   name="maxPrice" 
@@ -357,7 +655,6 @@ export default function ProductUpdateForm({ product, category, onUpdate, onClose
                   value={form.maxPrice} 
                   onChange={handleChange} 
                   placeholder="Max Price" 
-                  required 
                 />
               </div>
               <div>
@@ -369,6 +666,16 @@ export default function ProductUpdateForm({ product, category, onUpdate, onClose
                   value={form.discount} 
                   onChange={handleChange} 
                   placeholder="Discount (%)" 
+                />
+              </div>
+            <div>
+              <Label htmlFor="discountPrice">Discounted Price (auto)</Label>
+              <Input 
+                id="discountPrice"
+                name="discountPrice" 
+                type="number" 
+                value={form.discountPrice} 
+                readOnly 
                 />
               </div>
               <div>
@@ -441,6 +748,29 @@ export default function ProductUpdateForm({ product, category, onUpdate, onClose
                   <Plus className="w-4 h-4 mr-2" />
                   Add Weight
                 </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Variants Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Variants</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <Label className="block text-sm font-medium">Variants</Label>
+                  <Button type="button" onClick={handleAddVariant} className="bg-green-500 hover:bg-green-600 text-white px-3 py-1">Add Variant</Button>
+                </div>
+                {form.variants.map((v, idx) => (
+                  <div key={idx} className="flex gap-2 items-center">
+                    <Input className="w-1/3" placeholder="Variant Name" value={v.variantName} onChange={e => handleVariantChange(idx, 'variantName', e.target.value)} />
+                    <Input className="w-1/3" type="number" placeholder="Price" value={v.fixPrice} onChange={e => handleVariantChange(idx, 'fixPrice', e.target.value)} />
+                    <Input className="w-1/3" type="number" placeholder="Discounted Price (auto)" value={v.discountPrice} readOnly />
+                    <Button type="button" onClick={() => handleRemoveVariant(idx)} className="bg-red-500 hover:bg-red-600 text-white px-2 py-1">Remove</Button>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
@@ -526,36 +856,128 @@ export default function ProductUpdateForm({ product, category, onUpdate, onClose
             </CardContent>
           </Card>
 
+          {/* Custom Fields */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Custom Fields</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {customFields.map((f, idx) => (
+                  <div key={idx} className="mb-2 border p-2 rounded">
+                    <div className="flex gap-2 items-center mb-1">
+                      <Input className="w-1/3" placeholder="Field Name" value={f.fieldName} onChange={e => handleCustomFieldNameChange(idx, e.target.value)} />
+                    </div>
+                    {f.fieldValues.map((val, vIdx) => (
+                      <div key={vIdx} className="flex gap-2 items-center mb-1">
+                        <Input className="w-1/2" placeholder="Field Value" value={val} onChange={e => handleCustomFieldValueChange(idx, vIdx, e.target.value)} />
+                        <Button type="button" onClick={() => handleRemoveCustomFieldValue(idx, vIdx)} className="bg-red-500 hover:bg-red-600 text-white px-2 py-1">Remove</Button>
+                      </div>
+                    ))}
+                    <Button type="button" onClick={() => handleAddCustomFieldValue(idx)} className="bg-green-500 hover:bg-green-600 text-white px-3 py-1">Add Value</Button>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Colors */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Colors</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {/* Predefined Colors Select */}
+                <div className="mb-3">
+                  <p className="text-sm text-gray-600 mb-2">Select from predefined colors:</p>
+                  <select 
+                    className="w-full p-2 border border-gray-300 rounded-md mb-2"
+                    onChange={(e) => {
+                      const selectedColor = e.target.value;
+                      if (selectedColor && !form.colors.includes(selectedColor)) {
+                        setForm(prev => ({ ...prev, colors: [...prev.colors, selectedColor] }));
+                        e.target.value = ''; // Reset select
+                      }
+                    }}
+                  >
+                    <option value="">-- Select a color --</option>
+                    {colorOptions.map((color) => (
+                      <option key={color} value={color}>{color}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Custom Color Input */}
+                <div className="flex gap-2 mb-2">
+                  <Input 
+                    value={colorInput} 
+                    onChange={e => setColorInput(e.target.value)} 
+                    onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddColor(); }}} 
+                    placeholder="Type custom color and press Enter or Add" 
+                  />
+                  <Button type="button" onClick={handleAddColor} className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1">Add</Button>
+                </div>
+
+                {/* Selected Colors Display */}
+                <div className="flex flex-wrap gap-2">
+                  {form.colors.map((color, idx) => (
+                    <Badge key={color} variant="secondary" className="flex items-center">
+                      {color}
+                      <button type="button" onClick={() => handleRemoveColor(idx)} className="ml-2 text-red-500">×</button>
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Tags */}
           <Card>
             <CardHeader>
-              <CardTitle>Tags *</CardTitle>
+              <CardTitle>Tags</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div className="flex flex-wrap gap-2 mb-2">
-                  {form.tag.map((t) => (
-                    <Badge key={t} variant="secondary" className="px-3 py-1">
-                      {t}
-                    </Badge>
-                  ))}
-                  {form.tag.length === 0 && <span className="text-gray-400 text-sm">No tags selected</span>}
+              <div className="space-y-2">
+                <div className="flex gap-2 mb-2">
+                  <Input value={tagInput} onChange={e => setTagInput(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddTag(); }}} placeholder="Type tag and press Enter or Add" />
+                  <Button type="button" onClick={handleAddTag} className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1">Add</Button>
                 </div>
                 
+                {/* Predefined Tags */}
+                <div className="mb-3">
+                  <p className="text-sm text-gray-600 mb-2">Select from predefined tags:</p>
                 <div className="flex flex-wrap gap-2">
-                  {['Apsara', 'Glass Marking', 'White Pencil', 'Pencil', 'Adhesive', 'Glue', 'Sealant'].map(option => (
+                    {['Apsara', 'Glass Marking', 'White Pencil', 'Pencil', 'Adhesive', 'Glue', 'Sealant', 'Waterproof', 'Durable', 'High Quality'].map(option => (
                     <button
                       type="button"
                       key={option}
-                      className={`px-3 py-1 rounded-full border text-sm font-medium transition ${
-                        form.tag.includes(option) 
+                        className={`px-3 py-1 rounded-full border text-xs font-medium transition ${
+                          form.tags.includes(option) 
                           ? 'bg-blue-600 text-white border-blue-600' 
                           : 'bg-white text-gray-700 border-gray-300 hover:bg-blue-50'
                       }`}
-                      onClick={() => handleTagChange(option)}
+                        onClick={() => {
+                          if (form.tags.includes(option)) {
+                            handleRemoveTag(form.tags.indexOf(option));
+                          } else {
+                            setForm(prev => ({ ...prev, tags: [...prev.tags, option] }));
+                          }
+                        }}
                     >
                       {option}
                     </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Selected Tags Display */}
+                <div className="flex flex-wrap gap-2">
+                  {form.tags.map((tag, idx) => (
+                    <span key={tag} className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold flex items-center">
+                      {tag}
+                      <button type="button" onClick={() => handleRemoveTag(idx)} className="ml-2 text-red-500">×</button>
+                    </span>
                   ))}
                 </div>
               </div>

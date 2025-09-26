@@ -9,13 +9,15 @@ const weightSchema = new mongoose.Schema({
 const CementsProductSchema = new mongoose.Schema({
   name: { type: String, required: true },
   sku: { type: String, default: 'N/A' },
-  minPrice: { type: Number, required: true },
-  maxPrice: { type: Number, required: true },
+  fixPrice: { type: Number },
+  minPrice: { type: Number },
+  maxPrice: { type: Number },
   discount: { type: Number, default: 0 },
+  discountPrice: { type: Number },
   description: String,
   totalProduct: { type: Number, required: true },
   category: { type: String, default: 'Cements' },
-  tag: [String],
+  tags: [String],
   weights: [weightSchema],
   photos: [String],
 }, { timestamps: true });

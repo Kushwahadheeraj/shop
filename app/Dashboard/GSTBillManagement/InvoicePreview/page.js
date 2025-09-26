@@ -133,7 +133,7 @@ export default function InvoicePreview() {
       <div ref={printRef} className="bg-white border border-black shadow p-6 max-w-5xl mx-auto invoice-sheet">
         {/* Header - matches requested style */}
        <div className='border border-black'>
-       <div className="border-b pb-3">
+        <div className="border-b pb-3">
           
           <div className="text-center mt-1">
             <div className="text-lg font-bold tracking-wide">TAX INVOICE</div>
@@ -182,7 +182,7 @@ export default function InvoicePreview() {
               <div className="font-semibold">Dispatch Details</div><div>:</div><div></div>
               <div className="font-semibold">Vehicle No</div><div>:</div><div></div>
               <div className="font-semibold">E-Way Bill No.</div><div>:</div><div></div>
-            </div>
+          </div>
           </div>
           {/* Scan to pay */}
           <div className="p-2 flex flex-col items-center justify-start col-span-1">
@@ -191,7 +191,7 @@ export default function InvoicePreview() {
           </div>
         </div>
 
-         {/* Items table */}
+        {/* Items table */}
          <div className="">
           <table className="w-full text-sm border-t border-black border-collapse">
             <thead className="bg-gray-100">
@@ -371,8 +371,8 @@ export default function InvoicePreview() {
                       <td className="border-l border-t border-black px-2 py-1 text-right">{formatCurrency(totals.sgst || totals.igst)}</td>
                       <td className="border-l border-t border-black px-2 py-1 text-right">{formatCurrency(totalTax)}</td>
                     </tr>
-                  </tbody>
-                </table>
+            </tbody>
+          </table>
                 <div className="px-3 py-2 text-sm border-t border-black">Tax Amount (in words) :
                   <span className="ml-2 font-bold">INR {numberToWords(Math.round(totalTax))} Only</span>
                 </div>
@@ -394,7 +394,7 @@ export default function InvoicePreview() {
             <div>3 : Warranty/Guarantee of products lies with the manufacturer only.</div>
             <div>4 : Kindly check goods at the time of delivery; no claims will be entertained afterwards.</div>
             <div>5 : Payment to be made only in company's account.</div>
-          </div>
+        </div>
             {/* <div></div> */}
           {/* </div> */}
           
@@ -428,7 +428,7 @@ export default function InvoicePreview() {
           </div>
         </div>
 
-       </div>
+        </div>
         
         
       

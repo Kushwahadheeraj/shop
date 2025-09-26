@@ -16,7 +16,7 @@ const electricalProductSchema = new mongoose.Schema({
   discountPrice: { type: Number },
   totalProduct: { type: Number, required: true },
   sku: { type: String, default: 'N/A' },
-  category: { type: String, default: 'Adaptors' },
+  category: { type: String },
   tag: [String],
   colour: [String],
   brand: { type: String },

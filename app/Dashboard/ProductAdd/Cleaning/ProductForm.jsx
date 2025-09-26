@@ -16,7 +16,7 @@ export default function ProductForm({ product, onSave }) {
     totalProduct: '',
     sku: 'N/A',
     category: 'Cleaning',
-    tag: [],
+    tags: [],
     description: '',
   });
   const [files, setFiles] = useState([]);
@@ -65,10 +65,10 @@ export default function ProductForm({ product, onSave }) {
   };
 
   const handleAddTag = () => {
-    if (newTag.trim() && !form.tag.includes(newTag.trim())) {
+    if (newTag.trim() && !form.tags.includes(newTag.trim())) {
       setForm(prev => ({
         ...prev,
-        tag: [...prev.tag, newTag.trim()]
+        tags: [...prev.tags, newTag.trim()]
       }));
       setNewTag("");
     }
@@ -77,7 +77,7 @@ export default function ProductForm({ product, onSave }) {
   const handleRemoveTag = (tagToRemove) => {
     setForm(prev => ({
       ...prev,
-      tag: prev.tag.filter(tag => tag !== tagToRemove)
+      tags: prev.tags.filter(tags => tags !== tagToRemove)
     }));
   };
 
@@ -98,8 +98,8 @@ export default function ProductForm({ product, onSave }) {
     const formToSubmit = { ...form };
     const data = new FormData();
     Object.entries(formToSubmit).forEach(([k, v]) => {
-      if (k === 'tag') {
-        v.forEach(val => data.append('tag', val));
+      if (k === 'tags') {
+        v.forEach(val => data.append('tags', val));
       } else {
         data.append(k, v);
       }
@@ -118,7 +118,7 @@ export default function ProductForm({ product, onSave }) {
     if (form.discount === '' || isNaN(Number(form.discount))) return false;
     if (form.fixPrice === '' || isNaN(Number(form.fixPrice))) return false;
     if (!form.totalProduct || isNaN(Number(form.totalProduct))) return false;
-    if (!form.tag || !Array.isArray(form.tag) || form.tag.length === 0) return false;
+    if (!form.tags || !Array.isArray(form.tags) || form.tags.length === 0) return false;
     if (!form.description.trim()) return false;
     if (!files || files.length === 0) return false;
     return true;
@@ -188,7 +188,7 @@ export default function ProductForm({ product, onSave }) {
         <div className="md:col-span-2">
           <label className="block text-sm font-medium mb-1">Tags (Add custom tags)</label>
           <div className="flex flex-wrap gap-2 mb-2">
-            {form.tag.map((t) => (
+            {form.tags.map((t) => (
               <span key={t} className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
                 {t}
                 <button
@@ -200,20 +200,20 @@ export default function ProductForm({ product, onSave }) {
                 </button>
               </span>
             ))}
-            {form.tag.length === 0 && <span className="text-gray-400 text-xs">No tags added</span>}
+            {form.tags.length === 0 && <span className="text-gray-400 text-xs">No tags added</span>}
           </div>
           <div className="flex gap-2">
             <Input
               value={newTag}
               onChange={(e) => setNewTag(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Type a tag and press Enter or click Add"
+              placeholder="Type a tags and press Enter or click Add"
               className="flex-1"
             />
             <Button 
               type="button" 
               onClick={handleAddTag}
-              disabled={!newTag.trim() || form.tag.includes(newTag.trim())}
+              disabled={!newTag.trim() || form.tags.includes(newTag.trim())}
               className="bg-blue-600 hover:bg-blue-700 text-white"
             >
               Add

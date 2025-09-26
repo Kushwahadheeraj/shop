@@ -17,9 +17,16 @@ function resolveImageUrl(item) {
 export default function ProductDetailModal({ product, isOpen, onClose }) {
   if (!isOpen || !product) return null;
 
-  const originalPrice = product?.mrp || product?.originalPrice;
-  const salePrice = product?.price || product?.salePrice;
-  const discount = originalPrice && salePrice ? Math.round(((originalPrice - salePrice) / originalPrice) * 100) : 0;
+  // Use the same robust price resolution logic as UniversalShopPage
+  const originalPriceRaw = product?.mrp || product?.originalPrice || product?.price || product?.fixPrice || product?.minPrice;
+  const salePriceRaw = product?.discountPrice || product?.price || product?.fixPrice || product?.minPrice;
+  
+  const originalPrice = originalPriceRaw > 0 ? originalPriceRaw : 0;
+  const salePrice = salePriceRaw > 0 ? salePriceRaw : 0;
+  
+  const discount = originalPrice && salePrice && originalPrice > salePrice ? 
+    Math.round(((originalPrice - salePrice) / originalPrice) * 100) : 0;
+  
   const img = resolveImageUrl(product);
   const rating = product?.rating || 5;
   const isOutOfStock = product?.stock === 0 || product?.quantity === 0;
@@ -89,13 +96,15 @@ export default function ProductDetailModal({ product, isOpen, onClose }) {
 
             {/* Price */}
             <div className="flex items-center space-x-4 mb-6">
-              {originalPrice && originalPrice !== salePrice && (
+              {originalPrice > 0 && originalPrice !== salePrice && salePrice > 0 && (
                 <span className="text-gray-500 line-through text-lg">
                   ₹{originalPrice.toLocaleString()}
                 </span>
               )}
               <span className="text-3xl font-bold text-gray-900">
-                ₹{salePrice?.toLocaleString() || '0'}
+                {salePrice > 0 ? `₹${salePrice.toLocaleString()}` : 
+                 originalPrice > 0 ? `₹${originalPrice.toLocaleString()}` : 
+                 'Price on request'}
               </span>
             </div>
 
@@ -120,15 +129,113 @@ export default function ProductDetailModal({ product, isOpen, onClose }) {
               </p>
             </div>
 
+            {/* Product Options */}
+            {(product?.colors?.length > 0 || product?.variants?.length > 0 || product?.amps?.length > 0 || product?.weights?.length > 0) && (
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Available Options</h3>
+                
+                {/* Colors */}
+                {product?.colors?.length > 0 && (
+                  <div className="mb-4">
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">Colors:</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {product.colors.map((color, index) => (
+                        <span 
+                          key={index}
+                          className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                        >
+                          {color}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Variants */}
+                {product?.variants?.length > 0 && (
+                  <div className="mb-4">
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">Variants:</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {product.variants.map((variant, index) => (
+                        <span 
+                          key={index}
+                          className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                        >
+                          {variant}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Amps */}
+                {product?.amps?.length > 0 && (
+                  <div className="mb-4">
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">Amps:</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {product.amps.map((amp, index) => (
+                        <span 
+                          key={index}
+                          className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                        >
+                          {amp}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Weights */}
+                {product?.weights?.length > 0 && (
+                  <div className="mb-4">
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">Weights:</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {product.weights.map((weight, index) => (
+                        <span 
+                          key={index}
+                          className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                        >
+                          {weight}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Tags */}
+            {(product?.tags?.length > 0 || product?.tag?.length > 0) && (
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Tags</h3>
+                <div className="flex flex-wrap gap-2">
+                  {(product.tags || product.tag || []).map((tag, index) => (
+                    <span 
+                      key={index}
+                      className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Action Buttons */}
             <div className="flex space-x-4">
               <button 
                 className={`flex-1 py-3 px-6 rounded-lg text-lg font-medium transition-colors ${
                   isOutOfStock 
                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
-                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                    : 'bg-yellow-500 hover:bg-yellow-600 text-white'
                 }`}
                 disabled={isOutOfStock}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  // Add to cart functionality can be added here
+                  console.log('Add to cart:', product);
+                }}
               >
                 {isOutOfStock ? 'READ MORE' : 'ADD TO CART'}
               </button>
@@ -136,11 +243,17 @@ export default function ProductDetailModal({ product, isOpen, onClose }) {
                 className={`flex-1 py-3 px-6 rounded-lg text-lg font-medium transition-colors ${
                   isOutOfStock 
                     ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
-                    : 'bg-yellow-500 hover:bg-yellow-600 text-white'
+                    : 'bg-blue-600 hover:bg-blue-700 text-white'
                 }`}
                 disabled={isOutOfStock}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  // Buy now functionality can be added here
+                  console.log('Buy now:', product);
+                }}
               >
-                {isOutOfStock ? 'NOTIFY ME' : 'BUY NOW'}
+                {isOutOfStock ? 'NOTIFY ME' : 'VIEW DETAILS'}
               </button>
             </div>
 

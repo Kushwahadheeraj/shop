@@ -20,13 +20,15 @@ export default function ProductForm({ product, onSave }) {
   const [form, setForm] = useState(product || {
     name: '',
     sku: 'N/A', // Default SKU
+    fixPrice: '',
     minPrice: '',
     maxPrice: '',
     discount: '',
+    discountPrice: '',
     description: '',
     totalProduct: '',
     category: 'Dry', // Default category
-    tag: [],
+    tags: [],
     sizes: [], // array of { size: '', price: '', discountPrice: '' }
     photos: []
   });
@@ -40,15 +42,10 @@ export default function ProductForm({ product, onSave }) {
   // Check if all required fields are filled
   const isFormValid = () => {
     if (!form.name.trim()) return false;
-    if (!form.minPrice || isNaN(Number(form.minPrice))) return false;
-    if (!form.maxPrice || isNaN(Number(form.maxPrice))) return false;
     if (form.discount === '' || isNaN(Number(form.discount))) return false;
     if (!form.totalProduct || isNaN(Number(form.totalProduct))) return false;
-    if (!form.tag || !Array.isArray(form.tag) || form.tag.length === 0) return false;
-    if (!sizes || !Array.isArray(sizes) || sizes.length === 0) return false;
-    for (const s of sizes) {
-      if (!s.size || !s.price || isNaN(Number(s.price))) return false;
-    }
+    if (!form.tags || !Array.isArray(form.tags) || form.tags.length === 0) return false;
+    
     if (!files || files.length === 0) return false;
     return true;
   };
@@ -56,7 +53,16 @@ export default function ProductForm({ product, onSave }) {
   const handleChange = e => {
     const { name, value } = e.target;
     let updatedForm = { ...form, [name]: value };
-    // No auto-calculation for min/max price
+
+    // Auto-calc discountPrice from fixPrice and discount
+    if (name === 'fixPrice' || name === 'discount') {
+      const fixPrice = parseFloat(name === 'fixPrice' ? value : form.fixPrice);
+      const discount = parseFloat(name === 'discount' ? value : form.discount);
+      if (!isNaN(fixPrice) && !isNaN(discount)) {
+        updatedForm.discountPrice = (fixPrice - (fixPrice * discount / 100)).toFixed(2);
+      }
+    }
+
     setForm(updatedForm);
     // If discount changes, update all sizes' discountPrice
     if (name === 'discount') {
@@ -117,10 +123,10 @@ export default function ProductForm({ product, onSave }) {
 
   const handleTagChange = (option) => {
     setForm((prev) => {
-      const already = prev.tag.includes(option);
+      const already = prev.tags.includes(option);
       return {
         ...prev,
-        tag: already ? prev.tag.filter(t => t !== option) : [...prev.tag, option]
+        tags: already ? prev.tags.filter(t => t !== option) : [...prev.tags, option]
       };
     });
   };
@@ -143,9 +149,9 @@ export default function ProductForm({ product, onSave }) {
     const formToSubmit = { ...form };
     const data = new FormData();
     Object.entries(formToSubmit).forEach(([k, v]) => {
-      if (k === 'tag') {
-        v.forEach(val => data.append('tag', val));
-      } else {
+      if (k === 'tags') {
+        v.forEach(val => data.append('tags', val));
+      } else if (k !== 'sizes') {
         data.append(k, v);
       }
     });
@@ -169,12 +175,20 @@ export default function ProductForm({ product, onSave }) {
           <Input name="sku" value={form.sku} onChange={handleChange} placeholder="SKU" required />
         </div>
         <div>
+          <label className="block text-sm font-medium mb-1">Fix Price</label>
+          <Input name="fixPrice" type="number" value={form.fixPrice} onChange={handleChange} placeholder="Fix Price" />
+        </div>
+        <div>
           <label className="block text-sm font-medium mb-1">Min Price</label>
-          <Input name="minPrice" type="number" value={form.minPrice} onChange={handleChange} placeholder="Min Price" required />
+          <Input name="minPrice" type="number" value={form.minPrice} onChange={handleChange} placeholder="Min Price" />
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Max Price</label>
-          <Input name="maxPrice" type="number" value={form.maxPrice} onChange={handleChange} placeholder="Max Price" required />
+          <Input name="maxPrice" type="number" value={form.maxPrice} onChange={handleChange} placeholder="Max Price" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Discount Price (Auto)</label>
+          <Input name="discountPrice" type="number" value={form.discountPrice} onChange={handleChange} placeholder="Discount Price" readOnly />
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Discount (%)</label>
@@ -253,17 +267,17 @@ export default function ProductForm({ product, onSave }) {
         <div className="md:col-span-2">
           <label className="block text-sm font-medium mb-1">Tags (Select multiple)</label>
           <div className="flex flex-wrap gap-2 mb-2">
-            {form.tag.map((t) => (
+            {form.tags.map((t) => (
               <span key={t} className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">{t}</span>
             ))}
-            {form.tag.length === 0 && <span className="text-gray-400 text-xs">No tag selected</span>}
+            {form.tags.length === 0 && <span className="text-gray-400 text-xs">No tags selected</span>}
           </div>
           <div className="flex flex-wrap gap-2">
             {TAG_OPTIONS.map(option => (
               <button
                 type="button"
                 key={option}
-                className={`px-3 py-1 rounded-full border text-xs font-medium transition ${form.tag.includes(option) ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-blue-50'}`}
+                className={`px-3 py-1 rounded-full border text-xs font-medium transition ${form.tags.includes(option) ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-blue-50'}`}
                 onClick={() => handleTagChange(option)}
               >
                 {option}

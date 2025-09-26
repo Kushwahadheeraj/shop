@@ -47,31 +47,56 @@ export function CartProvider({ children }) {
 	const count = useMemo(() => items.reduce((sum, it) => sum + (it.quantity || 1), 0), [items]);
 	const total = useMemo(() => items.reduce((sum, it) => sum + (Number(it.price || 0) * (it.quantity || 1)), 0), [items]);
 
-	function mergeItems(primary, incoming) {
-		const idKey = (p) => p._id || p.id;
-		const map = new Map();
-		[...primary, ...incoming].forEach((p) => {
-			const key = idKey(p);
-			if (!key) return;
-			const existing = map.get(key);
-			if (existing) {
-				map.set(key, { ...existing, quantity: Math.max(1, (existing.quantity || 1) + (p.quantity || 1)) });
-			} else {
-				map.set(key, { ...p, quantity: Math.max(1, p.quantity || 1) });
-			}
-		});
-		return Array.from(map.values());
-	}
+    function mergeItems(primary, incoming) {
+        const idKey = (p) => p._id || p.id;
+        const optSig = (p) => {
+            try {
+                return JSON.stringify({
+                    color: p.color || '',
+                    colour: p.colour || '',
+                    weight: p.weight || '',
+                    amp: p.amp || '',
+                    variant: p.variant || '',
+                    typeOption: p.typeOption || '',
+                    brand: p.brand || '',
+                    way: p.way || ''
+                });
+            } catch { return ''; }
+        };
+        const map = new Map();
+        [...primary, ...incoming].forEach((p) => {
+            const base = idKey(p);
+            if (!base) return;
+            const key = `${base}||${optSig(p)}`;
+            const existing = map.get(key);
+            if (existing) {
+                // If same product with exactly same options, increase quantity
+                map.set(key, { ...existing, quantity: Math.max(1, (existing.quantity || 1) + (p.quantity || 1)) });
+            } else {
+                map.set(key, { ...p, quantity: Math.max(1, p.quantity || 1) });
+            }
+        });
+        return Array.from(map.values());
+    }
 
-	function addItem(product, qty = 1) {
+    function addItem(product, qty = 1) {
 		if (!product) return;
 		const toStore = {
 			_id: product._id || product.id,
 			name: product.name || product.title || 'Product',
 			price: Number(product.price || product.salePrice || 0),
-			mrp: Number(product.mrp || product.originalPrice || product.price || 0),
+            mrp: Number(product.mrp || product.originalPrice || product.price || 0),
 			thumbnail: resolveImage(product),
 			quantity: qty,
+            // carry option selections so items with different options are stored separately
+            color: product.color,
+            colour: product.colour,
+            weight: product.weight,
+            amp: product.amp,
+            variant: product.variant,
+            typeOption: product.typeOption,
+            brand: product.brand,
+            way: product.way
 		};
 		setItems((prev) => mergeItems(prev, [toStore]));
 	}

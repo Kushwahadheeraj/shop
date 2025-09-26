@@ -17,19 +17,22 @@ export default function ProductForm({ product, onSave }) {
   const [form, setForm] = useState(product || {
     name: '',
     sku: 'N/A', // Default SKU
+    fixPrice: '',
     minPrice: '',
     maxPrice: '',
     discount: '',
+    discountPrice: '',
     description: '',
     totalProduct: '',
     category: 'Adhesives', // Default category
-    tag: [],
+    tags: [],
     weights: [], // array of { weight: '', price: '', discountPrice: '' }
     photos: []
   });
   const [files, setFiles] = useState([]);
   const [preview, setPreview] = useState([]);
   const [photoError, setPhotoError] = useState("");
+  const [tagInput, setTagInput] = useState("");
 
   // Add state for weights if not present in product
   const [weights, setWeights] = useState(product?.weights || []);
@@ -37,25 +40,31 @@ export default function ProductForm({ product, onSave }) {
   // Check if all required fields are filled
   const isFormValid = () => {
     if (!form.name.trim()) return false;
-    if (!form.minPrice || isNaN(Number(form.minPrice))) return false;
-    if (!form.maxPrice || isNaN(Number(form.maxPrice))) return false;
-    if (form.discount === '' || isNaN(Number(form.discount))) return false;
+    // Price, Min, Max optional now
     if (!form.totalProduct || isNaN(Number(form.totalProduct))) return false;
-    if (!form.tag || !Array.isArray(form.tag) || form.tag.length === 0) return false;
-    if (!weights || !Array.isArray(weights) || weights.length === 0) return false;
-    for (const w of weights) {
-      if (!w.weight || !w.price || isNaN(Number(w.price))) return false;
-    }
+    if (!form.tags || !Array.isArray(form.tags) || form.tags.length === 0) return false;
+    // if (!weights || !Array.isArray(weights) || weights.length === 0) return false;
+    // for (const w of weights) {
+    //   if (!w.weight || !w.price || isNaN(Number(w.price))) return false;
+    // }
     if (!files || files.length === 0) return false;
     return true;
   };
 
   const handleChange = e => {
     const { name, value } = e.target;
-    let updatedForm = { ...form, [name]: value };
-    // No auto-calculation for min/max price
-    setForm(updatedForm);
-    // If discount changes, update all weights' discountPrice
+    setForm(prev => {
+      const updated = { ...prev, [name]: value };
+      // Auto-calc discountPrice from fixPrice + discount if present
+      if (name === 'fixPrice' || name === 'discount') {
+        const price = parseFloat(name === 'fixPrice' ? value : prev.fixPrice);
+        const discount = parseFloat(name === 'discount' ? value : prev.discount);
+        updated.discountPrice = (!isNaN(price) && !isNaN(discount))
+          ? (price - (price * discount / 100)).toFixed(2)
+          : '';
+      }
+      return updated;
+    });
     if (name === 'discount') {
       const discount = parseFloat(value);
       setWeights((prev) => prev.map(w => {
@@ -114,11 +123,27 @@ export default function ProductForm({ product, onSave }) {
 
   const handleTagChange = (option) => {
     setForm((prev) => {
-      const already = prev.tag.includes(option);
+      const already = prev.tags.includes(option);
       return {
         ...prev,
-        tag: already ? prev.tag.filter(t => t !== option) : [...prev.tag, option]
+        tags: already ? prev.tags.filter(t => t !== option) : [...prev.tags, option]
       };
+    });
+  };
+
+  // Custom tag input handlers
+  const handleAddCustomTag = () => {
+    const tag = tagInput.trim();
+    if (tag && !form.tags.includes(tag)) {
+      setForm(prev => ({ ...prev, tags: [...prev.tags, tag] }));
+    }
+    setTagInput("");
+  };
+
+  const handleRemoveCustomTag = (idx) => {
+    setForm(prev => {
+      const updated = prev.tags.filter((_, i) => i !== idx);
+      return { ...prev, tags: updated };
     });
   };
 
@@ -148,9 +173,11 @@ export default function ProductForm({ product, onSave }) {
     
     console.log('Building FormData...');
     Object.entries(formToSubmit).forEach(([k, v]) => {
-      if (k === 'tag') {
+      if (k === 'tags') {
         console.log('Adding tags:', v);
-        v.forEach(val => data.append('tag', val));
+        v.forEach(val => data.append('tags', val));
+      } else if (k === 'weights') {
+        // skip, we will append normalized weights from state below
       } else {
         console.log(`Adding ${k}:`, v);
         data.append(k, v);
@@ -159,7 +186,13 @@ export default function ProductForm({ product, onSave }) {
     
     // Add weights as JSON string
     console.log('Adding weights as JSON:', weights);
-    data.append('weights', JSON.stringify(weights));
+    // Normalize weights: keep array of objects {weight, price, discountPrice}
+    const normWeights = Array.isArray(weights) ? weights.filter(w=>w && (w.weight||w.price)).map(w=>({
+      weight: String(w.weight || '').trim(),
+      price: w.price !== '' && w.price != null ? Number(w.price) : undefined,
+      discountPrice: w.discountPrice !== '' && w.discountPrice != null ? Number(w.discountPrice) : undefined
+    })) : [];
+    data.append('weights', JSON.stringify(normWeights));
     
     // Add files
     console.log('Adding files to FormData...');
@@ -172,8 +205,10 @@ export default function ProductForm({ product, onSave }) {
     console.log('API URL:', `${API_BASE_URL}/adhesives/create`);
     
     try {
-      const res = await fetch(`${API_BASE_URL}/adhesives/create`, { 
-        method: product ? 'PUT' : 'POST', 
+      const endpoint = product ? `${API_BASE_URL}/adhesives/update/${product._id || product.id}` : `${API_BASE_URL}/adhesives/create`;
+      const method = product ? 'PUT' : 'POST';
+      const res = await fetch(endpoint, { 
+        method, 
         body: data 
       });
       
@@ -208,13 +243,21 @@ export default function ProductForm({ product, onSave }) {
           <label className="block text-sm font-medium mb-1">SKU</label>
           <Input name="sku" value={form.sku} onChange={handleChange} placeholder="SKU" required />
         </div>
+      <div>
+        <label className="block text-sm font-medium mb-1">Price</label>
+        <Input name="fixPrice" type="number" value={form.fixPrice} onChange={handleChange} placeholder="Price" />
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-1">Discounted Price (auto)</label>
+        <Input name="discountPrice" type="number" value={form.discountPrice} readOnly placeholder="Discounted Price" />
+      </div>
         <div>
           <label className="block text-sm font-medium mb-1">Min Price</label>
-          <Input name="minPrice" type="number" value={form.minPrice} onChange={handleChange} placeholder="Min Price" required />
+        <Input name="minPrice" type="number" value={form.minPrice} onChange={handleChange} placeholder="Min Price" />
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Max Price</label>
-          <Input name="maxPrice" type="number" value={form.maxPrice} onChange={handleChange} placeholder="Max Price" required />
+        <Input name="maxPrice" type="number" value={form.maxPrice} onChange={handleChange} placeholder="Max Price" />
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Discount (%)</label>
@@ -292,18 +335,36 @@ export default function ProductForm({ product, onSave }) {
         </div>
         <div className="md:col-span-2">
           <label className="block text-sm font-medium mb-1">Tags (Select multiple)</label>
-          <div className="flex flex-wrap gap-2 mb-2">
-            {form.tag.map((t) => (
-              <span key={t} className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">{t}</span>
-            ))}
-            {form.tag.length === 0 && <span className="text-gray-400 text-xs">No tag selected</span>}
+          
+          {/* Custom Tag Input */}
+          <div className="flex gap-2 mb-3">
+            <Input 
+              value={tagInput} 
+              onChange={e => setTagInput(e.target.value)} 
+              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddCustomTag(); }}} 
+              placeholder="Type custom tag and press Enter or Add" 
+            />
+            <Button type="button" onClick={handleAddCustomTag} className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1">Add</Button>
           </div>
+
+          {/* Selected Tags Display */}
+          <div className="flex flex-wrap gap-2 mb-3">
+            {form.tags.map((t, idx) => (
+              <span key={t} className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold flex items-center">
+                {t}
+                <button type="button" onClick={() => handleRemoveCustomTag(idx)} className="ml-2 text-red-500">×</button>
+              </span>
+            ))}
+            {form.tags.length === 0 && <span className="text-gray-400 text-xs">No tags selected</span>}
+          </div>
+
+          {/* Predefined Tags */}
           <div className="flex flex-wrap gap-2">
             {TAG_OPTIONS.map(option => (
               <button
                 type="button"
                 key={option}
-                className={`px-3 py-1 rounded-full border text-xs font-medium transition ${form.tag.includes(option) ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-blue-50'}`}
+                className={`px-3 py-1 rounded-full border text-xs font-medium transition ${form.tags.includes(option) ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-blue-50'}`}
                 onClick={() => handleTagChange(option)}
               >
                 {option}

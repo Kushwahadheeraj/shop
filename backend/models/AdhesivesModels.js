@@ -9,13 +9,15 @@ const weightSchema = new mongoose.Schema({
 const adhesivesProductSchema = new mongoose.Schema({
   name: String,
   sku: String,
+  fixPrice: Number,
   minPrice: Number,
   maxPrice: Number,
   discount: Number,
+  discountPrice: Number,
   description: String,
   totalProduct: Number,
   category: String,
-  tag: [String],
+  tags: [String],
   weights: [weightSchema],
   photos: [String],
 }, { timestamps: true });

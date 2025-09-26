@@ -42,11 +42,11 @@ exports.createDry = async (req, res) => {
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     if (shouldLog) console.log('[Dry] Uploaded URLs:', photoUrls);
 
-    // Parse sizes and tag if sent as JSON string
-    let { sizes, tag, ...rest } = req.body;
+    // Parse sizes and tags if sent as JSON string
+    let { sizes, tags, ...rest } = req.body;
     if (shouldLog) {
       console.log('[Dry] Raw sizes:', sizes);
-      console.log('[Dry] Raw tag:', tag);
+      console.log('[Dry] Raw tags:', tags);
     }
 
     if (typeof sizes === 'string') {
@@ -58,21 +58,21 @@ exports.createDry = async (req, res) => {
       }
     }
 
-    if (typeof tag === 'string') {
+    if (typeof tags === 'string') {
       try {
-        tag = JSON.parse(tag);
+        tags = JSON.parse(tags);
       } catch {
-        tag = [tag];
+        tags = [tags];
       }
     }
 
-    // Ensure tag is an array
-    if (!Array.isArray(tag)) {
-      tag = tag ? [tag] : [];
+    // Ensure tags is an array
+    if (!Array.isArray(tags)) {
+      tags = tags ? [tags] : [];
     }
 
     // Filter out empty tags
-    tag = tag.filter(t => t && t.trim() !== '');
+    tags = tags.filter(t => t && t.trim() !== '');
 
     // Filter out invalid size entries
     if (sizes && Array.isArray(sizes)) {
@@ -89,7 +89,7 @@ exports.createDry = async (req, res) => {
     const productData = {
       ...rest,
       sizes: sizes || [],
-      tag,
+      tags,
       photos: photoUrls,
       category: rest.category || 'Dry'
     };
@@ -139,19 +139,19 @@ exports.updateDry = async (req, res) => {
       );
     }
 
-    // Parse tag
-    if (update.tag && typeof update.tag === 'string') {
+    // Parse tags
+    if (update.tags && typeof update.tags === 'string') {
       try {
-        update.tag = JSON.parse(update.tag);
+        update.tags = JSON.parse(update.tags);
       } catch {
-        update.tag = [update.tag];
+        update.tags = [update.tags];
       }
     }
-    if (update.tag && !Array.isArray(update.tag)) {
-      update.tag = [update.tag];
+    if (update.tags && !Array.isArray(update.tags)) {
+      update.tags = [update.tags];
     }
-    if (update.tag) {
-      update.tag = update.tag.filter(t => t && t.trim() !== '');
+    if (update.tags) {
+      update.tags = update.tags.filter(t => t && t.trim() !== '');
     }
 
     if (req.files && req.files.length > 0) {

@@ -3,7 +3,7 @@ import React, { useState, useMemo } from "react";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+// Removed shadcn/ui Select components - using native HTML select instead
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
@@ -59,7 +59,7 @@ export default function ProductTable({ products, onEdit, onDelete, onView, categ
       let aValue = a[sortBy];
       let bValue = b[sortBy];
       
-      if (sortBy === "minPrice" || sortBy === "maxPrice" || sortBy === "fixPrice" || sortBy === "totalProduct") {
+      if (sortBy === "minPrice" || sortBy === "maxPrice" || sortBy === "fixPrice" || sortBy === "discountPrice" || sortBy === "totalProduct") {
         aValue = parseFloat(aValue) || 0;
         bValue = parseFloat(bValue) || 0;
       } else {
@@ -135,18 +135,17 @@ export default function ProductTable({ products, onEdit, onDelete, onView, categ
                 className="pl-10"
               />
             </div>
-            <Select value={filterDays} onValueChange={setFilterDays}>
-              <SelectTrigger>
-                <SelectValue placeholder="Filter by days" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Products</SelectItem>
-                <SelectItem value="3days">Last 3 Days</SelectItem>
-                <SelectItem value="7days">Last 7 Days</SelectItem>
-                <SelectItem value="15days">Last 15 Days</SelectItem>
-                <SelectItem value="30days">Last 30 Days</SelectItem>
-              </SelectContent>
-            </Select>
+            <select 
+              value={filterDays} 
+              onChange={(e) => setFilterDays(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            >
+              <option value="all">All Products</option>
+              <option value="3days">Last 3 Days</option>
+              <option value="7days">Last 7 Days</option>
+              <option value="15days">Last 15 Days</option>
+              <option value="30days">Last 30 Days</option>
+            </select>
             <div className="text-sm text-gray-600">
               Showing {filteredAndSortedProducts.length} of {products.length} products
             </div>
@@ -184,6 +183,21 @@ export default function ProductTable({ products, onEdit, onDelete, onView, categ
                         onClick={() => handleSort("maxPrice")}
                       >
                         Max Price {sortBy === "maxPrice" && (sortOrder === "asc" ? "↑" : "↓")}
+                      </TableHead>
+                    </>
+                  ) : products.length > 0 && products[0].fixPrice !== undefined ? (
+                    <>
+                      <TableHead 
+                        className="responsive-table-cell col-price cursor-pointer hover:bg-gray-50"
+                        onClick={() => handleSort("fixPrice")}
+                      >
+                        Fix Price {sortBy === "fixPrice" && (sortOrder === "asc" ? "↑" : "↓")}
+                      </TableHead>
+                      <TableHead 
+                        className="responsive-table-cell col-price cursor-pointer hover:bg-gray-50"
+                        onClick={() => handleSort("discountPrice")}
+                      >
+                        Discount Price {sortBy === "discountPrice" && (sortOrder === "asc" ? "↑" : "↓")}
                       </TableHead>
                     </>
                   ) : (
@@ -252,6 +266,11 @@ export default function ProductTable({ products, onEdit, onDelete, onView, categ
                           <TableCell className="responsive-table-cell col-price text-truncate-tooltip" title={formatPrice(product.minPrice)}>{formatPrice(product.minPrice)}</TableCell>
                           <TableCell className="responsive-table-cell col-price text-truncate-tooltip" title={formatPrice(product.maxPrice)}>{formatPrice(product.maxPrice)}</TableCell>
                         </>
+                      ) : product.fixPrice !== undefined ? (
+                        <>
+                          <TableCell className="responsive-table-cell col-price text-truncate-tooltip" title={formatPrice(product.fixPrice)}>{formatPrice(product.fixPrice)}</TableCell>
+                          <TableCell className="responsive-table-cell col-price text-truncate-tooltip" title={formatPrice(product.discountPrice)}>{formatPrice(product.discountPrice)}</TableCell>
+                        </>
                       ) : (
                         <TableCell className="responsive-table-cell col-price text-truncate-tooltip" title={formatPrice(product.fixPrice)}>{formatPrice(product.fixPrice)}</TableCell>
                       )}
@@ -272,16 +291,16 @@ export default function ProductTable({ products, onEdit, onDelete, onView, categ
                       </TableCell>
                       <TableCell className="responsive-table-cell col-tags">
                         <div className="flex flex-wrap gap-1 content-height-limit">
-                          {product.tags && product.tags.length > 0 ? (
+                          {(product.tags || product.tag) && (product.tags || product.tag).length > 0 ? (
                             <>
-                              {product.tags.slice(0, 2).map((tag, idx) => (
+                              {(product.tags || product.tag).slice(0, 2).map((tag, idx) => (
                                 <Badge key={idx} variant="secondary" className="text-xs badge-truncate" title={tag}>
                                   {tag}
                                 </Badge>
                               ))}
-                              {product.tags.length > 2 && (
+                              {(product.tags || product.tag).length > 2 && (
                                 <Badge variant="outline" className="text-xs">
-                                  +{product.tags.length - 2}
+                                  +{(product.tags || product.tag).length - 2}
                                 </Badge>
                               )}
                             </>

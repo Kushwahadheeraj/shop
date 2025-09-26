@@ -17,6 +17,12 @@ export function AuthProvider({ children }) {
   }, []);
 
   const checkAuthStatus = async () => {
+    // Check if we're on the client side
+    if (typeof window === 'undefined') {
+      setLoading(false);
+      return;
+    }
+    
     const token = localStorage.getItem('token');
     if (token) {
       try {
@@ -52,7 +58,9 @@ export function AuthProvider({ children }) {
           });
         } else if (response.status === 401) {
           // Only remove token on 401 (Unauthorized)
-          localStorage.removeItem('token');
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('token');
+          }
           setUser(null);
         } else {
           // For other errors, keep token but set user to null
@@ -80,7 +88,9 @@ export function AuthProvider({ children }) {
       const data = await res.json();
       
       if (data.token) {
-        localStorage.setItem('token', data.token);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('token', data.token);
+        }
         
         // Handle local file URLs by prepending the correct base URL
         let avatarUrl = data.seller.avatar;
@@ -118,6 +128,7 @@ export function AuthProvider({ children }) {
   };
 
   const isAuthenticated = () => {
+    if (typeof window === 'undefined') return false;
     const token = localStorage.getItem('token');
     return token !== null && user !== null;
   };
@@ -140,6 +151,9 @@ export function AuthProvider({ children }) {
 
   const updateProfile = async (profileData) => {
     try {
+      if (typeof window === 'undefined') {
+        return { success: false, error: 'Not available on server side' };
+      }
       const token = localStorage.getItem('token');
       
       // Check if profileData is FormData (for file uploads) or regular object
@@ -194,6 +208,9 @@ export function AuthProvider({ children }) {
 
   const changePassword = async (currentPassword, newPassword) => {
     try {
+      if (typeof window === 'undefined') {
+        return { success: false, error: 'Not available on server side' };
+      }
       const token = localStorage.getItem('token');
       const response = await fetch(`${API_BASE_URL}/seller/profile/password`, {
         method: 'PUT',

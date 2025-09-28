@@ -18,6 +18,8 @@ export default function ProductForm({ onSave }) {
     price: '',
     discount: '',
     discountPrice: '',
+    minPrice: '',
+    maxPrice: '',
     totalProduct: '',
     category: 'Fiber',
     description: '',
@@ -189,6 +191,14 @@ export default function ProductForm({ onSave }) {
         <div>
           <label className="block text-sm font-medium mb-1">Discounted Price (auto)</label>
           <Input name="discountPrice" type="number" value={form.discountPrice} readOnly />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Min Price (optional)</label>
+          <Input name="minPrice" type="number" value={form.minPrice} onChange={handleChange} placeholder="Min Price" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Max Price (optional)</label>
+          <Input name="maxPrice" type="number" value={form.maxPrice} onChange={handleChange} placeholder="Max Price" />
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Total Product</label>

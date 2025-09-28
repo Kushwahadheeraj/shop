@@ -13,6 +13,12 @@ export default function ProductForm({ product, onSave }) {
     price: '',
     discount: '',
     fixPrice: '',
+    minPrice: '',
+    maxPrice: '',
+    minPrice: '',
+    maxPrice: '',
+    minPrice: '',
+    maxPrice: '',
     totalProduct: '',
     sku: 'N/A',
     category: 'Cleaning',
@@ -143,6 +149,14 @@ export default function ProductForm({ product, onSave }) {
         <div>
           <label className="block text-sm font-medium mb-1">Fix Price (auto)</label>
           <Input name="fixPrice" type="number" value={form.fixPrice} readOnly placeholder="Fix Price (auto)" className="bg-gray-100" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Min Price (optional)</label>
+          <Input name="minPrice" type="number" value={form.minPrice} onChange={handleChange} placeholder="Min Price" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Max Price (optional)</label>
+          <Input name="maxPrice" type="number" value={form.maxPrice} onChange={handleChange} placeholder="Max Price" />
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Total Product</label>

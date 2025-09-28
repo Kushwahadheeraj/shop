@@ -6,6 +6,7 @@ const AIReceiptScanner = ({ onScanComplete, onClose }) => {
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState(null);
   const [error, setError] = useState('');
+  const [isTestingAPI, setIsTestingAPI] = useState(false);
   const fileInputRef = useRef(null);
 
   const handleFileUpload = async (event) => {
@@ -44,11 +45,29 @@ const AIReceiptScanner = ({ onScanComplete, onClose }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ filename: file.name, mimeType: file.type, base64 })
       });
+      
+      console.log('API Response status:', res.status);
       let data;
-      try { data = await res.json(); } catch { data = null; }
+      try { 
+        data = await res.json(); 
+        console.log('API Response data:', data);
+      } catch (e) { 
+        console.error('Failed to parse API response:', e);
+        data = null; 
+      }
       if (!res.ok && (!data || !data.raw)) {
         const msg = data?.message || `Scan API error (${res.status})`;
-        setError(msg);
+        console.error('API Error:', { status: res.status, message: msg, data });
+        
+        // Special handling for missing API key
+        if (data?.error === 'MISSING_API_KEY') {
+          setError('AI service is not configured. Please set up Gemini API key to use this feature.');
+        } else if (data?.error === 'GEMINI_API_ERROR') {
+          setError(`AI service error: ${msg}. Please check your API key and try again.`);
+        } else {
+          setError(msg);
+        }
+        
         setScanResult({
           shopName: '', shopAddress: '', billDate: new Date().toISOString().split('T')[0],
           items: [], pricing: { subtotal: 0, gstAmount: 0, totalAmount: 0 },
@@ -191,6 +210,26 @@ const AIReceiptScanner = ({ onScanComplete, onClose }) => {
     fileInputRef.current?.click();
   };
 
+  const testAPI = async () => {
+    setIsTestingAPI(true);
+    setError('');
+    
+    try {
+      const res = await fetch('/api/ai/test-gemini');
+      const data = await res.json();
+      
+      if (data.success) {
+        setError(`✅ API Test Successful: ${data.message}`);
+      } else {
+        setError(`❌ API Test Failed: ${data.message}`);
+      }
+    } catch (error) {
+      setError(`❌ API Test Error: ${error.message}`);
+    } finally {
+      setIsTestingAPI(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -231,6 +270,19 @@ const AIReceiptScanner = ({ onScanComplete, onClose }) => {
                   Choose Image
                 </button>
                 
+                <button
+                  onClick={testAPI}
+                  disabled={isTestingAPI}
+                  className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-blue-600 transition-all disabled:opacity-50"
+                >
+                  {isTestingAPI ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Camera className="w-4 h-4" />
+                  )}
+                  {isTestingAPI ? 'Testing API...' : 'Test API Connection'}
+                </button>
+                
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -245,8 +297,23 @@ const AIReceiptScanner = ({ onScanComplete, onClose }) => {
               </div>
 
               {error && (
-                <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                <div className={`mt-4 p-3 rounded-lg border ${
+                  error.includes('✅') 
+                    ? 'bg-green-100 border-green-400 text-green-700' 
+                    : 'bg-red-100 border-red-400 text-red-700'
+                }`}>
                   {error}
+                  {error.includes('AI service is not configured') && (
+                    <div className="mt-2 text-sm">
+                      <p className="font-medium">Setup Instructions:</p>
+                      <ol className="list-decimal list-inside mt-1 space-y-1">
+                        <li>Get a Gemini API key from <a href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Google AI Studio</a></li>
+                        <li>Create a <code className="bg-gray-200 px-1 rounded">.env.local</code> file in your project root</li>
+                        <li>Add: <code className="bg-gray-200 px-1 rounded">GEMINI_API_KEY=your_api_key_here</code></li>
+                        <li>Restart your development server</li>
+                      </ol>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

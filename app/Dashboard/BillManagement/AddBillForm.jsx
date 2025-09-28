@@ -41,21 +41,24 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
       return sum + (quantity * unitPrice);
     }, 0);
 
-    const gstAmount = (subtotal * formData.pricing.gstRate) / 100;
+    const gstRate = parseFloat(formData.pricing.gstRate) || 0;
+    const gstAmount = (subtotal * gstRate) / 100;
     const discount = parseFloat(formData.pricing.discount) || 0;
     const totalAmount = subtotal + gstAmount - discount;
+    const paidAmount = parseFloat(formData.payment.paidAmount) || 0;
 
     setFormData(prev => ({
       ...prev,
       pricing: {
         ...prev.pricing,
-        subtotal,
-        gstAmount,
-        totalAmount
+        subtotal: isNaN(subtotal) ? 0 : subtotal,
+        gstAmount: isNaN(gstAmount) ? 0 : gstAmount,
+        totalAmount: isNaN(totalAmount) ? 0 : totalAmount
       },
       payment: {
         ...prev.payment,
-        remainingAmount: totalAmount - prev.payment.paidAmount
+        paidAmount: isNaN(paidAmount) ? 0 : paidAmount,
+        remainingAmount: isNaN(totalAmount - paidAmount) ? 0 : totalAmount - paidAmount
       }
     }));
   }, [formData.items, formData.pricing.gstRate, formData.pricing.discount, formData.payment.paidAmount]);
@@ -118,25 +121,47 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
   };
 
   const handleAIScanComplete = async (scannedData) => {
-    // Find matching shop or create a new one
+    // Find matching shop or use first available shop as fallback
     const matchingShop = shops.find(shop => 
       shop.name.toLowerCase().includes(scannedData.shopName.toLowerCase()) ||
       scannedData.shopName.toLowerCase().includes(shop.name.toLowerCase())
     );
 
+    // Use first shop as fallback if no matching shop found
+    const selectedShopId = matchingShop ? matchingShop._id : (shops.length > 0 ? shops[0]._id : '');
+
+    // Sanitize pricing data to ensure valid numbers
+    const sanitizedPricing = {
+      subtotal: parseFloat(scannedData.pricing?.subtotal) || 0,
+      gstRate: parseFloat(scannedData.pricing?.gstRate) || 18,
+      gstAmount: parseFloat(scannedData.pricing?.gstAmount) || 0,
+      totalAmount: parseFloat(scannedData.pricing?.totalAmount) || 0,
+      discount: parseFloat(scannedData.pricing?.discount) || 0
+    };
+
+    // Sanitize payment data
+    const sanitizedPayment = {
+      method: scannedData.payment?.method || 'cash',
+      status: scannedData.payment?.status || 'pending',
+      paidAmount: parseFloat(scannedData.payment?.paidAmount) || 0
+    };
+
     setFormData(prev => ({
       ...prev,
-      shopId: matchingShop ? matchingShop._id : '',
-      items: scannedData.items,
-      pricing: scannedData.pricing,
-      payment: scannedData.payment,
-      billDate: scannedData.billDate,
-      description: scannedData.description
+      shopId: selectedShopId,
+      items: scannedData.items || [],
+      pricing: sanitizedPricing,
+      payment: sanitizedPayment,
+      billDate: scannedData.billDate || new Date().toISOString().split('T')[0],
+      description: scannedData.description || ''
     }));
 
-    // If no matching shop found, suggest creating one
-    if (!matchingShop) {
-      alert(`Shop "${scannedData.shopName}" not found. Please add this shop first or select an existing shop.`);
+    // If no matching shop found, show warning but continue with first available shop
+    if (!matchingShop && shops.length > 0) {
+      alert(`Shop "${scannedData.shopName}" not found. Using "${shops[0].name}" as default. Please change if needed.`);
+    } else if (shops.length === 0) {
+      alert('No shops available. Please add a shop first before scanning receipts.');
+      return;
     }
 
     // Auto-save when we have meaningful structured data
@@ -304,7 +329,7 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
                 </label>
                 <input
                   type="number"
-                  value={formData.pricing.totalAmount.toFixed(2)}
+                  value={isNaN(formData.pricing.totalAmount) ? 0 : formData.pricing.totalAmount.toFixed(2)}
                   readOnly
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
                 />
@@ -407,7 +432,7 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
                 </label>
                 <input
                   type="number"
-                  value={formData.pricing.subtotal.toFixed(2)}
+                  value={isNaN(formData.pricing.subtotal) ? 0 : formData.pricing.subtotal.toFixed(2)}
                   readOnly
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
                 />
@@ -418,7 +443,7 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
                 </label>
                 <input
                   type="number"
-                  value={formData.pricing.gstRate ?? 0}
+                  value={isNaN(formData.pricing.gstRate) ? 0 : formData.pricing.gstRate}
                   onChange={(e) => handleNestedInputChange('pricing', 'gstRate', parseFloat(e.target.value) || 0)}
                   min="0"
                   max="100"
@@ -431,7 +456,7 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
                 </label>
                 <input
                   type="number"
-                  value={formData.pricing.gstAmount.toFixed(2)}
+                  value={isNaN(formData.pricing.gstAmount) ? 0 : formData.pricing.gstAmount.toFixed(2)}
                   readOnly
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
                 />
@@ -446,8 +471,8 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
                 </label>
                 <input
                   type="number"
-                  value={formData.pricing.discount ?? 0}
-                  onChange={(e) => handleNestedInputChange('pricing', 'discount', e.target.value)}
+                  value={isNaN(formData.pricing.discount) ? 0 : formData.pricing.discount}
+                  onChange={(e) => handleNestedInputChange('pricing', 'discount', parseFloat(e.target.value) || 0)}
                   min="0"
                   step="0.01"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -459,8 +484,8 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
                 </label>
                 <input
                   type="number"
-                  value={formData.payment.paidAmount ?? 0}
-                  onChange={(e) => handleNestedInputChange('payment', 'paidAmount', e.target.value)}
+                  value={isNaN(formData.payment.paidAmount) ? 0 : formData.payment.paidAmount}
+                  onChange={(e) => handleNestedInputChange('payment', 'paidAmount', parseFloat(e.target.value) || 0)}
                   min="0"
                   step="0.01"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"

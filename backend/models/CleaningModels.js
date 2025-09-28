@@ -5,6 +5,8 @@ const CleaningProductSchema = new mongoose.Schema({
   price: { type: Number, required: true },
   discount: { type: Number, default: 0 },
   fixPrice: { type: Number, required: true },
+  minPrice: { type: Number },
+  maxPrice: { type: Number },
   totalProduct: { type: Number, required: true },
   sku: { type: String, default: 'N/A' },
   category: { type: String, default: 'Cleaning' },

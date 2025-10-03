@@ -43,27 +43,6 @@ export default function ProductList() {
       setLoading(false);
     }
   };
-      console.log('Response status:', res.status);
-      
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-      
-      const responseData = await res.json();
-      console.log('Response data:', responseData);
-      
-      const productsArray = responseData.data || [];
-      console.log('Products array:', productsArray);
-      
-      setProducts(productsArray);
-    } catch (err) {
-      setError(err.message);
-      console.error('Error fetching products:', err);
-      setProducts([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleEdit = (product) => {
     router.push("/Dashboard/ProductAdd/Home/ImageSlider/SanitaryImage?id=" + product._id);

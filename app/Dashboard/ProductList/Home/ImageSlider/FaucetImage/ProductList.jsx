@@ -43,20 +43,6 @@ export default function ProductList() {
       setLoading(false);
     }
   };
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-      const responseData = await res.json();
-      const productsArray = responseData.data || [];
-      setProducts(productsArray);
-    } catch (err) {
-      setError(err.message);
-      console.error('Error fetching products:', err);
-      setProducts([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleEdit = (product) => {
     router.push("/Dashboard/ProductAdd/Home/ImageSlider/FaucetImage?id=" + product._id);

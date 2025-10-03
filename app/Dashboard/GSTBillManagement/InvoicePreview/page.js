@@ -416,7 +416,7 @@ export default function InvoicePreview() {
             </div>
           </div>
           <div className="p-3 flex flex-col text-center justify-between" style={{ minHeight: '140px' }}>
-            <div className="font-semibold">for {bill.shopName || &apos;-&apos;}</div>
+            <div className="font-semibold">for {bill.shopName || '-'}</div>
             <div className="flex items-center justify-center">
               {bill.signatureDataUrl ? (
                 <img src={bill.signatureDataUrl} alt="Signature" className="h-16 object-contain" />

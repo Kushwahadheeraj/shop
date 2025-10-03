@@ -63,32 +63,7 @@ export default function ProductList() {
       setLoading(false);
     }
   };
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-      const responseData = await res.json();
-      console.log('API Response:', responseData); // Debug log
-      
-      // Handle the response format: {"success":true,"count":0,"data":[]}
-      let productsArray = [];
-      if (responseData.success && responseData.data) {
-        productsArray = responseData.data;
-      } else if (Array.isArray(responseData)) {
-        productsArray = responseData;
-      } else if (responseData.services) {
-        productsArray = responseData.services;
-      }
-      
-      console.log('Processed products array:', productsArray); // Debug log
-      setProducts(productsArray);
-    } catch (err) {
-      setError(err.message);
-      console.error('Error fetching products:', err);
-      setProducts([]); // Set empty array on error
-    } finally {
-      setLoading(false);
-    }
-  };
+
 
   const handleEdit = (product) => {
     router.push("/Dashboard/ProductAdd/Home/Service?id=" + product._id);

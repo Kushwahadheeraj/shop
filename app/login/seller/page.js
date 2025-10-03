@@ -1,10 +1,10 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import API_BASE_URL from "@/lib/apiConfig";
 import { useAuth } from "@/components/AuthContext";
 
-export default function SellerLoginPage() {
+function SellerLoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const mode = searchParams.get("mode") || "login";
@@ -394,4 +394,12 @@ By registering, you agree to this privacy policy.`);
       </div>
     </div>
   );
-} 
+}
+
+export default function SellerLoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[#f8f8f8]"><div className="text-center"><div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div><p className="text-gray-600">Loading...</p></div></div>}>
+      <SellerLoginPageContent />
+    </Suspense>
+  );
+}

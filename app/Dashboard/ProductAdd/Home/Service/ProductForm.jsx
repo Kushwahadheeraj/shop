@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select } from "@/components/ui/select";
 import API_BASE_URL from "@/lib/apiConfig";
 
 export default function ProductForm() {
@@ -89,22 +89,18 @@ export default function ProductForm() {
         {/* Icon Selection */}
         <div>
           <label className="block text-sm font-medium mb-2">Icon *</label>
-          <Select value={form.icon} onValueChange={handleSelectChange}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select an icon" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ShieldCheck">Shield Check (Secure Payment)</SelectItem>
-              <SelectItem value="Headphones">Headphones (Customer Support)</SelectItem>
-              <SelectItem value="Truck">Truck (Fast Delivery)</SelectItem>
-              <SelectItem value="CreditCard">Credit Card</SelectItem>
-              <SelectItem value="Phone">Phone</SelectItem>
-              <SelectItem value="Mail">Mail</SelectItem>
-              <SelectItem value="Clock">Clock</SelectItem>
-              <SelectItem value="Star">Star</SelectItem>
-              <SelectItem value="Heart">Heart</SelectItem>
-              <SelectItem value="CheckCircle">Check Circle</SelectItem>
-            </SelectContent>
+          <Select value={form.icon} onChange={(e) => handleSelectChange(e.target.value)}>
+            <option value="" disabled>Select an icon</option>
+            <option value="ShieldCheck">Shield Check (Secure Payment)</option>
+            <option value="Headphones">Headphones (Customer Support)</option>
+            <option value="Truck">Truck (Fast Delivery)</option>
+            <option value="CreditCard">Credit Card</option>
+            <option value="Phone">Phone</option>
+            <option value="Mail">Mail</option>
+            <option value="Clock">Clock</option>
+            <option value="Star">Star</option>
+            <option value="Heart">Heart</option>
+            <option value="CheckCircle">Check Circle</option>
           </Select>
         </div>
 

@@ -10,6 +10,7 @@
     "parse:hsn": "node scripts/parse-gst-hsn.js"
   },
   "dependencies": {
+    "critters": "^0.0.22",
     "@google/generative-ai": "^0.24.1",
     "@radix-ui/react-alert-dialog": "^1.1.14",
     "@radix-ui/react-avatar": "^1.1.10",

@@ -42,21 +42,6 @@ export default function ProductList() {
       setLoading(false);
     }
   };
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-      const data = await res.json();
-      // Ensure products is always an array
-      const productsArray = Array.isArray(data) ? data : (data.products || data.data || []);
-      setProducts(productsArray);
-    } catch (err) {
-      setError(err.message);
-      console.error('Error fetching products:', err);
-      setProducts([]); // Set empty array on error
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleEdit = (product) => {
     router.push("/Dashboard/ProductAdd/Home/ImageSlider?id=" + product._id);

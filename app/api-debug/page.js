@@ -219,7 +219,7 @@ const ApiDebugPage = () => {
             <ul className="text-blue-800 space-y-2 text-sm">
               <li>• <strong>Browser Console:</strong> Open F12 → Console tab to see detailed logs</li>
               <li>• <strong>Network Tab:</strong> Check F12 → Network tab to see API requests</li>
-              <li>• <strong>Token Check:</strong> Make sure you're logged in and token is present</li>
+              <li>• <strong>Token Check:</strong> Make sure you&apos;re logged in and token is present</li>
               <li>• <strong>Backend Status:</strong> Ensure backend server is running on port 5000</li>
               <li>• <strong>API Response:</strong> Check if data.success is true and data.data exists</li>
             </ul>

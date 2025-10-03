@@ -64,6 +64,22 @@ const BillManagementPage = () => {
     }
   }, [authLoading, isAuthenticated, isSeller, router]);
 
+  // Recalculate stats whenever bills, selectedShop, searchTerm, or filterDateRange changes
+  useEffect(() => {
+    if (bills.length > 0) {
+      console.log('🔄 Recalculating stats due to bills, shop, search, or date change...');
+      console.log('🔍 Current selected shop:', selectedShop);
+      console.log('🔍 Current search term:', searchTerm);
+      console.log('🔍 Current date range:', filterDateRange);
+      console.log('🔍 Current bills count:', bills.length);
+      
+      const calculatedStats = calculateStatsFromBills(bills, selectedShop, searchTerm, filterDateRange);
+      setStats(calculatedStats);
+      
+      console.log('📊 Updated stats:', calculatedStats);
+    }
+  }, [bills, selectedShop, searchTerm, filterDateRange]);
+
   // Show loading while checking authentication
   if (authLoading) {
     return (
@@ -384,23 +400,6 @@ const BillManagementPage = () => {
 
 
   // This useEffect is now handled by the loadRealData useEffect above
-
-  // Recalculate stats whenever bills, selectedShop, searchTerm, or filterDateRange changes
-  useEffect(() => {
-    if (bills.length > 0) {
-      console.log('🔄 Recalculating stats due to bills, shop, search, or date change...');
-      console.log('🔍 Current selected shop:', selectedShop);
-      console.log('🔍 Current search term:', searchTerm);
-      console.log('🔍 Current date range:', filterDateRange);
-      console.log('🔍 Current bills count:', bills.length);
-      
-      const calculatedStats = calculateStatsFromBills(bills, selectedShop, searchTerm, filterDateRange);
-      setStats(calculatedStats);
-      
-      console.log('📊 Updated stats:', calculatedStats);
-    }
-  }, [bills, selectedShop, searchTerm, filterDateRange] 
-);
 
   const handleSaveBill = async (billData) => {
     try {

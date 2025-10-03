@@ -393,7 +393,7 @@ export default function InvoicePreview() {
             <div>2 : All disputes are subject to Deoria jurisdiction only.</div>
             <div>3 : Warranty/Guarantee of products lies with the manufacturer only.</div>
             <div>4 : Kindly check goods at the time of delivery; no claims will be entertained afterwards.</div>
-            <div>5 : Payment to be made only in company's account.</div>
+            <div>5 : Payment to be made only in company&apos;s account.</div>
         </div>
             {/* <div></div> */}
           {/* </div> */}
@@ -402,13 +402,13 @@ export default function InvoicePreview() {
         {/* Signature and Bank Details - placed immediately after Terms (no gap) */}
          <div className=" border-t border-b border-black grid grid-cols-[1fr_2fr_1fr] text-sm">
           <div className="border-r border-black p-3">
-            <div className="font-semibold mb-1">Customer's Seal and Signature</div>
+            <div className="font-semibold mb-1">Customer&apos;s Seal and Signature</div>
           </div>
            <div className="border-r border-black p-3 bg-yellow-50/50">
              <div className="font-semibold mb-2">Company’s Bank Details</div>
              <div className="grid grid-cols-[160px_10px_1fr] gap-y-1">
                <div className="text-gray-700">Bank Name</div><div>:</div><div className="font-semibold">{bank?.bankName || '-'}</div>
-               <div className="text-gray-700">A/c's Holder Name</div><div>:</div><div className="font-semibold">{bank?.accountHolder || bill.shopName || '-'}</div>
+               <div className="text-gray-700">A/c&apos;s Holder Name</div><div>:</div><div className="font-semibold">{bank?.accountHolder || bill.shopName || '-'}</div>
                <div className="text-gray-700">A/c No.</div><div>:</div><div className="font-semibold">{bank?.accountNumber || '-'}</div>
                <div className="text-gray-700">Branch & IFSC Code</div><div>:</div><div className="font-semibold">{bank?.branch || ''}{bank?.branch && bank?.ifsc ? ' & ' : ''}{bank?.ifsc || ''}</div>
                <div className="text-gray-700">Phonepay/GPay No</div><div>:</div><div className="font-semibold">{bank?.upiNumber || bank?.upiPhone || '-'}</div>
@@ -416,7 +416,7 @@ export default function InvoicePreview() {
             </div>
           </div>
           <div className="p-3 flex flex-col text-center justify-between" style={{ minHeight: '140px' }}>
-            <div className="font-semibold">for {bill.shopName || '-'}</div>
+            <div className="font-semibold">for {bill.shopName || &apos;-&apos;}</div>
             <div className="flex items-center justify-center">
               {bill.signatureDataUrl ? (
                 <img src={bill.signatureDataUrl} alt="Signature" className="h-16 object-contain" />

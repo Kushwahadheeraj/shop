@@ -75,6 +75,22 @@ const GSTBillManagementPage = () => {
     }
   }, [authLoading, isAuthenticated, isSeller, router]);
 
+  // Recalculate stats whenever bills, selectedShop, searchTerm, or filterDateRange changes
+  useEffect(() => {
+    if (gstBills.length > 0) {
+      console.log('🔄 Recalculating GST stats due to bills, shop, search, or date change...');
+      console.log('🔍 Current selected shop:', selectedShop);
+      console.log('🔍 Current search term:', searchTerm);
+      console.log('🔍 Current date range:', filterDateRange);
+      console.log('🔍 Current bills count:', gstBills.length);
+      
+      const calculatedStats = calculateStatsFromBills(gstBills, selectedShop, searchTerm, filterDateRange);
+      setStats(calculatedStats);
+      
+      console.log('📊 Updated GST stats:', calculatedStats);
+    }
+  }, [gstBills, selectedShop, searchTerm, filterDateRange]);
+
   // Show loading while checking authentication
   if (authLoading) {
     return (
@@ -383,22 +399,6 @@ const GSTBillManagementPage = () => {
       setStats(calculatedStats);
     }
   };
-
-  // Recalculate stats whenever bills, selectedShop, searchTerm, or filterDateRange changes
-  useEffect(() => {
-    if (gstBills.length > 0) {
-      console.log('🔄 Recalculating GST stats due to bills, shop, search, or date change...');
-      console.log('🔍 Current selected shop:', selectedShop);
-      console.log('🔍 Current search term:', searchTerm);
-      console.log('🔍 Current date range:', filterDateRange);
-      console.log('🔍 Current bills count:', gstBills.length);
-      
-      const calculatedStats = calculateStatsFromBills(gstBills, selectedShop, searchTerm, filterDateRange);
-      setStats(calculatedStats);
-      
-      console.log('📊 Updated GST stats:', calculatedStats);
-    }
-  }, [gstBills, selectedShop, searchTerm, filterDateRange]);
 
   const handleSaveGSTBill = async (billData) => {
     try {

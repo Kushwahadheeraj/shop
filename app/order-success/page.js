@@ -96,7 +96,7 @@ export default function OrderSuccessPage() {
               <span className="text-lg font-semibold text-gray-700">Expected Delivery</span>
             </div>
             <p className="text-2xl font-bold text-blue-600 mb-2">{deliveryDate}</p>
-            <p className="text-sm text-gray-600">We'll send you a confirmation email shortly</p>
+            <p className="text-sm text-gray-600">We&apos;ll send you a confirmation email shortly</p>
           </div>
 
           {/* Decorative Elements */}

@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "start-dev.bat",
-    "build": "node_modules\\.bin\\next.cmd build",
-    "start": "node_modules\\.bin\\next.cmd start",
-    "lint": "node_modules\\.bin\\next.cmd lint",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
     "parse:hsn": "node scripts/parse-gst-hsn.js"
   },
   "dependencies": {

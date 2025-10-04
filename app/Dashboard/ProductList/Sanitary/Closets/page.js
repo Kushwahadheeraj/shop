@@ -1,9 +1,5 @@
 import ProductList from './ProductList';
 
-
-// Force dynamic rendering to prevent build timeouts
-export const dynamic = "force-dynamic";
-
 export default function ClosetsPage() {
   return (
     <div>
@@ -11,6 +7,7 @@ export default function ClosetsPage() {
     </div>
   );
 }
+
 // Force dynamic rendering to prevent build timeouts
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";

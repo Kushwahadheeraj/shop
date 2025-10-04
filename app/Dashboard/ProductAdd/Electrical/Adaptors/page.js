@@ -8,11 +8,7 @@ export default function AdaptorsProductAddPage() {
          {/* List products here */}
        </div>
      );
-} 
-
-
-// Force dynamic rendering to prevent build timeouts
-export const dynamic = "force-dynamic";
+}
 
 // Force dynamic rendering to prevent build timeouts
 export const dynamic = "force-dynamic";

@@ -1,9 +1,5 @@
 import ProductForm from './ProductForm';
 
-
-// Force dynamic rendering to prevent build timeouts
-export const dynamic = "force-dynamic";
-
 export default function CementsPage() {
   return (
     <div>
@@ -12,7 +8,7 @@ export default function CementsPage() {
       {/* List products here */}
     </div>
   );
-} 
+}
 
 // Force dynamic rendering to prevent build timeouts
 export const dynamic = "force-dynamic";

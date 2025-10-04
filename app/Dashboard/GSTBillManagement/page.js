@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Plus, Search, Filter, Download, Eye, Edit, Trash2, Calendar, DollarSign, Building2, CreditCard, History, Receipt, X, FileText, Printer, BarChart3, Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../../components/AuthContext';
@@ -115,7 +115,7 @@ const GSTBillManagementPage = () => {
   }
 
   // Fetch GST shops only (GST module uses dedicated shops)
-  const fetchShops = async () => {
+  const fetchShops = useCallback(async () => {
     try {
       setShopsLoading(true);
       const token = localStorage.getItem('token');
@@ -158,10 +158,10 @@ const GSTBillManagementPage = () => {
     } finally {
       setShopsLoading(false);
     }
-  };
+  }, [router]);
 
   // Fetch GST bills
-  const fetchGSTBills = async () => {
+  const fetchGSTBills = useCallback(async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
@@ -225,7 +225,7 @@ const GSTBillManagementPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router, selectedShop, searchTerm, filterDateRange]);
 
   // Get date range based on filter selection
   const getDateRange = (range) => {
@@ -271,7 +271,7 @@ const GSTBillManagementPage = () => {
   };
 
   // Calculate stats from local bills data
-  const calculateStatsFromBills = (billsData, currentSelectedShop = selectedShop, currentSearchTerm = searchTerm, currentFilterDateRange = filterDateRange) => {
+  const calculateStatsFromBills = useCallback((billsData, currentSelectedShop = selectedShop, currentSearchTerm = searchTerm, currentFilterDateRange = filterDateRange) => {
     console.log('🔍 Calculating GST stats from bills data:', billsData.length, 'bills');
     
     let filteredBills = billsData;
@@ -337,10 +337,10 @@ const GSTBillManagementPage = () => {
       totalGST,
       netAmount
     };
-  };
+  }, [selectedShop, searchTerm, filterDateRange]);
 
   // Fetch GST bill statistics
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
       console.log('🔑 Token for stats API:', token ? 'Present' : 'Missing');
@@ -398,7 +398,7 @@ const GSTBillManagementPage = () => {
       const calculatedStats = calculateStatsFromBills(gstBills);
       setStats(calculatedStats);
     }
-  };
+  }, [router, selectedShop, searchTerm, filterDateRange, gstBills, calculateStatsFromBills]);
 
   const handleSaveGSTBill = async (billData) => {
     try {

@@ -49,7 +49,7 @@ const BillManagementPage = () => {
       console.log('🔍 Shops API response status:', response.status);
       
       if (response.ok) {
-        const data = await response.json();
+      const data = await response.json();
         console.log('✅ Shops fetched successfully:', data);
         
         if (data.success && data.data) {
@@ -70,7 +70,7 @@ const BillManagementPage = () => {
     } finally {
       setShopsLoading(false);
     }
-  }, [router]);
+  }, []);
 
   // Fetch bills
   const fetchBills = useCallback(async () => {
@@ -104,10 +104,10 @@ const BillManagementPage = () => {
       console.log('🔍 Bills API response status:', response.status);
       
       if (response.ok) {
-        const data = await response.json();
+      const data = await response.json();
         console.log('✅ Bills fetched successfully:', data);
-        
-        if (data.success && data.data) {
+      
+      if (data.success && data.data) {
           setBills(data.data);
           console.log('✅ Bills state updated successfully');
         } else {

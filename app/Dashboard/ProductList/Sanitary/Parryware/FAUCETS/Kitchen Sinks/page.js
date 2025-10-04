@@ -1,6 +1,5 @@
 import ProductList from './ProductList';
 
-
 export default function KitchenSinksPage() {
   return (
     <div>
@@ -8,8 +7,6 @@ export default function KitchenSinksPage() {
     </div>
   );
 }
-export const runtime = "nodejs";
-export const revalidate = 0;
 
 // Force dynamic rendering to prevent build timeouts
 export const dynamic = "force-dynamic";

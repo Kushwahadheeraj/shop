@@ -12,6 +12,8 @@ const nextConfig = {
 	experimental: {
 		optimizeCss: true,
 		optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
+		// Increase build timeout for large static generation
+		buildTimeout: 300000, // 5 minutes
 	},
 	// Reduce memory usage during build
 	webpack: (config, { isServer }) => {
@@ -35,6 +37,12 @@ const nextConfig = {
 		}
 		return config;
 	},
+	// Optimize static generation
+	generateBuildId: async () => {
+		return 'build-' + Date.now();
+	},
+	// Reduce static generation load
+	output: 'standalone',
 };
 
 export default nextConfig;

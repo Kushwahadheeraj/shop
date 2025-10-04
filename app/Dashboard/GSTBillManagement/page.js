@@ -62,7 +62,7 @@ const GSTBillManagementPage = () => {
     };
     
     loadRealData();
-  }, []);
+  }, [fetchShops, fetchGSTBills, fetchStats, shops, gstBills, stats]);
 
   // Redirect if not authenticated or not a seller
   useEffect(() => {
@@ -89,7 +89,7 @@ const GSTBillManagementPage = () => {
       
       console.log('📊 Updated GST stats:', calculatedStats);
     }
-  }, [gstBills, selectedShop, searchTerm, filterDateRange]);
+  }, [gstBills, selectedShop, searchTerm, filterDateRange, calculateStatsFromBills]);
 
   // Show loading while checking authentication
   if (authLoading) {

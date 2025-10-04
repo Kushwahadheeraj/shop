@@ -2,6 +2,10 @@
 import React from 'react';
 import UniversalShopPage from '@/components/UniversalShopPage';
 
+
+// Force dynamic rendering to prevent build timeouts
+export const dynamic = "force-dynamic";
+
 export default function Page() {
   return <UniversalShopPage />;
 }

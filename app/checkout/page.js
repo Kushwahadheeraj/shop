@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/components/CartContext";
 import API_BASE_URL from "@/lib/apiConfig";
@@ -682,9 +683,11 @@ export default function CheckoutPage() {
                     <div className="flex gap-4">
                       {/* Product Image */}
                       <div className="w-20 h-20 bg-gray-100 rounded flex-shrink-0">
-                        <img
+                        <Image
                           src={item.thumbnail || item.image || item.img || '/placeholder-image.jpg'}
                           alt={item.name || item.title}
+                          width={80}
+                          height={80}
                           className="w-full h-full object-contain rounded"
                         />
                       </div>

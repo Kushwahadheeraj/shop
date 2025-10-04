@@ -33,6 +33,237 @@ const BillManagementPage = () => {
     remainingAmount: 0
   });
 
+  // Fetch shops
+  const fetchShops = useCallback(async () => {
+    try {
+      setShopsLoading(true);
+      const token = localStorage.getItem('token');
+      console.log('🔍 Fetching shops with token:', token ? 'Token present' : 'No token');
+      
+      const response = await fetch('/api/shops', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      console.log('🔍 Shops API response status:', response.status);
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('✅ Shops fetched successfully:', data);
+        
+        if (data.success && data.data) {
+          setShops(data.data);
+          console.log('✅ Shops state updated successfully');
+        } else {
+          console.error('❌ API returned error:', data.message);
+          console.error('❌ Full error response:', data);
+        }
+      } else {
+        const data = await response.json();
+        console.error('❌ API returned error:', data.message);
+        console.log('🔍 Full error response:', data);
+      }
+    } catch (error) {
+      console.error('❌ Error fetching shops:', error);
+      console.log('🔍 Error details:', error);
+    } finally {
+      setShopsLoading(false);
+    }
+  }, [router]);
+
+  // Fetch bills
+  const fetchBills = useCallback(async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        console.log('❌ No token found, redirecting to login');
+        router.push('/login/seller');
+        return;
+      }
+      
+      console.log('🔍 Fetching bills with token:', token ? 'Token present' : 'No token');
+      
+      const params = new URLSearchParams();
+      if (selectedShop) params.append('shopId', selectedShop);
+      if (searchTerm) params.append('search', searchTerm);
+      if (filterDateRange) {
+        const dateRange = getDateRange(filterDateRange);
+        if (dateRange.startDate) params.append('startDate', dateRange.startDate);
+        if (dateRange.endDate) params.append('endDate', dateRange.endDate);
+      }
+      
+      const response = await fetch(`/api/bills?${params.toString()}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      console.log('🔍 Bills API response status:', response.status);
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('✅ Bills fetched successfully:', data);
+        
+        if (data.success && data.data) {
+          setBills(data.data);
+          console.log('✅ Bills state updated successfully');
+        } else {
+          console.error('❌ API returned error:', data.message);
+          console.error('❌ Full error response:', data);
+        }
+      } else {
+        const data = await response.json();
+        console.error('❌ API returned error:', data.message);
+        console.log('🔍 Full error response:', data);
+      }
+    } catch (error) {
+      console.error('❌ Error fetching bills:', error);
+      console.log('🔍 Error details:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [router, selectedShop, searchTerm, filterDateRange]);
+
+  // Get date range based on filter selection
+  const getDateRange = (range) => {
+    const now = new Date();
+    const endDate = now.toISOString().split('T')[0]; // Today
+    
+    switch (range) {
+      case 'today':
+        return { startDate: endDate, endDate };
+      case 'yesterday':
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString().split('T')[0];
+        return { startDate: yesterdayStr, endDate: yesterdayStr };
+      case 'thisWeek':
+        const startOfWeek = new Date(now);
+        startOfWeek.setDate(now.getDate() - now.getDay());
+        return { startDate: startOfWeek.toISOString().split('T')[0], endDate };
+      case 'thisMonth':
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        return { startDate: startOfMonth.toISOString().split('T')[0], endDate };
+      case 'lastMonth':
+        const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+        return { 
+          startDate: startOfLastMonth.toISOString().split('T')[0], 
+          endDate: endOfLastMonth.toISOString().split('T')[0] 
+        };
+      case 'thisYear':
+        const startOfYear = new Date(now.getFullYear(), 0, 1);
+        return { startDate: startOfYear.toISOString().split('T')[0], endDate };
+      default:
+        return { startDate: null, endDate: null };
+    }
+  };
+
+  // Calculate stats from local bills data
+  const calculateStatsFromBills = useCallback((billsData, currentSelectedShop = selectedShop, currentSearchTerm = searchTerm, currentFilterDateRange = filterDateRange) => {
+    console.log('🔍 Calculating stats from bills data:', billsData.length, 'bills');
+    console.log('🔍 Bills data sample:', billsData.slice(0, 2)); // Show first 2 bills for debugging
+    console.log('🔍 Current filters:', { currentSelectedShop, currentSearchTerm, currentFilterDateRange });
+    
+    let filteredBills = billsData;
+    
+    // Filter by selected shop if any
+    if (currentSelectedShop) {
+      filteredBills = filteredBills.filter(bill => bill.shopId === currentSelectedShop);
+      console.log('🔍 After shop filter:', filteredBills.length, 'bills');
+    }
+    
+    // Filter by search term if any
+    if (currentSearchTerm) {
+      filteredBills = filteredBills.filter(bill => 
+        bill.customerName?.toLowerCase().includes(currentSearchTerm.toLowerCase()) ||
+        bill.customerPhone?.includes(currentSearchTerm) ||
+        bill.billNumber?.toLowerCase().includes(currentSearchTerm.toLowerCase())
+      );
+      console.log('🔍 After search filter:', filteredBills.length, 'bills');
+    }
+    
+    // Filter by date range if any
+    if (currentFilterDateRange) {
+      const dateRange = getDateRange(currentFilterDateRange);
+      if (dateRange.startDate && dateRange.endDate) {
+        filteredBills = filteredBills.filter(bill => {
+          const billDate = new Date(bill.createdAt).toISOString().split('T')[0];
+          return billDate >= dateRange.startDate && billDate <= dateRange.endDate;
+        });
+        console.log('🔍 After date filter:', filteredBills.length, 'bills');
+      }
+    }
+    
+    console.log('🔍 Final filtered bills:', filteredBills.length, 'bills');
+    
+    const totalBills = filteredBills.length;
+    const totalAmount = filteredBills.reduce((sum, bill) => sum + (bill.totalAmount || 0), 0);
+    const paidAmount = filteredBills.reduce((sum, bill) => sum + (bill.paidAmount || 0), 0);
+    const remainingAmount = totalAmount - paidAmount;
+    
+    console.log('📊 Calculated stats:', {
+      totalBills,
+      totalAmount,
+      paidAmount,
+      remainingAmount
+    });
+    
+    return {
+      totalBills,
+      totalAmount,
+      paidAmount,
+      remainingAmount
+    };
+  }, [selectedShop, searchTerm, filterDateRange]);
+
+  // Fetch bill statistics
+  const fetchStats = useCallback(async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const params = new URLSearchParams();
+      if (selectedShop) params.append('shopId', selectedShop);
+      if (searchTerm) params.append('search', searchTerm);
+      if (filterDateRange) {
+        const dateRange = getDateRange(filterDateRange);
+        if (dateRange.startDate) params.append('startDate', dateRange.startDate);
+        if (dateRange.endDate) params.append('endDate', dateRange.endDate);
+      }
+      
+      const response = await fetch(`/api/bills/stats?${params.toString()}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.data) {
+          setStats(data.data);
+        } else {
+          console.log('⚠️ API stats failed, calculating from local bills data');
+          // Fallback: calculate from local bills data
+          const calculatedStats = calculateStatsFromBills(bills);
+          setStats(calculatedStats);
+        }
+      } else {
+        console.log('⚠️ API stats failed, calculating from local bills data');
+        // Fallback: calculate from local bills data
+        const calculatedStats = calculateStatsFromBills(bills);
+        setStats(calculatedStats);
+      }
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+      // Fallback: calculate from local bills data
+      console.log('⚠️ Stats API error, calculating from local bills data');
+      const calculatedStats = calculateStatsFromBills(bills, selectedShop, searchTerm, filterDateRange);
+      setStats(calculatedStats);
+    }
+  }, [router, selectedShop, searchTerm, filterDateRange, bills, calculateStatsFromBills]);
+
   // Load real data from database
   useEffect(() => {
     const loadRealData = async () => {
@@ -103,303 +334,6 @@ const BillManagementPage = () => {
     );
   }
 
-  // Fetch shops
-  const fetchShops = useCallback(async () => {
-    try {
-      setShopsLoading(true);
-      const token = localStorage.getItem('token');
-      console.log('🔍 Fetching shops with token:', token ? 'Token present' : 'No token');
-      
-      const response = await fetch('/api/shops', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      console.log('🔍 Shops API response status:', response.status);
-      const data = await response.json();
-      console.log('🔍 Shops API response data:', data);
-      
-      if (response.status === 401) {
-        console.error('❌ Authentication failed:', data.message);
-        alert('Session expired. Please log in again.');
-        localStorage.removeItem('token');
-        router.push('/login/seller');
-        return;
-      }
-      
-      if (data.success) {
-        const shops = data.data.shops || [];
-        setShops(shops);
-        console.log('✅ Shops set successfully:', shops);
-        console.log('✅ Number of shops:', shops.length);
-        
-        if (shops.length === 0) {
-          console.log('⚠️ No shops found in database');
-        }
-      } else {
-        console.error('❌ API returned error:', data.message);
-        console.log('🔍 Full error response:', data);
-      }
-    } catch (error) {
-      console.error('❌ Error fetching shops:', error);
-      console.log('🔍 Error details:', error);
-    } finally {
-      setShopsLoading(false);
-    }
-  }, [router]);
-
-  // Fetch bills
-  const fetchBills = useCallback(async () => {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem('token');
-      
-      if (!token) {
-        console.error('❌ No authentication token found');
-        return;
-      }
-      
-      const params = new URLSearchParams();
-      if (selectedShop) params.append('shopId', selectedShop);
-      if (searchTerm) params.append('search', searchTerm);
-      
-      // Add date range filtering
-      if (filterDateRange) {
-        const { startDate, endDate } = getDateRange(filterDateRange);
-        if (startDate) params.append('startDate', startDate);
-        if (endDate) params.append('endDate', endDate);
-      }
-
-      console.log('🔍 Fetching bills with params:', params.toString());
-      console.log('🔍 Token present:', !!token);
-      
-      const response = await fetch(`/api/bills?${params}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      console.log('🔍 Bills API response status:', response.status);
-      
-      if (response.status === 401) {
-        console.error('❌ Authentication failed');
-        alert('Session expired. Please log in again.');
-        localStorage.removeItem('token');
-        router.push('/login/seller');
-        return;
-      }
-      
-      const data = await response.json();
-      console.log('🔍 Bills API response data:', data);
-      
-      if (data.success && data.data) {
-        const bills = data.data.bills || [];
-        setBills(bills);
-        console.log('✅ Bills fetched successfully:', bills);
-        console.log('✅ Number of bills:', bills.length);
-        
-        if (bills.length === 0) {
-          console.log('⚠️ No bills found in database');
-        } else {
-          // Calculate stats from the fetched bills
-          console.log('🔍 Calculating stats from fetched bills...');
-          const calculatedStats = calculateStatsFromBills(bills);
-          setStats(calculatedStats);
-          console.log('📊 Stats calculated from database bills:', calculatedStats);
-        }
-      } else {
-        console.error('❌ API returned error:', data.message || 'Unknown error');
-        console.log('🔍 Full error response:', data);
-      }
-    } catch (error) {
-      console.error('❌ Error fetching bills:', error);
-      console.log('🔍 Error details:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [router, selectedShop, searchTerm, filterDateRange]);
-
-  // Get date range based on filter selection
-  const getDateRange = (range) => {
-    const now = new Date();
-    const endDate = now.toISOString().split('T')[0]; // Today
-    
-    switch (range) {
-      case '1d':
-        const yesterday = new Date(now);
-        yesterday.setDate(yesterday.getDate() - 1);
-        return { startDate: yesterday.toISOString().split('T')[0], endDate };
-      
-      case '3d':
-        const threeDaysAgo = new Date(now);
-        threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-        return { startDate: threeDaysAgo.toISOString().split('T')[0], endDate };
-      
-      case '1w':
-        const oneWeekAgo = new Date(now);
-        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-        return { startDate: oneWeekAgo.toISOString().split('T')[0], endDate };
-      
-      case '15d':
-        const fifteenDaysAgo = new Date(now);
-        fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
-        return { startDate: fifteenDaysAgo.toISOString().split('T')[0], endDate };
-      
-      case '1m':
-        const oneMonthAgo = new Date(now);
-        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-        return { startDate: oneMonthAgo.toISOString().split('T')[0], endDate };
-      
-      case '2m':
-        const twoMonthsAgo = new Date(now);
-        twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
-        return { startDate: twoMonthsAgo.toISOString().split('T')[0], endDate };
-      
-      case '6m':
-        const sixMonthsAgo = new Date(now);
-        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-        return { startDate: sixMonthsAgo.toISOString().split('T')[0], endDate };
-      
-      case '1y':
-        const oneYearAgo = new Date(now);
-        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-        return { startDate: oneYearAgo.toISOString().split('T')[0], endDate };
-      
-      default:
-        return { startDate: null, endDate: null };
-    }
-  };
-
-  // Calculate stats from local bills data
-  const calculateStatsFromBills = useCallback((billsData, currentSelectedShop = selectedShop, currentSearchTerm = searchTerm, currentFilterDateRange = filterDateRange) => {
-    console.log('🔍 Calculating stats from bills data:', billsData.length, 'bills');
-    console.log('🔍 Bills data sample:', billsData.slice(0, 2)); // Show first 2 bills for debugging
-    console.log('🔍 Current filters:', { currentSelectedShop, currentSearchTerm, currentFilterDateRange });
-    
-    let filteredBills = billsData;
-    
-    // Filter by selected shop if any (only if a shop is actually selected)
-    if (currentSelectedShop && currentSelectedShop !== '') {
-      const selectedShopName = shops.find(s => s._id === currentSelectedShop)?.name;
-      filteredBills = billsData.filter(bill => bill.shopName === selectedShopName);
-      console.log('🔍 Filtered bills for shop:', selectedShopName, '=', filteredBills.length);
-    } else {
-      console.log('🔍 No shop selected - showing all bills:', billsData.length);
-    }
-    
-    // Filter by search term if any
-    if (currentSearchTerm) {
-      filteredBills = filteredBills.filter(bill => 
-        bill.billNumber.toLowerCase().includes(currentSearchTerm.toLowerCase()) ||
-        bill.shopName.toLowerCase().includes(currentSearchTerm.toLowerCase())
-      );
-      console.log('🔍 Filtered bills by search term:', currentSearchTerm, '=', filteredBills.length);
-    }
-    
-    // Filter by date range if selected
-    if (currentFilterDateRange) {
-      const { startDate, endDate } = getDateRange(currentFilterDateRange);
-      if (startDate && endDate) {
-        filteredBills = filteredBills.filter(bill => {
-          const billDate = new Date(bill.billDate);
-          return billDate >= new Date(startDate) && billDate <= new Date(endDate);
-        });
-        console.log('🔍 Filtered bills by date range:', filteredBills.length);
-      }
-    }
-    
-    // Calculate totals from all bills
-    const totalBills = filteredBills.length;
-    const totalAmount = roundCurrency(filteredBills.reduce((sum, bill) => {
-      const amount = bill.pricing?.totalAmount || 0;
-      console.log(`💰 Bill ${bill.billNumber}: totalAmount = ${amount}`);
-      return sum + amount;
-    }, 0));
-    
-    const paidAmount = roundCurrency(filteredBills.reduce((sum, bill) => {
-      const amount = bill.payment?.paidAmount || 0;
-      console.log(`💳 Bill ${bill.billNumber}: paidAmount = ${amount}`);
-      return sum + amount;
-    }, 0));
-    
-    const remainingAmount = roundCurrency(filteredBills.reduce((sum, bill) => {
-      const amount = bill.payment?.remainingAmount || 0;
-      console.log(`📊 Bill ${bill.billNumber}: remainingAmount = ${amount}`);
-      return sum + amount;
-    }, 0));
-    
-    console.log('📊 Final calculated stats:', {
-      totalBills,
-      totalAmount,
-      paidAmount,
-      remainingAmount
-    });
-    
-    return {
-      totalBills,
-      totalAmount,
-      paidAmount,
-      remainingAmount
-    };
-  }, [selectedShop, searchTerm, filterDateRange]);
-
-  // Fetch bill statistics
-  const fetchStats = useCallback(async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const params = new URLSearchParams();
-      if (selectedShop) params.append('shopId', selectedShop);
-      
-      // Add date range filtering for stats too
-      if (filterDateRange) {
-        const { startDate, endDate } = getDateRange(filterDateRange);
-        if (startDate) params.append('startDate', startDate);
-        if (endDate) params.append('endDate', endDate);
-      }
-
-      console.log('🔍 Fetching stats with params:', params.toString());
-      console.log('🔍 Selected shop:', selectedShop);
-      console.log('🔍 Filter date range:', filterDateRange);
-
-      const response = await fetch(`/api/bills/stats?${params}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
-      
-      console.log('🔍 Stats API response:', data);
-      
-      if (response.status === 401) {
-        console.error('Authentication failed:', data.message);
-        alert('Session expired. Please log in again.');
-        localStorage.removeItem('token');
-        router.push('/login/seller');
-        return;
-      }
-      
-      if (data.success && data.data?.overview) {
-        console.log('✅ Stats updated from API:', data.data.overview);
-        setStats(data.data.overview);
-      } else {
-        console.log('⚠️ API stats failed, calculating from local bills data');
-        // Fallback: calculate from local bills data
-        const calculatedStats = calculateStatsFromBills(bills);
-        setStats(calculatedStats);
-      }
-    } catch (error) {
-      console.error('Error fetching stats:', error);
-      // Fallback: calculate from local bills data
-      console.log('⚠️ Stats API error, calculating from local bills data');
-      const calculatedStats = calculateStatsFromBills(bills, selectedShop, searchTerm, filterDateRange);
-      setStats(calculatedStats);
-    }
-  }, [router, selectedShop, searchTerm, filterDateRange, bills, calculateStatsFromBills]);
-
-
-  // This useEffect is now handled by the loadRealData useEffect above
 
   const handleSaveBill = async (billData) => {
     try {

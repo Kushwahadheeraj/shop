@@ -1,9 +1,5 @@
 import ProductList from './ProductList';
 
-
-// Force dynamic rendering to prevent build timeouts
-export const dynamic = "force-dynamic";
-
 export default function XrossaSeriesPage() {
   return (
     <div>
@@ -11,6 +7,7 @@ export default function XrossaSeriesPage() {
     </div>
   );
 }
+
 // Force dynamic rendering to prevent build timeouts
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";

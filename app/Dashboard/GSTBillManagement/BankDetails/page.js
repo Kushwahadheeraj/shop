@@ -35,7 +35,7 @@ export default function BankDetailsPage() {
       return;
     }
     fetchAccounts();
-  }, []);
+  }, [router]);
 
   const saveAccount = async () => {
     const token = localStorage.getItem('token');

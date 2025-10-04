@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Edit, Download, Printer } from 'lucide-react';
 
 export default function InvoicePreview() {
@@ -419,7 +420,7 @@ export default function InvoicePreview() {
             <div className="font-semibold">for {bill.shopName || '-'}</div>
             <div className="flex items-center justify-center">
               {bill.signatureDataUrl ? (
-                <img src={bill.signatureDataUrl} alt="Signature" className="h-16 object-contain" />
+                <Image src={bill.signatureDataUrl} alt="Signature" width={128} height={64} className="h-16 object-contain" />
               ) : (
                 <div className="h-16 w-32 " />
               )}

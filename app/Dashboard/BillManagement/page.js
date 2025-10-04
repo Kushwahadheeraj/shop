@@ -50,7 +50,7 @@ const BillManagementPage = () => {
     
     // Load real data from database
     loadRealData();
-  }, []);
+  }, [fetchShops, fetchBills, fetchStats]);
 
 
   // Redirect if not authenticated or not a seller
@@ -78,7 +78,7 @@ const BillManagementPage = () => {
       
       console.log('📊 Updated stats:', calculatedStats);
     }
-  }, [bills, selectedShop, searchTerm, filterDateRange]);
+  }, [bills, selectedShop, searchTerm, filterDateRange, calculateStatsFromBills]);
 
   // Show loading while checking authentication
   if (authLoading) {

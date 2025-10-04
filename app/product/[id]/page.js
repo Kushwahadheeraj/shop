@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import API_BASE_URL from "@/lib/apiConfig";
 import { useCart } from "@/components/CartContext";
 import { useAuth } from "@/components/AuthContext";
@@ -239,7 +240,7 @@ export default function ProductDetailPage() {
     };
     if (id) fetchOne();
     return () => { mounted = false };
-  }, [id]);
+  }, [id, user]);
 
   useEffect(() => {
     const loadReviews = async () => {
@@ -415,9 +416,11 @@ export default function ProductDetailPage() {
                 setZoomOrigin(`${x}% ${y}%`);
               }}
             >
-              <img
+              <Image
                 src={product.images[currentImg]}
                 alt={product.name}
+                width={600}
+                height={600}
                 className="w-full h-full object-contain transition-transform duration-300"
                 style={{ transform: isZoom ? 'scale(1.6)' : 'scale(1)', transformOrigin: zoomOrigin }}
               />
@@ -439,7 +442,7 @@ export default function ProductDetailPage() {
                   className={`border rounded p-1 h-16 flex items-center justify-center ${idx===currentImg ? 'border-yellow-500' : 'border-gray-200'}`}
                   aria-label={`Show image ${idx+1}`}
                 >
-                  <img src={src} alt={product.name + ' ' + (idx+1)} className="object-contain max-h-full" />
+                  <Image src={src} alt={product.name + ' ' + (idx+1)} width={80} height={80} className="object-contain max-h-full" />
                 </button>
               ))}
             </div>
@@ -477,7 +480,7 @@ export default function ProductDetailPage() {
           {/* Delivery Information */}
           <div className="bg-gray-50 p-4 rounded-lg">
             <div className="items-start gap-3">
-              <img src="/truck.png" alt="Delivery Truck" className="w-16 h-16 object-contain" />
+              <Image src="/truck.png" alt="Delivery Truck" width={64} height={64} className="w-16 h-16 object-contain" />
               <div>
                 <div className="font-semibold text-base">Delivering all over India</div>
                 <div className="text-sm text-gray-600">All Orders delivered within 1-2 working days.</div>
@@ -740,7 +743,7 @@ export default function ProductDetailPage() {
                 .map((r, idx) => (
                 <div key={`${r.id}-${idx}`} className="flex gap-3 border-b pb-3">
                   <Link href={`/product/${r.id}`} className="w-16 h-16 flex-shrink-0 border rounded overflow-hidden flex items-center justify-center bg-white">
-                    <img src={r.image} alt={r.name} className="object-contain w-full h-full" />
+                    <Image src={r.image} alt={r.name} width={64} height={64} className="object-contain w-full h-full" />
                   </Link>
                   <div className="text-sm">
                     <Link href={`/product/${r.id}`} className="line-clamp-2 hover:underline">{r.name}</Link>
@@ -813,7 +816,7 @@ export default function ProductDetailPage() {
                         <span className="absolute ml-2 mt-2 bg-black text-white text-[10px] font-bold px-2 py-1 rounded-full">-{r.discount}%</span>
                       )}
                       <Link href={`/product/${r.id}`} className="h-28 flex items-center justify-center overflow-hidden mb-2">
-                        <img src={r.image} alt={r.name} className="object-contain h-full w-full transform transition-transform duration-300 group-hover:scale-105" />
+                        <Image src={r.image} alt={r.name} width={200} height={200} className="object-contain h-full w-full transform transition-transform duration-300 group-hover:scale-105" />
                       </Link>
                       <div className="text-[11px] text-gray-500">{r.type}</div>
                       <Link href={`/product/${r.id}`} className="text-xs font-medium line-clamp-2 mb-1">{r.name}</Link>
@@ -844,7 +847,7 @@ export default function ProductDetailPage() {
               <div key={r._id} className="border-b pb-4">
                     <div className="flex items-center gap-2 text-sm">
                       {r.userAvatar ? (
-                        <img src={r.userAvatar} alt={r.userName || 'User'} className="w-8 h-8 rounded-full object-cover" />
+                        <Image src={r.userAvatar} alt={r.userName || 'User'} width={32} height={32} className="w-8 h-8 rounded-full object-cover" />
                       ) : (
                         <div className="w-8 h-8 rounded-full bg-gray-200" />
                       )}
@@ -906,7 +909,7 @@ export default function ProductDetailPage() {
                   <span className="absolute ml-2 mt-2 bg-black text-white text-xs font-bold px-2 py-1 rounded-full">-{r.discount}%</span>
                 )}
                 <Link href={`/product/${r.id}`} className="h-36 flex items-center justify-center overflow-hidden mb-3">
-                  <img src={r.image} alt={r.name} className="object-contain h-full w-full transform transition-transform duration-300 group-hover:scale-105" />
+                  <Image src={r.image} alt={r.name} width={200} height={200} className="object-contain h-full w-full transform transition-transform duration-300 group-hover:scale-105" />
                 </Link>
                 <div className="text-xs text-gray-500">{r.type}</div>
                 <Link href={`/product/${r.id}`} className="text-sm font-medium line-clamp-2 mb-1">{r.name}</Link>

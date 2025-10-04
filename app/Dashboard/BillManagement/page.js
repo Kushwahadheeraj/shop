@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Plus, Search, Filter, Download, Eye, Edit, Trash2, Calendar, DollarSign, Building2, CreditCard, History, Receipt, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../../components/AuthContext';
@@ -104,7 +104,7 @@ const BillManagementPage = () => {
   }
 
   // Fetch shops
-  const fetchShops = async () => {
+  const fetchShops = useCallback(async () => {
     try {
       setShopsLoading(true);
       const token = localStorage.getItem('token');
@@ -147,10 +147,10 @@ const BillManagementPage = () => {
     } finally {
       setShopsLoading(false);
     }
-  };
+  }, [router]);
 
   // Fetch bills
-  const fetchBills = async () => {
+  const fetchBills = useCallback(async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
@@ -219,7 +219,7 @@ const BillManagementPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router, selectedShop, searchTerm, filterDateRange]);
 
   // Get date range based on filter selection
   const getDateRange = (range) => {
@@ -273,7 +273,7 @@ const BillManagementPage = () => {
   };
 
   // Calculate stats from local bills data
-  const calculateStatsFromBills = (billsData, currentSelectedShop = selectedShop, currentSearchTerm = searchTerm, currentFilterDateRange = filterDateRange) => {
+  const calculateStatsFromBills = useCallback((billsData, currentSelectedShop = selectedShop, currentSearchTerm = searchTerm, currentFilterDateRange = filterDateRange) => {
     console.log('🔍 Calculating stats from bills data:', billsData.length, 'bills');
     console.log('🔍 Bills data sample:', billsData.slice(0, 2)); // Show first 2 bills for debugging
     console.log('🔍 Current filters:', { currentSelectedShop, currentSearchTerm, currentFilterDateRange });
@@ -343,10 +343,10 @@ const BillManagementPage = () => {
       paidAmount,
       remainingAmount
     };
-  };
+  }, [selectedShop, searchTerm, filterDateRange]);
 
   // Fetch bill statistics
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
       const params = new URLSearchParams();
@@ -396,7 +396,7 @@ const BillManagementPage = () => {
       const calculatedStats = calculateStatsFromBills(bills, selectedShop, searchTerm, filterDateRange);
       setStats(calculatedStats);
     }
-  };
+  }, [router, selectedShop, searchTerm, filterDateRange, bills, calculateStatsFromBills]);
 
 
   // This useEffect is now handled by the loadRealData useEffect above

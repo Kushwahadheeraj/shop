@@ -262,7 +262,7 @@ const BillManagementPage = () => {
       const calculatedStats = calculateStatsFromBills(bills, selectedShop, searchTerm, filterDateRange);
       setStats(calculatedStats);
     }
-  }, [router, selectedShop, searchTerm, filterDateRange, bills, calculateStatsFromBills]);
+  }, [selectedShop, searchTerm, filterDateRange, bills, calculateStatsFromBills]);
 
   // Load real data from database
   useEffect(() => {

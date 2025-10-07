@@ -231,11 +231,16 @@ const EditBillForm = ({ bill, onClose, onSave, shops }) => {
                 }`}
               >
                 <option value="">Select a shop</option>
-                {shops.map(shop => (
-                  <option key={shop._id} value={shop._id}>
-                    {shop.name} - {shop.address}
-                  </option>
-                ))}
+                {(Array.isArray(shops) ? shops : []).map((shop) => {
+                  const id = shop?._id || shop?.id || shop?.shopId || '';
+                  const label = shop?.name || shop?.shopName || shop?.title || 'Unnamed Shop';
+                  const addr = shop?.address || shop?.street || shop?.city || '';
+                  return (
+                    <option key={id || label} value={id}>
+                      {label}{addr ? ` - ${addr}` : ''}
+                    </option>
+                  );
+                })}
               </select>
               {errors.shopId && (
                 <p className="text-red-500 text-sm mt-1">{errors.shopId}</p>

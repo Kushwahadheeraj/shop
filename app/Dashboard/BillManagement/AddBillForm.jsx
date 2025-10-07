@@ -312,7 +312,7 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
                 <option value="">
                   {shops.length === 0 ? 'No shops available' : 'Select a shop'}
                 </option>
-                {shops.map(shop => (
+                {(Array.isArray(shops) ? shops : []).map(shop => (
                   <option key={shop._id} value={shop._id}>
                     {shop.name} - {shop.address}
                   </option>

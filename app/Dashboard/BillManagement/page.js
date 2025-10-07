@@ -10,6 +10,28 @@ import EditBillForm from './EditBillForm';
 import PaymentModal from './PaymentModal';
 
 const BillManagementPage = () => {
+  // Backend helpers
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.API_BASE_URL || '';
+  const join = (base, path) => `${base.replace(/\/$/, '')}${path}`;
+  const api = (path) => (API_BASE ? join(API_BASE, path) : path);
+  const toArray = (res) => {
+    if (Array.isArray(res)) return res;
+    if (Array.isArray(res?.data)) return res.data;
+    if (Array.isArray(res?.data?.shops)) return res.data.shops;
+    if (Array.isArray(res?.data?.bills)) return res.data.bills;
+    return [];
+  };
+  const getSellerId = () => {
+    try {
+      const tokenStr = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      if (!tokenStr) return null;
+      const payload = JSON.parse(atob((tokenStr.split('.')[1] || '').replace(/-/g, '+').replace(/_/g, '/')));
+      return payload?.id || null;
+    } catch {
+      return null;
+    }
+  };
+  const sellerId = getSellerId();
   const router = useRouter();
   const { isAuthenticated, isSeller, loading: authLoading } = useAuth();
   const [showAddBillForm, setShowAddBillForm] = useState(false);
@@ -38,32 +60,24 @@ const BillManagementPage = () => {
     try {
       setShopsLoading(true);
       const token = localStorage.getItem('token');
-      console.log('🔍 Fetching shops with token:', token ? 'Token present' : 'No token');
-      
-      const response = await fetch('/api/shops', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
+      const qs = sellerId ? `?sellerId=${encodeURIComponent(sellerId)}` : '';
+      const response = await fetch(api(`/api/shops${qs}`), { headers: token ? { 'Authorization': `Bearer ${token}` } : {} });
       console.log('🔍 Shops API response status:', response.status);
-      
-      if (response.ok) {
-      const data = await response.json();
-        console.log('✅ Shops fetched successfully:', data);
-        
-        if (data.success && data.data) {
-          setShops(data.data);
-          console.log('✅ Shops state updated successfully');
-        } else {
-          console.error('❌ API returned error:', data.message);
-          console.error('❌ Full error response:', data);
-        }
-      } else {
-        const data = await response.json();
-        console.error('❌ API returned error:', data.message);
-        console.log('🔍 Full error response:', data);
+      const data = await response.json().catch(() => ({}));
+      const list = toArray(data);
+      console.log('🔍 Raw shops API response:', data);
+      console.log('🔍 Parsed shops list:', list);
+      console.log('🔍 First shop sample:', list[0]);
+      if (list.length > 0) {
+        console.log('🔍 Shop fields:', {
+          _id: list[0]._id,
+          id: list[0].id,
+          shopId: list[0].shopId,
+          name: list[0].name,
+          shopName: list[0].shopName
+        });
       }
+      if (list.length) setShops(list);
     } catch (error) {
       console.error('❌ Error fetching shops:', error);
       console.log('🔍 Error details:', error);
@@ -87,7 +101,7 @@ const BillManagementPage = () => {
       console.log('🔍 Fetching bills with token:', token ? 'Token present' : 'No token');
       
       const params = new URLSearchParams();
-      if (selectedShop) params.append('shopId', selectedShop);
+      if (sellerId) params.append('sellerId', sellerId);
       if (searchTerm) params.append('search', searchTerm);
       if (filterDateRange) {
         const dateRange = getDateRange(filterDateRange);
@@ -95,29 +109,27 @@ const BillManagementPage = () => {
         if (dateRange.endDate) params.append('endDate', dateRange.endDate);
       }
       
-      const response = await fetch(`/api/bills?${params.toString()}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await fetch(api(`/api/bills?${params.toString()}`), { headers: token ? { 'Authorization': `Bearer ${token}` } : {} });
       
       console.log('🔍 Bills API response status:', response.status);
       
-      if (response.ok) {
-      const data = await response.json();
-        console.log('✅ Bills fetched successfully:', data);
-      
-      if (data.success && data.data) {
-          setBills(data.data);
-          console.log('✅ Bills state updated successfully');
-        } else {
-          console.error('❌ API returned error:', data.message);
-          console.error('❌ Full error response:', data);
-        }
-      } else {
-        const data = await response.json();
-        console.error('❌ API returned error:', data.message);
-        console.log('🔍 Full error response:', data);
+      const data = await response.json().catch(() => ({}));
+      const list = toArray(data);
+      console.log('🔍 Raw bills API response:', data);
+      console.log('🔍 Parsed bills list:', list);
+      console.log('🔍 First bill sample:', list[0]);
+      if (list.length > 0) {
+        console.log('🔍 Bill shop fields:', {
+          shopId: list[0].shopId,
+          'shop._id': list[0].shop?._id,
+          shopName: list[0].shopName,
+          'shop.name': list[0].shop?.name,
+          shop: list[0].shop
+        });
+      }
+      if (list.length) {
+        setBills(list);
+        // Stats will be recalculated by useEffect when bills state updates
       }
     } catch (error) {
       console.error('❌ Error fetching bills:', error);
@@ -164,15 +176,68 @@ const BillManagementPage = () => {
 
   // Calculate stats from local bills data
   const calculateStatsFromBills = useCallback((billsData, currentSelectedShop = selectedShop, currentSearchTerm = searchTerm, currentFilterDateRange = filterDateRange) => {
-    console.log('🔍 Calculating stats from bills data:', billsData.length, 'bills');
-    console.log('🔍 Bills data sample:', billsData.slice(0, 2)); // Show first 2 bills for debugging
+    const safeBills = Array.isArray(billsData) ? billsData : [];
+    console.log('🔍 Calculating stats from bills data:', safeBills.length, 'bills');
+    console.log('🔍 Bills data sample:', safeBills.slice(0, 2)); // Show first 2 bills for debugging
     console.log('🔍 Current filters:', { currentSelectedShop, currentSearchTerm, currentFilterDateRange });
     
-    let filteredBills = billsData;
+    let filteredBills = safeBills;
     
-    // Filter by selected shop if any
+    // Filter by selected shop if any (supports id or name on bills)
     if (currentSelectedShop) {
-      filteredBills = filteredBills.filter(bill => bill.shopId === currentSelectedShop);
+      const selectedShopObj = (Array.isArray(shops) ? shops : [])
+        .find(s => String(s?._id || s?.id || s?.shopId || '') === String(currentSelectedShop));
+      
+      console.log('🔍 Shop filtering debug:', {
+        currentSelectedShop,
+        selectedShopObj,
+        shopsCount: shops.length,
+        billsBeforeFilter: filteredBills.length
+      });
+      
+      const normalize = (v) => v ? String(v).toLowerCase().replace(/[^a-z0-9]/g, '') : '';
+      const selNameNorm = normalize(selectedShopObj?.name || selectedShopObj?.title || selectedShopObj?.shopName || '');
+      
+      console.log('🔍 Shop name normalization:', {
+        originalName: selectedShopObj?.name,
+        normalizedName: selNameNorm
+      });
+      
+      filteredBills = filteredBills.filter(bill => {
+        // Handle both string and object shopId
+        let billShopId = '';
+        if (typeof bill.shopId === 'string') {
+          billShopId = bill.shopId;
+        } else if (bill.shopId && typeof bill.shopId === 'object') {
+          billShopId = bill.shopId._id || bill.shopId.id || '';
+        } else if (bill.shop?._id) {
+          billShopId = bill.shop._id;
+        }
+        
+        const billNameNorm = normalize(bill.shopName || bill.shop?.name || bill.shop || bill.shop_title || '');
+        
+        const nameMatch = selNameNorm && billNameNorm && (
+          billNameNorm === selNameNorm || 
+          billNameNorm.includes(selNameNorm) || 
+          selNameNorm.includes(billNameNorm)
+        );
+        
+        console.log('🔍 Bill filtering:', {
+          billId: bill._id,
+          billShopId,
+          billShopName: bill.shopName,
+          billNameNorm,
+          selectedShopId: String(currentSelectedShop),
+          idMatch: billShopId === String(currentSelectedShop),
+          nameMatch
+        });
+        
+        if (billShopId) return billShopId === String(currentSelectedShop);
+        if (selNameNorm && billNameNorm) {
+          return billNameNorm === selNameNorm || billNameNorm.includes(selNameNorm) || selNameNorm.includes(billNameNorm);
+        }
+        return true;
+      });
       console.log('🔍 After shop filter:', filteredBills.length, 'bills');
     }
     
@@ -191,7 +256,7 @@ const BillManagementPage = () => {
       const dateRange = getDateRange(currentFilterDateRange);
       if (dateRange.startDate && dateRange.endDate) {
         filteredBills = filteredBills.filter(bill => {
-          const billDate = new Date(bill.createdAt).toISOString().split('T')[0];
+          const billDate = new Date(bill.billDate || bill.createdAt || bill.invoiceDate || bill.date || 0).toISOString().split('T')[0];
           return billDate >= dateRange.startDate && billDate <= dateRange.endDate;
         });
         console.log('🔍 After date filter:', filteredBills.length, 'bills');
@@ -199,11 +264,11 @@ const BillManagementPage = () => {
     }
     
     console.log('🔍 Final filtered bills:', filteredBills.length, 'bills');
-    
+    const num = (v) => Number(v ?? 0);
     const totalBills = filteredBills.length;
-    const totalAmount = filteredBills.reduce((sum, bill) => sum + (bill.totalAmount || 0), 0);
-    const paidAmount = filteredBills.reduce((sum, bill) => sum + (bill.paidAmount || 0), 0);
-    const remainingAmount = totalAmount - paidAmount;
+    const totalAmount = filteredBills.reduce((sum, bill) => sum + num(bill.totalAmount ?? bill.pricing?.totalAmount), 0);
+    const paidAmount = filteredBills.reduce((sum, bill) => sum + num(bill.paidAmount ?? bill.payment?.paidAmount), 0);
+    const remainingAmount = Math.max(0, totalAmount - paidAmount);
     
     console.log('📊 Calculated stats:', {
       totalBills,
@@ -218,51 +283,16 @@ const BillManagementPage = () => {
       paidAmount,
       remainingAmount
     };
-  }, [selectedShop, searchTerm, filterDateRange]);
+  }, [selectedShop, searchTerm, filterDateRange, shops]);
 
-  // Fetch bill statistics
+  // This useEffect is now handled by the main stats calculation useEffect below
+
+  // Fetch bill statistics (simplified - stats are now calculated locally)
   const fetchStats = useCallback(async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const params = new URLSearchParams();
-      if (selectedShop) params.append('shopId', selectedShop);
-      if (searchTerm) params.append('search', searchTerm);
-      if (filterDateRange) {
-        const dateRange = getDateRange(filterDateRange);
-        if (dateRange.startDate) params.append('startDate', dateRange.startDate);
-        if (dateRange.endDate) params.append('endDate', dateRange.endDate);
-      }
-      
-      const response = await fetch(`/api/bills/stats?${params.toString()}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success && data.data) {
-          setStats(data.data);
-        } else {
-          console.log('⚠️ API stats failed, calculating from local bills data');
-          // Fallback: calculate from local bills data
-          const calculatedStats = calculateStatsFromBills(bills);
-          setStats(calculatedStats);
-        }
-      } else {
-        console.log('⚠️ API stats failed, calculating from local bills data');
-        // Fallback: calculate from local bills data
-        const calculatedStats = calculateStatsFromBills(bills);
-        setStats(calculatedStats);
-      }
-    } catch (error) {
-      console.error('Error fetching stats:', error);
-      // Fallback: calculate from local bills data
-      console.log('⚠️ Stats API error, calculating from local bills data');
-      const calculatedStats = calculateStatsFromBills(bills, selectedShop, searchTerm, filterDateRange);
-      setStats(calculatedStats);
-    }
-  }, [selectedShop, searchTerm, filterDateRange, bills, calculateStatsFromBills]);
+    console.log('📊 fetchStats called - stats will be calculated by useEffect');
+    // Stats are now calculated by useEffect when bills data changes
+    // This function is kept for compatibility but doesn't need to do anything
+  }, []);
 
   // Load real data from database
   useEffect(() => {
@@ -297,19 +327,20 @@ const BillManagementPage = () => {
 
   // Recalculate stats whenever bills, selectedShop, searchTerm, or filterDateRange changes
   useEffect(() => {
-    if (bills.length > 0) {
-      console.log('🔄 Recalculating stats due to bills, shop, search, or date change...');
-      console.log('🔍 Current selected shop:', selectedShop);
-      console.log('🔍 Current search term:', searchTerm);
-      console.log('🔍 Current date range:', filterDateRange);
-      console.log('🔍 Current bills count:', bills.length);
-      
-      const calculatedStats = calculateStatsFromBills(bills, selectedShop, searchTerm, filterDateRange);
-      setStats(calculatedStats);
-      
-      console.log('📊 Updated stats:', calculatedStats);
-    }
-  }, [bills, selectedShop, searchTerm, filterDateRange, calculateStatsFromBills]);
+    console.log('🔄 Recalculating stats due to dependency change...');
+    console.log('🔍 Current state:', {
+      billsCount: bills.length,
+      selectedShop,
+      searchTerm,
+      filterDateRange,
+      shopsCount: shops.length
+    });
+    
+    const calculatedStats = calculateStatsFromBills(bills, selectedShop, searchTerm, filterDateRange);
+    setStats(calculatedStats);
+    
+    console.log('📊 Updated stats:', calculatedStats);
+  }, [bills, selectedShop, searchTerm, filterDateRange, calculateStatsFromBills, shops]);
 
   // Show loading while checking authentication
   if (authLoading) {
@@ -736,7 +767,7 @@ const BillManagementPage = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Bill Management</h1>
-          <p className="text-gray-600">Manage your bills and shop transactions</p>
+          {/* <p className="text-gray-600">Manage your bills and shop transactions</p>
           <div className="text-sm text-gray-500 space-y-1">
             <p>Shops loaded: {shops.length}</p>
             <p>Bills loaded: {bills.length}</p>
@@ -750,7 +781,7 @@ const BillManagementPage = () => {
                 `Showing all results (${stats.totalBills} bills)`
               }
             </p>
-          </div>
+          </div> */}
         </div>
         <div className="flex gap-3">
           <button
@@ -876,23 +907,14 @@ const BillManagementPage = () => {
               onChange={(e) => {
                 console.log('🏪 Shop changed to:', e.target.value);
                 setSelectedShop(e.target.value);
-                
-                // Recalculate stats immediately when shop changes
-                if (bills.length > 0) {
-                  setTimeout(() => {
-                    const calculatedStats = calculateStatsFromBills(bills, e.target.value, searchTerm, filterDateRange);
-                    setStats(calculatedStats);
-                    console.log('📊 Stats updated for shop change:', calculatedStats);
-                  }, 100);
-                }
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               disabled={shopsLoading}
             >
               <option value="">
-                {shopsLoading ? 'Loading shops...' : `All Shops (${shops.length})`}
+                {shopsLoading ? 'Loading shops...' : `All Shops (${Array.isArray(shops) ? shops.length : 0})`}
               </option>
-              {shops.map(shop => (
+              {(Array.isArray(shops) ? shops : []).map(shop => (
                 <option key={shop._id} value={shop._id}>
                   {shop.name} - {shop.address}
                 </option>
@@ -910,15 +932,6 @@ const BillManagementPage = () => {
               onChange={(e) => {
                 console.log('📅 Date range changed to:', e.target.value);
                 setFilterDateRange(e.target.value);
-                
-                // Recalculate stats when date range changes
-                if (bills.length > 0) {
-                  setTimeout(() => {
-                    const calculatedStats = calculateStatsFromBills(bills, selectedShop, searchTerm, e.target.value);
-                    setStats(calculatedStats);
-                    console.log('📊 Stats updated for date range change:', calculatedStats);
-                  }, 100);
-                }
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
@@ -945,15 +958,6 @@ const BillManagementPage = () => {
                 onChange={(e) => {
                   console.log('🔍 Search term changed to:', e.target.value);
                   setSearchTerm(e.target.value);
-                  
-                  // Recalculate stats when search term changes
-                  if (bills.length > 0) {
-                    setTimeout(() => {
-                      const calculatedStats = calculateStatsFromBills(bills, selectedShop, e.target.value, filterDateRange);
-                      setStats(calculatedStats);
-                      console.log('📊 Stats updated for search term change:', calculatedStats);
-                    }, 100);
-                  }
                 }}
                 className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
@@ -967,15 +971,6 @@ const BillManagementPage = () => {
                 setSelectedShop('');
                 setSearchTerm('');
                 setFilterDateRange('');
-                
-                // Recalculate stats when filters are cleared
-                if (bills.length > 0) {
-                  setTimeout(() => {
-                    const calculatedStats = calculateStatsFromBills(bills, '', '', '');
-                    setStats(calculatedStats);
-                    console.log('📊 Stats updated after clearing filters:', calculatedStats);
-                  }, 100);
-                }
               }}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
             >
@@ -1006,29 +1001,60 @@ const BillManagementPage = () => {
           </div>
         ) : (() => {
           // Filter bills based on selected shop and search term
-          let filteredBills = bills;
+          let filteredBills = Array.isArray(bills) ? bills : [];
           
           // Filter by selected shop (only if a shop is actually selected)
           if (selectedShop && selectedShop !== '') {
-            const selectedShopName = shops.find(s => s._id === selectedShop)?.name;
-            filteredBills = bills.filter(bill => bill.shopName === selectedShopName);
+            const selObj = (Array.isArray(shops) ? shops : []).find(s => String(s?._id || s?.id || s?.shopId || '') === String(selectedShop));
+            const selNameLc = selObj?.name ? String(selObj.name).toLowerCase() : '';
+            filteredBills = filteredBills.filter(bill => {
+              // Handle both string and object shopId
+              let billShopId = '';
+              if (typeof bill.shopId === 'string') {
+                billShopId = bill.shopId;
+              } else if (bill.shopId && typeof bill.shopId === 'object') {
+                billShopId = bill.shopId._id || bill.shopId.id || '';
+              } else if (bill.shop?._id) {
+                billShopId = bill.shop._id;
+              }
+              
+              const billShopNameLc = (bill.shopName || bill.shop?.name || bill.shop || bill.shop_title || '').toString().toLowerCase();
+              if (billShopId) return billShopId === String(selectedShop);
+              if (selNameLc && billShopNameLc) return billShopNameLc === selNameLc;
+              return true;
+            });
           }
           
-          // Filter by search term
-          if (searchTerm) {
-            filteredBills = filteredBills.filter(bill => 
-              bill.billNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              bill.shopName.toLowerCase().includes(searchTerm.toLowerCase())
-            );
+          // Filter by search term (robust)
+          if (searchTerm && searchTerm.trim()) {
+            const q = searchTerm.trim().toLowerCase();
+            filteredBills = filteredBills.filter(bill => {
+              const parts = [
+                bill.billNumber,
+                bill.customerName,
+                bill.customerPhone,
+                bill.shopName,
+                bill.shop?.name,
+                bill.notes,
+              ].map(v => (v ?? '').toString().toLowerCase());
+              return parts.some(p => p && p.includes(q));
+            });
           }
-          
-          // Filter by date range
+
+          // Helper to get the date of a bill from multiple possible fields
+          const getBillDate = (b) => new Date(
+            b.billDate || b.invoiceDate || b.createdAt || b.date || 0
+          );
+
+          // Filter by date range (robust)
           if (filterDateRange) {
             const { startDate, endDate } = getDateRange(filterDateRange);
             if (startDate && endDate) {
+              const start = new Date(startDate);
+              const end = new Date(endDate);
               filteredBills = filteredBills.filter(bill => {
-                const billDate = new Date(bill.billDate);
-                return billDate >= new Date(startDate) && billDate <= new Date(endDate);
+                const d = getBillDate(bill);
+                return d && !isNaN(d) && d >= start && d <= end;
               });
             }
           }
@@ -1037,9 +1063,9 @@ const BillManagementPage = () => {
             selectedShop,
             searchTerm,
             filterDateRange,
-            originalCount: bills.length,
-            filteredCount: filteredBills.length,
-            filteredBills: filteredBills.map(b => ({ id: b._id, shop: b.shopName, amount: b.pricing?.totalAmount }))
+            originalCount: Array.isArray(bills) ? bills.length : 0,
+            filteredCount: Array.isArray(filteredBills) ? filteredBills.length : 0,
+            filteredBills: (Array.isArray(filteredBills) ? filteredBills : []).map(b => ({ id: b._id, shop: b.shopName, amount: b.pricing?.totalAmount }))
           });
           
           
@@ -1069,7 +1095,7 @@ const BillManagementPage = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredBills.map((bill) => (
+                  {(Array.isArray(filteredBills) ? filteredBills : []).map((bill) => (
                   <tr key={bill._id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {bill.billNumber}
@@ -1078,13 +1104,13 @@ const BillManagementPage = () => {
                       {bill.shopName}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {formatDate(bill.billDate)}
+                      {formatDate(bill.billDate || bill.createdAt || bill.invoiceDate || bill.date)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {formatCurrency(bill.pricing.totalAmount)}
+                      {formatCurrency(bill.pricing?.totalAmount || bill.totalAmount || 0)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {formatCurrency(bill.payment.paidAmount)} / {formatCurrency(bill.pricing.totalAmount)}
+                      {formatCurrency(bill.payment?.paidAmount || bill.paidAmount || 0)} / {formatCurrency(bill.pricing?.totalAmount || bill.totalAmount || 0)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex space-x-2">

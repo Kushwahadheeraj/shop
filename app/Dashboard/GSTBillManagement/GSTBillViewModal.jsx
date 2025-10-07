@@ -26,10 +26,10 @@ const GSTBillViewModal = ({ bill, isOpen, onClose, onEdit, onDelete }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 sm:p-4">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-[95vw] sm:max-w-3xl md:max-w-4xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b">
+        <div className="sticky top-0 z-10 bg-white flex items-center justify-between p-4 md:p-6 border-b">
           <div className="flex items-center space-x-3">
             <FileText className="h-6 w-6 text-green-600" />
             <h2 className="text-xl font-bold text-gray-900">GST Bill Details</h2>
@@ -59,10 +59,10 @@ const GSTBillViewModal = ({ bill, isOpen, onClose, onEdit, onDelete }) => {
         </div>
 
         {/* Bill Content */}
-        <div className="p-6">
+        <div className="p-4 md:p-6">
           {/* Bill Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">GST INVOICE</h1>
+          <div className="text-center mb-6 md:mb-8">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">GST INVOICE</h1>
             <p className="text-gray-600">Invoice No: {bill.invoiceNumber}</p>
             <p className="text-gray-600">Date: {formatDate(bill.invoiceDate)}</p>
             {bill.dueDate && (
@@ -98,31 +98,31 @@ const GSTBillViewModal = ({ bill, isOpen, onClose, onEdit, onDelete }) => {
           </div>
 
           {/* Items Table */}
-          <div className="mb-8">
+          <div className="mb-6 md:mb-8">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Items</h3>
             <div className="overflow-x-auto">
-              <table className="w-full border border-gray-300">
+              <table className="w-full border border-gray-300 text-xs sm:text-sm">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b border-gray-300">S.No</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b border-gray-300">Item Name</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-b border-gray-300">Description</th>
-                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-700 border-b border-gray-300">Qty</th>
-                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-700 border-b border-gray-300">Rate</th>
-                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-700 border-b border-gray-300">GST %</th>
-                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-700 border-b border-gray-300">Amount</th>
+                    <th className="px-3 sm:px-4 py-2 sm:py-3 text-left font-medium text-gray-700 border-b border-gray-300">S.No</th>
+                    <th className="px-3 sm:px-4 py-2 sm:py-3 text-left font-medium text-gray-700 border-b border-gray-300">Item Name</th>
+                    <th className="px-3 sm:px-4 py-2 sm:py-3 text-left font-medium text-gray-700 border-b border-gray-300">Description</th>
+                    <th className="px-3 sm:px-4 py-2 sm:py-3 text-right font-medium text-gray-700 border-b border-gray-300">Qty</th>
+                    <th className="px-3 sm:px-4 py-2 sm:py-3 text-right font-medium text-gray-700 border-b border-gray-300">Rate</th>
+                    <th className="px-3 sm:px-4 py-2 sm:py-3 text-right font-medium text-gray-700 border-b border-gray-300">GST %</th>
+                    <th className="px-3 sm:px-4 py-2 sm:py-3 text-right font-medium text-gray-700 border-b border-gray-300">Amount</th>
                   </tr>
                 </thead>
                 <tbody>
                   {bill.items && bill.items.map((item, index) => (
                     <tr key={index} className="border-b border-gray-200">
-                      <td className="px-4 py-3 text-sm text-gray-900">{index + 1}</td>
-                      <td className="px-4 py-3 text-sm text-gray-900">{item.name}</td>
-                      <td className="px-4 py-3 text-sm text-gray-900">{item.description || '-'}</td>
-                      <td className="px-4 py-3 text-sm text-gray-900 text-right">{item.quantity}</td>
-                      <td className="px-4 py-3 text-sm text-gray-900 text-right">{formatCurrency(item.unitPrice)}</td>
-                      <td className="px-4 py-3 text-sm text-gray-900 text-right">{item.gstRate}%</td>
-                      <td className="px-4 py-3 text-sm text-gray-900 text-right">{formatCurrency(item.amount)}</td>
+                      <td className="px-3 sm:px-4 py-2 sm:py-3 text-gray-900">{index + 1}</td>
+                      <td className="px-3 sm:px-4 py-2 sm:py-3 text-gray-900">{item.name}</td>
+                      <td className="px-3 sm:px-4 py-2 sm:py-3 text-gray-900">{item.description || '-'}</td>
+                      <td className="px-3 sm:px-4 py-2 sm:py-3 text-gray-900 text-right">{item.quantity}</td>
+                      <td className="px-3 sm:px-4 py-2 sm:py-3 text-gray-900 text-right">{formatCurrency(item.unitPrice)}</td>
+                      <td className="px-3 sm:px-4 py-2 sm:py-3 text-gray-900 text-right">{item.gstRate}%</td>
+                      <td className="px-3 sm:px-4 py-2 sm:py-3 text-gray-900 text-right">{formatCurrency(item.amount)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -132,7 +132,7 @@ const GSTBillViewModal = ({ bill, isOpen, onClose, onEdit, onDelete }) => {
 
           {/* Totals */}
           <div className="flex justify-end mb-8">
-            <div className="w-80">
+            <div className="w-full md:w-80">
               <div className="space-y-2">
                 <div className="flex justify-between py-2 border-b border-gray-200">
                   <span className="text-gray-600">Subtotal:</span>

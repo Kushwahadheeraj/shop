@@ -3,7 +3,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Sun, Moon, Calendar, ChevronRight, LogOut, User, Settings as SettingsIcon } from "lucide-react";
+import { Sun, Moon, Calendar, ChevronRight, LogOut, User, Settings as SettingsIcon, Menu } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/components/AuthContext";
 import API_BASE_URL from "@/lib/apiConfig";
@@ -17,7 +17,7 @@ import {
 
 const DEFAULT_AVATAR = "https://ui-avatars.com/api/?name=User&background=3B82F6&color=ffffff&size=200&bold=true";
 
-export default function Navbar() {
+export default function Navbar({ onMenuClick }) {
   const pathname = usePathname();
   const router = useRouter();
   const { user: authUser, logout } = useAuth();
@@ -107,23 +107,44 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="w-full flex items-center justify-between px-8 py-4 bg-white border-b border-zinc-100">
+    <nav className="w-full px-4 md:px-8 py-4 bg-white border-b border-zinc-100 flex items-center justify-between gap-3">
       {/* Breadcrumbs */}
-      <div className="flex items-center gap-2 text-zinc-400 text-sm">
-        {breadcrumbs.map((crumb, i) => (
-          <span key={i} className={i === breadcrumbs.length - 1 ? "text-zinc-900 font-semibold flex items-center" : "flex items-center"}>
-            {i > 0 && <ChevronRight className="w-4 h-4 mx-1" />}
-            {i < breadcrumbs.length - 1 ? (
-              <Link href={crumb.href} className="hover:underline">{crumb.label}</Link>
-            ) : (
-              crumb.label
-            )}
-          </span>
-        ))}
+      <div className="flex items-center gap-2 text-zinc-400 text-xs md:text-sm min-w-0 whitespace-nowrap overflow-hidden">
+        {/* Mobile menu button */}
+        <button
+          type="button"
+          aria-label="Open sidebar"
+          onClick={onMenuClick}
+          className="lg:hidden mr-2 inline-flex items-center justify-center rounded-md border border-zinc-200 w-9 h-9 text-zinc-700 hover:bg-zinc-50"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+        {breadcrumbs.map((crumb, i) => {
+          const isLast = i === breadcrumbs.length - 1;
+          return (
+            <span
+              key={i}
+              className={
+                isLast
+                  ? "text-zinc-900 font-semibold flex items-center truncate max-w-[55vw] md:max-w-none"
+                  : "flex items-center truncate max-w-[24vw] md:max-w-none"
+              }
+            >
+              {i > 0 && <ChevronRight className="w-4 h-4 mx-1 flex-shrink-0" />}
+              {i < breadcrumbs.length - 1 ? (
+                <Link href={crumb.href} className="hover:underline truncate">
+                  {crumb.label}
+                </Link>
+              ) : (
+                <span className="truncate">{crumb.label}</span>
+              )}
+            </span>
+          );
+        })}
       </div>
       {/* Date, User, Theme Toggle, Avatar Dropdown */}
-      <div className="flex items-center gap-6">
-        <div className="flex items-center gap-2 text-zinc-400">
+      <div className="flex items-center gap-4 md:gap-6 min-w-0">
+        <div className="hidden xs:flex items-center gap-2 text-zinc-400 flex-shrink-0">
           <Calendar className="w-5 h-5" />
           <span>{date}</span>
         </div>

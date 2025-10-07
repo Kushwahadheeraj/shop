@@ -1,5 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 const getNavItems = (isLoggedIn) => {
   const baseItems = [
@@ -24,6 +25,37 @@ const getNavItems = (isLoggedIn) => {
 export default function Navbar() {
   const [openMenu, setOpenMenu] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
+
+  const folderMap = {
+    'PAINTS': 'Paint',
+    'ELECTRICALS': 'Electrical',
+    'SANITARY WARE & FAUCETS': 'Sanitary',
+    'TOOLS': 'Tools',
+  };
+  const simpleNavMap = {
+    'CEMENTS & POP': 'Cements',
+    'ADHESIVE': 'Adhesives',
+    'CLEANING': 'Cleaning',
+  };
+  const slugify = (s) => String(s || '').replace(/&/g, ' ').replace(/[^a-zA-Z0-9]+/g, '').trim();
+  const handleMenuClick = (e, menuLabel) => {
+    const anchor = e.target.closest('a');
+    if (anchor) {
+      e.preventDefault();
+    }
+    const li = e.target.closest('li');
+    if (!li) return;
+    const group = li.closest('ul')?.dataset?.group;
+    const item = li.textContent?.trim();
+    if (!item) return;
+    const folder = folderMap[menuLabel];
+    if (!folder) return;
+    const groupSlug = group ? slugify(group) : null;
+    const itemSlug = slugify(item);
+    const path = groupSlug ? `/ShopPage/${folder}/${groupSlug}/${itemSlug}` : `/ShopPage/${folder}/${itemSlug}`;
+    router.push(path);
+  };
 
   // Check if user is logged in
   useEffect(() => {
@@ -40,16 +72,26 @@ export default function Navbar() {
   const navItems = getNavItems(isLoggedIn);
 
   return (
-    <nav className="fixed top-24 left-0 w-full z-40 h-8 bg-black text-white lg:visible lg:!flex lg:basis-auto md:hidden hidden">
+    <nav className="fixed top-24 left-0 w-full z-60 h-8 bg-black text-white lg:visible lg:!flex lg:basis-auto md:hidden hidden">
       <ul className='flex items-center px-2 py-2'>
         {navItems.map((item) => (
-          <li key={item.label} className='relative px-3'>
+          <li
+            key={item.label}
+            className='relative px-3'
+            onMouseEnter={() => item.hasDropdown && setOpenMenu(item.label)}
+            onMouseLeave={() => item.hasDropdown && setOpenMenu(null)}
+          >
             <a
               href={item.href}
               onClick={(e) => {
                 if (item.hasDropdown) {
                   e.preventDefault();
-                  setOpenMenu((prev) => (prev === item.label ? null : item.label));
+                  return;
+                }
+                const folder = simpleNavMap[item.label];
+                if (folder) {
+                  e.preventDefault();
+                  router.push(`/ShopPage/${folder}`);
                 }
               }}
               className={`text-sm px-1 py-2 rounded-full transition-all duration-300
@@ -73,443 +115,273 @@ export default function Navbar() {
 
             {/* Mega Menu for PAINTS */}
             {item.label === 'PAINTS' && (
-              <div className={`absolute top-full left-0 w-[70rem] bg-white text-black shadow-lg p-6 ${openMenu === 'PAINTS' ? 'grid' : 'hidden'} grid-cols-5 gap-2 z-50`}>
+              <div onClick={(e)=>handleMenuClick(e,'PAINTS')} className={`absolute top-full left-0 mt-2 w-[70rem] bg-white/95 text-black border border-gray-200 rounded-xl shadow-2xl p-6 ${openMenu === 'PAINTS' ? 'grid' : 'hidden'} grid-cols-5 gap-6 z-60 backdrop-blur-sm`}>
                 {/* Column 1 */}
                 <div>
-                  <h4 className='font-bold mb-2'>EMULSION</h4>
-                  <ul className='space-y-1'>
-                    <li>Interior Emulsion</li>
-                    <li>Exterior Emulsion</li>
-                    <li>Wall Texture</li>
-                    <li>Tile Guard</li>
+                  <h4 className='text-xs font-bold tracking-wider text-gray-500 uppercase pb-2 mb-3 border-b'>EMULSION</h4>
+                  <ul data-group='EMULSION' className='space-y-0 divide-y divide-gray-200 text-sm text-gray-700'>
+                    <li className='cursor-pointer py-1'>Interior Emulsion</li>
+                    <li className='cursor-pointer py-1'>Exterior Emulsion</li>
+                    <li className='cursor-pointer py-1'>Wall Texture</li>
+                    <li className='cursor-pointer py-1'>Tile Guard</li>
                   </ul>
 
-                  <h4 className='font-bold mt-4 mb-2'>ENAMEL</h4>
-                  <ul className='space-y-1'>
-                    <li>Satin Enamel</li>
-                    <li>Gloss Enamel</li>
-                    <li>Synthetic Enamel</li>
+                  <h4 className='text-xs font-bold tracking-wider text-gray-500 uppercase mt-4 pb-2 mb-3 border-b'>ENAMEL</h4>
+                  <ul data-group='ENAMEL' className='space-y-0 divide-y divide-gray-200 text-sm text-gray-700'>
+                    <li className='cursor-pointer py-1'>Satin Enamel</li>
+                    <li className='cursor-pointer py-1'>Gloss Enamel</li>
+                    <li className='cursor-pointer py-1'>Synthetic Enamel</li>
                   </ul>
 
-                  <h4 className='font-bold mt-4 mb-2'>DISTEMPER</h4>
-                  <ul className='space-y-1'>
-                    <li>Acrylic Distemper</li>
-                    <li>Synthetic Distemper</li>
+                  <h4 className='text-xs font-bold tracking-wider text-gray-500 uppercase mt-4 pb-2 mb-3 border-b'>DISTEMPER</h4>
+                  <ul data-group='DISTEMPER' className='space-y-0 divide-y divide-gray-200 text-sm text-gray-700'>
+                    <li className='cursor-pointer py-1'>Acrylic Distemper</li>
+                    <li className='cursor-pointer py-1'>Synthetic Distemper</li>
                   </ul>
                 </div>
 
                 {/* Column 2 */}
                 <div>
-                  <h4 className='font-bold mb-2'>PRIMER</h4>
-                  <ul className='space-y-1'>
-                    <li>Interior Primer</li>
-                    <li>Exterior Primer</li>
-                    <li>Cement Primer</li>
-                    <li>Wood Primer</li>
-                    <li>Metal Primer</li>
-                    <li>Acrylic Primer</li>
-                    <li>Solvent Primer</li>
+                  <h4 className='text-xs font-bold tracking-wider text-gray-500 uppercase pb-2 mb-3 border-b'>PRIMER</h4>
+                  <ul data-group='PRIMER' className='space-y-0 divide-y divide-gray-200 text-sm text-gray-700'>
+                    <li className='cursor-pointer py-1'>Interior Primer</li>
+                    <li className='cursor-pointer py-1'>Exterior Primer</li>
+                    <li className='cursor-pointer py-1'>Cement Primer</li>
+                    <li className='cursor-pointer py-1'>Wood Primer</li>
+                    <li className='cursor-pointer py-1'>Metal Primer</li>
+                    <li className='cursor-pointer py-1'>Acrylic Primer</li>
+                    <li className='cursor-pointer py-1'>Solvent Primer</li>
                   </ul>
 
-                  <h4 className='font-bold mt-4 mb-2'>STAINERS</h4>
-                  <ul className='space-y-1'>
-                    <li>Universal Stainers</li>
-                    <li>Wood Stainers</li>
+                  <h4 className='text-xs font-bold tracking-wider text-gray-500 uppercase mt-4 pb-2 mb-3 border-b'>STAINERS</h4>
+                  <ul data-group='STAINERS' className='space-y-0 divide-y divide-gray-200 text-sm text-gray-700'>
+                    <li className='cursor-pointer py-1'>Universal Stainers</li>
+                    <li className='cursor-pointer py-1'>Wood Stainers</li>
                   </ul>
                 </div>
 
                 {/* Column 3 */}
                 <div>
-                  <h4 className='font-bold mb-2'>BRUSHES & ROLLERS</h4>
-                  <ul className='space-y-1'>
-                    <li>Paint Brushes</li>
-                    <li>Rollers</li>
-                    <li>Spray Paints</li>
+                  <h4 className='text-xs font-bold tracking-wider text-gray-500 uppercase pb-2 mb-3 border-b'>BRUSHES & ROLLERS</h4>
+                  <ul data-group='BRUSHES & ROLLERS' className='space-y-0 divide-y divide-gray-200 text-sm text-gray-700'>
+                    <li className='cursor-pointer py-1'>Paint Brushes</li>
+                    <li className='cursor-pointer py-1'>Rollers</li>
+                    <li className='cursor-pointer py-1'>Spray Paints</li>
                   </ul>
 
-                  <h4 className='font-bold mt-4 mb-2'>
-                    WATERPROOFING & FILLERS
-                  </h4>
-                  <ul className='space-y-1'>
-                    <li>Crack Fillers</li>
-                    <li>Waterproof Basecoat</li>
+                  <h4 className='text-xs font-bold tracking-wider text-gray-500 uppercase mt-4 pb-2 mb-3 border-b'>WATERPROOFING & FILLERS</h4>
+                  <ul data-group='WATERPROOFING & FILLERS' className='space-y-0 divide-y divide-gray-200 text-sm text-gray-700'>
+                    <li className='cursor-pointer py-1'>Crack Fillers</li>
+                    <li className='cursor-pointer py-1'>Waterproof Basecoat</li>
                   </ul>
 
-                  <h4 className='font-bold mt-4 mb-2'>PAINTING ACCESSORIES</h4>
-                  <ul className='space-y-1'>
-                    <li>Sandpaper Rolls</li>
-                    <li>Painting Tools</li>
-                    <li>Stencils</li>
+                  <h4 className='text-xs font-bold tracking-wider text-gray-500 uppercase mt-4 pb-2 mb-3 border-b'>PAINTING ACCESSORIES</h4>
+                  <ul data-group='PAINTING ACCESSORIES' className='space-y-0 divide-y divide-gray-200 text-sm text-gray-700'>
+                    <li className='cursor-pointer py-1'>Sandpaper Rolls</li>
+                    <li className='cursor-pointer py-1'>Painting Tools</li>
+                    <li className='cursor-pointer py-1'>Stencils</li>
                   </ul>
                 </div>
 
                 {/* Column 4 */}
                 <div>
-                  <h4 className='font-bold mb-2'>WOOD FINISHES</h4>
-                  <ul className='space-y-1'>
-                    <li>Polish</li>
-                    <li>Varnish & Black Board Paint</li>
-                    <li>Melamyne</li>
-                    <li>PU</li>
-                    <li>Sealer</li>
-                    <li>NC</li>
-                    <li>Glass Coatings</li>
-                    <li>Wood Putty</li>
+                  <h4 className='text-xs font-bold tracking-wider text-gray-500 uppercase pb-2 mb-3 border-b'>WOOD FINISHES</h4>
+                  <ul data-group='WOOD FINISHES' className='space-y-0 divide-y divide-gray-200 text-sm text-gray-700'>
+                    <li className='cursor-pointer py-1'>Polish</li>
+                    <li className='cursor-pointer py-1'>Varnish & Black Board Paint</li>
+                    <li className='cursor-pointer py-1'>Melamyne</li>
+                    <li className='cursor-pointer py-1'>PU</li>
+                    <li className='cursor-pointer py-1'>Sealer</li>
+                    <li className='cursor-pointer py-1'>NC</li>
+                    <li className='cursor-pointer py-1'>Glass Coatings</li>
+                    <li className='cursor-pointer py-1'>Wood Putty</li>
                   </ul>
 
-                  <h4 className='font-bold mt-4 mb-2'>ADHESIVE & THINNER</h4>
-                  <ul className='space-y-1'>
-                    <li>Adhesive</li>
-                    <li>Thinner</li>
+                  <h4 className='text-xs font-bold tracking-wider text-gray-500 uppercase mt-4 pb-2 mb-3 border-b'>ADHESIVE & THINNER</h4>
+                  <ul data-group='ADHESIVE & THINNER' className='space-y-0 divide-y divide-gray-200 text-sm text-gray-700'>
+                    <li className='cursor-pointer py-1'>Adhesive</li>
+                    <li className='cursor-pointer py-1'>Thinner</li>
                   </ul>
                 </div>
 
-                {/* Column 5 */}
+                {/* Column */}
                 <div>
-                  <h4 className='font-bold mb-2'>WALL PUTTY</h4>
-                  <ul className='space-y-1'>
-                    <li>Powder Wall Putty</li>
-                    <li>Acrylic Wall Putty</li>
-                    <li>KPF Wall Putty</li>
+                  <h4 className='text-xs font-bold tracking-wider text-gray-500 uppercase pb-2 mb-3 border-b'>WALL PUTTY</h4>
+                  <ul data-group='WALL PUTTY' className='space-y-0 divide-y divide-gray-200 text-sm text-gray-700'>
+                    <li className='cursor-pointer py-1'>Powder Wall Putty</li>
+                    <li className='cursor-pointer py-1'>Acrylic Wall Putty</li>
+                    <li className='cursor-pointer py-1'>KPF Wall Putty</li>
                   </ul>
 
-                  <h4 className='font-bold mt-4 mb-2'>AUTOMOTIVE PAINTS</h4>
-                  <ul className='space-y-1'>
-                    <li>Aspa paints</li>
+                  <h4 className='text-xs font-bold tracking-wider text-gray-500 uppercase mt-4 pb-2 mb-3 border-b'>AUTOMOTIVE PAINTS</h4>
+                  <ul data-group='AUTOMOTIVE PAINTS' className='space-y-0 divide-y divide-gray-200 text-sm text-gray-700'>
+                    <li className='cursor-pointer py-1'>Aspa paints</li>
                   </ul>
 
-                  <h4 className='font-bold mt-4 mb-2'>TOP BRANDS</h4>
-                  <ul className='space-y-1'>
-                    <li>Asian Paints</li>
-                    <li>Jk Wall Putty</li>
-                    <li>Gem Paints</li>
-                    <li>Agsar Paints</li>
+                  <h4 className='text-xs font-bold tracking-wider text-gray-500 uppercase mt-4 pb-2 mb-3 border-b'>TOP BRANDS</h4>
+                  <ul data-group='TOP BRANDS' className='space-y-0 divide-y divide-gray-200 text-sm text-gray-700'>
+                    <li className='cursor-pointer py-1'>Asian Paints</li>
+                    <li className='cursor-pointer py-1'>Jk Wall Putty</li>
+                    <li className='cursor-pointer py-1'>Gem Paints</li>
+                    <li className='cursor-pointer py-1'>Agsar Paints</li>
                   </ul>
                 </div>
               </div>
             )}
             {/* Mega Menu for PAINTS */}
             {item.label === 'ELECTRICALS' && (
-              <div className={`absolute top-full left-0 w-[70rem] bg-white text-black shadow-lg p-6 ${openMenu === 'ELECTRICALS' ? 'grid' : 'hidden'} grid-cols-6 gap-2 z-50`}>
+              <div onClick={(e)=>handleMenuClick(e,'ELECTRICALS')} className={`absolute top-full left-0 mt-2 w-[70rem] bg-white/95 text-black border border-gray-200 rounded-xl shadow-2xl p-6 ${openMenu === 'ELECTRICALS' ? 'grid' : 'hidden'} grid-cols-6 gap-6 z-60 backdrop-blur-sm`}>
                 {/* Column 1 */}
                 <div>
-                  <h4 className='font-bold mb-2'>LIGHTING</h4>
-                  <ul className='space-y-1'>
-                    <li>
-                      <a href='#'>Light Electronics</a>
-                    </li>
-                    <li>
-                      <a href='#'>Lamps</a>
-                    </li>
-                    <li>
-                      <a href='#'>Reflectors</a>
-                    </li>
-                    <li>
-                      <a href='#'>Standard Incandescent</a>
-                    </li>
-                    <li>
-                      <a href='#'>CFL</a>
-                    </li>
-                    <li>
-                      <a href='#'>Desk Light</a>
-                    </li>
-                    <li>
-                      <a href='#'>Focus Light</a>
-                    </li>
+                  <h4 className='text-xs font-bold tracking-wider text-gray-500 uppercase pb-2 mb-3 border-b'>LIGHTING</h4>
+                  <ul data-group='LIGHTING' className='space-y-0 divide-y divide-gray-200 text-sm text-gray-700'>
+                    <li className='cursor-pointer py-1'>Light Electronics</li>
+                    <li className='cursor-pointer py-1'>Lamps</li>
+                    <li className='cursor-pointer py-1'>Reflectors</li>
+                    <li className='cursor-pointer py-1'>Standard Incandescent</li>
+                    <li className='cursor-pointer py-1'>CFL</li>
+                    <li className='cursor-pointer py-1'>Desk Light</li>
+                    <li className='cursor-pointer py-1'>Focus Light</li>
                   </ul>
                 </div>
                 {/* Column 2 */}
                 <div>
-                  <h4 className='font-bold mb-2'>LED LIGHTING</h4>
-                  <ul className='space-y-1'>
-                    <li>
-                      <a href='#'>Tube Light</a>
-                    </li>
-                    <li>
-                      <a href='#'>LED Bulbs</a>
-                    </li>
-                    <li>
-                      <a href='#'>LED DownLighters/Spot Light</a>
-                    </li>
-                    <li>
-                      <a href='#'>LED Strips</a>
-                    </li>
-                    <li>
-                      <a href='#'>Ceiling Light</a>
-                    </li>
-                    <li>
-                      <a href='#'>Wall Light</a>
-                    </li>
+                  <h4 className='text-xs font-bold tracking-wider text-gray-500 uppercase pb-2 mb-3 border-b'>LED LIGHTING</h4>
+                  <ul data-group='LED LIGHTING' className='space-y-0 divide-y divide-gray-200 text-sm text-gray-700'>
+                    <li className='cursor-pointer py-1'>Tube Light</li>
+                    <li className='cursor-pointer py-1'>LED Bulbs</li>
+                    <li className='cursor-pointer py-1'>LED DownLighters/Spot Light</li>
+                    <li className='cursor-pointer py-1'>LED Strips</li>
+                    <li className='cursor-pointer py-1'>Ceiling Light</li>
+                    <li className='cursor-pointer py-1'>Wall Light</li>
                   </ul>
 
-                  <h4 className='font-bold mt-4 mb-2'> PLUGS & ADAPTORS</h4>
-                  <ul className='space-y-1'>
-                    <li>
-                      <a href='#'>Pin Top</a>
-                    </li>
-                    <li>
-                      <a href='#'>Adaptors</a>
-                    </li>
+                  <h4 className='text-xs font-bold tracking-wider text-gray-500 uppercase mt-4 pb-2 mb-3 border-b'> PLUGS & ADAPTORS</h4>
+                  <ul data-group='PLUGS & ADAPTORS' className='space-y-0 divide-y divide-gray-200 text-sm text-gray-700'>
+                    <li className='cursor-pointer py-1'>Pin Top</li>
+                    <li className='cursor-pointer py-1'>Adaptors</li>
                   </ul>
                 </div>
 
                 {/* Column 3 */}
                 <div>
-                  <h4 className='font-bold mb-2'>FANS</h4>
-                  <ul className='space-y-1'>
-                    <li>
-                      <a href='#'>Ceiling Fans</a>
-                    </li>
-                    <li>
-                      <a href='#'>Cabin Fans</a>
-                    </li>
-                    <li>
-                      <a href='#'>Ventilation/Exhaust</a>
-                    </li>
-                    <li>
-                      <a href='#'>Wall Mounting Fans</a>
-                    </li>
-                    <li>
-                      <a href='#'>Pedestal Fans</a>
-                    </li>
-                    <li>
-                      <a href='#'>Table Fans</a>
-                    </li>
+                  <h4 className='text-xs font-bold tracking-wider text-gray-500 uppercase pb-2 mb-3 border-b'>FANS</h4>
+                  <ul data-group='FANS' className='space-y-0 divide-y divide-gray-200 text-sm text-gray-700'>
+                    <li className='cursor-pointer py-1'>Ceiling Fans</li>
+                    <li className='cursor-pointer py-1'>Cabin Fans</li>
+                    <li className='cursor-pointer py-1'>Ventilation/Exhaust</li>
+                    <li className='cursor-pointer py-1'>Wall Mounting Fans</li>
+                    <li className='cursor-pointer py-1'>Pedestal Fans</li>
+                    <li className='cursor-pointer py-1'>Table Fans</li>
                   </ul>
 
-                  <h4 className='font-bold mt-4 mb-2'>CABLES & WIRES</h4>
-                  <ul className='space-y-1'>
-                    <li>
-                      <a href='#'>House Wires</a>
-                    </li>
-                    <li>
-                      <a href='#'>Flexible Wires</a>
-                    </li>
+                  <h4 className='text-xs font-bold tracking-wider text-gray-500 uppercase mt-4 pb-2 mb-3 border-b'>CABLES & WIRES</h4>
+                  <ul data-group='CABLES & WIRES' className='space-y-0 divide-y divide-gray-200 text-sm text-gray-700'>
+                    <li className='cursor-pointer py-1'>House Wires</li>
+                    <li className='cursor-pointer py-1'>Flexible Wires</li>
                   </ul>
-                  <h4 className='font-bold mt-4 mb-2'>WATER PUMPS</h4>
-                  <ul className='space-y-1'>
-                    <li>
-                      <a href='#'>Motors</a>
-                    </li>
+                  <h4 className='text-xs font-bold tracking-wider text-gray-500 uppercase mt-4 pb-2 mb-3 border-b'>WATER PUMPS</h4>
+                  <ul data-group='WATER PUMPS' className='space-y-0 divide-y divide-gray-200 text-sm text-gray-700'>
+                    <li className='cursor-pointer py-1'>Motors</li>
                   </ul>
                 </div>
 
                 {/* Column 4 */}
                 <div>
-                  <h4 className='font-bold mb-2'>SWITCHES & GEARS</h4>
-                  <ul className='space-y-1'>
-                    <li>
-                      <a href='#'>Switches</a>
-                    </li>
-                    <li>
-                      <a href='#'>Dimmer</a>
-                    </li>
-                    <li>
-                      <a href='#'>Sockets</a>
-                    </li>
-                    <li>
-                      <a href='#'>Regulators</a>
-                    </li>
-                    <li>
-                      <a href='#'>Indicator</a>
-                    </li>
-                    <li>
-                      <a href='#'>DP-switch</a>
-                    </li>
-                    <li>
-                      <a href='#'>TV Outlets</a>
-                    </li>
-                    <li>
-                      <a href='#'>Switch Socket Combined</a>
-                    </li>
-                    <li>
-                      <a href='#'>Switch Plates</a>
-                    </li>
-                    <li>
-                      <a href='#'>Ceiling Roses</a>
-                    </li>
+                  <h4 className='text-xs font-bold tracking-wider text-gray-500 uppercase pb-2 mb-3 border-b'>SWITCHES & GEARS</h4>
+                  <ul data-group='SWITCHES & GEARS' className='space-y-0 divide-y divide-gray-200 text-sm text-gray-700'>
+                    <li className='cursor-pointer py-1'>Switches</li>
+                    <li className='cursor-pointer py-1'>Dimmer</li>
+                    <li className='cursor-pointer py-1'>Sockets</li>
+                    <li className='cursor-pointer py-1'>Regulators</li>
+                    <li className='cursor-pointer py-1'>Indicator</li>
+                    <li className='cursor-pointer py-1'>DP-switch</li>
+                    <li className='cursor-pointer py-1'>TV Outlets</li>
+                    <li className='cursor-pointer py-1'>Switch Socket Combined</li>
+                    <li className='cursor-pointer py-1'>Switch Plates</li>
+                    <li className='cursor-pointer py-1'>Ceiling Roses</li>
                   </ul>
                 </div>
 
                 {/* Column 5 */}
                 <div>
-                  <h4 className='font-bold mb-2'>PROTECTION DEVICES</h4>
-                  <ul className='space-y-1'>
-                    <li>
-                      <a href='#'>MCB</a>
-                    </li>
-                    <li>
-                      <a href='#'>ELCBs OR RCCBs</a>
-                    </li>
-                    <li>
-                      <a href='#'>Distribution Boards</a>
-                    </li>
-                    <li>
-                      <a href='#'>Fuse Carriers</a>
-                    </li>
-                    <li>
-                      <a href='#'>KIT KAT Fuses</a>
-                    </li>
-                    <li>
-                      <a href='#'>Isolators</a>
-                    </li>
+                  <h4 className='text-xs font-bold tracking-wider text-gray-500 uppercase pb-2 mb-3 border-b'>PROTECTION DEVICES</h4>
+                  <ul data-group='PROTECTION DEVICES' className='space-y-0 divide-y divide-gray-200 text-sm text-gray-700'>
+                    <li className='cursor-pointer py-1'>MCB</li>
+                    <li className='cursor-pointer py-1'>ELCBs OR RCCBs</li>
+                    <li className='cursor-pointer py-1'>Distribution Boards</li>
+                    <li className='cursor-pointer py-1'>Fuse Carriers</li>
+                    <li className='cursor-pointer py-1'>KIT KAT Fuses</li>
+                    <li className='cursor-pointer py-1'>Isolators</li>
                   </ul>
 
-                  <h4 className='font-bold mt-4 mb-2'>MODULAR/SURFACE BOX</h4>
-                  <ul className='space-y-1'>
-                    <li>
-                      <a href='#'>Electrical Fittings</a>
-                    </li>
-                    <li>
-                      <a href='#'>Flexible Conduit</a>
-                    </li>
-                    <li>
-                      <a href='#'>Holders</a>
-                    </li>
+                  <h4 className='text-xs font-bold tracking-wider text-gray-500 uppercase mt-4 pb-2 mb-3 border-b'>MODULAR/SURFACE BOX</h4>
+                  <ul data-group='MODULAR/SURFACE BOX' className='space-y-0 divide-y divide-gray-200 text-sm text-gray-700'>
+                    <li className='cursor-pointer py-1'>Electrical Fittings</li>
+                    <li className='cursor-pointer py-1'>Flexible Conduit</li>
+                    <li className='cursor-pointer py-1'>Holders</li>
                   </ul>
                 </div>
 
                 {/* Column 6 */}
                 <div>
-                  <h4 className='font-bold mb-2'>OTHERS</h4>
-                  <ul className='space-y-1'>
-                    <li>
-                      <a href='#'>Rotatory Switch</a>
-                    </li>
-                    <li>
-                      <a href='#'>Power Strips</a>
-                    </li>
-                    <li>
-                      <a href='#'>Insulation Tapes</a>
-                    </li>
-                    <li>
-                      <a href='#'>PVC Clips</a>
-                    </li>
-                    <li>
-                      <a href='#'>Earthing Accessories</a>
-                    </li>
-                    <li>
-                      <a href='#'>Jacks</a>
-                    </li>
+                  <h4 className='text-xs font-bold tracking-wider text-gray-500 uppercase pb-2 mb-3 border-b'>OTHERS</h4>
+                  <ul data-group='OTHERS' className='space-y-0 divide-y divide-gray-200 text-sm text-gray-700'>
+                    <li className='cursor-pointer py-1'>Rotatory Switch</li>
+                    <li className='cursor-pointer py-1'>Power Strips</li>
+                    <li className='cursor-pointer py-1'>Insulation Tapes</li>
+                    <li className='cursor-pointer py-1'>PVC Clips</li>
+                    <li className='cursor-pointer py-1'>Earthing Accessories</li>
+                    <li className='cursor-pointer py-1'>Jacks</li>
                   </ul>
                 </div>
               </div>
             )}
             {item.label === 'SANITARY WARE & FAUCETS' && (
-              <div className={`absolute top-full left-0 w-[20rem] bg-white text-black shadow-lg p-6 ${openMenu === 'SANITARY WARE & FAUCETS' ? 'grid' : 'hidden'}  gap-2 z-50`}>
+              <div onClick={(e)=>handleMenuClick(e,'SANITARY WARE & FAUCETS')} className={`absolute top-full left-0 mt-2 w-[32rem] bg-white/95 text-black border border-gray-200 rounded-xl shadow-2xl p-6 ${openMenu === 'SANITARY WARE & FAUCETS' ? 'block' : 'hidden'} z-60 backdrop-blur-sm`}>
                 {/* Column 1 */}
-                <ul className='submenu'>
-                  <li>
-                    <a href='#'>Acrylic Products</a>
-                  </li>
-                  <li>
-                    <a href='#'>Bathsense</a>
-                  </li>
-                  <li>
-                    <a href='#'>Coral bath fixtures</a>
-                  </li>
-                  <li>
-                    <a href='#'>Essess</a>
-                  </li>
-                  <li>
-                    <a href='#'>Corsa</a>
-                  </li>
-                  <li>
-                    <a href='#'>Hindware</a>
-                  </li>
-                  <li>
-                    <a href='#'>Parryware</a>
-                  </li>
-                  <li>
-                    <a href='#'>Leo Bath Fittings</a>
-                  </li>
-                  <li>
-                    <a href='#'>WaterTec</a>
-                  </li>
-                  <li>
-                    <a href='#'>Hardware & Bathroom Accessories</a>
-                  </li>
-                  <li>
-                    <a href='#'>Taps</a>
-                  </li>
+                <ul className='grid grid-cols-2 gap-4 text-sm text-gray-700'>
+                  <li className='cursor-pointer'>Acrylic Products</li>
+                  <li className='cursor-pointer'>Bathsense</li>
+                  <li className='cursor-pointer'>Coral bath fixtures</li>
+                  <li className='cursor-pointer'>Essess</li>
+                  <li className='cursor-pointer'>Corsa</li>
+                  <li className='cursor-pointer'>Hindware</li>
+                  <li className='cursor-pointer'>Parryware</li>
+                  <li className='cursor-pointer'>Leo Bath Fittings</li>
+                  <li className='cursor-pointer'>WaterTec</li>
+                  <li className='cursor-pointer'>Hardware & Bathroom Accessories</li>
+                  <li className='cursor-pointer'>Taps</li>
                 </ul>
               </div>
             )}
             {item.label === 'TOOLS' && (
-              <div className={`absolute top-full left-0 w-[15rem] bg-white text-black shadow-lg p-6 ${openMenu === 'TOOLS' ? 'grid' : 'hidden'}  gap-2 z-50`}>
+              <div onClick={(e)=>handleMenuClick(e,'TOOLS')} className={`absolute top-full left-0 mt-2 w-[28rem] bg-white/95 text-black border border-gray-200 rounded-xl shadow-2xl p-6 ${openMenu === 'TOOLS' ? 'block' : 'hidden'} z-60 backdrop-blur-sm`}>
                 {/* Column 1 */}
-                <ul>
-                  <li>
-                    <a href='/tools/hand-tools'>hand tools</a>
-                  </li>
-                  <li>
-                    <a href='/tools/abrasives'>abrasives</a>
-                  </li>
-                  <li>
-                    <a href='/tools/allen-keys'>Allen Keys</a>
-                  </li>
-                  <li>
-                    <a href='/tools/brush'>Brush</a>
-                  </li>
-                  <li>
-                    <a href='/tools/carpenter-pincer'>Carpenter Pincer</a>
-                  </li>
-                  <li>
-                    <a href='/tools/chisels'>Chisels</a>
-                  </li>
-                  <li>
-                    <a href='/tools/clamps'>Clamps</a>
-                  </li>
-                  <li>
-                    <a href='/tools/cutters'>Cutters</a>
-                  </li>
-                  <li>
-                    <a href='/tools/files'>files</a>
-                  </li>
-                  <li>
-                    <a href='/tools/garden-tools'>Garden Tools</a>
-                  </li>
-                  <li>
-                    <a href='/tools/glue-gun'>glue gun</a>
-                  </li>
-                  <li>
-                    <a href='/tools/grease-gun'>Grease Gun</a>
-                  </li>
-                  <li>
-                    <a href='/tools/hammer'>Hammer</a>
-                  </li>
-                  <li>
-                    <a href='/tools/level'>level</a>
-                  </li>
-                  <li>
-                    <a href='/tools/lubrications'>Lubrications</a>
-                  </li>
-                  <li>
-                    <a href='/tools/piler'>Piler</a>
-                  </li>
-                  <li>
-                    <a href='/tools/polishing-accessories'>
-                      Polishing Accessories
-                    </a>
-                  </li>
-                  <li>
-                    <a href='/tools/power-tools'>power tools</a>
-                  </li>
-                  <li>
-                    <a href='/tools/screw-driver'>Screw Driver</a>
-                  </li>
-                  <li>
-                    <a href='/tools/socket-set'>Socket Set</a>
-                  </li>
-                  <li>
-                    <a href='/tools/spare-mallets'>Spare Mallets</a>
-                  </li>
-                  <li>
-                    <a href='/tools/spanner'>spanner</a>
-                  </li>
-                  <li>
-                    <a href='/tools/wrench'>wrench</a>
-                  </li>
+                <ul className='grid grid-cols-2 gap-3 text-sm text-gray-700'>
+                  <li className='cursor-pointer'>Hand Tools</li>
+                  <li className='cursor-pointer'>Abrasives</li>
+                  <li className='cursor-pointer'>Allen Keys</li>
+                  <li className='cursor-pointer'>Brush</li>
+                  <li className='cursor-pointer'>Carpenter Pincer</li>
+                  <li className='cursor-pointer'>Chisels</li>
+                  <li className='cursor-pointer'>Clamps</li>
+                  <li className='cursor-pointer'>Cutters</li>
+                  <li className='cursor-pointer'>Files</li>
+                  <li className='cursor-pointer'>Garden Tools</li>
+                  <li className='cursor-pointer'>Glue Gun</li>
+                  <li className='cursor-pointer'>Grease Gun</li>
+                  <li className='cursor-pointer'>Hammer</li>
+                  <li className='cursor-pointer'>Level</li>
+                  <li className='cursor-pointer'>Lubrications</li>
+                  <li className='cursor-pointer'>Piler</li>
+                  <li className='cursor-pointer'>Polishing Accessories</li>
+                  <li className='cursor-pointer'>Power Tools</li>
+                  <li className='cursor-pointer'>Screw Driver</li>
+                  <li className='cursor-pointer'>Socket Set</li>
+                  <li className='cursor-pointer'>Spare Mallets</li>
+                  <li className='cursor-pointer'>Spanner</li>
+                  <li className='cursor-pointer'>Wrench</li>
                 </ul>
               </div>
             )}

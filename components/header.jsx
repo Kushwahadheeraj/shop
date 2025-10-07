@@ -64,7 +64,7 @@ export default function Header() {
   return (
     <>
 
-      <header className='fixed top-0 left-0 w-full z-50 h-16 md:h-24 bg-white border-b shadow'>
+      <header className='fixed top-0 left-0 w-full z-[3000] h-16 md:h-24 bg-white border-b shadow'>
         <div className='w-full max-w-[1280px] mx-auto h-full flex items-center justify-between px-1 md:px-2'>
           {/* Left: Hamburger, Logo, Brand */}
           <div className='flex items-center gap-3'>
@@ -110,54 +110,26 @@ export default function Header() {
                   </svg>
                 </button>
                 {/* Dropdown Menu */}
-                <div className={`absolute top-full left-0 w-48 bg-white border border-gray-200 shadow-xl z-50 ${allOpen ? 'block' : 'hidden'}`}>
+                <div className={`absolute top-full left-0 w-48 bg-white border border-gray-200 shadow-xl z-[2000] ${allOpen ? 'block' : 'hidden'}`}>
                   <div className=''>
                     {/* <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer flex items-center border-b border-gray-100'>
                       
                       <span className='text-sm font-medium text-gray-600 hover:text-white'>All</span>
                     </div> */}
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>Adhesives</span>
-                    </div>
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>Cements & POP</span>
-                    </div>
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>Cleaning</span>
-                    </div>
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>Dry Wall Gypsum Screws</span>
-                    </div>
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>Electrical Items</span>
-                    </div>
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>House Hold Ladder</span>
-                    </div>
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>Locks & accessories</span>
-                    </div>
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>Mask & Sanitizers</span>
-                    </div>
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>Paints</span>
-                    </div>
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>Pipes & Fittings</span>
-                    </div>
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>Sanitary Ware & faucets</span>
-                    </div>
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>Tools</span>
-                    </div>
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>Uncategorized</span>
-                    </div>
-                    <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer'>
-                      <span className='text-sm text-gray-700 hover:text-white'>WaterProofing</span>
-                    </div>
+                    <Link href='/ShopPage/Adhesives' className='block px-4 py-1.5 hover:bg-blue-600 text-sm text-gray-700 hover:text-white'>Adhesives</Link>
+                    <Link href='/ShopPage/Cements' className='block px-4 py-1.5 hover:bg-blue-600 text-sm text-gray-700 hover:text-white'>Cements & POP</Link>
+                    <Link href='/ShopPage/Cleaning' className='block px-4 py-1.5 hover:bg-blue-600 text-sm text-gray-700 hover:text-white'>Cleaning</Link>
+                    <Link href='/ShopPage/Dry' className='block px-4 py-1.5 hover:bg-blue-600 text-sm text-gray-700 hover:text-white'>Dry Wall Gypsum Screws</Link>
+                    <Link href='/ShopPage/Electrical' className='block px-4 py-1.5 hover:bg-blue-600 text-sm text-gray-700 hover:text-white'>Electrical Items</Link>
+                    <Link href='/ShopPage/Hardware' className='block px-4 py-1.5 hover:bg-blue-600 text-sm text-gray-700 hover:text-white'>House Hold Ladder</Link>
+                    <Link href='/ShopPage/Locks' className='block px-4 py-1.5 hover:bg-blue-600 text-sm text-gray-700 hover:text-white'>Locks & accessories</Link>
+                    <Link href='/ShopPage/Cleaning' className='block px-4 py-1.5 hover:bg-blue-600 text-sm text-gray-700 hover:text-white'>Mask & Sanitizers</Link>
+                    <Link href='/ShopPage/Paint' className='block px-4 py-1.5 hover:bg-blue-600 text-sm text-gray-700 hover:text-white'>Paints</Link>
+                    <Link href='/ShopPage/Pipe' className='block px-4 py-1.5 hover:bg-blue-600 text-sm text-gray-700 hover:text-white'>Pipes & Fittings</Link>
+                    <Link href='/ShopPage/Sanitary' className='block px-4 py-1.5 hover:bg-blue-600 text-sm text-gray-700 hover:text-white'>Sanitary Ware & faucets</Link>
+                    <Link href='/ShopPage/Tools' className='block px-4 py-1.5 hover:bg-blue-600 text-sm text-gray-700 hover:text-white'>Tools</Link>
+                    <Link href='/ShopPage/Uncategorized' className='block px-4 py-1.5 hover:bg-blue-600 text-sm text-gray-700 hover:text-white'>Uncategorized</Link>
+                    <Link href='/ShopPage/WaterProofing' className='block px-4 py-1.5 hover:bg-blue-600 text-sm text-gray-700 hover:text-white'>WaterProofing</Link>
                   </div>
                 </div>
               </div>

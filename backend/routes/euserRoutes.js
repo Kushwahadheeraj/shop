@@ -8,6 +8,8 @@ router.post('/login', euser.login);
 router.get('/me', euserAuth, euser.me);
 router.put('/profile', euserAuth, euser.updateProfile);
 router.put('/change-password', euserAuth, euser.changePassword);
+router.post('/forgot-password', euser.requestPasswordReset);
+router.post('/reset-password', euser.resetPasswordWithToken);
 // Admin/seller-side listing & stats (no auth middleware applied here; add if needed)
 router.get('/list', euser.list);
 router.get('/stats', euser.stats);

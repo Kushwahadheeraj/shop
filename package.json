@@ -11,7 +11,6 @@
     "parse:hsn": "node scripts/parse-gst-hsn.js"
   },
   "dependencies": {
-    "critters": "^0.0.22",
     "@google/generative-ai": "^0.24.1",
     "@radix-ui/react-alert-dialog": "^1.1.14",
     "@radix-ui/react-avatar": "^1.1.10",
@@ -29,12 +28,14 @@
     "@react-icons/all-files": "^4.1.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "critters": "^0.0.22",
     "d3-shape": "^3.2.0",
     "embla-carousel-react": "^8.6.0",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.511.0",
     "mongoose": "^8.0.0",
     "next": "^15.3.4",
+    "nodemailer": "^7.0.9",
     "pdf-parse": "^1.1.1",
     "puppeteer": "^24.15.0",
     "radix-ui": "^1.4.3",

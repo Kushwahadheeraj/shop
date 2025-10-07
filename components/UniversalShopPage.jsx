@@ -133,6 +133,7 @@ export default function UniversalShopPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { addItem } = useCart() || { addItem: () => {} };
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [priceFilter, setPriceFilter] = useState(null); // {min, max}
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
@@ -142,6 +143,17 @@ export default function UniversalShopPage() {
       document.body.style.overflow = previousOverflow;
     };
   }, [mobileOpen]);
+
+  useEffect(() => {
+    const onFilter = (e) => {
+      const { min, max } = e.detail || {};
+      if (typeof min === 'number' && typeof max === 'number') {
+        setPriceFilter({ min, max });
+      }
+    };
+    window.addEventListener('shop-price-filter', onFilter);
+    return () => window.removeEventListener('shop-price-filter', onFilter);
+  }, []);
 
   const shopSegments = useMemo(() => {
     if (!pathname) return [];
@@ -161,6 +173,28 @@ export default function UniversalShopPage() {
       .trim()
       .toUpperCase();
   }, [shopSegments]);
+
+  // Compute product lists BEFORE any conditional returns to preserve hooks order
+  const products = useMemo(() => (Array.isArray(data) ? data : []), [data]);
+  const filteredProducts = useMemo(() => {
+    if (!priceFilter) return products;
+    const { min, max } = priceFilter;
+    return products.filter((item) => {
+      const originalPriceRaw = item?.mrp ?? item?.originalPrice ?? item?.price ?? item?.fixPrice ?? item?.minPrice ?? 0;
+      const salePriceRaw = item?.discountPrice ?? item?.salePrice ?? item?.fixPrice ?? item?.price ?? item?.minPrice ?? 0;
+      const originalPrice = Number(originalPriceRaw) || 0;
+      const salePrice = Number(salePriceRaw) || 0;
+      const hasMinMax = item?.minPrice && item?.maxPrice && item?.minPrice !== item?.maxPrice;
+      if (hasMinMax) {
+        const minP = Number(item?.minPrice) || 0;
+        const maxP = Number(item?.maxPrice) || 0;
+        return maxP >= min && minP <= max; // overlap
+      }
+      const effective = salePrice > 0 ? salePrice : originalPrice;
+      if (!effective) return false;
+      return effective >= min && effective <= max;
+    });
+  }, [products, priceFilter]);
 
   useEffect(() => {
     let isMounted = true;
@@ -242,8 +276,6 @@ export default function UniversalShopPage() {
   }
 
   const title = shopSegments.join(' / ').toUpperCase() || 'SHOP';
-  const products = Array.isArray(data) ? data : [];
-
   const handleProductClick = (product) => {
     // Debug: Log the product structure
     console.log('Product clicked:', {
@@ -355,7 +387,7 @@ export default function UniversalShopPage() {
 
             {/* Products Grid - two columns on mobile to match reference */}
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
-              {products.map((item) => {
+              {filteredProducts.map((item) => {
                 const key = item?._id || item?.id || `${Math.random()}`;
                 const name = item?.name || item?.title || 'Unnamed Product';
                 // Robust price resolution across models
@@ -568,7 +600,7 @@ export default function UniversalShopPage() {
             </div>
 
       {/* No Products Message */}
-      {products.length === 0 && (
+      {filteredProducts.length === 0 && (
         <div className="text-center py-12">
           <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
           <p className="text-gray-500">Try adjusting your search or filter criteria.</p>

@@ -9,6 +9,10 @@ const eUserSchema = new mongoose.Schema({
   phone: { type: String, trim: true },
   avatar: { type: String, default: '' },
   status: { type: String, default: 'active' },
+  resetPasswordToken: { type: String, default: null },
+  resetPasswordExpires: { type: Date, default: null },
+  resetCodeHash: { type: String, default: null },
+  resetCodeExpires: { type: Date, default: null },
 }, { timestamps: true });
 
 // Either username or email must be provided

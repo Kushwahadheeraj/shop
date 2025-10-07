@@ -498,15 +498,12 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
   };
 
   const isActive = (category) => {
-    const folderName = categoryMap[category] || category;
+    const folderName = (categoryMap[category] || category || '').toLowerCase();
     if (!pathname) return false;
     const parts = pathname.split('/').filter(Boolean);
     const shopIndex = parts.findIndex((p) => p.toLowerCase() === 'shoppage');
-    const topSegment = shopIndex !== -1 ? parts[shopIndex + 1] : undefined;
-    if (!topSegment) return false;
-    // Only highlight the canonical item whose label matches the folder exactly
-    const isCanonical = category.toLowerCase().replace(/\s+/g, '') === folderName.toLowerCase();
-    return isCanonical && topSegment.toLowerCase() === folderName.toLowerCase();
+    const topSegment = shopIndex !== -1 ? (parts[shopIndex + 1] || '').toLowerCase() : '';
+    return topSegment === folderName.toLowerCase();
   };
 
   const isSubcategoryActive = (category, subcategory) => {
@@ -541,6 +538,13 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
         <div className="flex items-center gap-3">
           <button
             className={`bg-gray-600 text-white font-semibold rounded-full tracking-widest hover:bg-gray-700 transition-colors ${forceMobile ? 'px-4 py-1.5 text-[10px]' : 'px-5 py-2 text-xs'}`}
+            onClick={() => {
+              try {
+                const detail = { min: price[0], max: price[1] };
+                const evt = new CustomEvent('shop-price-filter', { detail });
+                window.dispatchEvent(evt);
+              } catch {}
+            }}
           >
             FILTER
           </button>
@@ -562,9 +566,9 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
               <div key={cat}>
                 {subcategories ? (
                   <Collapsible>
-                    <CollapsibleTrigger className={`flex items-center w-full justify-between ${forceMobile ? 'py-[6px]' : 'py-2'} text-sm text-gray-600 hover:text-gray-900 transition-colors group`}>
-                      <span className={`${isActive(cat) ? 'text-gray-900 font-semibold' : ''}`}>{cat}</span>
-                      <ChevronDown className="w-3 h-3 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                    <CollapsibleTrigger className={`flex items-center w-full justify-between ${forceMobile ? 'py-[6px]' : 'py-2'} text-sm transition-colors group ${isActive(cat) ? 'text-white bg-yellow-600 rounded-md px-2' : 'text-gray-600 hover:text-gray-900'}`}>
+                      <span>{cat}</span>
+                      <ChevronDown className="w-3 h-3 text-gray-200 group-hover:text-gray-600 transition-colors" />
                     </CollapsibleTrigger>
                     <CollapsibleContent className="pl-4">
                       {subcategories.map((sub) => {
@@ -575,8 +579,8 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
                               href={`/ShopPage/${folderName}/${sub.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '')}`}
                               className={`block ${forceMobile ? 'py-[6px]' : 'py-2'} text-[11px] transition-all duration-200 rounded-md px-2 ml-2 ${
                                 isSubcategoryActive(cat, sub)
-                                  ? 'text-blue-600 bg-blue-50 font-semibold'
-                                  : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50 hover:underline'
+                                  ? 'text-white bg-yellow-600 font-semibold'
+                                  : 'text-gray-600 hover:text-white hover:bg-yellow-600 hover:underline'
                               }`}
                             >
                               {sub}
@@ -587,11 +591,11 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
                             <Collapsible key={sub.label}>
                               <CollapsibleTrigger className={`flex items-center w-full justify-between ${forceMobile ? 'py-[4px]' : 'py-2'} text-[11px] font-semibold transition-colors rounded-md px-2 ml-2 group ${
                                 isSubcategoryActive(cat, sub.label)
-                                  ? 'text-blue-600 bg-blue-50'
-                                  : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                                  ? 'text-white bg-yellow-600'
+                                  : 'text-gray-700 hover:text-white hover:bg-yellow-600'
                               }`}>
                                 <span>{sub.label}</span>
-                                <ChevronDown className="w-3 h-3 group-hover:text-blue-600 transition-colors" />
+                                <ChevronDown className="w-3 h-3 group-hover:text-blue-200 transition-colors" />
                               </CollapsibleTrigger>
                               <CollapsibleContent className="pl-4">
                                 {sub.sub.map((item) => {
@@ -602,8 +606,8 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
                                         href={`/ShopPage/${folderName}/${sub.label.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '')}/${item.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '')}`}
                                         className={`block ${forceMobile ? 'py-[4px]' : 'py-1'} text-[11px] transition-all duration-200 rounded-md px-1 ml-4 ${
                                           isSubcategoryActive(cat, `${sub.label}/${item}`)
-                                            ? 'text-blue-600 bg-blue-50 font-semibold'
-                                            : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50 hover:underline'
+                                            ? 'text-white bg-yellow-600 font-semibold'
+                                            : 'text-gray-600 hover:text-white hover:bg-yellow-600 hover:underline'
                                         }`}
                                       >
                                         {item}
@@ -614,11 +618,11 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
                                       <Collapsible key={item.label}>
                                         <CollapsibleTrigger className={`flex items-center w-full justify-between ${forceMobile ? 'py-[4px]' : 'py-1'} text-[11px] font-semibold transition-colors rounded-md px-2 ml-4 group ${
                                           isSubcategoryActive(cat, `${sub.label}/${item.label}`)
-                                            ? 'text-blue-600 bg-blue-50'
-                                            : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+                                            ? 'text-white bg-yellow-600'
+                                            : 'text-gray-600 hover:text-white hover:bg-yellow-600'
                                         }`}>
                                           <span>{item.label}</span>
-                                          <ChevronDown className="w-3 h-3 group-hover:text-blue-600 transition-colors" />
+                                          <ChevronDown className="w-3 h-3 group-hover:text-blue-200 transition-colors" />
                                         </CollapsibleTrigger>
                                         <CollapsibleContent className="pl-4">
                                           {item.sub.map((subItem) => (
@@ -627,8 +631,8 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
                                               href={`/ShopPage/${folderName}/${sub.label.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '')}/${item.label.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '')}/${subItem.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '')}`}
                                               className={`block ${forceMobile ? 'py-[3px]' : 'py-1'} text-[11px] transition-all duration-200 rounded-md px-2 ml-6 ${
                                                 isNestedSubcategoryActive(cat, `${sub.label}/${item.label}`, subItem)
-                                                  ? 'text-blue-600 bg-blue-50 font-semibold'
-                                                  : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50 hover:underline'
+                                                  ? 'text-white bg-yellow-600 font-semibold'
+                                                  : 'text-gray-500 hover:text-white hover:bg-yellow-600 hover:underline'
                                               }`}
                                             >
                                               {subItem}
@@ -651,11 +655,7 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
                 ) : (
                   <Link
                     href={`/ShopPage/${folderName}`}
-                    className={`block py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors ${
-                      isActive(cat) 
-                        ? 'text-gray-900 font-semibold' 
-                        : ''
-                    }`}
+                    className={`block py-2 text-sm transition-colors rounded-md px-2 ${isActive(cat) ? 'text-white bg-yellow-600 font-semibold' : 'text-gray-600 hover:text-gray-900'}`}
                   >
                     {cat}
                   </Link>

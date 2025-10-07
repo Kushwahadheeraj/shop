@@ -1,5 +1,8 @@
 const jwt = require('jsonwebtoken');
 const EUser = require('../models/EUser');
+const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
+const nodemailer = require('nodemailer');
 
 function sign(user) {
   return jwt.sign({ id: user._id, role: 'euser' }, process.env.JWT_SECRET, { expiresIn: '7d' });
@@ -116,6 +119,86 @@ exports.changePassword = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ message: 'Failed to update password' });
+  }
+};
+
+// email transporter (simple SMTP using env)
+function createTransporter() {
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT || 587),
+    secure: false,
+    auth: process.env.SMTP_USER ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS } : undefined,
+  });
+}
+
+// Request password reset: generate 6-digit code and email it
+exports.requestPasswordReset = async (req, res) => {
+  try {
+    const { emailOrUsername } = req.body || {};
+    if (!emailOrUsername) return res.status(400).json({ message: 'Email or username is required' });
+    const user = await EUser.findOne({ $or: [ { email: emailOrUsername.toLowerCase() }, { username: emailOrUsername } ] });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const code = String(Math.floor(100000 + Math.random() * 900000));
+    const codeHash = await bcrypt.hash(code, 10);
+    const expires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+    user.resetCodeHash = codeHash;
+    user.resetCodeExpires = expires;
+    await user.save();
+
+    try {
+      if (user.email) {
+        const transporter = createTransporter();
+        await transporter.sendMail({
+          from: process.env.SMTP_FROM || 'no-reply@hardware-shack',
+          to: user.email,
+          subject: 'Your password reset code',
+          text: `Your password reset code is ${code}. It expires in 15 minutes.`,
+          html: `<p>Your password reset code is <b>${code}</b>. It expires in 15 minutes.</p>`,
+        });
+      }
+    } catch (mailErr) {
+      // Mailing failure shouldn't leak code; still allow fallback display in dev
+    }
+
+    // In dev, do not expose the code in response unless explicitly allowed
+    res.json({ success: true, message: 'Reset code sent to email if available', expires });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to request password reset' });
+  }
+};
+
+// Verify code and reset password
+exports.resetPasswordWithToken = async (req, res) => {
+  try {
+    const { token, code, emailOrUsername, newPassword } = req.body || {};
+    if ((!token && !code) || !newPassword) return res.status(400).json({ message: 'Code and newPassword are required' });
+    const user = await EUser.findOne({
+      $or: [
+        { resetPasswordToken: token, resetPasswordExpires: { $gt: new Date() } },
+        { $and: [
+          { $or: [ { email: emailOrUsername?.toLowerCase() }, { username: emailOrUsername } ] },
+          { resetCodeExpires: { $gt: new Date() } }
+        ]}
+      ]
+    });
+    if (!user) return res.status(400).json({ message: 'Invalid or expired code' });
+
+    if (code) {
+      const ok = await bcrypt.compare(String(code), user.resetCodeHash || '');
+      if (!ok) return res.status(400).json({ message: 'Invalid code' });
+    }
+
+    user.password = newPassword;
+    user.resetPasswordToken = null;
+    user.resetPasswordExpires = null;
+    user.resetCodeHash = null;
+    user.resetCodeExpires = null;
+    await user.save();
+    res.json({ success: true, message: 'Password has been reset' });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to reset password' });
   }
 };
 

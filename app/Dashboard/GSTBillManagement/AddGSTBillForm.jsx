@@ -5,6 +5,16 @@ import ShopFormModal from './components/ShopFormModal';
 import ProductCatalog from './components/ProductCatalog';
 
 const AddGSTBillForm = ({ onClose, onSave, shops }) => {
+  // Detect small screens to switch to stacked mobile layout for item rows
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mql = window.matchMedia('(max-width: 640px)');
+    const handler = (e) => setIsSmallScreen(e.matches);
+    setIsSmallScreen(mql.matches);
+    mql.addEventListener?.('change', handler);
+    return () => mql.removeEventListener?.('change', handler);
+  }, []);
   const GST_STATE_CODES = [
     { name: 'Jammu & Kashmir', code: '01' },
     { name: 'Himachal Pradesh', code: '02' },
@@ -603,8 +613,8 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
   const totals = calculateTotals();
 
   return (
-    <div className="fixed inset-0 bg-gray-100 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-7xl max-h-[95vh] overflow-y-auto relative">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 sm:p-4">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-[95vw] lg:max-w-7xl max-h-[95vh] overflow-y-auto relative">
         <button
           onClick={onClose}
           className="absolute top-3 right-3 p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
@@ -612,7 +622,7 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
           <X className="h-5 w-5" />
         </button>
         {/* Header */}
-        <div className="p-6 border-b bg-white">
+        <div className="p-4 md:p-6 border-b bg-white">
           {/* Centered GST Invoice Title */}
           <div className="text-center mb-6">
             <div className="flex items-center justify-center space-x-2">
@@ -640,9 +650,9 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
           </div>
 
           {/* Invoice Details in Column Layout with Logo */}
-          <div className="flex items-start justify-between">
+          <div className="flex flex-col md:flex-row items-start justify-between gap-4">
             <div className="w-full">
-              <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-6 items-start">
+              <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-4 md:gap-6 items-start">
                 {/* Left: Invoice No */}
               <div className="flex items-center space-x-3">
                 <label className="text-sm font-medium text-gray-700 border-b border-dashed border-gray-300 pb-1">Invoice No*</label>
@@ -676,7 +686,7 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
               </div>
               </div>
                 {/* Right: Dates stack */}
-                <div className="flex flex-col space-y-4 justify-self-end w-auto">
+                <div className="flex flex-col space-y-4 md:justify-self-end w-auto">
               <div className="flex items-center space-x-3">
                 <label className="text-sm font-medium text-gray-700 border-b border-dashed border-gray-300 pb-1">Invoice Date*</label>
                 <div className="flex items-center space-x-2">

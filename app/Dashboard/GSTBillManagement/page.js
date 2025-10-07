@@ -35,6 +35,140 @@ const GSTBillManagementPage = () => {
     netAmount: 0
   });
 
+  // Helper to derive start/end dates from a named range
+  const getDateRange = (range) => {
+    const now = new Date();
+    const endDate = now.toISOString().split('T')[0];
+    switch (range) {
+      case 'today':
+        return { startDate: endDate, endDate };
+      case 'yesterday':
+        {
+          const d = new Date(now);
+          d.setDate(d.getDate() - 1);
+          const y = d.toISOString().split('T')[0];
+          return { startDate: y, endDate: y };
+        }
+      case 'thisWeek':
+        {
+          const start = new Date(now);
+          start.setDate(now.getDate() - now.getDay());
+          return { startDate: start.toISOString().split('T')[0], endDate };
+        }
+      case 'thisMonth':
+        {
+          const start = new Date(now.getFullYear(), now.getMonth(), 1);
+          return { startDate: start.toISOString().split('T')[0], endDate };
+        }
+      case 'lastMonth':
+        {
+          const start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+          const end = new Date(now.getFullYear(), now.getMonth(), 0);
+          return { startDate: start.toISOString().split('T')[0], endDate: end.toISOString().split('T')[0] };
+        }
+      case 'thisYear':
+        {
+          const start = new Date(now.getFullYear(), 0, 1);
+          return { startDate: start.toISOString().split('T')[0], endDate };
+        }
+      default:
+        return { startDate: null, endDate: null };
+    }
+  };
+
+  // Fetch shops
+  const fetchShops = useCallback(async () => {
+    try {
+      setShopsLoading(true);
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      const res = await fetch('/api/shops', {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      });
+      if (!res.ok) {
+        // Best-effort logging
+        try { const err = await res.json(); console.error('❌ Shops API error:', err); } catch {}
+        return;
+      }
+      const data = await res.json();
+      if (data?.success && Array.isArray(data.data)) {
+        setShops(data.data);
+      } else if (data?.success && data?.data?.shops) {
+        setShops(data.data.shops);
+      }
+    } catch (e) {
+      console.error('❌ Error fetching shops:', e);
+    } finally {
+      setShopsLoading(false);
+    }
+  }, []);
+
+  // Fetch GST bills
+  const fetchGSTBills = useCallback(async () => {
+    try {
+      setLoading(true);
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      const params = new URLSearchParams();
+      if (selectedShop) params.append('shopId', selectedShop);
+      if (searchTerm) params.append('search', searchTerm);
+      if (filterDateRange) {
+        const dr = getDateRange(filterDateRange);
+        if (dr.startDate) params.append('startDate', dr.startDate);
+        if (dr.endDate) params.append('endDate', dr.endDate);
+      }
+      const res = await fetch(`/api/gst-bills?${params.toString()}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      });
+      if (!res.ok) {
+        try { const err = await res.json(); console.error('❌ GST bills API error:', err); } catch {}
+        return;
+      }
+      const data = await res.json();
+      if (data?.success && Array.isArray(data.data)) {
+        setGstBills(data.data);
+      }
+    } catch (e) {
+      console.error('❌ Error fetching GST bills:', e);
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedShop, searchTerm, filterDateRange]);
+
+  // Fetch stats (fallback to local calculation if API fails)
+  const fetchStats = useCallback(async () => {
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      const params = new URLSearchParams();
+      if (selectedShop) params.append('shopId', selectedShop);
+      if (searchTerm) params.append('search', searchTerm);
+      if (filterDateRange) {
+        const dr = getDateRange(filterDateRange);
+        if (dr.startDate) params.append('startDate', dr.startDate);
+        if (dr.endDate) params.append('endDate', dr.endDate);
+      }
+      const res = await fetch(`/api/gst-bills/stats?${params.toString()}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.success && data?.data) {
+          setStats(data.data);
+          return;
+        }
+      }
+      // Fallback
+      if (typeof calculateStatsFromBills === 'function') {
+        const calculated = calculateStatsFromBills(gstBills, selectedShop, searchTerm, filterDateRange);
+        setStats(calculated);
+      }
+    } catch (e) {
+      console.error('❌ Error fetching stats:', e);
+      if (typeof calculateStatsFromBills === 'function') {
+        const calculated = calculateStatsFromBills(gstBills, selectedShop, searchTerm, filterDateRange);
+        setStats(calculated);
+      }
+    }
+  }, [selectedShop, searchTerm, filterDateRange, gstBills]);
+
   // Load real data from database
   useEffect(() => {
     const loadRealData = async () => {
@@ -269,9 +403,9 @@ const GSTBillManagementPage = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col gap-3 md:flex-row md:justify-between md:items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">GST Bill Management</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">GST Bill Management</h1>
           {/* <p className="text-gray-600">Manage your GST bills and invoices</p>
           <div className="text-sm text-gray-500 space-y-1">
             <p>Shops loaded: {shops.length}</p>
@@ -288,7 +422,7 @@ const GSTBillManagementPage = () => {
             </p>
           </div> */}
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-2 md:gap-3">
           <button
             onClick={async () => {
               console.log('🔄 Refreshing all GST data from database...');
@@ -332,7 +466,7 @@ const GSTBillManagementPage = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
           <div className="flex items-center">
             <div className="p-3 bg-blue-100 rounded-full">
@@ -385,8 +519,8 @@ const GSTBillManagementPage = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="bg-white p-4 md:p-6 rounded-lg shadow-md border border-gray-200">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Shop</label>
             <select
@@ -501,7 +635,7 @@ const GSTBillManagementPage = () => {
 
       {/* GST Bills Table */}
       <div className="bg-white rounded-lg shadow-md border border-gray-200">
-        <div className="px-6 py-4 border-b border-gray-200">
+        <div className="px-4 md:px-6 py-3 md:py-4 border-b border-gray-200">
           <h3 className="text-lg font-medium text-gray-900">GST Bills</h3>
         </div>
         
@@ -571,7 +705,7 @@ const GSTBillManagementPage = () => {
           
           return (
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full text-xs sm:text-sm">
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice #</th>

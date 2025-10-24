@@ -25,6 +25,7 @@ const getNavItems = (isLoggedIn) => {
 export default function Navbar() {
   const [openMenu, setOpenMenu] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [activePage, setActivePage] = useState('HOME');
   const router = useRouter();
 
   const folderMap = {
@@ -69,49 +70,65 @@ export default function Navbar() {
     return () => window.removeEventListener('euser-auth', checkLoginStatus);
   }, []);
 
+  // Set active page based on current route
+  useEffect(() => {
+    const path = window.location.pathname;
+    if (path === '/') {
+      setActivePage('HOME');
+    } else if (path === '/Shop' || path.startsWith('/ShopPage')) {
+      setActivePage('SHOP');
+    } else if (path.startsWith('/Tracking')) {
+      setActivePage('TRACKING');
+    } else {
+      setActivePage('HOME');
+    }
+  }, []);
+
   const navItems = getNavItems(isLoggedIn);
 
   return (
-    <nav className="fixed top-24 left-0 w-full z-60 h-8 bg-black text-white lg:visible lg:!flex lg:basis-auto md:hidden hidden">
-      <ul className='flex items-center px-2 py-2'>
-        {navItems.map((item) => (
-          <li
-            key={item.label}
-            className='relative px-3'
-            onMouseEnter={() => item.hasDropdown && setOpenMenu(item.label)}
-            onMouseLeave={() => item.hasDropdown && setOpenMenu(null)}
-          >
-            <a
-              href={item.href}
-              onClick={(e) => {
-                if (item.hasDropdown) {
-                  e.preventDefault();
-                  return;
-                }
-                const folder = simpleNavMap[item.label];
-                if (folder) {
-                  e.preventDefault();
-                  router.push(`/ShopPage/${folder}`);
-                }
-              }}
-              className={`text-sm px-1 py-2 rounded-full transition-all duration-300
-                ${
-                  item.active
-                    ? 'bg-yellow-400 text-white hover:bg-yellow-500'
-                    : 'hover:bg-yellow-400'
-                }`}
+    <div className="fixed top-24 left-0 w-full z-60 lg:visible lg:!block md:hidden hidden">
+      <nav className="bg-black text-white">
+        <ul className='flex items-center px-0.5 py-0.5 space-x-1'>
+          {navItems.map((item) => (
+            <li
+              key={item.label}
+              className='relative'
+              onMouseEnter={() => item.hasDropdown && setOpenMenu(item.label)}
+              onMouseLeave={() => item.hasDropdown && setOpenMenu(null)}
             >
-              {item.label}
-              {item.hasDropdown && (
-                <svg
-                  className='ml-1 w-3 h-3 inline-block'
-                  fill='currentColor'
-                  viewBox='0 0 20 20'
-                >
-                  <path d='M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.586l3.71-3.356a.75.75 0 1 1 1.02 1.1l-4.25 3.85a.75.75 0 0 1-1.02 0l-4.25-3.85a.75.75 0 0 1 .02-1.06z' />
-                </svg>
-              )}
-            </a>
+              <a
+                href={item.href}
+                onClick={(e) => {
+                  setActivePage(item.label);
+                  if (item.hasDropdown) {
+                    e.preventDefault();
+                    return;
+                  }
+                  const folder = simpleNavMap[item.label];
+                  if (folder) {
+                    e.preventDefault();
+                    router.push(`/ShopPage/${folder}`);
+                  }
+                }}
+                className={`text-sm font-medium uppercase transition-all duration-300 flex items-center
+                  ${
+                    activePage === item.label
+                      ? 'bg-yellow-300 text-white px-2 py-1 rounded-full hover:bg-yellow-300'
+                      : 'text-gray-300 hover:text-white px-1 py-1'
+                  }`}
+              >
+                {item.label}
+                {item.hasDropdown && (
+                  <svg
+                    className='ml-1 w-3 h-3 inline-block'
+                    fill='currentColor'
+                    viewBox='0 0 20 20'
+                  >
+                    <path d='M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.586l3.71-3.356a.75.75 0 1 1 1.02 1.1l-4.25 3.85a.75.75 0 0 1-1.02 0l-4.25-3.85a.75.75 0 0 1 .02-1.06z' />
+                  </svg>
+                )}
+              </a>
 
             {/* Mega Menu for PAINTS */}
             {item.label === 'PAINTS' && (
@@ -388,6 +405,8 @@ export default function Navbar() {
           </li>
         ))}
       </ul>
-    </nav>
+      </nav>
+      {/* Bottom strip */}
+    </div>
   );
 }

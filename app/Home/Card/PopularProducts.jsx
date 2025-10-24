@@ -113,7 +113,7 @@ export default function PopularProducts() {
                           });
                         }}
                         variant="outline"
-                        className="mt-4 border-yellow-400 text-yellow-600 hover:bg-yellow-400 hover:text-white"
+                        className="mt-4 border-yellow-300 text-yellow-300 hover:bg-yellow-300 hover:text-white"
                       >
                         {product.buttonText}
                       </Button>

@@ -168,11 +168,11 @@ const ApiDebugPage = () => {
                       ) : result.ok ? (
                         <CheckCircle className="h-6 w-6 text-green-600" />
                       ) : (
-                        <XCircle className="h-6 w-6 text-yellow-600" />
+                        <XCircle className="h-6 w-6 text-yellow-300" />
                       )}
                       <span className={`text-sm font-medium ${
                         result.error ? 'text-red-600' : 
-                        result.ok ? 'text-green-600' : 'text-yellow-600'
+                        result.ok ? 'text-green-600' : 'text-yellow-300'
                       }`}>
                         {result.error ? 'Error' : result.ok ? 'Success' : 'Failed'}
                       </span>

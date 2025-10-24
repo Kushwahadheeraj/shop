@@ -97,7 +97,7 @@ export default function Items() {
                     {banner.description && <p className="text-sm text-gray-700 mb-3">{banner.description}</p>}
                     {banner.buttonText && (
                       <Link href={banner.link} passHref>
-                        <button className="bg-yellow-400 text-black font-bold py-2 px-6 rounded-full shadow-lg hover:bg-yellow-500 transition">
+                        <button className="bg-yellow-300 text-black font-bold py-2 px-6 rounded-full shadow-lg hover:bg-yellow-300 transition">
                           {banner.buttonText}
                         </button>
                       </Link>

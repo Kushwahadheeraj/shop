@@ -87,7 +87,7 @@ const ToolsImage = () => {
               {slide.buttonText && (
                 <li>
                   <Link href={slide.link} passHref>
-                    <button className='text-white lg:text-xl md:text-xl text-sm font-bold mt-4 lg:w-36 md:w-36 w-24 bg-yellow-400 hover:bg-yellow-600'>
+                    <button className='text-white lg:text-xl md:text-xl text-sm font-bold mt-4 lg:w-36 md:w-36 w-24 bg-yellow-300 hover:bg-yellow-300'>
                       {slide.buttonText}
                     </button>
                   </Link>

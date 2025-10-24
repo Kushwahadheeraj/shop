@@ -44,7 +44,7 @@ export default function Orders() {
                 <li>
                   <Link
                     href="/Orders"
-                    className="block font-bold border-l-4 border-yellow-400 pl-2 bg-gray-100"
+                    className="block font-bold border-l-4 border-yellow-300 pl-2 bg-gray-100"
                   >
                     ORDERS
                   </Link>
@@ -88,7 +88,7 @@ export default function Orders() {
            <div className="w-full md:w-3/4">
               <div className="text-center space-y-4">
                 <p className="text-gray-600">No order has been made yet.</p>
-                <Button asChild className="bg-yellow-400 hover:bg-yellow-500">
+                <Button asChild className="bg-yellow-300 hover:bg-yellow-300">
                   <Link href="/shop">
                     BROWSE PRODUCTS
                   </Link>

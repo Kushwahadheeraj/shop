@@ -236,7 +236,7 @@ const ProductCatalog = ({ onClose, onSelectProduct, selectedProductId }) => {
     if (product.stock <= product.minStock) {
       return { status: 'Low Stock', color: 'text-red-600 bg-red-100' };
     } else if (product.stock >= product.maxStock) {
-      return { status: 'Overstocked', color: 'text-yellow-600 bg-yellow-100' };
+      return { status: 'Overstocked', color: 'text-yellow-300 bg-yellow-100' };
     } else {
       return { status: 'In Stock', color: 'text-green-600 bg-green-100' };
     }

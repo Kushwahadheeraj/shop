@@ -319,7 +319,7 @@ export default function UniversalShopPage() {
             <div className="flex items-center gap-6">
               <button
                 onClick={() => router.push('/all-products')}
-                className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors text-sm"
+                className="bg-yellow-300 hover:bg-yellow-300 text-white px-4 py-2 rounded-lg font-semibold transition-colors text-sm"
               >
                 View All Products
               </button>
@@ -367,7 +367,7 @@ export default function UniversalShopPage() {
             </div>
 
       {/* Category Banner - compact on mobile */}
-      <div className="relative h-32 md:h-64 bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center mb-4 md:mb-8">
+      <div className="relative h-32 md:h-64 bg-gradient-to-r from-yellow-300 to-orange-500 flex items-center justify-center mb-4 md:mb-8">
         <div className="absolute inset-0 bg-black bg-opacity-20"></div>
         <h1 className="relative z-10 text-2xl md:text-5xl font-bold text-white text-center px-4">{displayTitle}</h1>
       </div>
@@ -505,7 +505,7 @@ export default function UniversalShopPage() {
                       {/* Hover Overlay with Quick View Button */}
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-end justify-center pb-4 pointer-events-none">
                         <button 
-                          className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-lg font-semibold opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0 pointer-events-auto"
+                          className="bg-yellow-300 hover:bg-yellow-300 text-white px-6 py-2 rounded-lg font-semibold opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0 pointer-events-auto"
                           onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
@@ -528,7 +528,7 @@ export default function UniversalShopPage() {
                         {[...Array(5)].map((_, i) => (
                           <svg
                             key={i}
-                            className={`w-4 h-4 ${i < rating ? 'text-yellow-400' : 'text-gray-300'}`}
+                            className={`w-4 h-4 ${i < rating ? 'text-yellow-300' : 'text-gray-300'}`}
                             fill="currentColor"
                             viewBox="0 0 20 20"
                           >
@@ -569,7 +569,7 @@ export default function UniversalShopPage() {
                         className={`w-full py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                           isOutOfStock 
                             ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
-                            : 'bg-yellow-500 hover:bg-yellow-600 text-white'
+                            : 'bg-yellow-300 hover:bg-yellow-300 text-white'
                         }`}
                         disabled={isOutOfStock}
                         onClick={(e) => {

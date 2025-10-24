@@ -48,7 +48,7 @@ export default function CartPreview({ open }) {
 					<span className="text-lg font-bold">₹{Number(total).toLocaleString()}</span>
 				</div>
 				<div className="flex gap-2">
-					<Link href="/cart" className="flex-1 text-center bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-2 rounded-md text-sm">VIEW CART</Link>
+					<Link href="/cart" className="flex-1 text-center bg-yellow-300 hover:bg-yellow-300 text-white font-semibold py-2 rounded-md text-sm">VIEW CART</Link>
 					<Link href="/checkout" className="flex-1 text-center bg-gray-900 hover:bg-black text-white font-semibold py-2 rounded-md text-sm">CHECKOUT</Link>
 				</div>
 			</div>

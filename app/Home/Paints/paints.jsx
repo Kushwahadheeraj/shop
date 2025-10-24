@@ -95,7 +95,7 @@ export default function Paints() {
                 onClick={() => { setQuickView(product); setSelectedColor((product.colors && product.colors[0]) || ""); }}
                 className="absolute inset-x-0 bottom-0 translate-y-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 mx-0"
               >
-                <div className="mx-3 bg-yellow-400 text-white text-sm font-extrabold text-center py-2 rounded">
+                <div className="mx-3 bg-yellow-300 text-white text-sm font-extrabold text-center py-2 rounded">
                   QUICK VIEW
                 </div>
               </button>
@@ -129,7 +129,7 @@ export default function Paints() {
                   {Array.from({ length: 5 }).map((_, i) => (
                     <svg
                       key={i}
-                      className={`w-4 h-4 ${i < product.rating ? "text-yellow-400" : "text-gray-300"}`}
+                      className={`w-4 h-4 ${i < product.rating ? "text-yellow-300" : "text-gray-300"}`}
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -150,7 +150,7 @@ export default function Paints() {
                     thumbnail: product.image
                   });
                 }}
-                className="mt-auto cursor-pointer bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-2 rounded transition w-full"
+                className="mt-auto cursor-pointer bg-yellow-300 hover:bg-yellow-300 text-white font-semibold py-2 rounded transition w-full"
               >
                 ADD TO CART
               </button>
@@ -203,7 +203,7 @@ export default function Paints() {
                         <button
                           key={idx}
                           onClick={() => setSelectedColor(c)}
-                          className={`h-8 px-3 rounded border text-xs ${selectedColor === c ? 'border-yellow-500 bg-yellow-50' : 'border-gray-300 bg-white'}`}
+                          className={`h-8 px-3 rounded border text-xs ${selectedColor === c ? 'border-yellow-300 bg-yellow-50' : 'border-gray-300 bg-white'}`}
                         >
                           {c}
                         </button>
@@ -213,7 +213,7 @@ export default function Paints() {
                 )}
                 <div className="flex items-center gap-3 pt-2">
                   <button
-                    className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded"
+                    className="bg-yellow-300 hover:bg-yellow-300 text-white font-semibold px-4 py-2 rounded"
                     onClick={() => {
                       addItem({
                         id: quickView.id,

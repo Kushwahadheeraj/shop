@@ -28,6 +28,8 @@ const uncategorizedRoutes = require('./routes/uncategorizedRoutes');
 const waterProofingRoutes = require('./routes/waterProofingRoutes');
 const euserRoutes = require('./routes/euserRoutes');
 const ordersRoutes = require('./routes/orders');
+const productRoutes = require('./routes/productRoutes');
+const simpleProductRoutes = require('./routes/simpleProductRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const couponRoutes = require('./routes/couponRoutes');
 const categoryCountRoutes = require('./routes/categoryCountRoutes');
@@ -38,6 +40,7 @@ const bankAccountsRoutes = require('./routes/bankAccountsRoutes');
 const gstShopsRoutes = require('./routes/gstShopsRoutes');
 const clientsRoutes = require('./routes/clientsRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
+const productsRoutes = require('./routes/productsRoutes');
 
 const app = express();
 
@@ -45,8 +48,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-
 
 // Serve static files from uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -58,6 +59,8 @@ connectDB();
 app.use('/api/seller', sellerRoutes);
 app.use('/api/euser', euserRoutes);
 app.use('/api/orders', ordersRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/simple-products', simpleProductRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/coupons', couponRoutes);
 app.use('/api/category-count', categoryCountRoutes);
@@ -89,6 +92,7 @@ app.use('/api/sanitary', sanitaryRoutes);
 app.use('/api/tools', toolsRoutes);
 app.use('/api/uncategorized', uncategorizedRoutes);
 app.use('/api/waterproofing', waterProofingRoutes);
+app.use('/api/products', productsRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

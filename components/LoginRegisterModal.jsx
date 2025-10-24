@@ -110,7 +110,7 @@ export default function LoginRegisterModal({ open, onClose }) {
               />
               <label htmlFor="remember" className="text-sm">Remember me</label>
             </div>
-            <Button disabled={loading} className="bg-yellow-400 hover:bg-yellow-500 text-white font-bold text-lg py-2">{loading ? 'Please wait...' : 'LOG IN'}</Button>
+            <Button disabled={loading} className="bg-yellow-300 hover:bg-yellow-300 text-white font-bold text-lg py-2">{loading ? 'Please wait...' : 'LOG IN'}</Button>
             <Link href="/forgot-password" className="text-xs text-gray-600 hover:underline block mt-2">Lost your password?</Link>
           </form>
         </div>
@@ -158,7 +158,7 @@ export default function LoginRegisterModal({ open, onClose }) {
               Your personal data will be used to support your experience throughout this website, to manage access to your account, and for other purposes described in our <Link href="/privacy-policy" className="underline">privacy policy</Link>
             </p> */}
             {error && <div className="text-sm text-red-600">{error}</div>}
-            <Button disabled={loading} className="bg-yellow-400 hover:bg-yellow-500 text-white font-bold text-sm md:text-base py-2 px-5 w-auto self-start">{loading ? 'Please wait...' : 'REGISTER'}</Button>
+            <Button disabled={loading} className="bg-yellow-300 hover:bg-yellow-300 text-white font-bold text-sm md:text-base py-2 px-5 w-auto self-start">{loading ? 'Please wait...' : 'REGISTER'}</Button>
           </form>
         </div>
         {/* Seller Login Redirect */}

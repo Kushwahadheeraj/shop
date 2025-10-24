@@ -53,7 +53,7 @@ const AnalyticsDashboard = ({ onClose, bills = [] }) => {
     // Payment status distribution
     const paymentStatusData = [
       { status: 'Paid', count: paidBills, color: 'bg-green-500' },
-      { status: 'Pending', count: pendingBills, color: 'bg-yellow-500' },
+      { status: 'Pending', count: pendingBills, color: 'bg-yellow-300' },
       { status: 'Overdue', count: overdueBills, color: 'bg-red-500' }
     ];
 

@@ -516,7 +516,7 @@ export default function Tracking() {
                 </div>
                 <button
                   onClick={() => setShowImageUpload(!showImageUpload)}
-                  className="absolute -bottom-1 -right-1 bg-yellow-400 hover:bg-yellow-500 text-white rounded-full p-1.5 shadow-lg transition-colors"
+                  className="absolute -bottom-1 -right-1 bg-yellow-300 hover:bg-yellow-300 text-white rounded-full p-1.5 shadow-lg transition-colors"
                   title="Change profile picture"
                 >
                   <Camera className="w-3 h-3" />
@@ -565,7 +565,7 @@ export default function Tracking() {
                     onClick={() => setActiveSection('dashboard')}
                     className={`block w-full text-left font-bold border-l-4 pl-2 py-2 ${
                       activeSection === 'dashboard' 
-                        ? 'border-yellow-400 bg-gray-100' 
+                        ? 'border-yellow-300 bg-gray-100' 
                         : 'border-transparent hover:bg-gray-100'
                     }`}
                   >
@@ -577,7 +577,7 @@ export default function Tracking() {
                     onClick={() => setActiveSection('orders')}
                     className={`block w-full text-left border-l-4 pl-2 py-2 ${
                       activeSection === 'orders' 
-                        ? 'border-yellow-400 bg-gray-100 font-bold' 
+                        ? 'border-yellow-300 bg-gray-100 font-bold' 
                         : 'border-transparent hover:bg-gray-100'
                     }`}
                   >
@@ -589,7 +589,7 @@ export default function Tracking() {
                     onClick={() => setActiveSection('addresses')}
                     className={`block w-full text-left border-l-4 pl-2 py-2 ${
                       activeSection === 'addresses' 
-                        ? 'border-yellow-400 bg-gray-100 font-bold' 
+                        ? 'border-yellow-300 bg-gray-100 font-bold' 
                         : 'border-transparent hover:bg-gray-100'
                     }`}
                   >
@@ -601,7 +601,7 @@ export default function Tracking() {
                     onClick={() => setActiveSection('account')}
                     className={`block w-full text-left border-l-4 pl-2 py-2 ${
                       activeSection === 'account' 
-                        ? 'border-yellow-400 bg-gray-100 font-bold' 
+                        ? 'border-yellow-300 bg-gray-100 font-bold' 
                         : 'border-transparent hover:bg-gray-100'
                     }`}
                   >
@@ -628,7 +628,7 @@ export default function Tracking() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                   <div className="bg-white p-6 rounded-lg shadow-sm border">
                     <h3 className="text-lg font-semibold text-gray-800 mb-2">Total Orders</h3>
-                    <p className="text-3xl font-bold text-yellow-600">{orders.length}</p>
+                    <p className="text-3xl font-bold text-yellow-300">{orders.length}</p>
                   </div>
                   <div className="bg-white p-6 rounded-lg shadow-sm border">
                     <h3 className="text-lg font-semibold text-gray-800 mb-2">Pending Orders</h3>
@@ -695,7 +695,7 @@ export default function Tracking() {
                     <Button
                       type="submit"
                       disabled={ordersLoading}
-                      className="bg-yellow-400 hover:bg-yellow-500 text-white font-bold px-8 py-2 mt-6 md:mt-0 disabled:opacity-50"
+                      className="bg-yellow-300 hover:bg-yellow-300 text-white font-bold px-8 py-2 mt-6 md:mt-0 disabled:opacity-50"
                     >
                       {ordersLoading ? 'TRACKING...' : 'TRACK'}
                     </Button>
@@ -724,7 +724,7 @@ export default function Tracking() {
 
                   {ordersLoading ? (
                     <div className="flex justify-center items-center py-12">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-400"></div>
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-300"></div>
                       <span className="ml-2 text-gray-600">Loading orders...</span>
                     </div>
                   ) : orders.length === 0 ? (
@@ -842,7 +842,7 @@ export default function Tracking() {
                   <h2 className="text-2xl font-bold text-gray-800">Your Addresses</h2>
                   <Button
                     onClick={() => setShowAddAddress(true)}
-                    className="bg-yellow-400 hover:bg-yellow-500 text-white"
+                    className="bg-yellow-300 hover:bg-yellow-300 text-white"
                   >
                     Add New Address
                   </Button>
@@ -913,7 +913,7 @@ export default function Tracking() {
                         <select
                           value={newAddress.type}
                           onChange={(e) => setNewAddress({...newAddress, type: e.target.value})}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-300"
                         >
                           <option value="home">Home</option>
                           <option value="work">Work</option>
@@ -938,7 +938,7 @@ export default function Tracking() {
                       </Button>
                       <Button
                         onClick={addAddress}
-                        className="bg-yellow-400 hover:bg-yellow-500 text-white"
+                        className="bg-yellow-300 hover:bg-yellow-300 text-white"
                       >
                         Add Address
                       </Button>
@@ -1015,7 +1015,7 @@ export default function Tracking() {
                               <select
                                 value={editAddress.type}
                                 onChange={(e) => setEditAddress({...editAddress, type: e.target.value})}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-300"
                               >
                                 <option value="home">Home</option>
                                 <option value="work">Work</option>
@@ -1040,7 +1040,7 @@ export default function Tracking() {
                             </Button>
                             <Button
                               onClick={updateAddress}
-                              className="bg-yellow-400 hover:bg-yellow-500 text-white"
+                              className="bg-yellow-300 hover:bg-yellow-300 text-white"
                             >
                               Update Address
                             </Button>
@@ -1079,7 +1079,7 @@ export default function Tracking() {
                               size="sm"
                               className={`${
                                 canEditAddress(address.id) 
-                                  ? 'text-yellow-600 border-yellow-300 hover:bg-yellow-50' 
+                                  ? 'text-yellow-300 border-yellow-300 hover:bg-yellow-50' 
                                   : 'text-gray-400 border-gray-300 cursor-not-allowed'
                               }`}
                               disabled={!canEditAddress(address.id)}
@@ -1119,7 +1119,7 @@ export default function Tracking() {
                     <Button
                       onClick={() => setIsEditingProfile(true)}
                       variant="outline"
-                      className="text-yellow-600 border-yellow-300 hover:bg-yellow-50"
+                      className="text-yellow-300 border-yellow-300 hover:bg-yellow-50"
                     >
                       Edit Profile
                     </Button>
@@ -1151,7 +1151,7 @@ export default function Tracking() {
                       </div>
                       <button
                         onClick={() => setShowImageUpload(!showImageUpload)}
-                        className="absolute -bottom-1 -right-1 bg-yellow-400 hover:bg-yellow-500 text-white rounded-full p-1.5 shadow-lg transition-colors"
+                        className="absolute -bottom-1 -right-1 bg-yellow-300 hover:bg-yellow-300 text-white rounded-full p-1.5 shadow-lg transition-colors"
                         title="Change profile picture"
                       >
                         <Camera className="w-3 h-3" />
@@ -1187,7 +1187,7 @@ export default function Tracking() {
 
                   {/* Profile Edit Form */}
                   {isEditingProfile && (
-                    <div className="mb-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                    <div className="mb-6 p-4 bg-yellow-50 rounded-lg border border-yellow-300">
                       <h4 className="text-lg font-semibold text-gray-800 mb-4">Edit Profile Information</h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
@@ -1218,7 +1218,7 @@ export default function Tracking() {
                         <Button
                           onClick={handleProfileUpdate}
                           disabled={updating}
-                          className="bg-yellow-400 hover:bg-yellow-500 text-white"
+                          className="bg-yellow-300 hover:bg-yellow-300 text-white"
                         >
                           {updating ? 'Updating...' : 'Update Profile'}
                         </Button>
@@ -1317,7 +1317,7 @@ export default function Tracking() {
                     <h4 className="text-lg font-semibold text-gray-800 mb-4">Account Statistics</h4>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="text-center">
-                        <p className="text-2xl font-bold text-yellow-600">{orders.length}</p>
+                        <p className="text-2xl font-bold text-yellow-300">{orders.length}</p>
                         <p className="text-sm text-gray-600">Total Orders</p>
                       </div>
                       <div className="text-center">

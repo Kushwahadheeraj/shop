@@ -396,7 +396,7 @@ export default function ProductList() {
                                   key={i}
                                   className={`w-3 h-3 ${
                                     i < Math.floor(product.rating) 
-                                      ? 'text-yellow-400 fill-current' 
+                                      ? 'text-yellow-300 fill-current' 
                                       : 'text-gray-300'
                                   }`}
                                   viewBox="0 0 20 20"

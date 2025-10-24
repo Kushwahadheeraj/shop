@@ -63,7 +63,7 @@ export default function OfferProduct() {
         )}
         {offer.buttonText && (
           <Link href={offer.link} passHref>
-            <button className="mt-6 rounded-full border-yellow-500 px-6 py-2 text-sm font-semibold text-black hover:bg-yellow-500 hover:text-white transition-colors duration-300 border shadow-sm">
+            <button className="mt-6 rounded-full border-yellow-300 px-6 py-2 text-sm font-semibold text-black hover:bg-yellow-300 hover:text-white transition-colors duration-300 border shadow-sm">
               {offer.buttonText}
             </button>
           </Link>

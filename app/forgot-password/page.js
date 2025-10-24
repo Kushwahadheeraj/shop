@@ -60,7 +60,7 @@ export default function ForgotPasswordPage() {
               <label className="block text-sm font-medium mb-1">Email or Username</label>
               <input className="w-full border rounded px-3 py-2" value={identifier} onChange={(e)=>setIdentifier(e.target.value)} placeholder="you@example.com or username" />
             </div>
-            <button disabled={loading} className="w-full bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-2 rounded">{loading? 'Please wait...' : 'Send reset link'}</button>
+            <button disabled={loading} className="w-full bg-yellow-300 hover:bg-yellow-300 text-white font-semibold py-2 rounded">{loading? 'Please wait...' : 'Send reset link'}</button>
           </form>
         ) : (
           <form className="space-y-4" onSubmit={reset}>
@@ -72,7 +72,7 @@ export default function ForgotPasswordPage() {
               <label className="block text-sm font-medium mb-1">New password</label>
               <input type="password" className="w-full border rounded px-3 py-2" value={password} onChange={(e)=>setPassword(e.target.value)} placeholder="******" />
             </div>
-            <button disabled={loading} className="w-full bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-2 rounded">{loading? 'Please wait...' : 'Reset password'}</button>
+            <button disabled={loading} className="w-full bg-yellow-300 hover:bg-yellow-300 text-white font-semibold py-2 rounded">{loading? 'Please wait...' : 'Reset password'}</button>
           </form>
         )}
       </div>

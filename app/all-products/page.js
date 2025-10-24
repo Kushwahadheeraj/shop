@@ -91,7 +91,7 @@ export default function AllProductsPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-300 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading all products...</p>
         </div>
       </div>
@@ -107,7 +107,7 @@ export default function AllProductsPage() {
           <p className="text-gray-600 mb-6">{error}</p>
           <button
             onClick={fetchAllProducts}
-            className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+            className="bg-yellow-300 hover:bg-yellow-300 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
           >
             Try Again
           </button>
@@ -136,7 +136,7 @@ export default function AllProductsPage() {
                 placeholder="Search products..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
               />
             </div>
 
@@ -146,7 +146,7 @@ export default function AllProductsPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
               >
                 <option value="name">Name A-Z</option>
                 <option value="price-low">Price Low to High</option>
@@ -163,7 +163,7 @@ export default function AllProductsPage() {
                 placeholder="Min price"
                 value={filterPrice.min}
                 onChange={(e) => setFilterPrice({...filterPrice, min: e.target.value})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
               />
             </div>
 
@@ -174,7 +174,7 @@ export default function AllProductsPage() {
                 placeholder="Max price"
                 value={filterPrice.max}
                 onChange={(e) => setFilterPrice({...filterPrice, max: e.target.value})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
               />
             </div>
           </div>
@@ -261,7 +261,7 @@ export default function AllProductsPage() {
 
                       {/* Rating */}
                       <div className="flex items-center space-x-1 mb-2">
-                        <div className="flex text-yellow-400">
+                        <div className="flex text-yellow-300">
                           {[...Array(5)].map((_, i) => (
                             <svg key={i} className="w-3 h-3 fill-current" viewBox="0 0 20 20">
                               <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
@@ -302,7 +302,7 @@ export default function AllProductsPage() {
                       onClick={() => setCurrentPage(i + 1)}
                       className={`px-3 py-2 text-sm font-medium rounded-lg ${
                         currentPage === i + 1
-                          ? 'bg-yellow-500 text-white'
+                          ? 'bg-yellow-300 text-white'
                           : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50'
                       }`}
                     >

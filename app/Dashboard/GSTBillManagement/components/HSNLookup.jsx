@@ -127,7 +127,7 @@ const HSNLookup = ({ onClose, onSelectHSN, selectedHSN }) => {
   const getGSTRateColor = (rate) => {
     if (rate <= 5) return 'text-green-600 bg-green-100';
     if (rate <= 12) return 'text-blue-600 bg-blue-100';
-    if (rate <= 18) return 'text-yellow-600 bg-yellow-100';
+    if (rate <= 18) return 'text-yellow-300 bg-yellow-100';
     return 'text-red-600 bg-red-100';
   };
 

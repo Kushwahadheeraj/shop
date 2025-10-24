@@ -404,7 +404,7 @@ export default function PaymentPage() {
 
           {/* Right Panel - Price Details */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg border-l-4 border-yellow-400 p-6">
+            <div className="bg-white rounded-lg border-l-4 border-yellow-300 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">PRICE DETAILS</h3>
               
               <div className="space-y-3 text-sm">

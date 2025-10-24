@@ -47,7 +47,7 @@ export default function Address() {
                 <li>
                   <Link
                     href="/Address"
-                    className="block font-bold border-l-4 border-yellow-400 pl-2 bg-gray-100"
+                    className="block font-bold border-l-4 border-yellow-300 pl-2 bg-gray-100"
                   >
                     ADDRESSES
                   </Link>
@@ -74,7 +74,7 @@ export default function Address() {
               {/* Billing Address */}
               <div className="flex-1">
                 <div className="font-bold text-lg mb-2">Billing address</div>
-                <Link href="#" className="text-sm text-yellow-500 font-semibold hover:underline">
+                <Link href="#" className="text-sm text-yellow-300 font-semibold hover:underline">
                   Add
                 </Link>
                 <div className="text-sm text-gray-500 italic mt-1">
@@ -84,7 +84,7 @@ export default function Address() {
               {/* Shipping Address */}
               <div className="flex-1">
                 <div className="font-bold text-lg mb-2">Shipping address</div>
-                <Link href="#" className="text-sm text-yellow-500 font-semibold hover:underline">
+                <Link href="#" className="text-sm text-yellow-300 font-semibold hover:underline">
                   Add
                 </Link>
                 <div className="text-sm text-gray-500 italic mt-1">

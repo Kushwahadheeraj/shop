@@ -375,7 +375,7 @@ const sanitarySubcategories = [
 
 const toolsSubcategories = [
   {
-    label: "abrasives",
+    label: "Abrasives",
     sub: ["Cut Off Wheel", "Diamond Blades"]
   },
   "Allen Keys",
@@ -386,17 +386,17 @@ const toolsSubcategories = [
   "Clamps",
   "Crowbar",
   "Cutters",
-  "files",
+  "Files",
   "Garden Tools",
   "Gear Pullers",
   "Glass cutter",
-  "glue gun",
+  "Glue gun",
   "Grease Gun",
   "Hacksaw Blades",
   "Hammer",
   "Hammer Drills",
   "hand tools",
-  "level",
+  "Level",
   "Lubrications",
   "Measurement Scale",
   "Measuring Tape",
@@ -404,20 +404,20 @@ const toolsSubcategories = [
   "Plier",
   "Polishing Accessories",
   {
-    label: "power tools",
+    label: "Power Tools",
     sub: ["Drill", "Grinders", "Marble Cutter"]
   },
-  "saw",
+  "Saw",
   "Screw Driver",
   "Silicon Gun",
   "Socket Set",
   "Spanners",
   "Spare Mallets",
   "Tool Compartments",
-  "toolkit set",
-  "various tool bits",
-  "wood chisel",
-  "wood items",
+  "Toolkit Set",
+  "Various Tool Bits",
+  "Wood Chisel",
+  "Wood Items",
   "Wrench"
 ];
 
@@ -557,7 +557,7 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
       <div>
         <div className="text-gray-800 font-bold text-sm">BROWSE</div>
         <div className="h-0.5 w-8 bg-gray-300 mb-4" />
-        <div className="space-y-1 text-[12px]">
+        <div className="space-y-0 text-[16px]">
           {browse.map((cat, index) => {
             const subcategories = getSubcategories(cat);
             const folderName = categoryMap[cat] || cat;
@@ -566,76 +566,76 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
               <div key={cat}>
                 {subcategories ? (
                   <Collapsible>
-                    <CollapsibleTrigger className={`flex items-center w-full justify-between ${forceMobile ? 'py-[6px]' : 'py-2'} text-sm transition-colors group ${isActive(cat) ? 'text-white bg-yellow-600 rounded-md px-2' : 'text-gray-600 hover:text-gray-900'}`}>
-                      <span>{cat}</span>
-                      <ChevronDown className="w-3 h-3 text-gray-200 group-hover:text-gray-600 transition-colors" />
+                    <CollapsibleTrigger className={`flex items-center w-full justify-start py-3 text-[16px] px-2 transition-colors group text-left ${isActive(cat) ? 'text-white bg-yellow-300' : 'text-gray-600 hover:text-gray-900'}`}>
+                      <span className="flex-1 min-w-0 truncate pr-2 text-left">{cat}</span>
+                      <ChevronDown className="min-w-[12px] w-3 h-3 text-gray-700 group-hover:text-gray-800 transition-colors ml-auto flex-shrink-0" />
                     </CollapsibleTrigger>
-                    <CollapsibleContent className="pl-4">
+                    <CollapsibleContent className="pl-6 border-l border-gray-300">
                       {subcategories.map((sub) => {
                         if (typeof sub === "string") {
                           return (
                             <Link
                               key={sub}
                               href={`/ShopPage/${folderName}/${sub.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '')}`}
-                              className={`block ${forceMobile ? 'py-[6px]' : 'py-2'} text-[11px] transition-all duration-200 rounded-md px-2 ml-2 ${
+                              className={`block w-full py-1 text-[14px] transition-all duration-200 px-2 whitespace-nowrap overflow-hidden text-ellipsis text-left ${
                                 isSubcategoryActive(cat, sub)
-                                  ? 'text-white bg-yellow-600 font-semibold'
-                                  : 'text-gray-600 hover:text-white hover:bg-yellow-600 hover:underline'
+                                  ? 'text-white bg-yellow-300 font-semibold'
+                                  : 'text-gray-600 hover:text-white hover:bg-yellow-300 hover:underline'
                               }`}
                             >
-                              {sub}
+                              <span className="whitespace-nowrap overflow-hidden text-ellipsis block">{sub}</span>
                             </Link>
                           );
                         } else if (sub && typeof sub === "object" && sub.label && sub.sub) {
                           return (
                             <Collapsible key={sub.label}>
-                              <CollapsibleTrigger className={`flex items-center w-full justify-between ${forceMobile ? 'py-[4px]' : 'py-2'} text-[11px] font-semibold transition-colors rounded-md px-2 ml-2 group ${
+                              <CollapsibleTrigger className={`flex items-center w-full justify-start py-1 text-[14px] transition-colors px-2 group text-left ${
                                 isSubcategoryActive(cat, sub.label)
-                                  ? 'text-white bg-yellow-600'
-                                  : 'text-gray-700 hover:text-white hover:bg-yellow-600'
+                                  ? 'text-white bg-yellow-300'
+                                  : 'text-gray-600 hover:text-white hover:bg-yellow-300'
                               }`}>
-                                <span>{sub.label}</span>
-                                <ChevronDown className="w-3 h-3 group-hover:text-blue-200 transition-colors" />
+                                <span className="flex-1 min-w-0 truncate pr-2 text-left">{sub.label}</span>
+                                <ChevronDown className="min-w-[12px] w-3 h-3 text-gray-700 group-hover:text-blue-700 transition-colors ml-auto flex-shrink-0" />
                               </CollapsibleTrigger>
-                              <CollapsibleContent className="pl-4">
+                              <CollapsibleContent className="pl-6 border-l border-gray-300">
                                 {sub.sub.map((item) => {
                                   if (typeof item === "string") {
                                     return (
                                       <Link
                                         key={item}
                                         href={`/ShopPage/${folderName}/${sub.label.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '')}/${item.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '')}`}
-                                        className={`block ${forceMobile ? 'py-[4px]' : 'py-1'} text-[11px] transition-all duration-200 rounded-md px-1 ml-4 ${
+                                        className={`block w-full py-1 text-[14px] transition-all duration-200 px-2 whitespace-nowrap overflow-hidden text-ellipsis text-left ${
                                           isSubcategoryActive(cat, `${sub.label}/${item}`)
-                                            ? 'text-white bg-yellow-600 font-semibold'
-                                            : 'text-gray-600 hover:text-white hover:bg-yellow-600 hover:underline'
+                                            ? 'text-white bg-yellow-300 font-semibold'
+                                            : 'text-gray-600 hover:text-white hover:bg-yellow-300 hover:underline'
                                         }`}
                                       >
-                                        {item}
+                                        <span className="whitespace-nowrap overflow-hidden text-ellipsis block">{item}</span>
                                       </Link>
                                     );
                                   } else if (item && typeof item === "object" && item.label && item.sub) {
                                     return (
                                       <Collapsible key={item.label}>
-                                        <CollapsibleTrigger className={`flex items-center w-full justify-between ${forceMobile ? 'py-[4px]' : 'py-1'} text-[11px] font-semibold transition-colors rounded-md px-2 ml-4 group ${
+                                        <CollapsibleTrigger className={`flex items-center w-full justify-start py-1 text-[14px] transition-colors px-2 group text-left ${
                                           isSubcategoryActive(cat, `${sub.label}/${item.label}`)
-                                            ? 'text-white bg-yellow-600'
-                                            : 'text-gray-600 hover:text-white hover:bg-yellow-600'
+                                            ? 'text-white bg-yellow-300'
+                                            : 'text-gray-600 hover:text-white hover:bg-yellow-300'
                                         }`}>
-                                          <span>{item.label}</span>
-                                          <ChevronDown className="w-3 h-3 group-hover:text-blue-200 transition-colors" />
+                                          <span className="flex-1 min-w-0 truncate pr-2 text-left">{item.label}</span>
+                                          <ChevronDown className="min-w-[12px] w-3 h-3 text-gray-700 group-hover:text-blue-700 transition-colors ml-auto flex-shrink-0" />
                                         </CollapsibleTrigger>
-                                        <CollapsibleContent className="pl-4">
+                                        <CollapsibleContent className="pl-6 border-l border-gray-300">
                                           {item.sub.map((subItem) => (
                                             <Link
                                               key={subItem}
                                               href={`/ShopPage/${folderName}/${sub.label.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '')}/${item.label.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '')}/${subItem.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '')}`}
-                                              className={`block ${forceMobile ? 'py-[3px]' : 'py-1'} text-[11px] transition-all duration-200 rounded-md px-2 ml-6 ${
+                                              className={`block w-full py-1 text-[14px] transition-all duration-200 px-2 whitespace-nowrap overflow-hidden text-ellipsis text-left ${
                                                 isNestedSubcategoryActive(cat, `${sub.label}/${item.label}`, subItem)
-                                                  ? 'text-white bg-yellow-600 font-semibold'
-                                                  : 'text-gray-500 hover:text-white hover:bg-yellow-600 hover:underline'
+                                                  ? 'text-white bg-yellow-300 font-semibold'
+                                                  : 'text-gray-500 hover:text-white hover:bg-yellow-300 hover:underline'
                                               }`}
                                             >
-                                              {subItem}
+                                              <span className="whitespace-nowrap overflow-hidden text-ellipsis block">{subItem}</span>
                                             </Link>
                                           ))}
                                         </CollapsibleContent>
@@ -655,9 +655,9 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
                 ) : (
                   <Link
                     href={`/ShopPage/${folderName}`}
-                    className={`block py-2 text-sm transition-colors rounded-md px-2 ${isActive(cat) ? 'text-white bg-yellow-600 font-semibold' : 'text-gray-600 hover:text-gray-900'}`}
+                    className={`block py-3 text-[16px] transition-colors px-2 whitespace-nowrap overflow-hidden text-ellipsis text-left ${isActive(cat) ? 'text-white bg-yellow-300 font-semibold' : 'text-gray-600 hover:text-gray-900'}`}
                   >
-                    {cat}
+                    <span className="whitespace-nowrap overflow-hidden text-ellipsis block text-left">{cat}</span>
                   </Link>
                 )}
               </div>

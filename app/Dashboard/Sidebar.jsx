@@ -2168,6 +2168,7 @@ const sections = [
           },
         ],
       },
+      { name: 'Shop', path: '/Dashboard/ProductAdd/Shop' },
       {
         name: 'Tools',
         subItemsName: [
@@ -4577,6 +4578,7 @@ const sections = [
           },
         ],
       },
+      {name: 'Shop', path: '/Dashboard/ProductList/Shop' },
       {
         name: 'Tools',
         subItemsName: [
@@ -4889,7 +4891,7 @@ export default function Sidebar({ onSetting, onLogout, open, onClose }) {
                     className={`flex-1 text-left px-3 py-2 rounded-lg text-sm transition group cursor-pointer ${
                       openSection === section.name
                         ? 'bg-zinc-100 font-semibold shadow'
-                        : 'hover:bg-zinc-100'
+                        : 'hover:bg-yellow-300 hover:text-white'
                     }`}
                     onClick={() => handleToggle(section.name)}
                   >
@@ -5064,7 +5066,7 @@ function SidebarItem({ item }) {
           hasSubItemsName ||
           hasSubItemsNameComponent ||
           hasSubItemsNameComponentName
-            ? 'hover:bg-zinc-100'
+            ? 'hover:bg-yellow-300 hover:text-white'
             : ''
         }`}
         onClick={handleRowClick}
@@ -5078,7 +5080,7 @@ function SidebarItem({ item }) {
         ) ? (
           <Link
             href={item.path}
-            className='block px-2 py-2 rounded text-sm hover:bg-zinc-700 transition flex-1'
+            className='block px-2 py-2 rounded text-sm hover:bg-yellow-300 hover:text-white transition flex-1'
           >
             <span className='align-middle'>{item.name}</span>
           </Link>

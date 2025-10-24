@@ -813,7 +813,7 @@ const BillManagementPage = () => {
       </div>
 
       {/* Debug Info */}
-      {/* <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+      {/* <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-4">
         <h3 className="text-sm font-medium text-yellow-800 mb-2">Debug Information</h3>
         <div className="text-xs text-yellow-700 space-y-1">
           <p>Shops loaded: {shops.length}</p>
@@ -854,7 +854,7 @@ const BillManagementPage = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <div className="p-3 bg-yellow-100 rounded-full">
-                <DollarSign className="w-6 h-6 text-yellow-600" />
+                <DollarSign className="w-6 h-6 text-yellow-300" />
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Paid Amount</p>
@@ -864,7 +864,7 @@ const BillManagementPage = () => {
             {selectedShop && (
               <button
                 onClick={handleViewPaymentHistory}
-                className="p-2 text-yellow-600 hover:text-yellow-800 hover:bg-yellow-50 rounded-lg transition-colors"
+                className="p-2 text-yellow-300 hover:text-yellow-800 hover:bg-yellow-50 rounded-lg transition-colors"
                 title="View Payment History"
               >
                 <History className="w-5 h-5" />

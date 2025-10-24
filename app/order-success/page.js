@@ -60,7 +60,7 @@ export default function OrderSuccessPage() {
           <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-400 to-blue-500"></div>
           
           {/* Confetti Animation */}
-          <div className="absolute top-4 left-4 w-3 h-3 bg-yellow-400 rounded-full animate-bounce"></div>
+          <div className="absolute top-4 left-4 w-3 h-3 bg-yellow-300 rounded-full animate-bounce"></div>
           <div className="absolute top-8 right-8 w-2 h-2 bg-pink-400 rounded-full animate-bounce delay-100"></div>
           <div className="absolute top-12 left-1/4 w-2 h-2 bg-blue-400 rounded-full animate-bounce delay-200"></div>
           <div className="absolute top-6 right-1/4 w-3 h-3 bg-green-400 rounded-full animate-bounce delay-300"></div>
@@ -74,7 +74,7 @@ export default function OrderSuccessPage() {
             </div>
             
             {/* Decorative Circles */}
-            <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-200 rounded-full animate-ping"></div>
+            <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-300 rounded-full animate-ping"></div>
             <div className="absolute -bottom-2 -left-2 w-4 h-4 bg-blue-200 rounded-full animate-ping delay-500"></div>
           </div>
 

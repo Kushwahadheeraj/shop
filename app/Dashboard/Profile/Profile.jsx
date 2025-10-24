@@ -282,7 +282,7 @@ export default function ProfilePage() {
 
       {/* Debug Info */}
       {/* {process.env.NODE_ENV === 'development' && (
-        <div className="mb-4 p-3 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded text-sm">
+        <div className="mb-4 p-3 bg-yellow-100 border border-yellow-300 text-yellow-700 rounded text-sm">
           <strong>Debug Info:</strong><br/>
           User Avatar: {user?.avatar || 'None'}<br/>
           Current Avatar URL: {currentAvatar}<br/>

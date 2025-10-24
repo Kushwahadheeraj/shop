@@ -72,7 +72,7 @@ const PaintsImage = () => {
               )}
               {slide.buttonText && (
                 <Link href={slide.link} passHref>
-                  <button className='text-white text-sm lg:text-xl lg:text-bold mt-4 py-1 md:w-24 w-20 lg:w-36 bg-yellow-400 hover:bg-yellow-600'>
+                  <button className='text-white text-sm lg:text-xl lg:text-bold mt-4 py-1 md:w-24 w-20 lg:w-36 bg-yellow-300 hover:bg-yellow-300'>
                     {slide.buttonText}
                   </button>
                 </Link>

@@ -159,7 +159,7 @@ export default function {0}() {{
                   <h3 className="font-semibold text-gray-900 text-sm mb-2 line-clamp-2">{{product.name}}</h3>
                   <div className="flex items-center mb-3">
                     {{[...Array(5)].map((_, i) => (
-                      <Star key={{i}} className={{{`w-4 h-4 ${{i < (product.rating || 0) ? 'text-yellow-400 fill-current' : 'text-gray-300'}}`}}} />
+                      <Star key={{i}} className={{{`w-4 h-4 ${{i < (product.rating || 0) ? 'text-yellow-300 fill-current' : 'text-gray-300'}}`}}} />
                     ))}}
                     <span className="text-xs text-gray-500 ml-1">({{product.rating || 0}})</span>
                   </div>
@@ -175,7 +175,7 @@ export default function {0}() {{
                   </div>
                   <button 
                     onClick={{() => handleAddToCart(product._id || product.id)}} 
-                    className="w-full py-2 px-4 border-2 border-yellow-500 text-orange-600 font-medium rounded-lg hover:bg-yellow-500 hover:text-white transition-colors duration-200 flex items-center justify-center gap-2"
+                    className="w-full py-2 px-4 border-2 border-yellow-300 text-orange-600 font-medium rounded-lg hover:bg-yellow-300 hover:text-white transition-colors duration-200 flex items-center justify-center gap-2"
                   >
                     <ShoppingCart className="w-4 h-4" />
                     Add to Cart

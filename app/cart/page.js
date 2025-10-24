@@ -3,19 +3,29 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/components/CartContext';
-import LoginRegisterModal from '@/components/LoginRegisterModal';
 
 export default function CartPage() {
   const { items, total, updateQuantity, removeItem } = useCart() || { items: [], total: 0 };
-  const [showLogin, setShowLogin] = useState(false);
   const router = useRouter();
 
   const handleCheckout = () => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('euser_token') : null;
-    if (!token) {
-      setShowLogin(true);
+    const rawUser = typeof window !== 'undefined' ? localStorage.getItem('euser') : null;
+    if (!rawUser) {
+      router.push('/login');
       return;
     }
+    
+    try {
+      const user = JSON.parse(rawUser);
+      if (!user || !(user._id || user.id)) {
+        router.push('/login');
+        return;
+      }
+    } catch (error) {
+      router.push('/login');
+      return;
+    }
+    
     router.push('/checkout');
   };
 
@@ -106,7 +116,6 @@ export default function CartPage() {
           </div> */}
         </div>
       </div>
-      <LoginRegisterModal open={showLogin} onClose={() => setShowLogin(false)} />
     </div>
   );
 }

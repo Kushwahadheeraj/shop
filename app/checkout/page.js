@@ -18,6 +18,8 @@ function currency(amount) {
 export default function CheckoutPage() {
   const router = useRouter();
   const { items = [], total = 0 } = useCart() || { items: [], total: 0 };
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [form, setForm] = useState({
     firstName: "",
@@ -52,8 +54,57 @@ export default function CheckoutPage() {
     isDefault: false,
   });
 
+  // Check authentication status
+  useEffect(() => {
+    const checkAuth = () => {
+      try {
+        const rawUser = typeof window !== 'undefined' ? localStorage.getItem('euser') : null;
+        if (rawUser) {
+          const user = JSON.parse(rawUser);
+          if (user && (user._id || user.id)) {
+            setIsAuthenticated(true);
+          } else {
+            setIsAuthenticated(false);
+          }
+        } else {
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.error('Error checking authentication:', error);
+        setIsAuthenticated(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
+    const onAuth = () => {
+      try {
+        const rawUser = localStorage.getItem('euser');
+        if (rawUser) {
+          const user = JSON.parse(rawUser);
+          setIsAuthenticated(!!(user && (user._id || user.id)));
+          if (user?.email) setForm(f => ({ ...f, email: user.email }));
+        } else {
+          setIsAuthenticated(false);
+        }
+      } catch {}
+    };
+    try { window.addEventListener('euser-auth', onAuth); } catch {}
+    return () => { try { window.removeEventListener('euser-auth', onAuth); } catch {} };
+  }, []);
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push('/login');
+    }
+  }, [isLoading, isAuthenticated, router]);
+
   // Load addresses and form data from localStorage
   useEffect(() => {
+    if (!isAuthenticated) return; // Don't load data if not authenticated
+    
     try {
       console.log('=== CHECKOUT EMAIL DEBUG ===');
       console.log('All localStorage keys:', Object.keys(localStorage));
@@ -142,6 +193,17 @@ export default function CheckoutPage() {
     return 70; // default small orders
   };
 
+  const getUserEmail = () => {
+    try {
+      const raw = typeof window !== 'undefined' ? localStorage.getItem('euser') : null;
+      if (!raw) return '';
+      const u = JSON.parse(raw);
+      return u?.email || '';
+    } catch {
+      return '';
+    }
+  };
+
   const platformFee = 7;
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [couponCode, setCouponCode] = useState("");
@@ -170,6 +232,12 @@ export default function CheckoutPage() {
     const updatedAddresses = [...addresses, address];
     setAddresses(updatedAddresses);
     localStorage.setItem(ADDRESS_STORAGE_KEY, JSON.stringify(updatedAddresses));
+    // Also hydrate the checkout form and persist it for later steps
+    setForm((f) => ({ ...f, ...address }));
+    try {
+      const formToSave = { ...form, ...address };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(formToSave));
+    } catch {}
     
     // Reset form
     setNewAddress({
@@ -203,6 +271,15 @@ export default function CheckoutPage() {
     );
     setAddresses(updatedAddresses);
     localStorage.setItem(ADDRESS_STORAGE_KEY, JSON.stringify(updatedAddresses));
+    // If the edited address is the selected one, sync it into the checkout form and storage
+    if (selectedAddressId === editingAddressId) {
+      const merged = { ...newAddress, id: editingAddressId, email: form.email };
+      setForm((f) => ({ ...f, ...merged }));
+      try {
+        const formToSave = { ...form, ...merged };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(formToSave));
+      } catch {}
+    }
     
     // Reset form
     setNewAddress({
@@ -240,6 +317,10 @@ export default function CheckoutPage() {
     const address = addresses.find(addr => addr.id === addressId);
     if (address) {
       setForm(prev => ({ ...prev, ...address, email: prev.email }));
+      try {
+        const formToSave = { ...form, ...address };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(formToSave));
+      } catch {}
     }
   };
 
@@ -323,6 +404,7 @@ export default function CheckoutPage() {
 
   const isAddressComplete = (addr) => {
     if (!addr) return false;
+    const emailCandidate = form.email || addr.email || getUserEmail();
     const required = [
       addr.firstName,
       addr.lastName,
@@ -331,7 +413,7 @@ export default function CheckoutPage() {
       addr.state,
       addr.pin,
       addr.phone,
-      form.email || addr.email,
+      emailCandidate,
     ];
     return required.every((v) => !!String(v || '').trim());
   };
@@ -356,7 +438,7 @@ export default function CheckoutPage() {
     const raw = typeof window !== 'undefined' ? localStorage.getItem('euser') : null;
     const user = raw ? JSON.parse(raw) : null;
     const userId = user?._id || user?.id;
-    const emailFromUser = user?.email || '';
+    const emailFromUser = user?.email || form.email || '';
 
     const clientOrderId = `co_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
     const payload = {
@@ -385,6 +467,23 @@ export default function CheckoutPage() {
     router.push('/payment');
   };
 
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div className="min-h-screen mt-36 bg-white py-6 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render anything if not authenticated (will redirect)
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen mt-36 bg-white py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -411,7 +510,7 @@ export default function CheckoutPage() {
                   <span className="text-lg font-bold">1 LOGIN</span>
                   <span className="text-green-300">✓</span>
                 </div>
-                <button type="button" className="text-sm underline">CHANGE</button>
+                <button type="button" onClick={() => router.push('/login')} className="text-sm underline">CHANGE</button>
               </div>
               <div className="mt-2 text-sm">
                 {form.email ? `${form.firstName || 'User'} ${form.lastName || ''} +91${form.phone || ''}` : 'Please login first'}

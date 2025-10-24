@@ -100,7 +100,7 @@ export default function DashboardPage() {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="w-8 h-8 border-4 border-yellow-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-8 h-8 border-4 border-yellow-300 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">Loading dashboard...</p>
         </div>
       </div>
@@ -153,7 +153,7 @@ export default function DashboardPage() {
                   variant={currentView === 'user' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setCurrentView('user')}
-                  className={currentView === 'user' ? 'bg-yellow-600 hover:bg-yellow-700' : ''}
+                  className={currentView === 'user' ? 'bg-yellow-300 hover:bg-yellow-700' : ''}
                 >
                   <Users className="w-4 h-4 mr-2" />
                   User Analytics
@@ -162,7 +162,7 @@ export default function DashboardPage() {
                   variant={currentView === 'product' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setCurrentView('product')}
-                  className={currentView === 'product' ? 'bg-yellow-600 hover:bg-yellow-700' : ''}
+                  className={currentView === 'product' ? 'bg-yellow-300 hover:bg-yellow-700' : ''}
                 >
                   <Package className="w-4 h-4 mr-2" />
                   Product Analytics
@@ -371,6 +371,35 @@ export default function DashboardPage() {
             </div>
           </>
         )}
+
+        {/* Product Management Section */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Product Management</CardTitle>
+            <CardDescription>
+              Manage your products - add, edit, and delete products
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-4">
+              <Button
+                onClick={() => router.push('/Dashboard/ProductAdd')}
+                className="bg-yellow-300 hover:bg-yellow-300 text-white"
+              >
+                <Package className="w-4 h-4 mr-2" />
+                Add New Product
+              </Button>
+              <Button
+                onClick={() => router.push('/Dashboard/ProductList')}
+                variant="outline"
+                className="border-yellow-300 text-yellow-300 hover:bg-yellow-50"
+              >
+                <Package className="w-4 h-4 mr-2" />
+                View All Products
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Top Selling Products */}
         <Card>

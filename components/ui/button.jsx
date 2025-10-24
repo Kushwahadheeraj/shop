@@ -6,11 +6,11 @@ import { cva } from "class-variance-authority"
 const cn = (...classes) => classes.filter(Boolean).join(' ')
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        default: "bg-yellow-500 text-black hover:bg-yellow-600",
+        default: "bg-yellow-300 text-black hover:bg-yellow-300",
         destructive:
           "bg-red-500 text-white hover:bg-red-600",
         outline:
@@ -18,7 +18,7 @@ const buttonVariants = cva(
         secondary:
           "bg-gray-100 text-gray-900 hover:bg-gray-200",
         ghost: "hover:bg-yellow-50 hover:text-yellow-700",
-        link: "text-yellow-600 underline-offset-4 hover:underline",
+        link: "text-yellow-300 underline-offset-4 hover:underline",
       },
       size: {
         default: "h-10 px-4 py-2",

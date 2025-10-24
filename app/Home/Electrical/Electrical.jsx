@@ -183,7 +183,7 @@ export default function Electricals() {
               )}
               {product.stockStatus === "out_of_stock_read_more" && (
                 <Link href={`/product/${product.id}`} passHref>
-                  <button className="mt-auto bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-2 rounded transition w-full">
+                  <button className="mt-auto bg-yellow-300 hover:bg-yellow-300 text-white font-semibold py-2 rounded transition w-full">
                     READ MORE
                   </button>
                 </Link>

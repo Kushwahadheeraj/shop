@@ -177,7 +177,17 @@ export default function ProductDetailPage() {
         try {
           const prev = JSON.parse(localStorage.getItem('recent_products') || '[]');
           const next = [
-            { id: mappedProduct.id, name: mappedProduct.name, image: mappedProduct.image, type: mappedProduct.type, price: mappedProduct.price, discountPrice: mappedProduct.discountPrice, discount: mappedProduct.discount }
+            { 
+              id: mappedProduct.id, 
+              name: mappedProduct.name, 
+              image: mappedProduct.image, 
+              type: mappedProduct.type, 
+              price: mappedProduct.price, 
+              discountPrice: mappedProduct.discountPrice, 
+              minPrice: mappedProduct.minPrice,
+              maxPrice: mappedProduct.maxPrice,
+              discount: mappedProduct.discount 
+            }
           ].concat(prev.filter(p => String(p.id) !== String(mappedProduct.id)));
           const trimmed = next.slice(0, 6);
           localStorage.setItem('recent_products', JSON.stringify(trimmed));
@@ -220,7 +230,7 @@ export default function ProductDetailPage() {
             const stored2 = JSON.parse(localStorage.getItem('recently_viewed_products') || '[]');
             const allStored = []
               .concat(Array.isArray(stored1) ? stored1 : [])
-              .concat(Array.isArray(stored2) ? stored2.map(p=>({ id: p._id || p.id, name: p.name, image: p.photo || p.image, type: p.category, price: p.price, discountPrice: p.discountPrice, discount: 0 })) : []);
+              .concat(Array.isArray(stored2) ? stored2.map(p=>({ id: p._id || p.id, name: p.name, image: p.photo || p.image, type: p.category, price: p.price, discountPrice: p.discountPrice, minPrice: p.minPrice, maxPrice: p.maxPrice, discount: 0 })) : []);
             if (Array.isArray(allStored) && allStored.length) {
               relatedMapped = allStored
                 .filter(r => String(r.id) !== String(id) && (r.type === (category || '')))
@@ -439,7 +449,7 @@ export default function ProductDetailPage() {
                 <button
                   key={idx}
                   onClick={() => setCurrentImg(idx)}
-                  className={`border rounded p-1 h-16 flex items-center justify-center ${idx===currentImg ? 'border-yellow-500' : 'border-gray-200'}`}
+                  className={`border rounded p-1 h-16 flex items-center justify-center ${idx===currentImg ? 'border-yellow-300' : 'border-gray-200'}`}
                   aria-label={`Show image ${idx+1}`}
                 >
                   <Image src={src} alt={product.name + ' ' + (idx+1)} width={80} height={80} className="object-contain max-h-full" />
@@ -461,7 +471,7 @@ export default function ProductDetailPage() {
           <div className="space-y-3">
             {ratingSummary.count > 0 && (
               <button onClick={()=>setActiveTab('reviews')} className="flex items-center gap-2 text-sm text-gray-700">
-                <span className="text-yellow-500 text-lg">{
+                <span className="text-yellow-300 text-lg">{
                   '★★★★★'.slice(0, Math.round(ratingSummary.avg))
                 }{
                   '☆☆☆☆☆'.slice(0, 5 - Math.round(ratingSummary.avg))
@@ -498,7 +508,7 @@ export default function ProductDetailPage() {
               <select 
                 value={color} 
                 onChange={(e) => setColor(e.target.value)}
-                className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-300"
               >
                 {product.colors.map((c, idx) => (
                   <option key={idx} value={c}>{c}</option>
@@ -749,10 +759,16 @@ export default function ProductDetailPage() {
                     <Link href={`/product/${r.id}`} className="line-clamp-2 hover:underline">{r.name}</Link>
                     <div className="text-xs text-gray-500">{r.type}</div>
                     <div>
-                      {r.price != null && r.discount > 0 && (
-                        <span className="text-gray-400 line-through text-xs mr-1">₹{Number(r.price).toLocaleString('en-IN')}</span>
+                      {r.minPrice != null && r.maxPrice != null && Number(r.minPrice) !== Number(r.maxPrice) ? (
+                        <span className="font-semibold text-xs">₹{Number(r.minPrice).toLocaleString('en-IN')} – ₹{Number(r.maxPrice).toLocaleString('en-IN')}</span>
+                      ) : (
+                        <>
+                          {r.price != null && r.discount > 0 && (
+                            <span className="text-gray-400 line-through text-xs mr-1">₹{Number(r.price).toLocaleString('en-IN')}</span>
+                          )}
+                          <span className="font-semibold text-xs">₹{Number((r.discountPrice ?? r.price) || 0).toLocaleString('en-IN')}</span>
+                        </>
                       )}
-                      <span className="font-semibold text-xs">₹{Number((r.discountPrice ?? r.price) || 0).toLocaleString('en-IN')}</span>
                     </div>
                   </div>
                 </div>
@@ -827,7 +843,7 @@ export default function ProductDetailPage() {
                         <span className="font-semibold text-sm">₹{Number((r.discountPrice ?? r.price) || 0).toLocaleString('en-IN')}</span>
                       </div>
                       <div className="pt-2">
-                        <Link href={`/product/${r.id}`} className="block text-center text-[11px] bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-2 rounded">SELECT OPTIONS</Link>
+                        <Link href={`/product/${r.id}`} className="block text-center text-[11px] bg-yellow-300 hover:bg-yellow-300 text-white font-semibold py-2 rounded">SELECT OPTIONS</Link>
                       </div>
                     </div>
                   ))}
@@ -852,7 +868,7 @@ export default function ProductDetailPage() {
                         <div className="w-8 h-8 rounded-full bg-gray-200" />
                       )}
                       <div className="font-medium">{r.userName || 'User'}</div>
-                  <div className="text-yellow-500 text-xs">{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</div>
+                  <div className="text-yellow-300 text-xs">{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</div>
                   <div className="text-xs text-gray-500">{new Date(r.createdAt).toLocaleDateString()}</div>
                 </div>
                 {r.comment && <div className="mt-1 text-sm text-gray-700">{r.comment}</div>}
@@ -867,7 +883,7 @@ export default function ProductDetailPage() {
             <div className="text-sm mb-2">Your rating *</div>
             <div className="flex items-center gap-1 mb-3">
               {[1,2,3,4,5].map(n => (
-                <button key={n} onClick={() => setMyRating(n)} className={`text-xl ${myRating >= n ? 'text-yellow-500' : 'text-gray-300'}`}>★</button>
+                <button key={n} onClick={() => setMyRating(n)} className={`text-xl ${myRating >= n ? 'text-yellow-300' : 'text-gray-300'}`}>★</button>
               ))}
             </div>
             <div className="text-sm mb-1">Your review *</div>
@@ -877,7 +893,7 @@ export default function ProductDetailPage() {
             <textarea disabled={!hasToken && !user} value={myText} onChange={(e)=>setMyText(e.target.value)} className="w-full border rounded p-2 h-28 text-sm disabled:bg-gray-100" />
             <button
               disabled={!hasToken && !user}
-              className="mt-3 bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold px-4 py-2 rounded"
+              className="mt-3 bg-yellow-300 hover:bg-yellow-300 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold px-4 py-2 rounded"
               onClick={async ()=>{
                 if (!myRating) return alert('Please select rating');
                 try {
@@ -914,7 +930,7 @@ export default function ProductDetailPage() {
                 <div className="text-xs text-gray-500">{r.type}</div>
                 <Link href={`/product/${r.id}`} className="text-sm font-medium line-clamp-2 mb-1">{r.name}</Link>
                 <div className="mt-auto">
-                  {r.minPrice != null && r.maxPrice != null && Number(r.minPrice) !== Number(r.maxPrice) ? (
+                  {r.minPrice != null && r.maxPrice != null && Number(r.minPrice) > 0 && Number(r.maxPrice) > 0 && Number(r.minPrice) !== Number(r.maxPrice) ? (
                     <span className="font-semibold">₹{Number(r.minPrice).toLocaleString('en-IN')} – ₹{Number(r.maxPrice).toLocaleString('en-IN')}</span>
                   ) : (
                     <>
@@ -926,7 +942,7 @@ export default function ProductDetailPage() {
                   )}
                 </div>
                 <div className="pt-2">
-                  <Link href={`/product/${r.id}`} className="block text-center text-xs bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-2 rounded">SELECT OPTIONS</Link>
+                  <Link href={`/product/${r.id}`} className="block text-center text-xs bg-yellow-300 hover:bg-yellow-300 text-white font-semibold py-2 rounded">SELECT OPTIONS</Link>
                 </div>
               </div>
             ))}

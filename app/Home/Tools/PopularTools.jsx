@@ -146,7 +146,7 @@ export default function PopularTools() {
                           });
                         }}
                         variant="outline" 
-                        className="mt-4 border-yellow-400 text-yellow-600 hover:bg-yellow-400 hover:text-white"
+                        className="mt-4 border-yellow-300 text-yellow-300 hover:bg-yellow-300 hover:text-white"
                       >
                         {tool.buttonText}
                       </Button>
@@ -168,9 +168,9 @@ const StarRating = ({ rating }) => {
   const stars = [];
   for (let i = 1; i <= 5; i++) {
     if (i <= rating) {
-      stars.push(<Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />);
+      stars.push(<Star key={i} className="w-4 h-4 text-yellow-300 fill-yellow-300" />);
     } else if (i - 0.5 === rating) {
-      stars.push(<Star key={i} className="w-4 h-4 text-yellow-500" />);
+      stars.push(<Star key={i} className="w-4 h-4 text-yellow-300" />);
     } else {
       stars.push(<Star key={i} className="w-4 h-4 text-gray-300" />);
     }

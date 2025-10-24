@@ -34,12 +34,12 @@ const OrdersGridChart = ({ data = [] }) => {
             {dayData.map((item, hourIndex) => (
               <div
                 key={`${dayIndex}-${hourIndex}`}
-                className="flex-1 rounded-sm border border-gray-200 hover:border-yellow-400 hover:shadow-md transition-all duration-200 cursor-pointer group relative"
+                className="flex-1 rounded-sm border border-gray-200 hover:border-yellow-300 hover:shadow-md transition-all duration-200 cursor-pointer group relative"
                 style={{ backgroundColor: getColorIntensity(item.orders) }}
                 title={`${item.day} ${item.hour}: ${item.orders} orders`}
               >
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span className="text-xs font-medium text-yellow-800 bg-white px-2 py-1 rounded shadow-sm border border-yellow-200">
+                  <span className="text-xs font-medium text-yellow-800 bg-white px-2 py-1 rounded shadow-sm border border-yellow-300">
                     {item.orders}
                   </span>
                 </div>

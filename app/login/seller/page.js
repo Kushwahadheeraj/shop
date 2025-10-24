@@ -365,7 +365,7 @@ By registering, you agree to this privacy policy.`);
             className={`w-full font-bold py-2 rounded transition-colors ${
               mode === "register" && !isFormValid()
                 ? "bg-gray-400 cursor-not-allowed"
-                : "bg-yellow-400 hover:bg-yellow-500 text-white"
+                : "bg-yellow-300 hover:bg-yellow-300 text-white"
             }`}
             disabled={loading || (mode === "register" && !isFormValid())}
           >

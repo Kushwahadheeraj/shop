@@ -84,7 +84,7 @@ export default function ProductDetailModal({ product, isOpen, onClose }) {
               {[...Array(5)].map((_, i) => (
                 <svg
                   key={i}
-                  className={`w-5 h-5 ${i < rating ? 'text-yellow-400' : 'text-gray-300'}`}
+                  className={`w-5 h-5 ${i < rating ? 'text-yellow-300' : 'text-gray-300'}`}
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -227,7 +227,7 @@ export default function ProductDetailModal({ product, isOpen, onClose }) {
                 className={`flex-1 py-3 px-6 rounded-lg text-lg font-medium transition-colors ${
                   isOutOfStock 
                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
-                    : 'bg-yellow-500 hover:bg-yellow-600 text-white'
+                    : 'bg-yellow-300 hover:bg-yellow-300 text-white'
                 }`}
                 disabled={isOutOfStock}
                 onClick={(e) => {

@@ -4828,6 +4828,7 @@ const sections = [
   { name: 'Category List', path: '/Dashboard/CategoryList' },
   { name: 'Coupon List', path: '/Dashboard/Coupons' },
   { name: 'Bill Management', path: '/Dashboard/BillManagement' },
+  { name: 'Simple Bill Management', path: '/Dashboard/SimpleBillManagement' },
   { name: 'GST Bill Management', path: '/Dashboard/GSTBillManagement' },
 ];
 

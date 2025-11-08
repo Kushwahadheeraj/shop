@@ -12,7 +12,7 @@ function uploadToCloudinary(buffer) {
   });
 }
 
-// Upload single image to Cloudinary
+// Upload single file (image or PDF) to Cloudinary
 exports.uploadImage = async (req, res) => {
   try {
     if (!req.file) {
@@ -22,17 +22,17 @@ exports.uploadImage = async (req, res) => {
       });
     }
 
-    const imageUrl = await uploadToCloudinary(req.file.buffer);
+    const fileUrl = await uploadToCloudinary(req.file.buffer);
     
     res.status(200).json({
       success: true,
-      message: 'Image uploaded successfully',
-      secure_url: imageUrl
+      message: 'File uploaded successfully',
+      secure_url: fileUrl
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Error uploading image',
+      message: 'Error uploading file',
       error: error.message
     });
   }

@@ -4830,6 +4830,8 @@ const sections = [
   { name: 'Bill Management', path: '/Dashboard/BillManagement' },
   { name: 'Simple Bill Management', path: '/Dashboard/SimpleBillManagement' },
   { name: 'GST Bill Management', path: '/Dashboard/GSTBillManagement' },
+  { name: 'Bill Items Inventory', path: '/Dashboard/BillItemsInventory' },
+  { name: 'Bill File Management', path: '/Dashboard/BillFileManagement' },
 ];
 
 // Add this helper function at the top (after imports):

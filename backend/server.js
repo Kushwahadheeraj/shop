@@ -72,6 +72,7 @@ app.use('/api/shops', shopRoutes);
 app.use('/api/gst-shops', gstShopsRoutes);
 app.use('/api/gst-bills', gstBillsRoutes);
 app.use('/api/clients', clientsRoutes);
+app.use('/api/bill-files', require('./routes/billFilesRoutes'));
 app.use('/api/bank-accounts', bankAccountsRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/adhesives', adhesivesRoutes);

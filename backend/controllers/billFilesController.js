@@ -73,7 +73,7 @@ exports.createBillFiles = async (req, res) => {
 exports.getBillFiles = async (req, res) => {
   try {
     const { sellerId } = req;
-    const { shopId, billType } = req.query;
+    const { shopId, billType, startDate, endDate } = req.query;
 
     if (!sellerId) {
       return res.status(401).json({
@@ -85,6 +85,20 @@ exports.getBillFiles = async (req, res) => {
     const query = { sellerId };
     if (shopId) query.shopId = shopId;
     if (billType) query.billType = billType;
+    
+    // Date filtering
+    if (startDate || endDate) {
+      query.uploadedAt = {};
+      if (startDate) {
+        query.uploadedAt.$gte = new Date(startDate);
+      }
+      if (endDate) {
+        // Set end date to end of day
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        query.uploadedAt.$lte = end;
+      }
+    }
 
     const files = await BillFile.find(query)
       .populate('shopId', 'name address')
@@ -99,6 +113,79 @@ exports.getBillFiles = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error fetching files',
+      error: error.message
+    });
+  }
+};
+
+// Get bill files summary/statistics
+exports.getBillFilesSummary = async (req, res) => {
+  try {
+    const { sellerId } = req;
+    const { shopId, startDate, endDate } = req.query;
+
+    if (!sellerId) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authentication required'
+      });
+    }
+
+    const query = { sellerId };
+    if (shopId) query.shopId = shopId;
+    
+    // Date filtering
+    if (startDate || endDate) {
+      query.uploadedAt = {};
+      if (startDate) {
+        query.uploadedAt.$gte = new Date(startDate);
+      }
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        query.uploadedAt.$lte = end;
+      }
+    }
+
+    // Get all files
+    const files = await BillFile.find(query)
+      .populate('shopId', 'name address')
+      .sort({ uploadedAt: -1 });
+
+    // Group by shop
+    const groupedByShop = {};
+    files.forEach(file => {
+      const shopId = file.shopId._id.toString();
+      if (!groupedByShop[shopId]) {
+        groupedByShop[shopId] = {
+          shop: file.shopId,
+          gst: [],
+          bill: [],
+          total: 0
+        };
+      }
+      groupedByShop[shopId][file.billType].push(file);
+      groupedByShop[shopId].total++;
+    });
+
+    // Calculate statistics
+    const stats = {
+      total: files.length,
+      gstCount: files.filter(f => f.billType === 'gst').length,
+      billCount: files.filter(f => f.billType === 'bill').length,
+      groupedByShop: Object.values(groupedByShop)
+    };
+
+    res.json({
+      success: true,
+      data: files,
+      summary: stats
+    });
+  } catch (error) {
+    console.error('Error fetching bill files summary:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching files summary',
       error: error.message
     });
   }

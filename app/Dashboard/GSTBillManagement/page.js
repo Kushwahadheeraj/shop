@@ -123,15 +123,86 @@ const GSTBillManagementPage = () => {
         return;
       }
       const data = await res.json();
-      if (data?.success && Array.isArray(data.data)) {
-        setGstBills(data.data);
+      console.log('📊 GST Bills API response:', data);
+      
+      // Backend returns: { success: true, data: { gstBills: [...], stats: {...} } }
+      if (data?.success && data?.data) {
+        if (Array.isArray(data.data.gstBills)) {
+          setGstBills(data.data.gstBills);
+          console.log('✅ GST Bills set:', data.data.gstBills.length, 'bills');
+        } else if (Array.isArray(data.data)) {
+          // Fallback: if data.data is directly an array
+          setGstBills(data.data);
+          console.log('✅ GST Bills set (direct array):', data.data.length, 'bills');
+        } else if (Array.isArray(data.bills)) {
+          // Another fallback
+          setGstBills(data.bills);
+          console.log('✅ GST Bills set (from bills field):', data.bills.length, 'bills');
+        } else {
+          console.warn('⚠️ No bills array found in response:', data);
+          setGstBills([]);
+        }
+      } else {
+        console.warn('⚠️ Unexpected GST bills response format:', data);
+        setGstBills([]);
       }
     } catch (e) {
       console.error('❌ Error fetching GST bills:', e);
+      setGstBills([]);
     } finally {
       setLoading(false);
     }
   }, [selectedShop, searchTerm, filterDateRange]);
+
+  // Calculate stats from bills data
+  const calculateStatsFromBills = useCallback((billsData, currentSelectedShop = selectedShop, currentSearchTerm = searchTerm, currentFilterDateRange = filterDateRange) => {
+    const safeBills = Array.isArray(billsData) ? billsData : [];
+    console.log('🔍 Calculating stats from bills data:', safeBills.length, 'bills');
+    
+    let filteredBills = safeBills;
+    
+    // Filter by selected shop if any
+    if (currentSelectedShop && currentSelectedShop !== '') {
+      const selectedShopObj = shops.find(s => String(s?._id || s?.id || '') === String(currentSelectedShop));
+      const selectedShopName = selectedShopObj?.name;
+      if (selectedShopName) {
+        filteredBills = filteredBills.filter(bill => bill.shopName === selectedShopName);
+      }
+    }
+    
+    // Filter by search term
+    if (currentSearchTerm && currentSearchTerm !== '') {
+      filteredBills = filteredBills.filter(bill => 
+        (bill.invoiceNumber || '').toLowerCase().includes(currentSearchTerm.toLowerCase()) ||
+        (bill.shopName || '').toLowerCase().includes(currentSearchTerm.toLowerCase()) ||
+        (bill.customerName || '').toLowerCase().includes(currentSearchTerm.toLowerCase())
+      );
+    }
+    
+    // Filter by date range
+    if (currentFilterDateRange && currentFilterDateRange !== '') {
+      const { startDate, endDate } = getDateRange(currentFilterDateRange);
+      if (startDate && endDate) {
+        filteredBills = filteredBills.filter(bill => {
+          const billDate = new Date(bill.invoiceDate);
+          return billDate >= new Date(startDate) && billDate <= new Date(endDate);
+        });
+      }
+    }
+    
+    // Calculate stats
+    const totalBills = filteredBills.length;
+    const totalAmount = filteredBills.reduce((sum, bill) => sum + (parseFloat(bill.grandTotal) || 0), 0);
+    const totalGST = filteredBills.reduce((sum, bill) => sum + (parseFloat(bill.gstAmount) || 0), 0);
+    const netAmount = filteredBills.reduce((sum, bill) => sum + (parseFloat(bill.netAmount) || 0), 0);
+    
+    return {
+      totalBills,
+      totalAmount: isNaN(totalAmount) ? 0 : totalAmount,
+      totalGST: isNaN(totalGST) ? 0 : totalGST,
+      netAmount: isNaN(netAmount) ? 0 : netAmount
+    };
+  }, [selectedShop, searchTerm, filterDateRange, shops]);
 
   // Fetch stats (fallback to local calculation if API fails)
   const fetchStats = useCallback(async () => {
@@ -155,19 +226,16 @@ const GSTBillManagementPage = () => {
           return;
         }
       }
-      // Fallback
-      if (typeof calculateStatsFromBills === 'function') {
-        const calculated = calculateStatsFromBills(gstBills, selectedShop, searchTerm, filterDateRange);
-        setStats(calculated);
-      }
+      // Fallback to local calculation
+      const calculated = calculateStatsFromBills(gstBills, selectedShop, searchTerm, filterDateRange);
+      setStats(calculated);
     } catch (e) {
       console.error('❌ Error fetching stats:', e);
-      if (typeof calculateStatsFromBills === 'function') {
-        const calculated = calculateStatsFromBills(gstBills, selectedShop, searchTerm, filterDateRange);
-        setStats(calculated);
-      }
+      // Fallback to local calculation
+      const calculated = calculateStatsFromBills(gstBills, selectedShop, searchTerm, filterDateRange);
+      setStats(calculated);
     }
-  }, [selectedShop, searchTerm, filterDateRange, gstBills]);
+  }, [selectedShop, searchTerm, filterDateRange, gstBills, calculateStatsFromBills]);
 
   // Load real data from database
   useEffect(() => {
@@ -177,17 +245,11 @@ const GSTBillManagementPage = () => {
       try {
         console.log('📊 Fetching shops...');
         await fetchShops();
-        console.log('📊 Shops fetched successfully:', shops);
         
         console.log('📊 Fetching GST bills...');
         await fetchGSTBills();
-        console.log('📊 GST bills fetched successfully:', gstBills);
         
-        console.log('📊 Fetching stats...');
-        await fetchStats();
-        console.log('📊 Stats fetched successfully:', stats);
-        
-        console.log('✅ All data loaded successfully!');
+        console.log('✅ Initial data loaded successfully!');
       } catch (error) {
         console.error('❌ Error loading data:', error);
         console.error('❌ Error details:', error.message);
@@ -197,6 +259,13 @@ const GSTBillManagementPage = () => {
     
     loadRealData();
   }, []);
+
+  // Refetch data when filters change
+  useEffect(() => {
+    if (!loading) {
+      fetchGSTBills();
+    }
+  }, [selectedShop, searchTerm, filterDateRange]);
 
   // Redirect if not authenticated or not a seller
   useEffect(() => {
@@ -211,7 +280,7 @@ const GSTBillManagementPage = () => {
 
   // Recalculate stats whenever bills, selectedShop, searchTerm, or filterDateRange changes
   useEffect(() => {
-    if (gstBills.length > 0) {
+    if (gstBills.length > 0 || shops.length > 0) {
       console.log('🔄 Recalculating GST stats due to bills, shop, search, or date change...');
       console.log('🔍 Current selected shop:', selectedShop);
       console.log('🔍 Current search term:', searchTerm);
@@ -222,8 +291,16 @@ const GSTBillManagementPage = () => {
       setStats(calculatedStats);
       
       console.log('📊 Updated GST stats:', calculatedStats);
+    } else if (gstBills.length === 0) {
+      // Reset stats when no bills
+      setStats({
+        totalBills: 0,
+        totalAmount: 0,
+        totalGST: 0,
+        netAmount: 0
+      });
     }
-  }, [gstBills, selectedShop, searchTerm, filterDateRange]);
+  }, [gstBills, selectedShop, searchTerm, filterDateRange, shops, calculateStatsFromBills]);
 
   // Show loading while checking authentication
   if (authLoading) {

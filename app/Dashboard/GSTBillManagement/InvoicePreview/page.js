@@ -3,6 +3,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Edit, Download, Printer } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
+import InvoiceTemplateRenderer from '../components/InvoiceTemplateRenderer';
 
 export default function InvoicePreview() {
   const params = useSearchParams();
@@ -36,6 +38,26 @@ export default function InvoicePreview() {
     load();
   }, [params, router]);
 
+  // Inject print styles
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      @media print {
+        .no-print { display: none !important; }
+        body { background: white; }
+        @page { size: A4; margin: 12mm; }
+        /* Print only the invoice area */
+        body * { visibility: hidden !important; }
+        .invoice-sheet, .invoice-sheet * { visibility: visible !important; }
+        .invoice-sheet { position: absolute; left: 0; top: 0; right: 0; margin: 0 auto; box-shadow: none !important; border: 1px solid #000 !important; }
+      }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
   const handlePrint = () => {
     window.print();
   };
@@ -46,6 +68,8 @@ export default function InvoicePreview() {
   };
 
   if (!bill) return <div className="p-6">Loading...</div>;
+
+  const templateId = bill.templateId || 1; // Default to template 1
 
   const formatCurrency = (n) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(Math.round((n + Number.EPSILON) * 100)/100);
   const formatDate = (d) => new Date(d).toLocaleDateString('en-IN');
@@ -131,9 +155,11 @@ export default function InvoicePreview() {
         <button onClick={handlePrint} className="px-3 py-2 border rounded flex items-center gap-2"><Printer className="w-4 h-4"/>Print</button>
       </div>
 
-      <div ref={printRef} className="bg-white border border-black shadow p-6 max-w-5xl mx-auto invoice-sheet">
-        {/* Header - matches requested style */}
-       <div className='border border-black'>
+      {/* Render template based on templateId - Template 10 uses original detailed structure */}
+      {templateId === 10 ? (
+        <div ref={printRef} className={`bg-white border border-black shadow p-6 max-w-5xl mx-auto invoice-sheet template-${templateId}`}>
+          {/* Original Detailed Template (Template 10) */}
+          <div className='border border-black'>
         <div className="border-b pb-3">
           
           <div className="text-center mt-1">
@@ -188,7 +214,24 @@ export default function InvoicePreview() {
           {/* Scan to pay */}
           <div className="p-2 flex flex-col items-center justify-start col-span-1">
             <div className="font-semibold mb-1">Scan To Pay</div>
-            <div className="w-40 h-40"></div>
+            <div className="w-40 h-40 flex items-center justify-center border border-gray-300 bg-white p-2">
+              {(() => {
+                const upiId = '8299301972@ybl';
+                const amount = bill.grandTotal || 0;
+                const upiUrl = `upi://pay?pa=${upiId}&am=${amount.toFixed(2)}&cu=INR&tn=Payment%20for%20Invoice%20${bill.invoiceNumber || ''}`;
+                return (
+                  <QRCodeSVG
+                    value={upiUrl}
+                    size={140}
+                    level="M"
+                    includeMargin={false}
+                  />
+                );
+              })()}
+            </div>
+            <div className="text-xs text-center mt-1 text-gray-600">
+              ₹{formatCurrency(bill.grandTotal || 0).replace('₹', '')}
+            </div>
           </div>
         </div>
 
@@ -439,18 +482,22 @@ export default function InvoicePreview() {
 
        
       </div>
-
-      <style jsx global>{`
-        @media print {
-          .no-print { display: none !important; }
-          body { background: white; }
-          @page { size: A4; margin: 12mm; }
-          /* Print only the invoice area */
-          body * { visibility: hidden !important; }
-          .invoice-sheet, .invoice-sheet * { visibility: visible !important; }
-          .invoice-sheet { position: absolute; left: 0; top: 0; right: 0; margin: 0 auto; box-shadow: none !important; border: 1px solid #000 !important; }
-        }
-      `}</style>
+      ) : (
+        <div ref={printRef} className="invoice-sheet">
+          <InvoiceTemplateRenderer
+            bill={bill}
+            templateId={templateId}
+            formatCurrency={formatCurrency}
+            formatDate={formatDate}
+            numberToWords={numberToWords}
+            pickStateName={pickStateName}
+            pickStateCode={pickStateCode}
+            pickCustomerStateName={pickCustomerStateName}
+            pickCustomerStateCode={pickCustomerStateCode}
+            bank={bank}
+          />
+        </div>
+      )}
     </div>
   );
 }

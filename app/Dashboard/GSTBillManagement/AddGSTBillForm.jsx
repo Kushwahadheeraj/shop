@@ -3,6 +3,7 @@ import { X, Save, Plus, Trash2, Calculator, Calendar, Edit, Upload, ChevronDown,
 import ClientManagement from './components/ClientManagement';
 import ShopFormModal from './components/ShopFormModal';
 import ProductCatalog from './components/ProductCatalog';
+import InvoiceTemplates from './components/InvoiceTemplates';
 
 const AddGSTBillForm = ({ onClose, onSave, shops }) => {
   // Detect small screens to switch to stacked mobile layout for item rows
@@ -95,7 +96,8 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
     showThumbnails: false,
     showDescriptionFullWidth: false,
     hideSubtotalForGroups: false,
-    showSKU: false
+    showSKU: false,
+    templateId: 10 // Default template (Original Detailed Template)
   });
 
   const [errors, setErrors] = useState({});
@@ -123,6 +125,8 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
   const [hsnPage, setHsnPage] = useState(1);
   const [hsnPageSize, setHsnPageSize] = useState(50);
   const [lastInvoiceNumber, setLastInvoiceNumber] = useState('');
+  const [showTemplateSelector, setShowTemplateSelector] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState({ id: 10, name: 'Detailed' });
 
   const filteredHSN = useMemo(() => {
     const q = (hsnQuery || '').toLowerCase().trim();
@@ -247,11 +251,45 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
         const token = localStorage.getItem('token');
         const res = await fetch('/api/gst-bills', { headers: { 'Authorization': `Bearer ${token}` } });
         const data = await res.json();
-        const list = data?.data?.gstBills || data?.data || data?.gstBills || [];
-        if (Array.isArray(list) && list.length > 0) {
-          setLastInvoiceNumber(list[0].invoiceNumber || '');
+        // Backend returns: { success: true, data: { gstBills: [...], stats: {...} } }
+        const billsList = data?.success && data?.data?.gstBills 
+          ? data.data.gstBills 
+          : (Array.isArray(data?.data) ? data.data : []);
+        
+        if (Array.isArray(billsList) && billsList.length > 0) {
+          // Extract the last sequence number from invoice format: "KH&TH/11-25/0006"
+          const getSequenceNumber = (invNum) => {
+            if (!invNum) return 0;
+            const str = invNum.toString();
+            // Get the part after the last '/' (the sequence number)
+            const lastSlashIndex = str.lastIndexOf('/');
+            if (lastSlashIndex === -1) return 0;
+            const sequencePart = str.substring(lastSlashIndex + 1);
+            // Extract numeric part from sequence (e.g., "0006" -> 6)
+            const numericMatch = sequencePart.match(/\d+/);
+            return numericMatch ? parseInt(numericMatch[0], 10) : 0;
+          };
+          
+          // Sort by sequence number (descending) to get the latest invoice
+          const sortedBills = [...billsList].sort((a, b) => {
+            const seqA = getSequenceNumber(a.invoiceNumber);
+            const seqB = getSequenceNumber(b.invoiceNumber);
+            return seqB - seqA; // Descending order
+          });
+          
+          const lastInvoice = sortedBills[0];
+          if (lastInvoice?.invoiceNumber) {
+            setLastInvoiceNumber(lastInvoice.invoiceNumber);
+            console.log('📊 Last invoice number found:', lastInvoice.invoiceNumber, 'Sequence:', getSequenceNumber(lastInvoice.invoiceNumber));
+          }
+        } else {
+          console.log('📊 No previous invoices found');
+          setLastInvoiceNumber('');
         }
-      } catch {}
+      } catch (error) {
+        console.error('❌ Error fetching last invoice number:', error);
+        setLastInvoiceNumber('');
+      }
     })();
   }, []);
 
@@ -552,6 +590,7 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
       const totals = calculateTotals();
       const billData = {
         ...formData,
+        templateId: formData.templateId || selectedTemplate.id,
         netAmount: totals.subtotal,
         gstAmount: totals.totalGST,
         grandTotal: totals.grandTotal,
@@ -679,8 +718,10 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
                       className="w-24 text-sm text-gray-900 border-b border-purple-500 pb-1 focus:outline-none"
                     />
                 </div>
-                  {(lastInvoiceNumber || prevInvoiceDisplay) ? (
-                    <span className="text-xs text-gray-500 mt-1">Last No: {lastInvoiceNumber || prevInvoiceDisplay}</span>
+                  {lastInvoiceNumber ? (
+                    <span className="text-xs text-gray-500 mt-1">Last Invoice No: <span className="font-semibold text-gray-700">{lastInvoiceNumber}</span></span>
+                  ) : prevInvoiceDisplay ? (
+                    <span className="text-xs text-gray-500 mt-1">Last Invoice No: <span className="font-semibold text-gray-700">{prevInvoiceDisplay}</span></span>
                   ) : null}
                   {errors.invoiceNumber && <span className="text-xs text-red-600 mt-1">{errors.invoiceNumber}</span>}
               </div>
@@ -993,6 +1034,41 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
                   )}
                 </div>
               </div>
+            </div>
+
+            {/* Invoice Template Selection */}
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-6">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Invoice Template</h3>
+                  <p className="text-sm text-gray-600 mt-1">Choose a template for your invoice</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowTemplateSelector(true)}
+                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
+                >
+                  <FileText className="w-4 h-4" />
+                  <span>Select Template</span>
+                </button>
+              </div>
+              {selectedTemplate && (
+                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-gray-900">{selectedTemplate.name}</p>
+                      <p className="text-sm text-gray-600">Template ID: {selectedTemplate.id}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowTemplateSelector(true)}
+                      className="text-purple-600 hover:text-purple-700 text-sm"
+                    >
+                      Change
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Currency and Format Section */}
@@ -1462,6 +1538,19 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
           onClose={()=>setShowAddShopModal(false)}
           onSaved={(res)=>{ setShowAddShopModal(false); setShowShopDropdown(false); (async()=>{ try{ const token=localStorage.getItem('token'); const r=await fetch('/api/gst-shops',{ headers:{ 'Authorization':`Bearer ${token}` }}); const d=await r.json(); if(d?.success){ setGstShops(d.data); if(!isEditingShop){ const last = d.data[d.data.length-1]; setSelectedGSTShop(last); handleInputChange('shopId', last?._id); } else if (selectedGSTShop){ const updated = d.data.find(x=>x._id===selectedGSTShop._id); setSelectedGSTShop(updated||selectedGSTShop); } } }catch{}})(); }}
         />
+
+        {/* Invoice Template Selector Modal */}
+        {showTemplateSelector && (
+          <InvoiceTemplates
+            onClose={() => setShowTemplateSelector(false)}
+            onSelectTemplate={(template) => {
+              setSelectedTemplate(template);
+              setFormData(prev => ({ ...prev, templateId: template.id }));
+              setShowTemplateSelector(false);
+            }}
+            selectedTemplate={selectedTemplate}
+          />
+        )}
       </div>
     </div>
   );

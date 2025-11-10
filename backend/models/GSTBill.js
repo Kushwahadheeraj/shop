@@ -205,6 +205,14 @@ const gstBillSchema = new mongoose.Schema({
     default: null
   },
 
+  // Invoice template
+  templateId: {
+    type: Number,
+    default: 10, // Default to original detailed template
+    min: 1,
+    max: 10
+  },
+
   // Timestamps
   createdAt: {
     type: Date,

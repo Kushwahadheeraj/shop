@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Upload, X, Building2, Plus, Search, FileText, Image as ImageIcon, Trash2 } from 'lucide-react';
+import { Upload, X, Building2, Plus, Search, FileText, Image as ImageIcon, Trash2, Calendar, Filter } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../../components/AuthContext';
 import AddShopForm from '../SimpleBillManagement/AddShopForm';
@@ -39,6 +39,13 @@ const BillFileManagementPage = () => {
   const [uploadFiles, setUploadFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState({});
+  const [billFiles, setBillFiles] = useState([]);
+  const [filesLoading, setFilesLoading] = useState(false);
+  const [filterShop, setFilterShop] = useState('');
+  const [filterStartDate, setFilterStartDate] = useState('');
+  const [filterEndDate, setFilterEndDate] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+  const [activeTab, setActiveTab] = useState('all'); // 'all', 'gst', 'bill'
 
   const fetchingShopsRef = useRef(false);
 
@@ -70,6 +77,36 @@ const BillFileManagementPage = () => {
   useEffect(() => {
     fetchShops();
   }, [fetchShops]);
+
+  // Fetch bill files
+  const fetchBillFiles = useCallback(async () => {
+    try {
+      setFilesLoading(true);
+      const token = localStorage.getItem('token');
+      const params = new URLSearchParams();
+      if (filterShop) params.append('shopId', filterShop);
+      if (filterStartDate) params.append('startDate', filterStartDate);
+      if (filterEndDate) params.append('endDate', filterEndDate);
+      
+      const qs = params.toString();
+      const response = await fetch(api(`/api/bill-files/summary${qs ? `?${qs}` : ''}`), {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+      });
+      const data = await response.json();
+      if (data.success) {
+        setBillFiles(data.data || []);
+      }
+    } catch (error) {
+      console.error('Error fetching bill files:', error);
+    } finally {
+      setFilesLoading(false);
+    }
+  }, [api, filterShop, filterStartDate, filterEndDate]);
+
+  // Load bill files on mount and when filters change
+  useEffect(() => {
+    fetchBillFiles();
+  }, [fetchBillFiles]);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -200,6 +237,8 @@ const BillFileManagementPage = () => {
         setUploadFiles([]);
         setSelectedShop('');
         setUploadProgress({});
+        // Refresh the files list
+        await fetchBillFiles();
       } else {
         throw new Error(saveData.message || 'Failed to save file records');
       }
@@ -247,6 +286,74 @@ const BillFileManagementPage = () => {
       throw error;
     }
   };
+
+  // Delete bill file
+  const handleDeleteFile = async (fileId) => {
+    if (!confirm('Are you sure you want to delete this file?')) return;
+    
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/bill-files/${fileId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      const data = await response.json();
+      if (response.ok && data.success) {
+        alert('File deleted successfully!');
+        await fetchBillFiles();
+      } else {
+        throw new Error(data.message || 'Failed to delete file');
+      }
+    } catch (error) {
+      console.error('Error deleting file:', error);
+      alert('Error deleting file: ' + error.message);
+    }
+  };
+
+  // Group files by shop
+  const groupFilesByShop = (files) => {
+    const grouped = {};
+    files.forEach(file => {
+      // Filter by active tab
+      if (activeTab === 'gst' && file.billType !== 'gst') return;
+      if (activeTab === 'bill' && file.billType !== 'bill') return;
+      
+      const shopId = file.shopId?._id || file.shopId;
+      const shopName = file.shopId?.name || 'Unknown Shop';
+      if (!grouped[shopId]) {
+        grouped[shopId] = {
+          shop: file.shopId,
+          shopName,
+          gst: [],
+          bill: []
+        };
+      }
+      if (file.billType === 'gst') {
+        grouped[shopId].gst.push(file);
+      } else {
+        grouped[shopId].bill.push(file);
+      }
+    });
+    return grouped;
+  };
+
+  // Format date
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-IN', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const groupedFiles = groupFilesByShop(billFiles);
 
   if (authLoading) {
     return (
@@ -447,6 +554,255 @@ const BillFileManagementPage = () => {
             </>
           )}
         </button>
+      </div>
+
+      {/* Filters Section */}
+      <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold text-gray-900">Uploaded Files</h3>
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+          >
+            <Filter className="w-4 h-4" />
+            Filters
+          </button>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex items-center gap-2 mb-6 border-b border-gray-200">
+          <button
+            onClick={() => setActiveTab('all')}
+            className={`px-4 py-2 text-sm font-medium transition-colors ${
+              activeTab === 'all'
+                ? 'border-b-2 border-blue-600 text-blue-600'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            All Files ({billFiles.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('gst')}
+            className={`px-4 py-2 text-sm font-medium transition-colors ${
+              activeTab === 'gst'
+                ? 'border-b-2 border-green-600 text-green-600'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            GST Bills ({billFiles.filter(f => f.billType === 'gst').length})
+          </button>
+          <button
+            onClick={() => setActiveTab('bill')}
+            className={`px-4 py-2 text-sm font-medium transition-colors ${
+              activeTab === 'bill'
+                ? 'border-b-2 border-orange-600 text-orange-600'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Bills without GST ({billFiles.filter(f => f.billType === 'bill').length})
+          </button>
+        </div>
+
+        {showFilters && (
+          <div className="mb-4 p-4 bg-gray-50 rounded-lg">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Filter by Shop
+                </label>
+                <select
+                  value={filterShop}
+                  onChange={(e) => setFilterShop(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">All Shops</option>
+                  {shops.map(shop => (
+                    <option key={shop._id} value={shop._id}>
+                      {shop.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Start Date
+                </label>
+                <input
+                  type="date"
+                  value={filterStartDate}
+                  onChange={(e) => setFilterStartDate(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  End Date
+                </label>
+                <input
+                  type="date"
+                  value={filterEndDate}
+                  onChange={(e) => setFilterEndDate(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+            {/* Clear Filters Button */}
+            {(filterShop || filterStartDate || filterEndDate) && (
+              <div className="flex justify-end">
+                <button
+                  onClick={() => {
+                    setFilterShop('');
+                    setFilterStartDate('');
+                    setFilterEndDate('');
+                  }}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+                >
+                  <X className="w-4 h-4" />
+                  Clear Filters
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Files Display */}
+        {filesLoading ? (
+          <div className="text-center py-8">
+            <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading files...</p>
+          </div>
+        ) : Object.keys(groupedFiles).length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            <FileText className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+            <p>No files uploaded yet</p>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {Object.values(groupedFiles).map((group, idx) => {
+              // Show shop only if it has files for the active tab
+              const hasGstFiles = group.gst.length > 0;
+              const hasBillFiles = group.bill.length > 0;
+              const shouldShowShop = 
+                activeTab === 'all' ? (hasGstFiles || hasBillFiles) :
+                activeTab === 'gst' ? hasGstFiles :
+                activeTab === 'bill' ? hasBillFiles : false;
+
+              if (!shouldShowShop) return null;
+
+              return (
+                <div key={idx} className="border border-gray-200 rounded-lg p-6 bg-white">
+                  <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-200">
+                    <Building2 className="w-5 h-5 text-blue-600" />
+                    <h4 className="text-lg font-semibold text-gray-900">{group.shopName}</h4>
+                    <span className="text-sm text-gray-500">
+                      ({group.gst.length} GST, {group.bill.length} Bill)
+                    </span>
+                  </div>
+
+                  {/* GST Bills Section - Show only if activeTab is 'all' or 'gst' */}
+                  {group.gst.length > 0 && (activeTab === 'all' || activeTab === 'gst') && (
+                    <div className="mb-6">
+                      <h5 className="text-md font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                        <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+                          GST Bills ({group.gst.length})
+                        </span>
+                      </h5>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {group.gst.map((file) => (
+                          <div
+                            key={file._id}
+                            className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                          >
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="flex items-center gap-2 flex-1 min-w-0">
+                                {file.fileType === 'application/pdf' ? (
+                                  <FileText className="w-5 h-5 text-red-500 flex-shrink-0" />
+                                ) : (
+                                  <ImageIcon className="w-5 h-5 text-blue-500 flex-shrink-0" />
+                                )}
+                                <p className="text-sm font-medium text-gray-900 truncate">
+                                  {file.fileName}
+                                </p>
+                              </div>
+                              <button
+                                onClick={() => handleDeleteFile(file._id)}
+                                className="text-red-500 hover:text-red-700 flex-shrink-0 ml-2"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                            <div className="text-xs text-gray-500 mb-2 flex items-center gap-1">
+                              <Calendar className="w-3 h-3" />
+                              {formatDate(file.uploadedAt)}
+                            </div>
+                            <a
+                              href={file.fileUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-blue-600 hover:text-blue-800 underline"
+                            >
+                              View File
+                            </a>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Non-GST Bills Section - Show only if activeTab is 'all' or 'bill' */}
+                  {group.bill.length > 0 && (activeTab === 'all' || activeTab === 'bill') && (
+                    <div>
+                      <h5 className="text-md font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                        <span className="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm">
+                          Bills without GST ({group.bill.length})
+                        </span>
+                      </h5>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {group.bill.map((file) => (
+                          <div
+                            key={file._id}
+                            className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                          >
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="flex items-center gap-2 flex-1 min-w-0">
+                                {file.fileType === 'application/pdf' ? (
+                                  <FileText className="w-5 h-5 text-red-500 flex-shrink-0" />
+                                ) : (
+                                  <ImageIcon className="w-5 h-5 text-blue-500 flex-shrink-0" />
+                                )}
+                                <p className="text-sm font-medium text-gray-900 truncate">
+                                  {file.fileName}
+                                </p>
+                              </div>
+                              <button
+                                onClick={() => handleDeleteFile(file._id)}
+                                className="text-red-500 hover:text-red-700 flex-shrink-0 ml-2"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                            <div className="text-xs text-gray-500 mb-2 flex items-center gap-1">
+                              <Calendar className="w-3 h-3" />
+                              {formatDate(file.uploadedAt)}
+                            </div>
+                            <a
+                              href={file.fileUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-blue-600 hover:text-blue-800 underline"
+                            >
+                              View File
+                            </a>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Add Shop Modal */}

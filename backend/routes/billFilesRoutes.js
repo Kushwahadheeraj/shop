@@ -12,6 +12,9 @@ router.post('/', billFilesController.createBillFiles);
 // GET /api/bill-files - Get bill files
 router.get('/', billFilesController.getBillFiles);
 
+// GET /api/bill-files/summary - Get bill files with summary
+router.get('/summary', billFilesController.getBillFilesSummary);
+
 // DELETE /api/bill-files/:id - Delete bill file
 router.delete('/:id', billFilesController.deleteBillFile);
 

@@ -10,7 +10,7 @@ const InvoiceTemplates = ({ onClose, onSelectTemplate, selectedTemplate }) => {
       category: 'Professional',
       preview: '/templates/modern-professional.png',
       features: ['GST Compliant', 'Responsive Design', 'Brand Colors', 'Auto Calculations'],
-      isDefault: true
+      isDefault: false
     },
     {
       id: 2,
@@ -56,6 +56,42 @@ const InvoiceTemplates = ({ onClose, onSelectTemplate, selectedTemplate }) => {
       preview: '/templates/ecommerce.png',
       features: ['GST Compliant', 'Product Images', 'SKU Display', 'Order Tracking'],
       isDefault: false
+    },
+    {
+      id: 7,
+      name: 'Elegant',
+      description: 'Sophisticated and elegant design',
+      category: 'Professional',
+      preview: '/templates/elegant.png',
+      features: ['GST Compliant', 'Premium Look', 'Detailed Layout', 'Professional Style'],
+      isDefault: false
+    },
+    {
+      id: 8,
+      name: 'Compact',
+      description: 'Space-efficient compact layout',
+      category: 'Business',
+      preview: '/templates/compact.png',
+      features: ['GST Compliant', 'Space Saving', 'All Details', 'Print Friendly'],
+      isDefault: false
+    },
+    {
+      id: 9,
+      name: 'Colorful',
+      description: 'Vibrant and eye-catching design',
+      category: 'Creative',
+      preview: '/templates/colorful.png',
+      features: ['GST Compliant', 'Vibrant Colors', 'Modern Style', 'Visual Appeal'],
+      isDefault: false
+    },
+    {
+      id: 10,
+      name: 'Detailed',
+      description: 'Comprehensive detailed invoice template (Original)',
+      category: 'Corporate',
+      preview: '/templates/detailed.png',
+      features: ['GST Compliant', 'Full Details', 'HSN Summary', 'Complete Information'],
+      isDefault: true
     }
   ]);
 
@@ -132,12 +168,137 @@ const InvoiceTemplates = ({ onClose, onSelectTemplate, selectedTemplate }) => {
                 onClick={() => handleSelectTemplate(template)}
               >
                 {/* Template Preview */}
-                <div className="aspect-[4/3] bg-gray-100 relative">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <FileText className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-                      <p className="text-sm text-gray-500">{template.name}</p>
-                    </div>
+                <div className="aspect-[4/3] bg-gray-100 relative overflow-hidden">
+                  {/* Visual Preview based on template ID */}
+                  <div className="absolute inset-0 p-2">
+                    {template.id === 1 && (
+                      <div className="h-full bg-gradient-to-br from-purple-600 to-purple-700 rounded">
+                        <div className="text-white text-xs p-2 text-center font-bold">TAX INVOICE</div>
+                        <div className="bg-white rounded-b p-2 text-xs">
+                          <div className="border-l-4 border-purple-600 pl-2 mb-1">Bill To</div>
+                          <div className="border-l-4 border-purple-600 pl-2 mb-1">Invoice Details</div>
+                          <div className="bg-purple-100 rounded p-1 text-center text-xs">Items Table</div>
+                        </div>
+                      </div>
+                    )}
+                    {template.id === 2 && (
+                      <div className="h-full border-2 border-gray-800 rounded">
+                        <div className="bg-gray-800 text-white text-xs p-1 text-center font-bold">TAX INVOICE</div>
+                        <div className="p-1 text-xs">
+                          <div className="border-b border-gray-400 pb-1 mb-1">Bill To</div>
+                          <div className="border-b border-gray-400 pb-1 mb-1">Invoice Details</div>
+                          <div className="bg-gray-100 rounded p-1 text-center text-xs">Items</div>
+                        </div>
+                      </div>
+                    )}
+                    {template.id === 3 && (
+                      <div className="h-full border-b-2 border-gray-300 rounded">
+                        <div className="text-center p-2">
+                          <div className="text-xs font-light mb-1">INVOICE</div>
+                          <div className="text-xs text-gray-600 mb-2">Shop Name</div>
+                          <div className="border-t border-gray-200 pt-1 text-xs text-left">Bill To</div>
+                          <div className="border-t border-gray-200 pt-1 text-xs text-right">Invoice #</div>
+                        </div>
+                      </div>
+                    )}
+                    {template.id === 4 && (
+                      <div className="h-full bg-gradient-to-br from-blue-50 to-purple-50 rounded border-4 border-blue-500">
+                        <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs p-1 text-center font-black">TAX INVOICE</div>
+                        <div className="p-1">
+                          <div className="bg-blue-100 rounded p-1 mb-1 text-xs">Bill To</div>
+                          <div className="bg-purple-100 rounded p-1 mb-1 text-xs">Invoice Info</div>
+                          <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded p-1 text-xs text-center">Total</div>
+                        </div>
+                      </div>
+                    )}
+                    {template.id === 5 && (
+                      <div className="h-full border border-gray-300 rounded">
+                        <div className="border-b-4 border-gray-800 p-1">
+                          <div className="text-xs font-bold">Shop Name</div>
+                          <div className="text-xs text-right">TAX INVOICE</div>
+                        </div>
+                        <div className="p-1 text-xs">
+                          <div className="uppercase text-gray-500 mb-1">Bill To</div>
+                          <div className="border-t-2 border-gray-800 pt-1 text-xs">Items Table</div>
+                        </div>
+                      </div>
+                    )}
+                    {template.id === 6 && (
+                      <div className="h-full border-2 border-orange-300 rounded-lg">
+                        <div className="bg-orange-500 text-white text-xs p-1 text-center font-bold">TAX INVOICE</div>
+                        <div className="p-1">
+                          <div className="grid grid-cols-3 gap-1 mb-1">
+                            <div className="bg-gray-50 rounded p-1 text-xs">Bill To</div>
+                            <div className="bg-gray-50 rounded p-1 text-xs">Invoice</div>
+                            <div className="bg-gray-50 rounded p-1 text-xs">Total</div>
+                          </div>
+                          <div className="bg-orange-100 rounded p-1 text-xs">Items</div>
+                        </div>
+                      </div>
+                    )}
+                    {template.id === 7 && (
+                      <div className="h-full bg-gradient-to-b from-gray-50 to-white border border-gray-300 rounded">
+                        <div className="text-center p-2 border-b border-gray-400">
+                          <div className="text-xs font-thin tracking-widest mb-1">INVOICE</div>
+                          <div className="text-xs font-light">Shop Name</div>
+                        </div>
+                        <div className="p-1 text-xs">
+                          <div className="border-l-2 border-gray-400 pl-2 mb-1">Bill To</div>
+                          <div className="border-r-2 border-gray-400 pr-2 text-right mb-1">Invoice #</div>
+                          <div className="border-t-2 border-gray-400 pt-1 text-right">Total</div>
+                        </div>
+                      </div>
+                    )}
+                    {template.id === 8 && (
+                      <div className="h-full border border-gray-400 rounded text-xs">
+                        <div className="grid grid-cols-3 gap-1 border-b-2 border-gray-800 p-1">
+                          <div className="text-xs font-bold">Shop</div>
+                          <div className="text-center text-xs font-bold">INVOICE</div>
+                          <div className="text-right text-xs">Bill To</div>
+                        </div>
+                        <div className="p-1">
+                          <div className="bg-gray-100 rounded p-1 text-xs mb-1">Items Table</div>
+                          <div className="border-t-2 border-gray-800 pt-1 text-right text-xs">Total</div>
+                        </div>
+                      </div>
+                    )}
+                    {template.id === 9 && (
+                      <div className="h-full bg-gradient-to-br from-pink-100 via-yellow-100 to-blue-100 rounded-2xl border-4 border-pink-400">
+                        <div className="bg-white rounded-xl p-1">
+                          <div className="text-center p-1">
+                            <div className="text-xs font-black bg-gradient-to-r from-pink-500 via-yellow-500 to-blue-500 bg-clip-text text-transparent">INVOICE</div>
+                            <div className="text-xs font-bold">Shop Name</div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-1 p-1">
+                            <div className="bg-gradient-to-br from-pink-200 to-pink-300 rounded p-1 text-xs">Bill To</div>
+                            <div className="bg-gradient-to-br from-blue-200 to-blue-300 rounded p-1 text-xs">Invoice</div>
+                          </div>
+                          <div className="bg-gradient-to-r from-pink-500 via-yellow-500 to-blue-500 text-white rounded p-1 text-xs text-center">Total</div>
+                        </div>
+                      </div>
+                    )}
+                    {template.id === 10 && (
+                      <div className="h-full border border-black rounded">
+                        <div className="border-b border-black p-1">
+                          <div className="text-xs font-bold text-center">TAX INVOICE</div>
+                          <div className="text-xs text-center font-extrabold uppercase">Shop Name</div>
+                        </div>
+                        <div className="p-1 text-xs">
+                          <div className="grid grid-cols-5 border-t border-black p-1">
+                            <div className="col-span-2 border-r border-black">Bill To</div>
+                            <div className="col-span-2 border-r border-black">Invoice Details</div>
+                            <div>Scan</div>
+                          </div>
+                          <div className="border-t border-black p-1">Items Table</div>
+                          <div className="border-t border-black p-1">Terms & Conditions</div>
+                          <div className="border-t border-black grid grid-cols-3 p-1">
+                            <div className="border-r border-black">Signature</div>
+                            <div className="border-r border-black">Bank Details</div>
+                            <div>Signatory</div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                   {template.isDefault && (
                     <div className="absolute top-2 left-2">

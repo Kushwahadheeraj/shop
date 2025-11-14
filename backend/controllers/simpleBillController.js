@@ -60,6 +60,26 @@ const createSimpleBill = async (req, res) => {
       totalPrice: item.quantity * item.unitPrice
     }));
 
+    const validPaymentMethods = ['cash', 'card', 'upi', 'bank_transfer', 'cheque'];
+    const validPaymentStatuses = ['pending', 'paid', 'partial', 'overdue'];
+
+    const numericPaidAmount =
+      typeof payment?.paidAmount === 'number'
+        ? payment.paidAmount
+        : parseFloat(payment?.paidAmount) || 0;
+
+    const sanitizedPaidAmount = Math.max(0, numericPaidAmount);
+    const paymentMethod = validPaymentMethods.includes(payment?.method)
+      ? payment.method
+      : 'cash';
+    const paymentStatus = validPaymentStatuses.includes(payment?.status)
+      ? payment.status
+      : sanitizedPaidAmount >= calculatedPricing.totalAmount
+      ? 'paid'
+      : sanitizedPaidAmount > 0
+      ? 'partial'
+      : 'pending';
+
     const billData = {
       billNumber,
       shopId,
@@ -68,10 +88,10 @@ const createSimpleBill = async (req, res) => {
       items: itemsWithTotals,
       pricing: calculatedPricing,
       payment: {
-        method: payment?.method || 'cash',
-        status: payment?.status || 'pending',
-        paidAmount: payment?.paidAmount || 0,
-        remainingAmount: calculatedPricing.totalAmount - (payment?.paidAmount || 0)
+        method: paymentMethod,
+        status: paymentStatus,
+        paidAmount: sanitizedPaidAmount,
+        remainingAmount: Math.max(calculatedPricing.totalAmount - sanitizedPaidAmount, 0)
       },
       billDate: billDate ? new Date(billDate) : new Date(),
       dueDate: dueDate ? new Date(dueDate) : null,
@@ -242,7 +262,21 @@ const updateSimpleBill = async (req, res) => {
     }
 
     // Update other fields
-    if (payment) bill.payment = { ...bill.payment, ...payment };
+    if (payment) {
+      bill.payment = { ...bill.payment, ...payment };
+
+      // Sanitize payment method and status if provided
+      const validPaymentMethods = ['cash', 'card', 'upi', 'bank_transfer', 'cheque'];
+      const validPaymentStatuses = ['pending', 'paid', 'partial', 'overdue'];
+
+      if (!validPaymentMethods.includes(bill.payment.method)) {
+        bill.payment.method = 'cash';
+      }
+
+      if (!validPaymentStatuses.includes(bill.payment.status)) {
+        bill.payment.status = 'pending';
+      }
+    }
     if (billDate) bill.billDate = new Date(billDate);
     if (dueDate) bill.dueDate = new Date(dueDate);
     if (description !== undefined) bill.description = description;
@@ -251,7 +285,20 @@ const updateSimpleBill = async (req, res) => {
     if (recurring) bill.recurring = { ...bill.recurring, ...recurring };
 
     // Recalculate remaining amount
-    bill.payment.remainingAmount = bill.pricing.totalAmount - bill.payment.paidAmount;
+    const numericPaidAmount =
+      typeof bill.payment.paidAmount === 'number'
+        ? bill.payment.paidAmount
+        : parseFloat(bill.payment.paidAmount) || 0;
+    bill.payment.paidAmount = Math.max(0, numericPaidAmount);
+    bill.payment.remainingAmount = Math.max(bill.pricing.totalAmount - bill.payment.paidAmount, 0);
+
+    if (bill.payment.paidAmount >= bill.pricing.totalAmount) {
+      bill.payment.status = 'paid';
+    } else if (bill.payment.paidAmount > 0 && bill.payment.status === 'pending') {
+      bill.payment.status = 'partial';
+    } else if (bill.payment.paidAmount === 0) {
+      bill.payment.status = 'pending';
+    }
 
     await bill.save();
 

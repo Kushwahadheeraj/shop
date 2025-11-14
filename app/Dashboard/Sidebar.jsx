@@ -4829,6 +4829,7 @@ const sections = [
   { name: 'Coupon List', path: '/Dashboard/Coupons' },
   { name: 'Bill Management', path: '/Dashboard/BillManagement' },
   { name: 'Simple Bill Management', path: '/Dashboard/SimpleBillManagement' },
+  { name: 'Quick Invoice Creator', path: '/Dashboard/InvoiceGenerator' },
   { name: 'GST Bill Management', path: '/Dashboard/GSTBillManagement' },
   { name: 'Bill Items Inventory', path: '/Dashboard/BillItemsInventory' },
   { name: 'Bill File Management', path: '/Dashboard/BillFileManagement' },

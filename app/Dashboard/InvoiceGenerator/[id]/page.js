@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import InvoiceTemplateRenderer from "../components/InvoiceTemplateRenderer";
 import InvoiceTemplates from "../components/InvoiceTemplates";
+import API_BASE_URL from "@/lib/apiConfig";
 
 const normalizeInvoice = (bill) => {
   if (!bill) return null;
@@ -75,7 +76,7 @@ const InvoicePreviewPage = () => {
         setError(null);
         const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
-        const response = await fetch(`/api/invoices/${id}`, { headers });
+        const response = await fetch(`${API_BASE_URL}/invoices/${id}`, { headers });
         const data = await response.json().catch(() => ({}));
         if (!response.ok || data?.success === false) {
           throw new Error(data?.message || "Unable to load invoice");
@@ -87,7 +88,7 @@ const InvoicePreviewPage = () => {
           normalized?.templateId || normalized?.metadata?.templateId || "default";
         setSelectedTemplate({ id: templateId });
       } catch (err) {
-        console.error(err);
+        // console.error(err);
         setError(err.message || "Failed to load invoice");
       } finally {
         setLoading(false);
@@ -158,7 +159,7 @@ const InvoicePreviewPage = () => {
       <style jsx global>{`
         @media print {
           @page {
-            margin: 0;
+            margin: 0 !important;
             size: A4;
           }
           * {
@@ -200,7 +201,9 @@ const InvoicePreviewPage = () => {
           .invoice-print-only {
             position: relative !important;
             margin: 0 auto !important;
+            margin-top: 0 !important;
             padding: 0 !important;
+            padding-top: 0 !important;
             width: 210mm !important;
             max-width: 210mm !important;
             background: transparent !important;
@@ -211,15 +214,16 @@ const InvoicePreviewPage = () => {
             page-break-inside: auto !important;
             display: block !important;
           }
-          /* Apply border to the rendered template */
+          /* Template wrapper styling - remove border, ensure proper spacing and page breaks */
           .invoice-print-only > * {
-            border: 2px solid #000 !important;
-            outline: 2px solid #000 !important;
-            outline-offset: -2px !important;
+            border: none !important;
+            outline: none !important;
             background: white !important;
-          }
-          /* Ensure content breaks properly across pages */
-          .invoice-print-only > * {
+            margin: 0 auto !important;
+            padding-top: 0 !important;
+            padding-left: 1cm !important;
+            padding-right: 1cm !important;
+            padding-bottom: 0.5cm !important;
             page-break-inside: auto;
           }
           .invoice-print-only table {
@@ -231,7 +235,6 @@ const InvoicePreviewPage = () => {
           }
           /* Ensure Amount in Words and Terms sections are visible and can break across pages */
           .invoice-print-only section {
-            page-break-inside: auto;
             visibility: visible !important;
             opacity: 1 !important;
           }
@@ -254,21 +257,50 @@ const InvoicePreviewPage = () => {
           .invoice-print-only .bg-slate-100 {
             background: white !important;
           }
-          /* Remove extra padding and margins from invoice content */
-          .invoice-print-only > * {
-            margin: 0 !important;
-          }
-          .invoice-print-only > *:first-child {
-            margin-top: 0 !important;
-          }
-          .invoice-print-only > *:last-child {
-            margin-bottom: 0 !important;
-          }
-          /* Keep template padding for proper content spacing */
           /* Remove max-width constraints in print */
           .invoice-print-only .max-w-5xl,
           .invoice-print-only .max-w-4xl {
             max-width: 100% !important;
+            width: 100% !important;
+          }
+          /* Ensure proper font rendering in print */
+          .invoice-print-only {
+            font-family: Arial, sans-serif !important;
+            color: #000 !important;
+          }
+          /* Ensure QR code renders properly */
+          .invoice-print-only svg {
+            display: block !important;
+            visibility: visible !important;
+          }
+          /* Ensure emerald colors print as dark green/black */
+          .invoice-print-only .text-emerald-500,
+          .invoice-print-only .text-emerald-600,
+          .invoice-print-only .text-emerald-400 {
+            color: #059669 !important;
+          }
+          .invoice-print-only .border-emerald-400 {
+            border-color: #059669 !important;
+          }
+          /* Prevent totals section from being cut off */
+          .invoice-print-only section[class*="break-inside-avoid"] {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+            orphans: 3 !important;
+            widows: 3 !important;
+          }
+          /* Align totals section right padding with table's last column padding */
+          .invoice-print-only section[class*="break-inside-avoid"] > div {
+            padding-right: 0 !important;
+          }
+          .invoice-print-only section[class*="break-inside-avoid"] > div > div {
+            padding-right: 0.5rem !important;
+            margin-right: 0 !important;
+          }
+          /* Match table cell padding in print */
+          .invoice-print-only table td:last-child,
+          .invoice-print-only table th:last-child {
+            padding-right: 0.5rem !important;
           }
         }
       `}</style>
@@ -331,7 +363,7 @@ const InvoicePreviewPage = () => {
         </div>
 
         {/* Invoice - Visible in print and on screen */}
-        <div className="invoice-print-only px-4 pb-10 max-w-5xl mx-auto">
+        <div className="invoice-print-only px-4 pb-10 max-w-5xl mx-auto print:px-0 print:pb-0 print:max-w-full">
           <InvoiceTemplateRenderer bill={bill} template={templateForRenderer} />
         </div>
 

@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import API_BASE_URL from '@/lib/apiConfig';
 
 const baseInput = 'w-full h-10 px-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500';
 
@@ -15,7 +16,7 @@ export default function BankDetailsPage() {
   const fetchAccounts = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/bank-accounts', { headers: { 'Authorization': `Bearer ${token}` } });
+      const res = await fetch(`${API_BASE_URL}/bank-accounts`, { headers: { 'Authorization': `Bearer ${token}` } });
       const data = await res.json();
       if (data?.success) setAccounts(data.data || []);
     } finally { setLoading(false); }
@@ -39,7 +40,7 @@ export default function BankDetailsPage() {
 
   const saveAccount = async () => {
     const token = localStorage.getItem('token');
-    const res = await fetch('/api/bank-accounts', { method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
+    const res = await fetch(`${API_BASE_URL}/bank-accounts`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
     const data = await res.json();
     if (data?.success) { setForm({ accountHolder: '', bankName: '', accountNumber: '', ifsc: '', branch: '', isDefault: false }); fetchAccounts(); setSelectedId(data.data?._id || ''); }
   };
@@ -52,7 +53,7 @@ export default function BankDetailsPage() {
       return;
     }
     const payload = { ...pendingBill, bankAccountId: selectedId };
-    const res = await fetch('/api/gst-bills', { method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    const res = await fetch(`${API_BASE_URL}/gst-bills`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
     const data = await res.json();
     if (res.ok && data?.success) {
       sessionStorage.removeItem('pending_gst_bill');

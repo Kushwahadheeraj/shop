@@ -4,14 +4,14 @@ import { Upload, X, Building2, Plus, Search, FileText, Image as ImageIcon, Trash
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../../components/AuthContext';
 import AddShopForm from '../SimpleBillManagement/AddShopForm';
+import API_BASE_URL from '@/lib/apiConfig';
 
 const BillFileManagementPage = () => {
   // Backend helpers
-  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.API_BASE_URL || '';
   const join = useCallback((base, path) => `${base.replace(/\/$/, '')}${path}`, []);
   const api = useCallback((path) => {
-    return API_BASE ? join(API_BASE, path) : path;
-  }, [API_BASE, join]);
+    return join(API_BASE_URL, path);
+  }, [join]);
   const toArray = useCallback((res) => {
     if (Array.isArray(res)) return res;
     if (Array.isArray(res?.data)) return res.data;
@@ -219,7 +219,7 @@ const BillFileManagementPage = () => {
         throw new Error('No files were uploaded successfully');
       }
       
-      const saveResponse = await fetch('/api/bill-files', {
+      const saveResponse = await fetch(`${API_BASE_URL}/bill-files`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -257,7 +257,7 @@ const BillFileManagementPage = () => {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('Please log in to create a shop');
       
-      const response = await fetch('/api/shops', {
+      const response = await fetch(`${API_BASE_URL}/shops`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -293,7 +293,7 @@ const BillFileManagementPage = () => {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/bill-files/${fileId}`, {
+      const response = await fetch(`${API_BASE_URL}/bill-files/${fileId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

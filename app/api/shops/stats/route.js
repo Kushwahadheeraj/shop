@@ -1,29 +1,52 @@
 import { NextResponse } from 'next/server';
-
-const API_BASE_URL = process.env.BACKEND_URL || 'http://localhost:5000/api';
+import connectDB from '@/lib/db';
+import { verifyAuth } from '@/lib/auth';
+import Shop from '@/lib/models/Shop';
 
 export async function GET(request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const queryString = searchParams.toString();
-    const url = `${API_BASE_URL}/shops/stats${queryString ? `?${queryString}` : ''}`;
-    
-    const token = request.headers.get('authorization');
-    
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Authorization': token || '',
-        'Content-Type': 'application/json',
-      },
+    const sellerId = verifyAuth(request);
+    await connectDB();
+
+    const totalShops = await Shop.countDocuments({ createdBy: sellerId });
+    const activeShops = await Shop.countDocuments({ 
+      createdBy: sellerId, 
+      status: 'active' 
+    });
+    const inactiveShops = await Shop.countDocuments({ 
+      createdBy: sellerId, 
+      status: 'inactive' 
     });
 
-    const data = await response.json();
-    return NextResponse.json(data, { status: response.status });
+    const recentShops = await Shop.find({ 
+      createdBy: sellerId,
+      lastTransactionDate: { $exists: true }
+    })
+    .sort({ lastTransactionDate: -1 })
+    .limit(5)
+    .select('name lastTransactionDate');
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        totalShops,
+        activeShops,
+        inactiveShops,
+        recentShops
+      }
+    });
   } catch (error) {
     console.error('Error fetching shop stats:', error);
+    
+    if (error.message.includes('Authentication') || error.message.includes('token')) {
+      return NextResponse.json(
+        { success: false, message: error.message },
+        { status: 401 }
+      );
+    }
+
     return NextResponse.json(
-      { success: false, message: 'Error fetching shop statistics' },
+      { success: false, message: 'Error fetching shop statistics', error: error.message },
       { status: 500 }
     );
   }

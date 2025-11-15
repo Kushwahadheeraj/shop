@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Plus, RefreshCw, Trash2, FileText, Wand2, Sparkles, Loader2, Clock } from "lucide-react";
+import { Plus, RefreshCw, Trash2, FileText, Wand2, Sparkles, Loader2, Clock, History, FileEdit } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../../../components/AuthContext";
 import InvoiceTemplates from "./components/InvoiceTemplates";
+import API_BASE_URL from "@/lib/apiConfig";
 
 const UNIT_OPTIONS = [
   { value: "pc", label: "Pc" },
@@ -97,6 +98,7 @@ const InvoiceGeneratorPage = () => {
   const [billHistory, setBillHistory] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [activeTab, setActiveTab] = useState("form"); // 'form' or 'history'
   const invoiceIdParam = searchParams?.get("id");
 
   const currentShop = useMemo(
@@ -241,7 +243,7 @@ const InvoiceGeneratorPage = () => {
     try {
       setShopsLoading(true);
       const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-      const response = await fetch("/api/shops", {
+      const response = await fetch(`${API_BASE_URL}/shops`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
       const data = await response.json().catch(() => ({}));
@@ -253,7 +255,7 @@ const InvoiceGeneratorPage = () => {
         }
       }
     } catch (error) {
-      console.error("Failed to load shops", error);
+      // console.error("Failed to load shops", error);
     } finally {
       setShopsLoading(false);
     }
@@ -326,12 +328,12 @@ const InvoiceGeneratorPage = () => {
       const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
       const params = new URLSearchParams({ limit: "25", sort: "desc" });
-      const response = await fetch(`/api/invoices?${params.toString()}`, { headers });
+      const response = await fetch(`${API_BASE_URL}/invoices?${params.toString()}`, { headers });
       const data = await response.json().catch(() => ({}));
       const list = data?.data || [];
       setBillHistory(Array.isArray(list) ? list : []);
     } catch (error) {
-      console.error("Failed to fetch invoice history", error);
+      // console.error("Failed to fetch invoice history", error);
     } finally {
       setHistoryLoading(false);
     }
@@ -343,7 +345,7 @@ const InvoiceGeneratorPage = () => {
       try {
         const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
-        const response = await fetch(`/api/invoices/${id}`, { headers });
+        const response = await fetch(`${API_BASE_URL}/invoices/${id}`, { headers });
         const data = await response.json().catch(() => ({}));
         if (!response.ok || data?.success === false) {
           throw new Error(data?.message || "Unable to load invoice");
@@ -404,7 +406,7 @@ const InvoiceGeneratorPage = () => {
           setSelectedTemplate(null);
         }
       } catch (error) {
-        console.error("Failed to load invoice", error);
+        // console.error("Failed to load invoice", error);
         alert(error.message || "Failed to load invoice");
       }
     },
@@ -440,10 +442,10 @@ const InvoiceGeneratorPage = () => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
       };
-      const url = currentBillId ? `/api/invoices/${currentBillId}` : `/api/invoices`;
+      const url = currentBillId ? `${API_BASE_URL}/invoices/${currentBillId}` : `${API_BASE_URL}/invoices`;
       const method = currentBillId ? "PUT" : "POST";
       
-      console.log("Saving invoice:", { url, method, payloadKeys: Object.keys(payload) });
+      // console.log("Saving invoice:", { url, method, payloadKeys: Object.keys(payload) });
       
       let response;
       try {
@@ -453,7 +455,7 @@ const InvoiceGeneratorPage = () => {
           body: JSON.stringify(payload)
         });
       } catch (fetchError) {
-        console.error("Network error:", fetchError);
+        // console.error("Network error:", fetchError);
         throw new Error(`Network error: ${fetchError.message}. Please check your internet connection.`);
       }
       
@@ -467,20 +469,20 @@ const InvoiceGeneratorPage = () => {
           data = { success: false, message: 'Empty response from server' };
         }
       } catch (parseError) {
-        console.error("Failed to parse response:", parseError);
-        console.error("Response text:", responseText);
-        console.error("Response status:", response.status);
+        // console.error("Failed to parse response:", parseError);
+        // console.error("Response text:", responseText);
+        // console.error("Response status:", response.status);
         throw new Error(`Server response is not valid JSON. Status: ${response.status}`);
       }
       
       if (!response.ok || data?.success === false) {
         const errorMessage = data?.message || data?.error || `HTTP ${response.status}: ${response.statusText}` || "Failed to save invoice";
         // Log error details separately to avoid Next.js console interception issues
-        console.error("API Error - Status:", response.status);
-        console.error("API Error - Status Text:", response.statusText);
-        console.error("API Error - Response Text:", responseText);
-        console.error("API Error - Parsed Data:", JSON.stringify(data, null, 2));
-        console.error("API Error - Payload Keys:", payload ? Object.keys(payload) : []);
+        // console.error("API Error - Status:", response.status);
+        // console.error("API Error - Status Text:", response.statusText);
+        // console.error("API Error - Response Text:", responseText);
+        // console.error("API Error - Parsed Data:", JSON.stringify(data, null, 2));
+        // console.error("API Error - Payload Keys:", payload ? Object.keys(payload) : []);
         throw new Error(errorMessage);
       }
       const savedBill = data?.data?.bill || data?.bill || data?.data || payload;
@@ -497,11 +499,11 @@ const InvoiceGeneratorPage = () => {
       }
     } catch (error) {
       // Log error details separately to avoid Next.js console interception issues
-      console.error("Failed to save invoice");
-      console.error("Error name:", error?.name);
-      console.error("Error message:", error?.message);
-      console.error("Error stack:", error?.stack);
-      console.error("Error string:", error?.toString());
+      // console.error("Failed to save invoice");
+      // console.error("Error name:", error?.name);
+      // console.error("Error message:", error?.message);
+      // console.error("Error stack:", error?.stack);
+      // console.error("Error string:", error?.toString());
       
       const errorMessage = error?.message || error?.toString() || "Failed to save invoice. Please check your connection and try again.";
       alert(errorMessage);
@@ -545,87 +547,141 @@ useEffect(() => {
   }
 
   return (
-    <div className="space-y-8">
-      <div className="bg-gradient-to-r from-blue-600 via-sky-500 to-blue-500 rounded-2xl p-6 text-white shadow-lg">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold flex items-center gap-2">
-              <Sparkles className="w-7 h-7" />
-              Quick Invoice Creator
-            </h1>
-            <p className="text-sm text-blue-100 mt-2">
-              तुरंत बिल बनाइये — दुकान के नाम से या सीधे ग्राहक के नाम से, आइटम जोड़ें और QR से पेमेंट दिखाएँ।
-            </p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-50 p-4 sm:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Professional Header */}
+        <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 rounded-2xl p-6 sm:p-8 text-white shadow-xl border border-emerald-500/20">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold flex items-center gap-3 mb-2">
+                <div className="bg-white/20 p-2 rounded-xl">
+                  <Sparkles className="w-6 h-6 sm:w-7 sm:h-7" />
+                </div>
+                Professional Invoice Generator
+              </h1>
+              <p className="text-sm sm:text-base text-emerald-50/90 mt-2 max-w-2xl">
+                तुरंत बिल बनाइये — दुकान के नाम से या सीधे ग्राहक के नाम से, आइटम जोड़ें और QR से पेमेंट दिखाएँ।
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2 sm:gap-3">
+              <button
+                onClick={() => setTemplatePickerOpen(true)}
+                className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 shadow-lg hover:shadow-xl border border-white/30"
+                type="button"
+              >
+                <Wand2 className="w-4 h-4" />
+                <span className="hidden sm:inline">Choose Template</span>
+                <span className="sm:hidden">Template</span>
+              </button>
+              <button
+                onClick={handleNewInvoice}
+                className="inline-flex items-center gap-2 bg-white text-emerald-700 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-emerald-50 transition-all duration-200 shadow-lg hover:shadow-xl"
+                type="button"
+              >
+                <RefreshCw className="w-4 h-4" />
+                <span className="hidden sm:inline">New Invoice</span>
+                <span className="sm:hidden">New</span>
+              </button>
+            </div>
           </div>
-          <div className="flex flex-wrap gap-2">
+        </div>
+
+        {/* Tabs Navigation */}
+        <div className="bg-white border-2 border-gray-200 rounded-2xl p-2 shadow-lg">
+          <div className="flex gap-2">
             <button
-              onClick={() => setTemplatePickerOpen(true)}
-              className="inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              onClick={() => setActiveTab("form")}
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm transition-all duration-200 ${
+                activeTab === "form"
+                  ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-500/30"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
               type="button"
             >
-              <Wand2 className="w-4 h-4" />
-              Choose Template
+              <FileEdit className="w-4 h-4" />
+              <span className="hidden sm:inline">Invoice Form</span>
+              <span className="sm:hidden">Form</span>
             </button>
             <button
-              onClick={handleNewInvoice}
-              className="inline-flex items-center gap-2 bg-white text-blue-600 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-50 transition-colors"
+              onClick={() => {
+                setActiveTab("history");
+                if (billHistory.length === 0) {
+                  fetchBillHistory();
+                }
+              }}
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm transition-all duration-200 ${
+                activeTab === "history"
+                  ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-500/30"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
               type="button"
             >
-              <RefreshCw className="w-4 h-4" />
-              New Invoice
+              <History className="w-4 h-4" />
+              <span className="hidden sm:inline">Invoice History</span>
+              <span className="sm:hidden">History</span>
             </button>
           </div>
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6">
-        <div className="space-y-6">
-          <section className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Invoice Details</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-600 mb-2">
-                  Invoice Number
-                </label>
-                <input
-                  type="text"
-                  value={invoiceMeta.invoiceNumber}
-                  onChange={(e) => setInvoiceMeta((prev) => ({ ...prev, invoiceNumber: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
+        {activeTab === "form" ? (
+          <div className="bg-white border-2 border-gray-200 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+            {/* Invoice Details Section - Full Width */}
+            <section className="bg-gradient-to-br from-gray-50 to-white border-2 border-gray-200 rounded-2xl p-5 sm:p-6 shadow-lg">
+              <div className="flex items-center gap-2 mb-5">
+                <div className="w-1 h-6 bg-gradient-to-b from-emerald-500 to-teal-500 rounded-full"></div>
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900">Invoice Details</h2>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-600 mb-2">
-                  Bill Date
-                </label>
-                <input
-                  type="date"
-                  value={invoiceMeta.invoiceDate}
-                  onChange={(e) => setInvoiceMeta((prev) => ({ ...prev, invoiceDate: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-2">
+                    Invoice Number
+                  </label>
+                  <input
+                    type="text"
+                    value={invoiceMeta.invoiceNumber}
+                    onChange={(e) => setInvoiceMeta((prev) => ({ ...prev, invoiceNumber: e.target.value }))}
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-white hover:bg-gray-50 font-medium text-gray-900"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-2">
+                    Bill Date
+                  </label>
+                  <input
+                    type="date"
+                    value={invoiceMeta.invoiceDate}
+                    onChange={(e) => setInvoiceMeta((prev) => ({ ...prev, invoiceDate: e.target.value }))}
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-white hover:bg-gray-50 font-medium text-gray-900"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-2">
+                    Due Date
+                  </label>
+                  <input
+                    type="date"
+                    value={invoiceMeta.dueDate}
+                    onChange={(e) => setInvoiceMeta((prev) => ({ ...prev, dueDate: e.target.value }))}
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-white hover:bg-gray-50 font-medium text-gray-900"
+                  />
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-600 mb-2">
-                  Due Date
-                </label>
-                <input
-                  type="date"
-                  value={invoiceMeta.dueDate}
-                  onChange={(e) => setInvoiceMeta((prev) => ({ ...prev, dueDate: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
+            </section>
+
+            {/* Bill From and Customer Details - Side by Side */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Bill From Section */}
+              <section className="bg-white border-2 border-gray-200 rounded-2xl p-5 sm:p-6 shadow-lg hover:shadow-xl transition-shadow duration-200 space-y-5">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-1 h-6 bg-gradient-to-b from-emerald-500 to-teal-500 rounded-full"></div>
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900">Bill From</h2>
             </div>
-          </section>
-
-          <section className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm space-y-4">
             <div className="flex flex-wrap gap-3">
               <button
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
                   issuerType === "shop"
-                    ? "bg-blue-600 text-white shadow"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-500/30 scale-105"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200 border-2 border-transparent hover:border-gray-300"
                 }`}
                 onClick={() => setIssuerType("shop")}
                 type="button"
@@ -633,10 +689,10 @@ useEffect(() => {
                 दुकान से बिल काटें
               </button>
               <button
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
                   issuerType === "custom"
-                    ? "bg-blue-600 text-white shadow"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-500/30 scale-105"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200 border-2 border-transparent hover:border-gray-300"
                 }`}
                 onClick={() => setIssuerType("custom")}
                 type="button"
@@ -653,7 +709,7 @@ useEffect(() => {
                 <select
                   value={selectedShopId}
                   onChange={(e) => setSelectedShopId(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
                 >
                   <option value="">
                     {shopsLoading
@@ -669,13 +725,13 @@ useEffect(() => {
                   ))}
                 </select>
                 {currentShop && (
-                  <div className="text-xs text-gray-500 bg-gray-50 border border-gray-200 rounded-lg p-3">
-                    <div className="font-semibold text-gray-700">{currentShop.name}</div>
-                    <div>{formatShopAddress(currentShop)}</div>
+                  <div className="text-sm text-gray-600 bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-200 rounded-xl p-4 shadow-sm">
+                    <div className="font-bold text-gray-900 mb-1 text-base">{currentShop.name}</div>
+                    <div className="text-gray-700 mb-2">{formatShopAddress(currentShop)}</div>
                     {(currentShop.contact?.phone || currentShop.contact?.email) && (
-                      <div className="mt-1 space-y-1">
-                        {currentShop.contact?.phone && <div>📞 {currentShop.contact.phone}</div>}
-                        {currentShop.contact?.email && <div>✉️ {currentShop.contact.email}</div>}
+                      <div className="mt-2 space-y-1 pt-2 border-t border-emerald-200">
+                        {currentShop.contact?.phone && <div className="flex items-center gap-2">📞 <span className="font-medium">{currentShop.contact.phone}</span></div>}
+                        {currentShop.contact?.email && <div className="flex items-center gap-2">✉️ <span className="font-medium">{currentShop.contact.email}</span></div>}
                       </div>
                     )}
                   </div>
@@ -693,7 +749,7 @@ useEffect(() => {
                     onChange={(e) =>
                       setIssuerDetails((prev) => ({ ...prev, name: e.target.value }))
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
                     placeholder="उदाहरण: Sharma Traders"
                   />
                 </div>
@@ -707,7 +763,7 @@ useEffect(() => {
                     onChange={(e) =>
                       setIssuerDetails((prev) => ({ ...prev, phone: e.target.value }))
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
                     placeholder="+91-"
                   />
                 </div>
@@ -721,7 +777,7 @@ useEffect(() => {
                     onChange={(e) =>
                       setIssuerDetails((prev) => ({ ...prev, address: e.target.value }))
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
                     placeholder="पूरा पता"
                   />
                 </div>
@@ -735,17 +791,21 @@ useEffect(() => {
                     onChange={(e) =>
                       setIssuerDetails((prev) => ({ ...prev, email: e.target.value }))
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
                     placeholder="yourshop@example.com"
                   />
                 </div>
               </div>
             )}
-          </section>
+              </section>
 
-          <section className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm space-y-4">
-            <h2 className="text-lg font-semibold text-gray-900">Customer Details</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Customer Details Section */}
+              <section className="bg-white border-2 border-gray-200 rounded-2xl p-5 sm:p-6 shadow-lg hover:shadow-xl transition-shadow duration-200 space-y-5">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-1 h-6 bg-gradient-to-b from-emerald-500 to-teal-500 rounded-full"></div>
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-900">Customer Details</h2>
+                </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-2">
                   Customer Name
@@ -756,7 +816,7 @@ useEffect(() => {
                   onChange={(e) =>
                     setCustomerDetails((prev) => ({ ...prev, name: e.target.value }))
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
                   placeholder="ग्राहक का नाम (optional)"
                 />
               </div>
@@ -770,7 +830,7 @@ useEffect(() => {
                   onChange={(e) =>
                     setCustomerDetails((prev) => ({ ...prev, phone: e.target.value }))
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
                   placeholder="+91-"
                 />
               </div>
@@ -784,7 +844,7 @@ useEffect(() => {
                   onChange={(e) =>
                     setCustomerDetails((prev) => ({ ...prev, address: e.target.value }))
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
                   placeholder="डिलीवरी/ग्राहक पता"
                 />
               </div>
@@ -798,19 +858,24 @@ useEffect(() => {
                   onChange={(e) =>
                     setCustomerDetails((prev) => ({ ...prev, email: e.target.value }))
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
                   placeholder="customer@example.com"
                 />
               </div>
+              </div>
+              </section>
             </div>
-          </section>
 
-          <section className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">Items</h2>
+            {/* Items Section - Full Width */}
+            <section className="bg-white border-2 border-gray-200 rounded-2xl p-5 sm:p-6 shadow-lg hover:shadow-xl transition-shadow duration-200 space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <div className="w-1 h-6 bg-gradient-to-b from-emerald-500 to-teal-500 rounded-full"></div>
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900">Items</h2>
+              </div>
               <button
                 onClick={addNewItem}
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-bold bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl hover:from-emerald-700 hover:to-teal-700 transition-all duration-200 shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:scale-105"
                 type="button"
               >
                 <Plus className="w-4 h-4" />
@@ -818,7 +883,7 @@ useEffect(() => {
               </button>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               {items.map((item, index) => {
                 const lineTotal =
                   Math.round(((parseFloat(item.quantity) || 0) * (parseFloat(item.unitPrice) || 0) + Number.EPSILON) * 100) /
@@ -826,32 +891,32 @@ useEffect(() => {
                 return (
                   <div
                     key={`item-${index}`}
-                    className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr_1fr_auto] gap-3 bg-gray-50 border border-gray-200 rounded-xl p-4 items-center"
+                    className="grid grid-cols-1 sm:grid-cols-12 gap-3 bg-white border-2 border-gray-200 rounded-xl p-4 items-center hover:border-emerald-400 hover:shadow-lg transition-all duration-200"
                   >
-                    <div>
+                    <div className="sm:col-span-4">
                       <input
                         type="text"
                         value={item.name}
                         onChange={(e) => handleItemChange(index, "name", e.target.value)}
                         placeholder="Item name"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50 hover:bg-white font-medium text-gray-900"
                       />
                     </div>
-                    <div>
+                    <div className="sm:col-span-2">
                       <input
                         type="number"
                         min="0"
                         value={item.quantity}
                         onChange={(e) => handleItemChange(index, "quantity", e.target.value)}
                         placeholder="Qty"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50 hover:bg-white font-medium text-gray-900 text-center"
                       />
                     </div>
-                    <div>
+                    <div className="sm:col-span-1">
                       <select
                         value={item.unit || "pc"}
                         onChange={(e) => handleItemChange(index, "unit", e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                        className="w-full px-2 py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50 hover:bg-white font-medium text-gray-900 text-sm"
                       >
                         {UNIT_OPTIONS.map((option) => (
                           <option key={option.value} value={option.value}>
@@ -860,29 +925,32 @@ useEffect(() => {
                         ))}
                       </select>
                     </div>
-                    <div>
+                    <div className="sm:col-span-2">
                       <input
                         type="number"
                         min="0"
+                        step="0.01"
                         value={item.unitPrice}
                         onChange={(e) => handleItemChange(index, "unitPrice", e.target.value)}
                         placeholder="Rate"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50 hover:bg-white font-medium text-gray-900 text-right"
                       />
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-700 font-medium">
-                        ₹{lineTotal.toFixed(2)}
-                      </p>
+                    <div className="sm:col-span-2 flex items-center justify-start">
+                      <div className="bg-gradient-to-r from-emerald-100 to-teal-100 border-2 border-emerald-200 px-4 py-2 rounded-lg w-full">
+                        <p className="text-sm font-bold text-emerald-700 text-right">
+                          ₹{lineTotal.toFixed(2)}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex justify-end">
+                    <div className="sm:col-span-1 flex justify-end">
                       {items.length > 1 && (
                         <button
                           onClick={() => removeItem(index)}
-                          className="text-red-500 hover:text-red-700 rounded-lg p-2"
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg p-2 transition-all duration-200"
                           type="button"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-5 h-5" />
                         </button>
                       )}
                     </div>
@@ -890,200 +958,238 @@ useEffect(() => {
                 );
               })}
             </div>
-          </section>
+            </section>
 
-          <section className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm space-y-4">
-            <label className="block text-sm font-medium text-gray-600 mb-2">
-              Notes (प्रिंट पर दिखेगा)
-            </label>
+            {/* Notes Section - Full Width */}
+            <section className="bg-white border-2 border-gray-200 rounded-2xl p-5 sm:p-6 shadow-lg hover:shadow-xl transition-shadow duration-200 space-y-4">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-1 h-6 bg-gradient-to-b from-emerald-500 to-teal-500 rounded-full"></div>
+              <label className="block text-sm font-bold text-gray-900">
+                Notes (प्रिंट पर दिखेगा)
+              </label>
+            </div>
             <textarea
               rows={3}
               value={invoiceMeta.notes}
               onChange={(e) => setInvoiceMeta((prev) => ({ ...prev, notes: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900 resize-none"
               placeholder="Thank you for shopping with us!"
             />
-          </section>
-        </div>
+            </section>
 
-        <div className="space-y-6">
-          <section className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm space-y-4">
-            <h2 className="text-lg font-semibold text-gray-900">Summary</h2>
-            <div className="space-y-3 text-sm text-gray-600">
-              <div className="flex justify-between">
-                <span>Subtotal</span>
-                <span className="font-semibold text-gray-900">
-                  ₹{subtotal.toFixed(2)}
-                </span>
+            {/* Summary Section - Full Width at Bottom */}
+            <section className="bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-300 rounded-2xl p-5 sm:p-6 shadow-xl space-y-5">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-1 h-6 bg-gradient-to-b from-emerald-500 to-teal-500 rounded-full"></div>
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900">Summary</h2>
               </div>
-              <div className="flex justify-between items-center">
-                <span>Discount</span>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="number"
-                    min="0"
-                    value={pricingAdjustments.discountValue}
-                    onChange={(e) =>
-                      setPricingAdjustments((prev) => ({
-                        ...prev,
-                        discountValue: e.target.value
-                      }))
-                    }
-                    className="w-24 px-2 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right"
-                  />
-                  <select
-                    value={pricingAdjustments.discountType}
-                    onChange={(e) =>
-                      setPricingAdjustments((prev) => ({
-                        ...prev,
-                        discountType: e.target.value
-                      }))
-                    }
-                    className="px-2 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                  >
-                    <option value="amount">₹</option>
-                    <option value="percent">%</option>
-                  </select>
-                </div>
-              </div>
-              <div className="flex justify-between items-center">
-                <span>Paid (Optional)</span>
-                <input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  placeholder="0.00"
-                  value={pricingAdjustments.paidAmount === 0 ? '' : pricingAdjustments.paidAmount}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    // Allow empty string, convert to 0 if empty
-                    setPricingAdjustments((prev) => ({ 
-                      ...prev, 
-                      paidAmount: value === '' ? '' : (Number(value) || 0)
-                    }));
-                  }}
-                  onBlur={(e) => {
-                    // Convert empty to 0 on blur
-                    if (e.target.value === '') {
-                      setPricingAdjustments((prev) => ({ ...prev, paidAmount: 0 }));
-                    }
-                  }}
-                  className="w-24 px-2 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right"
-                />
-              </div>
-              <div className="border-t border-gray-200 pt-3">
-                <div className="flex justify-between text-base font-semibold text-gray-900">
-                  <span>Total</span>
-                  <span>₹{totalAmount.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-sm text-gray-600 mt-1">
-                  <span>Balance</span>
-                  <span className="text-rose-600 font-semibold">
-                    ₹{balanceAmount.toFixed(2)}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm space-y-4">
-            <h2 className="text-lg font-semibold text-gray-900">Actions</h2>
-            <button
-              onClick={handleSaveAndPreview}
-              disabled={!preparedBill || saving}
-              className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              type="button"
-            >
-              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
-              {saving ? "Saving..." : "Save & Preview Invoice"}
-            </button>
-            <p className="text-xs text-gray-500">
-              Preview पेज से आप प्रिंट, PDF डाउनलोड और इनवॉइस एडिट कर सकते हैं।
-            </p>
-          </section>
-
-          <section className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">Recent Invoices</h2>
-              <button
-                onClick={fetchBillHistory}
-                className="text-xs text-blue-600 hover:underline"
-                type="button"
-              >
-                Refresh
-              </button>
-            </div>
-            {historyLoading ? (
-              <div className="flex items-center justify-center py-8 text-gray-400">
-                <Loader2 className="w-5 h-5 animate-spin" />
-              </div>
-            ) : billHistory.length === 0 ? (
-              <p className="text-sm text-gray-500">
-                अभी तक कोई सेव्ड इनवॉइस नहीं है। एक नया बिल बनाएँ और सेव करें।
-              </p>
-            ) : (
-              <div className="space-y-3">
-                {billHistory.slice(0, 10).map((bill) => {
-                  const total =
-                    bill.pricing?.totalAmount ??
-                    bill.totalAmount ??
-                    bill.pricing?.subtotal ??
-                    0;
-                  return (
-                    <div
-                      key={bill._id}
-                      className={`border rounded-lg p-3 transition-colors ${
-                        currentBillId === bill._id
-                          ? "border-blue-400 bg-blue-50/60"
-                          : "border-gray-200 hover:bg-gray-50"
-                      }`}
-                    >
-                      <button
-                        onClick={() =>
-                          router.push(`/Dashboard/InvoiceGenerator?id=${bill._id}`)
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center py-2 border-b border-gray-200">
+                    <span className="text-sm font-semibold text-gray-700">Subtotal</span>
+                    <span className="text-base font-bold text-gray-900">
+                      ₹{subtotal.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center gap-3 py-2 border-b border-gray-200">
+                    <span className="text-sm font-semibold text-gray-700">Discount</span>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="number"
+                        min="0"
+                        value={pricingAdjustments.discountValue}
+                        onChange={(e) =>
+                          setPricingAdjustments((prev) => ({
+                            ...prev,
+                            discountValue: e.target.value
+                          }))
                         }
-                        className="w-full text-left"
-                        type="button"
+                        className="w-20 sm:w-24 px-3 py-1.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-right font-medium bg-white"
+                      />
+                      <select
+                        value={pricingAdjustments.discountType}
+                        onChange={(e) =>
+                          setPricingAdjustments((prev) => ({
+                            ...prev,
+                            discountType: e.target.value
+                          }))
+                        }
+                        className="px-3 py-1.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-semibold bg-white"
                       >
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-semibold text-gray-900">
-                            {bill.billNumber || bill.invoiceNumber || "Invoice"}
-                          </span>
-                          <span className="text-[11px] text-gray-500">
-                            {formatDisplayDate(
-                              bill.billDate || bill.invoiceDate || bill.createdAt
-                            )}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between text-xs text-gray-500 mt-1">
-                          <span>{bill.customerName || "Customer"}</span>
-                          <span className="font-medium text-gray-700">
-                            ₹{Number(total || 0).toFixed(2)}
-                          </span>
-                        </div>
-                      </button>
-                      <div className="flex items-center justify-between mt-2">
-                        <span className="inline-flex items-center gap-1 text-xs text-gray-500">
-                          <Clock className="w-3 h-3" />
-                          {(bill.payment?.status || "pending").toUpperCase()}
-                        </span>
-                        <button
-                          onClick={() =>
-                            router.push(`/Dashboard/InvoiceGenerator/${bill._id}`)
-                          }
-                          className="text-xs text-blue-600 hover:underline"
-                          type="button"
-                        >
-                          Preview
-                        </button>
-                      </div>
+                        <option value="amount">₹</option>
+                        <option value="percent">%</option>
+                      </select>
                     </div>
-                  );
-                })}
+                  </div>
+                  <div className="flex justify-between items-center gap-3 py-2 border-b border-gray-200">
+                    <span className="text-sm font-semibold text-gray-700">Paid (Optional)</span>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      placeholder="0.00"
+                      value={pricingAdjustments.paidAmount === 0 ? '' : pricingAdjustments.paidAmount}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setPricingAdjustments((prev) => ({ 
+                          ...prev, 
+                          paidAmount: value === '' ? '' : (Number(value) || 0)
+                        }));
+                      }}
+                      onBlur={(e) => {
+                        if (e.target.value === '') {
+                          setPricingAdjustments((prev) => ({ ...prev, paidAmount: 0 }));
+                        }
+                      }}
+                      className="w-20 sm:w-24 px-3 py-1.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-right font-medium bg-white"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl p-5">
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-lg font-bold text-white">Total</span>
+                      <span className="text-2xl font-extrabold text-white">₹{totalAmount.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between items-center pt-3 border-t border-white/30">
+                      <span className="text-sm font-semibold text-emerald-50">Balance</span>
+                      <span className="text-lg font-bold text-white">
+                        ₹{balanceAmount.toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleSaveAndPreview}
+                    disabled={!preparedBill || saving}
+                    className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 text-base font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl hover:from-emerald-700 hover:to-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:scale-[1.02] disabled:hover:scale-100"
+                    type="button"
+                  >
+                    {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <FileText className="w-5 h-5" />}
+                    {saving ? "Saving..." : "Save & Preview Invoice"}
+                  </button>
+                  <p className="text-xs text-gray-600 text-center bg-white/50 rounded-lg p-2">
+                    Preview पेज से आप प्रिंट, PDF डाउनलोड और इनवॉइस एडिट कर सकते हैं।
+                  </p>
+                </div>
               </div>
-            )}
-          </section>
-        </div>
+            </section>
+          </div>
+        ) : (
+          /* History Tab */
+          <div className="space-y-6">
+            <section className="bg-white border-2 border-gray-200 rounded-2xl p-5 sm:p-6 shadow-lg space-y-4">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-1 h-6 bg-gradient-to-b from-emerald-500 to-teal-500 rounded-full"></div>
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-900">Invoice History</h2>
+                </div>
+                <button
+                  onClick={fetchBillHistory}
+                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl transition-all duration-200"
+                  type="button"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  <span className="hidden sm:inline">Refresh</span>
+                </button>
+              </div>
+              {historyLoading ? (
+                <div className="flex items-center justify-center py-12 text-gray-400">
+                  <Loader2 className="w-6 h-6 animate-spin" />
+                </div>
+              ) : billHistory.length === 0 ? (
+                <div className="text-center py-12">
+                  <History className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                  <p className="text-sm text-gray-500 font-medium">
+                    अभी तक कोई सेव्ड इनवॉइस नहीं है। एक नया बिल बनाएँ और सेव करें।
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {billHistory.map((bill) => {
+                    const total =
+                      bill.pricing?.totalAmount ??
+                      bill.totalAmount ??
+                      bill.pricing?.subtotal ??
+                      0;
+                    return (
+                      <div
+                        key={bill._id}
+                        className={`border-2 rounded-xl p-4 transition-all duration-200 cursor-pointer ${
+                          currentBillId === bill._id
+                            ? "border-emerald-400 bg-gradient-to-br from-emerald-50 to-teal-50 shadow-md ring-2 ring-emerald-200"
+                            : "border-gray-200 hover:border-emerald-300 hover:bg-gray-50 hover:shadow-md"
+                        }`}
+                        onClick={() => {
+                          setActiveTab("form");
+                          router.push(`/Dashboard/InvoiceGenerator?id=${bill._id}`);
+                        }}
+                      >
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex-1">
+                            <h3 className="text-base font-bold text-gray-900 mb-1">
+                              {bill.billNumber || bill.invoiceNumber || "Invoice"}
+                            </h3>
+                            <p className="text-xs text-gray-500">
+                              {formatDisplayDate(
+                                bill.billDate || bill.invoiceDate || bill.createdAt
+                              )}
+                            </p>
+                          </div>
+                          <span className={`px-2 py-1 rounded-lg text-[10px] font-bold uppercase ${
+                            bill.payment?.status === "paid" 
+                              ? "bg-green-100 text-green-700"
+                              : bill.payment?.status === "partial"
+                              ? "bg-yellow-100 text-yellow-700"
+                              : "bg-gray-100 text-gray-700"
+                          }`}>
+                            {bill.payment?.status || "pending"}
+                          </span>
+                        </div>
+                        <div className="space-y-2 mb-3">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-600">Customer:</span>
+                            <span className="font-semibold text-gray-900">
+                              {bill.customerName || "Customer"}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-600">Amount:</span>
+                            <span className="font-bold text-emerald-700 text-base">
+                              ₹{Number(total || 0).toFixed(2)}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 pt-3 border-t border-gray-200">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveTab("form");
+                              router.push(`/Dashboard/InvoiceGenerator?id=${bill._id}`);
+                            }}
+                            className="flex-1 px-3 py-1.5 text-xs font-semibold text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors"
+                            type="button"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              router.push(`/Dashboard/InvoiceGenerator/${bill._id}`);
+                            }}
+                            className="flex-1 px-3 py-1.5 text-xs font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg hover:from-emerald-700 hover:to-teal-700 transition-all duration-200"
+                            type="button"
+                          >
+                            Preview
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </section>
+          </div>
+        )}
       </div>
 
       {isTemplatePickerOpen && (

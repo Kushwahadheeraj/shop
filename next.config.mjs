@@ -39,8 +39,8 @@ const nextConfig = {
 	generateBuildId: async () => {
 		return 'build-' + Date.now();
 	},
-	// Reduce static generation load
-	output: 'standalone',
+	// Only use standalone output in production
+	...(process.env.NODE_ENV === 'production' && { output: 'standalone' }),
 };
 
 export default nextConfig;

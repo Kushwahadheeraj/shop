@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, Save } from 'lucide-react';
+import API_BASE_URL from '@/lib/apiConfig';
 
 const GST_STATE_CODES = [
   { name: 'Jammu & Kashmir', code: '01' },
@@ -114,9 +115,9 @@ const ClientManagement = ({ onClose, onSelectClient, initialClient, mode = 'add'
     try {
       let res;
       if (mode === 'edit' && initialClient?._id) {
-        res = await fetch(`/api/clients/${initialClient._id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(payload) });
+        res = await fetch(`${API_BASE_URL}/clients/${initialClient._id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(payload) });
       } else {
-        res = await fetch('/api/clients', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(payload) });
+        res = await fetch(`${API_BASE_URL}/clients`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify(payload) });
       }
       const data = await res.json();
       const saved = data?.data?.client || data?.client || payload;
@@ -174,7 +175,7 @@ const ClientManagement = ({ onClose, onSelectClient, initialClient, mode = 'add'
                     <input className={baseInput + ' flex-1'} value={form.gstin} maxLength={15} onChange={(e)=>set('gstin', (e.target.value || '').toUpperCase())} placeholder="Business GSTIN (Optional)" />
                     <button type="button" onClick={async()=>{
                       try{
-                        const r = await fetch('/api/gstin-lookup', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ gstin: form.gstin })});
+                        const r = await fetch(`${API_BASE_URL}/gstin-lookup`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ gstin: form.gstin })});
                         const d = await r.json();
                         const n = d?.normalized || {};
                         if(n.name){ set('businessName', n.name); }

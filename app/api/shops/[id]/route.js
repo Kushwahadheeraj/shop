@@ -1,25 +1,30 @@
 import { NextResponse } from 'next/server';
-
-const API_BASE_URL = process.env.BACKEND_URL || 'http://localhost:5000/api';
+import connectDB from '@/lib/db';
+import { verifyAuth } from '@/lib/auth';
+import Shop from '@/lib/models/Shop';
+import Bill from '@/lib/models/Bill';
 
 export async function GET(request, { params }) {
   try {
-    const token = request.headers.get('authorization');
-    
-    const response = await fetch(`${API_BASE_URL}/shops/${params.id}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': token || '',
-        'Content-Type': 'application/json',
-      },
-    });
+    await connectDB();
+    const { id } = await params;
 
-    const data = await response.json();
-    return NextResponse.json(data, { status: response.status });
+    const shop = await Shop.findById(id);
+    if (!shop) {
+      return NextResponse.json(
+        { success: false, message: 'Shop not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: shop
+    });
   } catch (error) {
     console.error('Error fetching shop:', error);
     return NextResponse.json(
-      { success: false, message: 'Error fetching shop' },
+      { success: false, message: 'Error fetching shop', error: error.message },
       { status: 500 }
     );
   }
@@ -27,24 +32,49 @@ export async function GET(request, { params }) {
 
 export async function PUT(request, { params }) {
   try {
-    const body = await request.json();
-    const token = request.headers.get('authorization');
-    
-    const response = await fetch(`${API_BASE_URL}/shops/${params.id}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': token || '',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
+    await connectDB();
+    const { id } = await params;
 
-    const data = await response.json();
-    return NextResponse.json(data, { status: response.status });
+    const body = await request.json();
+    const {
+      name,
+      address,
+      contact,
+      location,
+      business,
+      financial,
+      status,
+      notes
+    } = body;
+
+    const shop = await Shop.findById(id);
+    if (!shop) {
+      return NextResponse.json(
+        { success: false, message: 'Shop not found' },
+        { status: 404 }
+      );
+    }
+
+    if (name) shop.name = name;
+    if (address) shop.address = address;
+    if (contact) shop.contact = { ...shop.contact, ...contact };
+    if (location) shop.location = { ...shop.location, ...location };
+    if (business) shop.business = { ...shop.business, ...business };
+    if (financial) shop.financial = { ...shop.financial, ...financial };
+    if (status) shop.status = status;
+    if (notes !== undefined) shop.notes = notes;
+
+    await shop.save();
+
+    return NextResponse.json({
+      success: true,
+      message: 'Shop updated successfully',
+      data: shop
+    });
   } catch (error) {
     console.error('Error updating shop:', error);
     return NextResponse.json(
-      { success: false, message: 'Error updating shop' },
+      { success: false, message: 'Error updating shop', error: error.message },
       { status: 500 }
     );
   }
@@ -52,22 +82,37 @@ export async function PUT(request, { params }) {
 
 export async function DELETE(request, { params }) {
   try {
-    const token = request.headers.get('authorization');
-    
-    const response = await fetch(`${API_BASE_URL}/shops/${params.id}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': token || '',
-        'Content-Type': 'application/json',
-      },
-    });
+    await connectDB();
+    const { id } = await params;
 
-    const data = await response.json();
-    return NextResponse.json(data, { status: response.status });
+    const shop = await Shop.findById(id);
+    if (!shop) {
+      return NextResponse.json(
+        { success: false, message: 'Shop not found' },
+        { status: 404 }
+      );
+    }
+
+    // Check if shop has any bills
+    const billCount = await Bill.countDocuments({ shopId: id });
+    
+    if (billCount > 0) {
+      return NextResponse.json(
+        { success: false, message: 'Cannot delete shop with existing bills. Please delete all bills first.' },
+        { status: 400 }
+      );
+    }
+
+    await Shop.findByIdAndDelete(id);
+
+    return NextResponse.json({
+      success: true,
+      message: 'Shop deleted successfully'
+    });
   } catch (error) {
     console.error('Error deleting shop:', error);
     return NextResponse.json(
-      { success: false, message: 'Error deleting shop' },
+      { success: false, message: 'Error deleting shop', error: error.message },
       { status: 500 }
     );
   }

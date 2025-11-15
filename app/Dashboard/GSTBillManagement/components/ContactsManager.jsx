@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { X, Edit, Trash2, Plus, Users, Building2, Search } from 'lucide-react';
 import ClientManagement from './ClientManagement';
 import ShopFormModal from './ShopFormModal';
+import API_BASE_URL from '@/lib/apiConfig';
 
 const baseBtn = "px-3 py-2 border rounded hover:bg-gray-50";
 
@@ -24,8 +25,8 @@ export default function ContactsManager({ isOpen, onClose }) {
       try {
         const token = localStorage.getItem('token');
         const [rc, rs] = await Promise.all([
-          fetch('/api/clients', { headers: { 'Authorization': `Bearer ${token}` } }),
-          fetch('/api/gst-shops', { headers: { 'Authorization': `Bearer ${token}` } })
+          fetch(`${API_BASE_URL}/clients`, { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch(`${API_BASE_URL}/gst-shops`, { headers: { 'Authorization': `Bearer ${token}` } })
         ]);
         const dc = await rc.json();
         const ds = await rs.json();
@@ -39,14 +40,14 @@ export default function ContactsManager({ isOpen, onClose }) {
 
   const refreshClients = async () => {
     const token = localStorage.getItem('token');
-    const r = await fetch('/api/clients', { headers: { 'Authorization': `Bearer ${token}` } });
+    const r = await fetch(`${API_BASE_URL}/clients`, { headers: { 'Authorization': `Bearer ${token}` } });
     const d = await r.json();
     setClients(d?.data?.clients || d?.data || d || []);
   };
 
   const refreshShops = async () => {
     const token = localStorage.getItem('token');
-    const r = await fetch('/api/gst-shops', { headers: { 'Authorization': `Bearer ${token}` } });
+    const r = await fetch(`${API_BASE_URL}/gst-shops`, { headers: { 'Authorization': `Bearer ${token}` } });
     const d = await r.json();
     setShops(d?.data || []);
   };

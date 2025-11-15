@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import MonthlyChart from './components/MonthlyChart';
 import AreaChart from './components/AreaChart';
+import API_BASE_URL from '@/lib/apiConfig';
 
 export default function DashboardPage() {
   const { isAuthenticated, isSeller, loading, user } = useAuth();
@@ -32,7 +33,7 @@ export default function DashboardPage() {
       try {
         setLoadingData(true);
         const token = localStorage.getItem('token');
-        const response = await fetch(`/api/dashboard/analytics?view=${currentView}&period=${selectedPeriod}`, {
+        const response = await fetch(`${API_BASE_URL}/dashboard/analytics?view=${currentView}&period=${selectedPeriod}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -41,11 +42,11 @@ export default function DashboardPage() {
         
         if (response.ok) {
           const result = await response.json();
-          console.log('Dashboard API response:', result);
+          // console.log('Dashboard API response:', result);
           if (result.success) {
             setDashboardData(result.data);
           } else {
-            console.error('API returned error:', result.error);
+            // console.error('API returned error:', result.error);
             // Set default data structure to prevent crashes
             setDashboardData({
               users: { total: 0, new: 0, active: 0, growth: 0 },
@@ -59,7 +60,7 @@ export default function DashboardPage() {
             });
           }
         } else {
-          console.error('Failed to fetch dashboard data:', response.status, response.statusText);
+          // console.error('Failed to fetch dashboard data:', response.status, response.statusText);
           // Set default data structure
           setDashboardData({
             users: { total: 0, new: 0, active: 0, growth: 0 },
@@ -73,7 +74,7 @@ export default function DashboardPage() {
           });
         }
       } catch (error) {
-        console.error('Error fetching dashboard data:', error);
+        // console.error('Error fetching dashboard data:', error);
         // Set default data structure
         setDashboardData({
           users: { total: 0, new: 0, active: 0, growth: 0 },

@@ -4,6 +4,7 @@ import ClientManagement from './components/ClientManagement';
 import ShopFormModal from './components/ShopFormModal';
 import ProductCatalog from './components/ProductCatalog';
 import InvoiceTemplates from './components/InvoiceTemplates';
+import API_BASE_URL from '@/lib/apiConfig';
 
 const AddGSTBillForm = ({ onClose, onSave, shops }) => {
   // Detect small screens to switch to stacked mobile layout for item rows
@@ -146,7 +147,7 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
     setHsnForRow(rowIndex);
     try {
       if (!hsnList.length) {
-        const res = await fetch('/api/hsn-codes');
+        const res = await fetch(`${API_BASE_URL}/hsn-codes`);
         const data = await res.json();
         // accept either {data: [...]} or array
         const list = Array.isArray(data) ? data : (data.data || data.items || []);
@@ -232,7 +233,7 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
     (async () => {
       try {
         const token = localStorage.getItem('token');
-        const r = await fetch('/api/gst-shops', { headers: { 'Authorization': `Bearer ${token}` } });
+        const r = await fetch(`${API_BASE_URL}/gst-shops`, { headers: { 'Authorization': `Bearer ${token}` } });
         const d = await r.json();
         if (d?.success) {
           setGstShops(d.data);
@@ -249,7 +250,7 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
     (async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch('/api/gst-bills', { headers: { 'Authorization': `Bearer ${token}` } });
+        const res = await fetch(`${API_BASE_URL}/gst-bills`, { headers: { 'Authorization': `Bearer ${token}` } });
         const data = await res.json();
         // Backend returns: { success: true, data: { gstBills: [...], stats: {...} } }
         const billsList = data?.success && data?.data?.gstBills 
@@ -297,7 +298,7 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
     (async () => {
       try {
         const token = localStorage.getItem('token');
-        const r = await fetch('/api/clients', { headers: { 'Authorization': `Bearer ${token}` } });
+        const r = await fetch(`${API_BASE_URL}/clients`, { headers: { 'Authorization': `Bearer ${token}` } });
         const d = await r.json();
         if (d?.success) setClients(d.data?.clients || d.data || []);
       } catch {}
@@ -1536,7 +1537,7 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
           mode={isEditingShop ? 'edit' : 'add'}
           initialShop={isEditingShop ? selectedGSTShop : undefined}
           onClose={()=>setShowAddShopModal(false)}
-          onSaved={(res)=>{ setShowAddShopModal(false); setShowShopDropdown(false); (async()=>{ try{ const token=localStorage.getItem('token'); const r=await fetch('/api/gst-shops',{ headers:{ 'Authorization':`Bearer ${token}` }}); const d=await r.json(); if(d?.success){ setGstShops(d.data); if(!isEditingShop){ const last = d.data[d.data.length-1]; setSelectedGSTShop(last); handleInputChange('shopId', last?._id); } else if (selectedGSTShop){ const updated = d.data.find(x=>x._id===selectedGSTShop._id); setSelectedGSTShop(updated||selectedGSTShop); } } }catch{}})(); }}
+          onSaved={(res)=>{ setShowAddShopModal(false); setShowShopDropdown(false); (async()=>{ try{ const token=localStorage.getItem('token'); const r=await fetch(`${API_BASE_URL}/gst-shops`,{ headers:{ 'Authorization':`Bearer ${token}` }}); const d=await r.json(); if(d?.success){ setGstShops(d.data); if(!isEditingShop){ const last = d.data[d.data.length-1]; setSelectedGSTShop(last); handleInputChange('shopId', last?._id); } else if (selectedGSTShop){ const updated = d.data.find(x=>x._id===selectedGSTShop._id); setSelectedGSTShop(updated||selectedGSTShop); } } }catch{}})(); }}
         />
 
         {/* Invoice Template Selector Modal */}

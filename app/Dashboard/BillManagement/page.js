@@ -8,12 +8,12 @@ import AddShopForm from './AddShopForm';
 import BillViewModal from './BillViewModal';
 import EditBillForm from './EditBillForm';
 import PaymentModal from './PaymentModal';
+import API_BASE_URL from '@/lib/apiConfig';
 
 const BillManagementPage = () => {
   // Backend helpers
-  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.API_BASE_URL || '';
   const join = (base, path) => `${base.replace(/\/$/, '')}${path}`;
-  const api = (path) => (API_BASE ? join(API_BASE, path) : path);
+  const api = (path) => join(API_BASE_URL, path);
   const toArray = (res) => {
     if (Array.isArray(res)) return res;
     if (Array.isArray(res?.data)) return res.data;
@@ -62,25 +62,25 @@ const BillManagementPage = () => {
       const token = localStorage.getItem('token');
       const qs = sellerId ? `?sellerId=${encodeURIComponent(sellerId)}` : '';
       const response = await fetch(api(`/api/shops${qs}`), { headers: token ? { 'Authorization': `Bearer ${token}` } : {} });
-      console.log('🔍 Shops API response status:', response.status);
+      // console.log('🔍 Shops API response status:', response.status);
       const data = await response.json().catch(() => ({}));
       const list = toArray(data);
-      console.log('🔍 Raw shops API response:', data);
-      console.log('🔍 Parsed shops list:', list);
-      console.log('🔍 First shop sample:', list[0]);
+      // console.log('🔍 Raw shops API response:', data);
+      // console.log('🔍 Parsed shops list:', list);
+      // console.log('🔍 First shop sample:', list[0]);
       if (list.length > 0) {
-        console.log('🔍 Shop fields:', {
-          _id: list[0]._id,
-          id: list[0].id,
-          shopId: list[0].shopId,
-          name: list[0].name,
-          shopName: list[0].shopName
-        });
+        // console.log('🔍 Shop fields:', {
+        //   _id: list[0]._id,
+        //   id: list[0].id,
+        //   shopId: list[0].shopId,
+        //   name: list[0].name,
+        //   shopName: list[0].shopName
+        // });
       }
       if (list.length) setShops(list);
     } catch (error) {
-      console.error('❌ Error fetching shops:', error);
-      console.log('🔍 Error details:', error);
+      // console.error('❌ Error fetching shops:', error);
+      // console.log('🔍 Error details:', error);
     } finally {
       setShopsLoading(false);
     }
@@ -93,12 +93,12 @@ const BillManagementPage = () => {
       const token = localStorage.getItem('token');
       
       if (!token) {
-        console.log('❌ No token found, redirecting to login');
+        // console.log('❌ No token found, redirecting to login');
         router.push('/login/seller');
         return;
       }
       
-      console.log('🔍 Fetching bills with token:', token ? 'Token present' : 'No token');
+      // console.log('🔍 Fetching bills with token:', token ? 'Token present' : 'No token');
       
       const params = new URLSearchParams();
       if (sellerId) params.append('sellerId', sellerId);
@@ -111,29 +111,29 @@ const BillManagementPage = () => {
       
       const response = await fetch(api(`/api/bills?${params.toString()}`), { headers: token ? { 'Authorization': `Bearer ${token}` } : {} });
       
-      console.log('🔍 Bills API response status:', response.status);
+      // console.log('🔍 Bills API response status:', response.status);
       
       const data = await response.json().catch(() => ({}));
       const list = toArray(data);
-      console.log('🔍 Raw bills API response:', data);
-      console.log('🔍 Parsed bills list:', list);
-      console.log('🔍 First bill sample:', list[0]);
+      // console.log('🔍 Raw bills API response:', data);
+      // console.log('🔍 Parsed bills list:', list);
+      // console.log('🔍 First bill sample:', list[0]);
       if (list.length > 0) {
-        console.log('🔍 Bill shop fields:', {
-          shopId: list[0].shopId,
-          'shop._id': list[0].shop?._id,
-          shopName: list[0].shopName,
-          'shop.name': list[0].shop?.name,
-          shop: list[0].shop
-        });
+        // console.log('🔍 Bill shop fields:', {
+        //   shopId: list[0].shopId,
+        //   'shop._id': list[0].shop?._id,
+        //   shopName: list[0].shopName,
+        //   'shop.name': list[0].shop?.name,
+        //   shop: list[0].shop
+        // });
       }
       if (list.length) {
         setBills(list);
         // Stats will be recalculated by useEffect when bills state updates
       }
     } catch (error) {
-      console.error('❌ Error fetching bills:', error);
-      console.log('🔍 Error details:', error);
+      // console.error('❌ Error fetching bills:', error);
+      // console.log('🔍 Error details:', error);
     } finally {
       setLoading(false);
     }
@@ -177,9 +177,9 @@ const BillManagementPage = () => {
   // Calculate stats from local bills data
   const calculateStatsFromBills = useCallback((billsData, currentSelectedShop = selectedShop, currentSearchTerm = searchTerm, currentFilterDateRange = filterDateRange) => {
     const safeBills = Array.isArray(billsData) ? billsData : [];
-    console.log('🔍 Calculating stats from bills data:', safeBills.length, 'bills');
-    console.log('🔍 Bills data sample:', safeBills.slice(0, 2)); // Show first 2 bills for debugging
-    console.log('🔍 Current filters:', { currentSelectedShop, currentSearchTerm, currentFilterDateRange });
+    // console.log('🔍 Calculating stats from bills data:', safeBills.length, 'bills');
+    // console.log('🔍 Bills data sample:', safeBills.slice(0, 2)); // Show first 2 bills for debugging
+    // console.log('🔍 Current filters:', { currentSelectedShop, currentSearchTerm, currentFilterDateRange });
     
     let filteredBills = safeBills;
     
@@ -188,20 +188,20 @@ const BillManagementPage = () => {
       const selectedShopObj = (Array.isArray(shops) ? shops : [])
         .find(s => String(s?._id || s?.id || s?.shopId || '') === String(currentSelectedShop));
       
-      console.log('🔍 Shop filtering debug:', {
-        currentSelectedShop,
-        selectedShopObj,
-        shopsCount: shops.length,
-        billsBeforeFilter: filteredBills.length
-      });
+      // console.log('🔍 Shop filtering debug:', {
+      //   currentSelectedShop,
+      //   selectedShopObj,
+      //   shopsCount: shops.length,
+      //   billsBeforeFilter: filteredBills.length
+      // });
       
       const normalize = (v) => v ? String(v).toLowerCase().replace(/[^a-z0-9]/g, '') : '';
       const selNameNorm = normalize(selectedShopObj?.name || selectedShopObj?.title || selectedShopObj?.shopName || '');
       
-      console.log('🔍 Shop name normalization:', {
-        originalName: selectedShopObj?.name,
-        normalizedName: selNameNorm
-      });
+      // console.log('🔍 Shop name normalization:', {
+      //   originalName: selectedShopObj?.name,
+      //   normalizedName: selNameNorm
+      // });
       
       filteredBills = filteredBills.filter(bill => {
         // Handle both string and object shopId
@@ -222,15 +222,15 @@ const BillManagementPage = () => {
           selNameNorm.includes(billNameNorm)
         );
         
-        console.log('🔍 Bill filtering:', {
-          billId: bill._id,
-          billShopId,
-          billShopName: bill.shopName,
-          billNameNorm,
-          selectedShopId: String(currentSelectedShop),
-          idMatch: billShopId === String(currentSelectedShop),
-          nameMatch
-        });
+        // console.log('🔍 Bill filtering:', {
+        //   billId: bill._id,
+        //   billShopId,
+        //   billShopName: bill.shopName,
+        //   billNameNorm,
+        //   selectedShopId: String(currentSelectedShop),
+        //   idMatch: billShopId === String(currentSelectedShop),
+        //   nameMatch
+        // });
         
         if (billShopId) return billShopId === String(currentSelectedShop);
         if (selNameNorm && billNameNorm) {
@@ -238,7 +238,7 @@ const BillManagementPage = () => {
         }
         return true;
       });
-      console.log('🔍 After shop filter:', filteredBills.length, 'bills');
+      // console.log('🔍 After shop filter:', filteredBills.length, 'bills');
     }
     
     // Filter by search term if any
@@ -248,7 +248,7 @@ const BillManagementPage = () => {
         bill.customerPhone?.includes(currentSearchTerm) ||
         bill.billNumber?.toLowerCase().includes(currentSearchTerm.toLowerCase())
       );
-      console.log('🔍 After search filter:', filteredBills.length, 'bills');
+      // console.log('🔍 After search filter:', filteredBills.length, 'bills');
     }
     
     // Filter by date range if any
@@ -259,23 +259,23 @@ const BillManagementPage = () => {
           const billDate = new Date(bill.billDate || bill.createdAt || bill.invoiceDate || bill.date || 0).toISOString().split('T')[0];
           return billDate >= dateRange.startDate && billDate <= dateRange.endDate;
         });
-        console.log('🔍 After date filter:', filteredBills.length, 'bills');
+        // console.log('🔍 After date filter:', filteredBills.length, 'bills');
       }
     }
     
-    console.log('🔍 Final filtered bills:', filteredBills.length, 'bills');
+    // console.log('🔍 Final filtered bills:', filteredBills.length, 'bills');
     const num = (v) => Number(v ?? 0);
     const totalBills = filteredBills.length;
     const totalAmount = filteredBills.reduce((sum, bill) => sum + num(bill.totalAmount ?? bill.pricing?.totalAmount), 0);
     const paidAmount = filteredBills.reduce((sum, bill) => sum + num(bill.paidAmount ?? bill.payment?.paidAmount), 0);
     const remainingAmount = Math.max(0, totalAmount - paidAmount);
     
-    console.log('📊 Calculated stats:', {
-      totalBills,
-      totalAmount,
-      paidAmount,
-      remainingAmount
-    });
+    // console.log('📊 Calculated stats:', {
+    //   totalBills,
+    //   totalAmount,
+    //   paidAmount,
+    //   remainingAmount
+    // });
     
     return {
       totalBills,
@@ -289,7 +289,7 @@ const BillManagementPage = () => {
 
   // Fetch bill statistics (simplified - stats are now calculated locally)
   const fetchStats = useCallback(async () => {
-    console.log('📊 fetchStats called - stats will be calculated by useEffect');
+    // console.log('📊 fetchStats called - stats will be calculated by useEffect');
     // Stats are now calculated by useEffect when bills data changes
     // This function is kept for compatibility but doesn't need to do anything
   }, []);
@@ -297,7 +297,7 @@ const BillManagementPage = () => {
   // Load real data from database
   useEffect(() => {
     const loadRealData = async () => {
-      console.log('🔄 Loading real data from database...');
+      // console.log('🔄 Loading real data from database...');
       
       try {
         // Try to fetch data from API
@@ -305,7 +305,7 @@ const BillManagementPage = () => {
         await fetchBills();
         await fetchStats();
       } catch (error) {
-        console.error('❌ Error loading data:', error);
+        // console.error('❌ Error loading data:', error);
       }
     };
     
@@ -327,19 +327,19 @@ const BillManagementPage = () => {
 
   // Recalculate stats whenever bills, selectedShop, searchTerm, or filterDateRange changes
   useEffect(() => {
-    console.log('🔄 Recalculating stats due to dependency change...');
-    console.log('🔍 Current state:', {
-      billsCount: bills.length,
-      selectedShop,
-      searchTerm,
-      filterDateRange,
-      shopsCount: shops.length
-    });
+    // console.log('🔄 Recalculating stats due to dependency change...');
+    // console.log('🔍 Current state:', {
+    //   billsCount: bills.length,
+    //   selectedShop,
+    //   searchTerm,
+    //   filterDateRange,
+    //   shopsCount: shops.length
+    // });
     
     const calculatedStats = calculateStatsFromBills(bills, selectedShop, searchTerm, filterDateRange);
     setStats(calculatedStats);
     
-    console.log('📊 Updated stats:', calculatedStats);
+    // console.log('📊 Updated stats:', calculatedStats);
   }, [bills, selectedShop, searchTerm, filterDateRange, calculateStatsFromBills, shops]);
 
   // Show loading while checking authentication
@@ -374,10 +374,10 @@ const BillManagementPage = () => {
         throw new Error('Please log in to create a bill');
       }
       
-      console.log('🔍 Creating bill with data:', billData);
-      console.log('🔍 Token present:', token ? 'Yes' : 'No');
+      // console.log('🔍 Creating bill with data:', billData);
+      // console.log('🔍 Token present:', token ? 'Yes' : 'No');
       
-      const response = await fetch('/api/bills', {
+      const response = await fetch(`${API_BASE_URL}/bills`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -386,9 +386,9 @@ const BillManagementPage = () => {
         body: JSON.stringify(billData)
       });
 
-      console.log('🔍 Bill creation response status:', response.status);
+      // console.log('🔍 Bill creation response status:', response.status);
       const data = await response.json();
-      console.log('🔍 Bill creation response data:', data);
+      // console.log('🔍 Bill creation response data:', data);
       
       if (response.status === 401) {
         // Clear invalid token and redirect to login
@@ -398,21 +398,21 @@ const BillManagementPage = () => {
       }
       
       if (response.status === 500) {
-        console.error('❌ Server error:', data);
+        // console.error('❌ Server error:', data);
         throw new Error('Server error: ' + (data.message || 'Internal server error'));
       }
       
       if (data.success) {
-        console.log('✅ Bill created successfully');
+        // console.log('✅ Bill created successfully');
         fetchBills();
         fetchStats();
         alert('Bill created successfully!');
       } else {
-        console.error('❌ API returned error:', data.message);
+        // console.error('❌ API returned error:', data.message);
         throw new Error(data.message || 'Failed to create bill');
       }
     } catch (error) {
-      console.error('❌ Error saving bill:', error);
+      // console.error('❌ Error saving bill:', error);
       throw error;
     }
   };
@@ -425,9 +425,9 @@ const BillManagementPage = () => {
         throw new Error('Please log in to create a shop');
       }
       
-      console.log('Creating shop with token:', token ? 'Token present' : 'No token');
+      // console.log('Creating shop with token:', token ? 'Token present' : 'No token');
       
-      const response = await fetch('/api/shops', {
+      const response = await fetch(`${API_BASE_URL}/shops`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -446,15 +446,15 @@ const BillManagementPage = () => {
       }
       
       if (data.success) {
-        console.log('Shop created successfully:', data.data);
+        // console.log('Shop created successfully:', data.data);
         await fetchShops(); // Wait for shops to be fetched
         alert('Shop added successfully!');
       } else {
-        console.error('Failed to create shop:', data.message);
+        // console.error('Failed to create shop:', data.message);
         throw new Error(data.message || 'Failed to create shop');
       }
     } catch (error) {
-      console.error('Error saving shop:', error);
+      // console.error('Error saving shop:', error);
       throw error;
     }
   };
@@ -535,7 +535,7 @@ const BillManagementPage = () => {
         throw new Error('Please log in to add payment');
       }
       
-      console.log('🔍 Adding payment with data:', paymentData);
+      // console.log('🔍 Adding payment with data:', paymentData);
       
       // Check if this is a combined bill payment
       if (paymentData.billId === 'combined-remaining' && selectedBill?.isCombinedBill) {
@@ -552,9 +552,9 @@ const BillManagementPage = () => {
         body: JSON.stringify(paymentData)
       });
 
-      console.log('🔍 Payment response status:', response.status);
+      // console.log('🔍 Payment response status:', response.status);
       const data = await response.json();
-      console.log('🔍 Payment response data:', data);
+      // console.log('🔍 Payment response data:', data);
       
       if (response.status === 401) {
         localStorage.removeItem('token');
@@ -563,21 +563,21 @@ const BillManagementPage = () => {
       }
       
       if (response.status === 500) {
-        console.error('❌ Server error:', data);
+        // console.error('❌ Server error:', data);
         throw new Error('Server error: ' + (data.message || 'Internal server error'));
       }
       
       if (data.success) {
-        console.log('✅ Payment added successfully');
+        // console.log('✅ Payment added successfully');
         fetchBills();
         fetchStats();
         alert('Payment added successfully!');
       } else {
-        console.error('❌ API returned error:', data.message);
+        // console.error('❌ API returned error:', data.message);
         throw new Error(data.message || 'Failed to add payment');
       }
     } catch (error) {
-      console.error('❌ Error adding payment:', error);
+      // console.error('❌ Error adding payment:', error);
       throw error;
     }
   };
@@ -589,10 +589,10 @@ const BillManagementPage = () => {
       let remainingPayment = paymentAmount;
       let processedBills = [];
       
-      console.log('🔄 Processing combined bill payment:', {
-        totalPayment: paymentAmount,
-        billsCount: remainingBills.length
-      });
+      // console.log('🔄 Processing combined bill payment:', {
+      //   totalPayment: paymentAmount,
+      //   billsCount: remainingBills.length
+      // });
       
       // Process each bill in order (oldest first)
       for (const bill of remainingBills) {
@@ -611,11 +611,11 @@ const BillManagementPage = () => {
             notes: `${paymentData.notes || ''} (Part of combined payment: ₹${paymentAmount})`.trim()
           };
           
-          console.log(`💳 Processing payment for bill ${bill.billNumber}:`, {
-            billRemaining,
-            paymentForThisBill,
-            remainingPayment
-          });
+          // console.log(`💳 Processing payment for bill ${bill.billNumber}:`, {
+          //   billRemaining,
+          //   paymentForThisBill,
+          //   remainingPayment
+          // });
           
           const response = await fetch(`/api/bills/${bill._id}/payment`, {
             method: 'POST',
@@ -641,9 +641,9 @@ const BillManagementPage = () => {
               amount: paymentForThisBill,
               remaining: billRemaining - paymentForThisBill
             });
-            console.log(`✅ Payment processed for bill ${bill.billNumber}`);
+            // console.log(`✅ Payment processed for bill ${bill.billNumber}`);
           } else {
-            console.error(`❌ Error processing payment for bill ${bill.billNumber}:`, data.message);
+            // console.error(`❌ Error processing payment for bill ${bill.billNumber}:`, data.message);
             throw new Error(`Failed to process payment for bill ${bill.billNumber}: ${data.message}`);
           }
         }
@@ -661,7 +661,7 @@ const BillManagementPage = () => {
       alert(successMessage);
       
     } catch (error) {
-      console.error('❌ Error processing combined bill payment:', error);
+      // console.error('❌ Error processing combined bill payment:', error);
       throw error;
     }
   };
@@ -674,7 +674,7 @@ const BillManagementPage = () => {
         throw new Error('Please log in to update a bill');
       }
       
-      console.log('🔍 Updating bill with data:', billData);
+      // console.log('🔍 Updating bill with data:', billData);
       
       const response = await fetch(`/api/bills/${selectedBill._id}`, {
         method: 'PUT',
@@ -685,9 +685,9 @@ const BillManagementPage = () => {
         body: JSON.stringify(billData)
       });
 
-      console.log('🔍 Bill update response status:', response.status);
+      // console.log('🔍 Bill update response status:', response.status);
       const data = await response.json();
-      console.log('🔍 Bill update response data:', data);
+      // console.log('🔍 Bill update response data:', data);
       
       if (response.status === 401) {
         // Clear invalid token and redirect to login
@@ -697,21 +697,21 @@ const BillManagementPage = () => {
       }
       
       if (response.status === 500) {
-        console.error('❌ Server error:', data);
+        // console.error('❌ Server error:', data);
         throw new Error('Server error: ' + (data.message || 'Internal server error'));
       }
       
       if (data.success) {
-        console.log('✅ Bill updated successfully');
+        // console.log('✅ Bill updated successfully');
         fetchBills();
         fetchStats();
         alert('Bill updated successfully!');
       } else {
-        console.error('❌ API returned error:', data.message);
+        // console.error('❌ API returned error:', data.message);
         throw new Error(data.message || 'Failed to update bill');
       }
     } catch (error) {
-      console.error('❌ Error updating bill:', error);
+      // console.error('❌ Error updating bill:', error);
       throw error;
     }
   };
@@ -736,7 +736,7 @@ const BillManagementPage = () => {
           throw new Error(data.message);
         }
       } catch (error) {
-        console.error('Error deleting bill:', error);
+        // console.error('Error deleting bill:', error);
         alert('Error deleting bill');
       }
     }
@@ -786,7 +786,7 @@ const BillManagementPage = () => {
         <div className="flex gap-3">
           <button
             onClick={async () => {
-              console.log('🔄 Refreshing all data from database...');
+              // console.log('🔄 Refreshing all data from database...');
               await fetchShops();
               await fetchBills();
               await fetchStats();
@@ -905,7 +905,7 @@ const BillManagementPage = () => {
             <select
               value={selectedShop}
               onChange={(e) => {
-                console.log('🏪 Shop changed to:', e.target.value);
+                // console.log('🏪 Shop changed to:', e.target.value);
                 setSelectedShop(e.target.value);
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -930,7 +930,7 @@ const BillManagementPage = () => {
             <select
               value={filterDateRange}
               onChange={(e) => {
-                console.log('📅 Date range changed to:', e.target.value);
+                // console.log('📅 Date range changed to:', e.target.value);
                 setFilterDateRange(e.target.value);
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -956,7 +956,7 @@ const BillManagementPage = () => {
                 placeholder="Search bills..."
                 value={searchTerm}
                 onChange={(e) => {
-                  console.log('🔍 Search term changed to:', e.target.value);
+                  // console.log('🔍 Search term changed to:', e.target.value);
                   setSearchTerm(e.target.value);
                 }}
                 className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -967,7 +967,7 @@ const BillManagementPage = () => {
           <div className="flex items-end">
             <button
               onClick={() => {
-                console.log('🧹 Clearing all filters');
+                // console.log('🧹 Clearing all filters');
                 setSelectedShop('');
                 setSearchTerm('');
                 setFilterDateRange('');
@@ -1059,14 +1059,14 @@ const BillManagementPage = () => {
             }
           }
           
-          console.log('🔍 Filtered bills:', {
-            selectedShop,
-            searchTerm,
-            filterDateRange,
-            originalCount: Array.isArray(bills) ? bills.length : 0,
-            filteredCount: Array.isArray(filteredBills) ? filteredBills.length : 0,
-            filteredBills: (Array.isArray(filteredBills) ? filteredBills : []).map(b => ({ id: b._id, shop: b.shopName, amount: b.pricing?.totalAmount }))
-          });
+          // console.log('🔍 Filtered bills:', {
+          //   selectedShop,
+          //   searchTerm,
+          //   filterDateRange,
+          //   originalCount: Array.isArray(bills) ? bills.length : 0,
+          //   filteredCount: Array.isArray(filteredBills) ? filteredBills.length : 0,
+          //   filteredBills: (Array.isArray(filteredBills) ? filteredBills : []).map(b => ({ id: b._id, shop: b.shopName, amount: b.pricing?.totalAmount }))
+          // });
           
           
           if (filteredBills.length === 0) {

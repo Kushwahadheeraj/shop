@@ -48,7 +48,9 @@ export async function POST(request) {
       );
     }
     
-    const response = await fetch(`${API_BASE_URL}/shops`, {
+    const url = `${API_BASE_URL}/shops`;
+    
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Authorization': token,

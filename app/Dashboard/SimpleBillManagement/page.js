@@ -8,14 +8,14 @@ import AddShopForm from './AddShopForm';
 import SimpleBillViewModal from './SimpleBillViewModal';
 import EditSimpleBillForm from './EditSimpleBillForm';
 import PaymentModal from './PaymentModal';
+import API_BASE_URL from '@/lib/apiConfig';
 
 const SimpleBillManagementPage = () => {
   // Backend helpers - memoize these to prevent recreation
-  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.API_BASE_URL || '';
   const join = useCallback((base, path) => `${base.replace(/\/$/, '')}${path}`, []);
   const api = useCallback((path) => {
-    return API_BASE ? join(API_BASE, path) : path;
-  }, [API_BASE, join]);
+    return join(API_BASE_URL, path);
+  }, [join]);
   const toArray = useCallback((res) => {
     if (Array.isArray(res)) return res;
     if (Array.isArray(res?.data)) return res.data;
@@ -73,12 +73,33 @@ const SimpleBillManagementPage = () => {
       const token = localStorage.getItem('token');
       const currentSellerId = getSellerId();
       const qs = currentSellerId ? `?sellerId=${encodeURIComponent(currentSellerId)}` : '';
-      const response = await fetch(api(`/api/shops${qs}`), { headers: token ? { 'Authorization': `Bearer ${token}` } : {} });
+      const response = await fetch(api(`/shops${qs}`), { headers: token ? { 'Authorization': `Bearer ${token}` } : {} });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        // console.error('❌ Error fetching shops - Response:', response.status, errorData);
+        // console.error('❌ Error details:', {
+        //   message: errorData.message,
+        //   error: errorData.error,
+        //   errorName: errorData.errorName,
+        //   errorCode: errorData.errorCode
+        // });
+        // Show user-friendly error
+        if (errorData.message) {
+          alert(`Error loading shops: ${errorData.message}`);
+        }
+        setShops([]);
+        return;
+      }
+      
       const data = await response.json().catch(() => ({}));
       const list = toArray(data);
       setShops(Array.isArray(list) ? list : []);
     } catch (error) {
-      console.error('❌ Error fetching shops:', error);
+      // console.error('❌ Error fetching shops:', error);
+      // console.error('❌ Error stack:', error.stack);
+      alert(`Error loading shops: ${error.message || 'Unknown error'}`);
+      setShops([]);
     } finally {
       setShopsLoading(false);
       fetchingShopsRef.current = false;
@@ -106,12 +127,12 @@ const SimpleBillManagementPage = () => {
       if (currentSellerId) params.append('sellerId', currentSellerId);
       
       // Always fetch all bills - filtering is done client-side for better UX
-      const response = await fetch(api(`/api/simple-bills?${params.toString()}`), { headers: token ? { 'Authorization': `Bearer ${token}` } : {} });
+      const response = await fetch(api(`/simple-bills?${params.toString()}`), { headers: token ? { 'Authorization': `Bearer ${token}` } : {} });
       const data = await response.json().catch(() => ({}));
       const list = toArray(data);
       setBills(Array.isArray(list) ? list : []);
     } catch (error) {
-      console.error('❌ Error fetching bills:', error);
+      // console.error('❌ Error fetching bills:', error);
     } finally {
       setLoading(false);
       fetchingBillsRef.current = false;
@@ -236,7 +257,7 @@ const SimpleBillManagementPage = () => {
         await fetchBills(); // Fetch all bills, filtering is done client-side
         await fetchStats();
       } catch (error) {
-        console.error('❌ Error loading data:', error);
+        // console.error('❌ Error loading data:', error);
         hasLoadedOnceRef.current = false; // Reset on error so it can retry
       }
     };
@@ -281,7 +302,7 @@ const SimpleBillManagementPage = () => {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('Please log in to create a bill');
       
-      const response = await fetch('/api/simple-bills', {
+      const response = await fetch(`${API_BASE_URL}/simple-bills`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -305,7 +326,7 @@ const SimpleBillManagementPage = () => {
         throw new Error(data.message || 'Failed to create bill');
       }
     } catch (error) {
-      console.error('❌ Error saving bill:', error);
+      // console.error('❌ Error saving bill:', error);
       throw error;
     }
   };
@@ -315,7 +336,7 @@ const SimpleBillManagementPage = () => {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('Please log in to create a shop');
       
-      const response = await fetch('/api/shops', {
+      const response = await fetch(`${API_BASE_URL}/shops`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -324,13 +345,26 @@ const SimpleBillManagementPage = () => {
         body: JSON.stringify(shopData)
       });
 
-      const data = await response.json();
-      if (response.status === 401) {
-        localStorage.removeItem('token');
-        router.push('/login/seller');
-        throw new Error('Session expired. Please log in again.');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        // console.error('❌ Error creating shop - Response:', response.status, errorData);
+        // console.error('❌ Error details:', {
+        //   message: errorData.message,
+        //   error: errorData.error,
+        //   errorName: errorData.errorName,
+        //   errorCode: errorData.errorCode
+        // });
+        
+        if (response.status === 401) {
+          localStorage.removeItem('token');
+          router.push('/login/seller');
+          throw new Error('Session expired. Please log in again.');
+        }
+        
+        throw new Error(errorData.message || errorData.error || 'Failed to create shop');
       }
       
+      const data = await response.json();
       if (data.success) {
         await fetchShops();
         alert('Shop added successfully!');
@@ -338,7 +372,8 @@ const SimpleBillManagementPage = () => {
         throw new Error(data.message || 'Failed to create shop');
       }
     } catch (error) {
-      console.error('Error saving shop:', error);
+      // console.error('❌ Error saving shop:', error);
+      // console.error('❌ Error stack:', error.stack);
       throw error;
     }
   };
@@ -418,7 +453,7 @@ const SimpleBillManagementPage = () => {
         return;
       }
       
-      const response = await fetch(`/api/simple-bills/${paymentData.billId}/payment`, {
+      const response = await fetch(`/simple-bills/${paymentData.billId}/payment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -442,7 +477,7 @@ const SimpleBillManagementPage = () => {
         throw new Error(data.message || 'Failed to add payment');
       }
     } catch (error) {
-      console.error('❌ Error adding payment:', error);
+      // console.error('❌ Error adding payment:', error);
       throw error;
     }
   };
@@ -468,7 +503,7 @@ const SimpleBillManagementPage = () => {
             notes: `${paymentData.notes || ''} (Part of combined payment: ₹${paymentAmount})`.trim()
           };
           
-          const response = await fetch(`/api/simple-bills/${bill._id}/payment`, {
+          const response = await fetch(`/simple-bills/${bill._id}/payment`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -508,7 +543,7 @@ const SimpleBillManagementPage = () => {
       alert(successMessage);
       
     } catch (error) {
-      console.error('❌ Error processing combined bill payment:', error);
+      // console.error('❌ Error processing combined bill payment:', error);
       throw error;
     }
   };
@@ -518,7 +553,7 @@ const SimpleBillManagementPage = () => {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('Please log in to update a bill');
       
-      const response = await fetch(`/api/simple-bills/${selectedBill._id}`, {
+      const response = await fetch(`/simple-bills/${selectedBill._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -542,7 +577,7 @@ const SimpleBillManagementPage = () => {
         throw new Error(data.message || 'Failed to update bill');
       }
     } catch (error) {
-      console.error('❌ Error updating bill:', error);
+      // console.error('❌ Error updating bill:', error);
       throw error;
     }
   };
@@ -551,7 +586,7 @@ const SimpleBillManagementPage = () => {
     if (window.confirm('Are you sure you want to delete this bill?')) {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`/api/simple-bills/${billId}`, {
+        const response = await fetch(`/simple-bills/${billId}`, {
           method: 'DELETE',
           headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -565,7 +600,7 @@ const SimpleBillManagementPage = () => {
           throw new Error(data.message);
         }
       } catch (error) {
-        console.error('Error deleting bill:', error);
+        // console.error('Error deleting bill:', error);
         alert('Error deleting bill');
       }
     }

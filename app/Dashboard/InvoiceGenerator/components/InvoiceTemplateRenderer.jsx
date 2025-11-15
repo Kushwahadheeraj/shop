@@ -167,9 +167,9 @@ const calculateTotals = (bill) => {
 };
 
 const Terms = () => (
-  <div className="border-t border-gray-200 pt-4 mt-6">
-    <h3 className="text-sm font-semibold text-slate-900 uppercase mb-3">Terms and Conditions</h3>
-    <div className="text-xs text-gray-600 leading-5 space-y-2">
+  <div className="border-t border-gray-200 pt-4 mt-6 print:pt-3 print:mt-4">
+    <h3 className="text-sm font-semibold text-slate-900 uppercase mb-3 print:text-xs print:mb-2">Terms and Conditions</h3>
+    <div className="text-xs text-gray-600 leading-5 space-y-2 print:text-[10px] print:leading-relaxed print:space-y-1">
       <p>1. Goods once sold will not be taken back; exchange is allowed only after 12 PM. (एक बार बेचे गए सामान वापस नहीं लिए जाएंगे; केवल दोपहर 12 बजे के बाद ही एक्सचेंज की अनुमति है।)</p>
       <p>2. Please check items before leaving the counter. No complaints will be entertained after leaving. (कृपया काउंटर छोड़ने से पहले सामान जांच लें। छोड़ने के बाद कोई शिकायत स्वीकार नहीं की जाएगी।)</p>
       <p>3. Payments through UPI/Cash only unless agreed in writing. (लिखित रूप से सहमति के बिना केवल UPI/नकद के माध्यम से भुगतान।)</p>
@@ -250,7 +250,7 @@ const InvoiceHeader = ({ bill }) => (
   </header>
 );
 
-// New header with QR code and Bill To in split layout - Exact same as image
+// New header with QR code and Bill To in split layout - Exact same as image A
 const InvoiceHeaderWithQR = ({ bill }) => {
   const totals = calculateTotals(bill);
   const upiId = '8299301972@ybl';
@@ -258,18 +258,24 @@ const InvoiceHeaderWithQR = ({ bill }) => {
     2
   )}&cu=INR&tn=Payment%20for%20Invoice%20${bill?.billNumber || bill?.invoiceNumber || ''}`;
 
+  // Format invoice number like "INV 2025 9234" instead of "INV-2025-9234"
+  const formatInvoiceNumber = (invNum) => {
+    if (!invNum) return '—';
+    return invNum.replace(/-/g, ' ');
+  };
+
   return (
-    <header className="mb-6">
-      {/* Three column layout: Left (Invoice Details + QR), Middle (Supplier + Client), Right (Shipping) */}
-      <div className="grid grid-cols-12 gap-4 mb-4">
-        {/* Left Column: Invoice Details and QR Code */}
-        <div className="col-span-12 md:col-span-3 space-y-4">
+    <header className="mb-6 print:mb-4">
+      {/* 3 equal columns layout: QR, Supplier/Bill To, Shipping */}
+      <div className="grid grid-cols-3 gap-4 mb-4 print:gap-3 print:mb-3">
+        {/* Column 1: Invoice Details and QR Code */}
+        <div className="col-span-1 space-y-4 print:space-y-3">
           <div>
-            <h1 className="text-4xl font-bold text-emerald-500 mb-4">INVOICE</h1>
-            <div className="space-y-2 text-sm text-slate-700">
+            <h1 className="text-4xl font-bold text-emerald-500 mb-4 print:text-3xl print:mb-3">INVOICE</h1>
+            <div className="space-y-2 text-sm text-slate-700 print:text-xs">
               <p>
                 <span className="font-semibold text-emerald-600">INVOICE:</span>{' '}
-                {bill?.billNumber || bill?.invoiceNumber || '—'}
+                {formatInvoiceNumber(bill?.billNumber || bill?.invoiceNumber)}
               </p>
               <p>
                 <span className="font-semibold text-emerald-600">DATE:</span>{' '}
@@ -277,17 +283,17 @@ const InvoiceHeaderWithQR = ({ bill }) => {
               </p>
             </div>
           </div>
-          <div className="mt-4">
-            <QRCodeSVG value={value} size={120} includeMargin level="M" />
+          <div className="mt-4 print:mt-3">
+            <QRCodeSVG value={value} size={120} includeMargin level="M" className="print:w-24 print:h-24" />
           </div>
         </div>
 
-        {/* Middle Column: Supplier (Top) and Client (Bottom) */}
-        <div className="col-span-12 md:col-span-5 space-y-6">
+        {/* Column 2: Supplier and Bill To */}
+        <div className="col-span-1 space-y-6 print:space-y-4">
           {/* Supplier Section */}
           <div>
-            <h2 className="text-sm font-semibold text-emerald-600 uppercase mb-2">SUPPLIER</h2>
-            <div className="text-sm text-slate-700 space-y-1">
+            <h2 className="text-sm font-semibold text-emerald-600 uppercase mb-2 print:text-xs print:mb-1">SUPPLIER</h2>
+            <div className="text-sm text-slate-700 space-y-1 print:text-xs">
               <p className="font-semibold">{bill?.shopName || 'Shop Name'}</p>
               {bill?.shopAddress && <p>{bill.shopAddress}</p>}
               {(bill?.shopPhone || bill?.shopEmail) && (
@@ -301,8 +307,8 @@ const InvoiceHeaderWithQR = ({ bill }) => {
 
           {/* Bill To Section */}
           <div>
-            <h2 className="text-sm font-semibold text-emerald-600 uppercase mb-2">BILL TO</h2>
-            <div className="text-sm text-slate-700 space-y-1">
+            <h2 className="text-sm font-semibold text-emerald-600 uppercase mb-2 print:text-xs print:mb-1">BILL TO</h2>
+            <div className="text-sm text-slate-700 space-y-1 print:text-xs">
               <p className="font-semibold">
                 {bill?.customerName || bill?.customer?.name || 'Valued Customer'}
               </p>
@@ -319,10 +325,10 @@ const InvoiceHeaderWithQR = ({ bill }) => {
           </div>
         </div>
 
-        {/* Right Column: Shipping Address */}
-        <div className="col-span-12 md:col-span-4">
-          <h2 className="text-sm font-semibold text-emerald-600 uppercase mb-2">SHIPPING ADDRESS</h2>
-          <div className="text-sm text-slate-700 space-y-1">
+        {/* Column 3: Shipping Address */}
+        <div className="col-span-1">
+          <h2 className="text-sm font-semibold text-emerald-600 uppercase mb-2 print:text-xs print:mb-1">SHIPPING ADDRESS</h2>
+          <div className="text-sm text-slate-700 space-y-1 print:text-xs">
             <p className="font-semibold">
               {bill?.customerName || bill?.customer?.name || 'Valued Customer'}
             </p>
@@ -337,7 +343,7 @@ const InvoiceHeaderWithQR = ({ bill }) => {
       </div>
 
       {/* Divider line */}
-      <div className="border-t-2 border-emerald-400 my-4"></div>
+      <div className="border-t-2 border-emerald-400 my-4 print:my-3"></div>
     </header>
   );
 };
@@ -382,20 +388,20 @@ const CustomerCard = ({ bill }) => (
 const ItemsTable = ({ bill }) => {
   const items = Array.isArray(bill?.items) ? bill.items : [];
   return (
-    <div className="overflow-hidden">
-      <table className="w-full text-sm text-slate-700 bg-white border-collapse">
+    <div className="overflow-hidden print:overflow-visible">
+      <table className="w-full text-sm text-slate-700 bg-white border-collapse print:text-xs">
         <thead>
-          <tr className="border-b-2 border-emerald-400">
-            <th className="text-left py-3 px-3 font-semibold text-emerald-600 uppercase text-xs">Article</th>
-            <th className="text-right py-3 px-3 font-semibold text-emerald-600 uppercase text-xs">Quantity</th>
-            <th className="text-right py-3 px-3 font-semibold text-emerald-600 uppercase text-xs">Unit Price</th>
-            <th className="text-right py-3 px-3 font-semibold text-emerald-600 uppercase text-xs">Total</th>
+          <tr className="border-b-2 border-emerald-400 print:border-b-2">
+            <th className="text-left py-3 px-3 font-semibold text-emerald-600 uppercase text-xs print:py-2 print:px-2">Article</th>
+            <th className="text-right py-3 px-3 font-semibold text-emerald-600 uppercase text-xs print:py-2 print:px-2">Quantity</th>
+            <th className="text-right py-3 px-3 font-semibold text-emerald-600 uppercase text-xs print:py-2 print:px-2">Unit Price</th>
+            <th className="text-right py-3 px-3 font-semibold text-emerald-600 uppercase text-xs print:py-2 print:px-2">Total</th>
           </tr>
         </thead>
         <tbody>
           {items.length === 0 ? (
             <tr>
-              <td colSpan={4} className="px-4 py-6 text-center text-sm text-slate-400">
+              <td colSpan={4} className="px-4 py-6 text-center text-sm text-slate-400 print:py-4 print:text-xs">
                 No items added to this invoice.
               </td>
             </tr>
@@ -409,18 +415,18 @@ const ItemsTable = ({ bill }) => {
               return (
                 <tr
                   key={`${item.name}-${idx}`}
-                  className="border-b border-slate-200"
+                  className="border-b border-slate-200 print:border-b print:border-slate-200"
                 >
-              <td className="px-3 py-3 font-medium text-slate-800">
-                {item.name || 'Item'}
-              </td>
-                  <td className="px-3 py-3 text-right text-slate-700">
+                  <td className="px-3 py-3 font-medium text-slate-800 print:py-2 print:px-2">
+                    {item.name || 'Item'}
+                  </td>
+                  <td className="px-3 py-3 text-right text-slate-700 print:py-2 print:px-2">
                     {quantityDisplay}
                   </td>
-                  <td className="px-3 py-3 text-right text-slate-700">
+                  <td className="px-3 py-3 text-right text-slate-700 print:py-2 print:px-2">
                     {fallbackCurrency(rate)}
                   </td>
-                  <td className="px-3 py-3 text-right font-semibold text-slate-900">
+                  <td className="px-3 py-3 text-right font-semibold text-slate-900 print:py-2 print:px-2">
                     {fallbackCurrency(amount)}
                   </td>
                 </tr>
@@ -440,29 +446,29 @@ const TotalsFooter = ({ bill }) => {
   const paise = Math.round((totals.totalAmount - Math.floor(totals.totalAmount)) * 100);
   
   return (
-    <section className="mt-6">
-      <div className="flex justify-end">
-        <div className="w-full md:w-80 space-y-2">
-          <div className="flex justify-between text-sm text-slate-700 py-1">
+    <section className="mt-6 print:mt-4 print:break-inside-avoid print:page-break-inside-avoid">
+      <div className="flex justify-end print:justify-end">
+        <div className="w-full md:w-80 space-y-2 print:w-full print:space-y-1">
+          <div className="flex justify-between text-sm text-slate-700 py-1 print:text-xs print:py-0.5">
             <span>Sub Total (Tax Inclusive):</span>
             <span className="font-medium">{fallbackCurrency(totals.subtotal)}</span>
           </div>
-          <div className="flex justify-between text-sm text-slate-700 py-1">
+          <div className="flex justify-between text-sm text-slate-700 py-1 print:text-xs print:py-0.5">
             <span>Discount:</span>
             <span className="font-medium">
               {totals.discount > 0 ? `-${fallbackCurrency(totals.discount)}` : fallbackCurrency(0)}
             </span>
           </div>
-          <div className="border-t-2 border-emerald-400 pt-2 mt-2">
-            <div className="flex justify-between text-base font-semibold text-slate-900">
+          <div className="border-t-2 border-emerald-400 pt-2 mt-2 print:pt-1 print:mt-1">
+            <div className="flex justify-between text-base font-semibold text-slate-900 print:text-sm">
               <span>Total:</span>
               <span>{fallbackCurrency(totals.totalAmount)}</span>
             </div>
           </div>
-          <div className="mt-3 pt-3 border-t border-slate-200">
-            <div className="text-xs text-slate-600">
-              <p className="font-semibold text-slate-700 mb-1">Amount in Words:</p>
-              <p>
+          <div className="mt-3 pt-3 border-t border-slate-200 print:mt-2 print:pt-2">
+            <div className="text-xs text-slate-600 print:text-[10px] print:leading-tight">
+              <p className="font-semibold text-slate-700 mb-1 print:mb-0.5">Amount in Words:</p>
+              <p className="print:leading-relaxed">
                 {totalInWords} Rupees{paise > 0 ? ` and ${paise} Paise` : ''} Only
                 ({totalInWordsHindi} रुपये{paise > 0 ? ` और ${numberToWordsHindi(paise)} पैसे` : ''} मात्र)
               </p>
@@ -471,8 +477,8 @@ const TotalsFooter = ({ bill }) => {
         </div>
       </div>
       {bill?.notes && (
-        <div className="mt-6 pt-4 border-t border-slate-200">
-          <p className="text-sm text-slate-600">{bill.notes}</p>
+        <div className="mt-6 pt-4 border-t border-slate-200 print:mt-4 print:pt-3">
+          <p className="text-sm text-slate-600 print:text-xs">{bill.notes}</p>
         </div>
       )}
     </section>
@@ -480,13 +486,13 @@ const TotalsFooter = ({ bill }) => {
 };
 
 const FooterSignature = ({ bill }) => (
-  <footer className="mt-8 pt-6">
+  <footer className="mt-8 pt-6 print:mt-6 print:pt-4">
     <div className="text-right">
-      <p className="text-sm font-semibold text-slate-900 mb-8">for {bill?.shopName || 'Our Shop'}</p>
-      <div className="h-16 flex items-center justify-end">
-        <div className="w-32 h-px bg-slate-300" />
+      <p className="text-sm font-semibold text-slate-900 mb-8 print:text-xs print:mb-6">for {bill?.shopName || 'Our Shop'}</p>
+      <div className="h-16 flex items-center justify-end print:h-12">
+        <div className="w-32 h-px bg-slate-300 print:w-24" />
       </div>
-      <p className="text-xs uppercase tracking-widest text-slate-500 mt-2">Authorised Signatory</p>
+      <p className="text-xs uppercase tracking-widest text-slate-500 mt-2 print:text-[10px] print:mt-1">Authorised Signatory</p>
     </div>
   </footer>
 );
@@ -528,9 +534,9 @@ const TemplateWrapper = ({ bill, template }) => {
       );
     case 'default':
     default:
-      // Default template - exact same as image layout
+      // Default template - 3 column layout with 100px top padding
       return (
-        <div className="bg-white max-w-5xl w-full mx-auto p-8">
+        <div className="bg-white max-w-5xl w-full mx-auto p-8 print:p-0 print:max-w-full print:w-full">
           <InvoiceHeaderWithQR bill={bill} />
           <ItemsTable bill={bill} />
           <TotalsFooter bill={bill} />
@@ -549,4 +555,3 @@ const InvoiceTemplateRenderer = ({ bill, template }) => {
 };
 
 export default InvoiceTemplateRenderer;
-

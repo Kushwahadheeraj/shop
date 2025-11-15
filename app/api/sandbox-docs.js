@@ -173,7 +173,7 @@ const hsnCodeSearchApi = async (hsnCode) => {
 };
 
 // Export all API functions
-module.exports = {
+export {
   eWayBillSearchGstinApi,
   gstinValidationApi,
   hsnCodeSearchApi

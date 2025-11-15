@@ -1,29 +1,110 @@
-const BACKEND = process.env.BACKEND_URL || 'http://localhost:5000';
+import { NextResponse } from 'next/server';
+import connectDB from '@/lib/db';
+import { verifyAuth } from '@/lib/auth';
+import Client from '@/lib/models/Client';
 
-export async function PUT(req, context) {
+export async function GET(request, { params }) {
   try {
-    const { params } = await context;
-    const id = params?.id;
-    const auth = req.headers.get('authorization') || '';
-    const body = await req.text();
-    const res = await fetch(`${BACKEND}/api/clients/${id}`, { method: 'PUT', headers: { 'Authorization': auth, 'Content-Type': 'application/json' }, body });
-    const data = await res.json();
-    return new Response(JSON.stringify(data), { status: res.status, headers: { 'Content-Type': 'application/json' } });
-  } catch (e) {
-    return new Response(JSON.stringify({ success: false, error: e?.message || 'proxy error' }), { status: 500 });
+    const sellerId = verifyAuth(request);
+    await connectDB();
+    const { id } = await params;
+
+    const client = await Client.findOne({ _id: id, sellerId });
+    if (!client) {
+      return NextResponse.json(
+        { success: false, message: 'Client not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ success: true, data: { client } });
+  } catch (error) {
+    console.error('Error getting client:', error);
+    
+    if (error.message.includes('Authentication') || error.message.includes('token')) {
+      return NextResponse.json(
+        { success: false, message: error.message },
+        { status: 401 }
+      );
+    }
+
+    return NextResponse.json(
+      { success: false, message: 'Error getting client', error: error.message },
+      { status: 500 }
+    );
   }
 }
 
-export async function DELETE(req, context) {
+export async function PUT(request, { params }) {
   try {
-    const { params } = await context;
-    const id = params?.id;
-    const auth = req.headers.get('authorization') || '';
-    const res = await fetch(`${BACKEND}/api/clients/${id}`, { method: 'DELETE', headers: { 'Authorization': auth } });
-    const data = await res.json();
-    return new Response(JSON.stringify(data), { status: res.status, headers: { 'Content-Type': 'application/json' } });
-  } catch (e) {
-    return new Response(JSON.stringify({ success: false, error: e?.message || 'proxy error' }), { status: 500 });
+    const sellerId = verifyAuth(request);
+    await connectDB();
+    const { id } = await params;
+
+    const body = await request.json();
+    const updateData = { ...body };
+    delete updateData.sellerId;
+
+    const client = await Client.findOneAndUpdate(
+      { _id: id, sellerId },
+      updateData,
+      { new: true }
+    );
+
+    if (!client) {
+      return NextResponse.json(
+        { success: false, message: 'Client not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ success: true, data: { client } });
+  } catch (error) {
+    console.error('Error updating client:', error);
+    
+    if (error.message.includes('Authentication') || error.message.includes('token')) {
+      return NextResponse.json(
+        { success: false, message: error.message },
+        { status: 401 }
+      );
+    }
+
+    return NextResponse.json(
+      { success: false, message: 'Error updating client', error: error.message },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request, { params }) {
+  try {
+    const sellerId = verifyAuth(request);
+    await connectDB();
+    const { id } = await params;
+
+    const client = await Client.findOneAndDelete({ _id: id, sellerId });
+    if (!client) {
+      return NextResponse.json(
+        { success: false, message: 'Client not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ success: true, message: 'Client deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting client:', error);
+    
+    if (error.message.includes('Authentication') || error.message.includes('token')) {
+      return NextResponse.json(
+        { success: false, message: error.message },
+        { status: 401 }
+      );
+    }
+
+    return NextResponse.json(
+      { success: false, message: 'Error deleting client', error: error.message },
+      { status: 500 }
+    );
   }
 }
 

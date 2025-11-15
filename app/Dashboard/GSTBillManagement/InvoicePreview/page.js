@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Edit, Download, Printer } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import InvoiceTemplateRenderer from '../components/InvoiceTemplateRenderer';
+import API_BASE_URL from '@/lib/apiConfig';
 
 export default function InvoicePreview() {
   const params = useSearchParams();
@@ -18,7 +19,7 @@ export default function InvoicePreview() {
       const billId = params.get('billId');
       if (!billId) { router.push('/Dashboard/GSTBillManagement'); return; }
       const token = localStorage.getItem('token');
-      const res = await fetch(`/api/gst-bills/${billId}`, { headers: { 'Authorization': `Bearer ${token}` } });
+      const res = await fetch(`${API_BASE_URL}/gst-bills/${billId}`, { headers: { 'Authorization': `Bearer ${token}` } });
       const data = await res.json();
       if (data?.success) {
         const b = data.data.gstBill;
@@ -26,7 +27,7 @@ export default function InvoicePreview() {
         // fetch linked bank account for display
         try {
           if (b?.bankAccountId) {
-            const res2 = await fetch('/api/bank-accounts', { headers: { 'Authorization': `Bearer ${token}` } });
+            const res2 = await fetch(`${API_BASE_URL}/bank-accounts`, { headers: { 'Authorization': `Bearer ${token}` } });
             const d2 = await res2.json();
             const list = d2?.data || [];
             const acc = list.find(x => String(x._id) === String(b.bankAccountId));

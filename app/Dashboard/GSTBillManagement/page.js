@@ -9,6 +9,7 @@ import EditGSTBillForm from './EditGSTBillForm';
 import InvoiceTemplates from './components/InvoiceTemplates';
 import AnalyticsDashboard from './components/AnalyticsDashboard';
 import ContactsManager from './components/ContactsManager';
+import API_BASE_URL from '@/lib/apiConfig';
 
 const GSTBillManagementPage = () => {
   const router = useRouter();
@@ -81,12 +82,12 @@ const GSTBillManagementPage = () => {
     try {
       setShopsLoading(true);
       const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-      const res = await fetch('/api/shops', {
+      const res = await fetch(`${API_BASE_URL}/shops`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
       if (!res.ok) {
         // Best-effort logging
-        try { const err = await res.json(); console.error('❌ Shops API error:', err); } catch {}
+        try { const err = await res.json(); /* console.error('❌ Shops API error:', err); */ } catch {}
         return;
       }
       const data = await res.json();
@@ -96,7 +97,7 @@ const GSTBillManagementPage = () => {
         setShops(data.data.shops);
       }
     } catch (e) {
-      console.error('❌ Error fetching shops:', e);
+      // console.error('❌ Error fetching shops:', e);
     } finally {
       setShopsLoading(false);
     }
@@ -119,35 +120,35 @@ const GSTBillManagementPage = () => {
         headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
       if (!res.ok) {
-        try { const err = await res.json(); console.error('❌ GST bills API error:', err); } catch {}
+        try { const err = await res.json(); /* console.error('❌ GST bills API error:', err); */ } catch {}
         return;
       }
       const data = await res.json();
-      console.log('📊 GST Bills API response:', data);
+      // console.log('📊 GST Bills API response:', data);
       
       // Backend returns: { success: true, data: { gstBills: [...], stats: {...} } }
       if (data?.success && data?.data) {
         if (Array.isArray(data.data.gstBills)) {
           setGstBills(data.data.gstBills);
-          console.log('✅ GST Bills set:', data.data.gstBills.length, 'bills');
+          // console.log('✅ GST Bills set:', data.data.gstBills.length, 'bills');
         } else if (Array.isArray(data.data)) {
           // Fallback: if data.data is directly an array
           setGstBills(data.data);
-          console.log('✅ GST Bills set (direct array):', data.data.length, 'bills');
+          // console.log('✅ GST Bills set (direct array):', data.data.length, 'bills');
         } else if (Array.isArray(data.bills)) {
           // Another fallback
           setGstBills(data.bills);
-          console.log('✅ GST Bills set (from bills field):', data.bills.length, 'bills');
+          // console.log('✅ GST Bills set (from bills field):', data.bills.length, 'bills');
         } else {
-          console.warn('⚠️ No bills array found in response:', data);
+          // console.warn('⚠️ No bills array found in response:', data);
           setGstBills([]);
         }
       } else {
-        console.warn('⚠️ Unexpected GST bills response format:', data);
+        // console.warn('⚠️ Unexpected GST bills response format:', data);
         setGstBills([]);
       }
     } catch (e) {
-      console.error('❌ Error fetching GST bills:', e);
+      // console.error('❌ Error fetching GST bills:', e);
       setGstBills([]);
     } finally {
       setLoading(false);
@@ -157,7 +158,7 @@ const GSTBillManagementPage = () => {
   // Calculate stats from bills data
   const calculateStatsFromBills = useCallback((billsData, currentSelectedShop = selectedShop, currentSearchTerm = searchTerm, currentFilterDateRange = filterDateRange) => {
     const safeBills = Array.isArray(billsData) ? billsData : [];
-    console.log('🔍 Calculating stats from bills data:', safeBills.length, 'bills');
+    // console.log('🔍 Calculating stats from bills data:', safeBills.length, 'bills');
     
     let filteredBills = safeBills;
     
@@ -230,7 +231,7 @@ const GSTBillManagementPage = () => {
       const calculated = calculateStatsFromBills(gstBills, selectedShop, searchTerm, filterDateRange);
       setStats(calculated);
     } catch (e) {
-      console.error('❌ Error fetching stats:', e);
+      // console.error('❌ Error fetching stats:', e);
       // Fallback to local calculation
       const calculated = calculateStatsFromBills(gstBills, selectedShop, searchTerm, filterDateRange);
       setStats(calculated);
@@ -240,20 +241,20 @@ const GSTBillManagementPage = () => {
   // Load real data from database
   useEffect(() => {
     const loadRealData = async () => {
-      console.log('🔄 Loading GST bills data from database...');
+      // console.log('🔄 Loading GST bills data from database...');
       
       try {
-        console.log('📊 Fetching shops...');
+        // console.log('📊 Fetching shops...');
         await fetchShops();
         
-        console.log('📊 Fetching GST bills...');
+        // console.log('📊 Fetching GST bills...');
         await fetchGSTBills();
         
-        console.log('✅ Initial data loaded successfully!');
+        // console.log('✅ Initial data loaded successfully!');
       } catch (error) {
-        console.error('❌ Error loading data:', error);
-        console.error('❌ Error details:', error.message);
-        console.error('❌ Error stack:', error.stack);
+        // console.error('❌ Error loading data:', error);
+        // console.error('❌ Error details:', error.message);
+        // console.error('❌ Error stack:', error.stack);
       }
     };
     
@@ -281,16 +282,16 @@ const GSTBillManagementPage = () => {
   // Recalculate stats whenever bills, selectedShop, searchTerm, or filterDateRange changes
   useEffect(() => {
     if (gstBills.length > 0 || shops.length > 0) {
-      console.log('🔄 Recalculating GST stats due to bills, shop, search, or date change...');
-      console.log('🔍 Current selected shop:', selectedShop);
-      console.log('🔍 Current search term:', searchTerm);
-      console.log('🔍 Current date range:', filterDateRange);
-      console.log('🔍 Current bills count:', gstBills.length);
+      // console.log('🔄 Recalculating GST stats due to bills, shop, search, or date change...');
+      // console.log('🔍 Current selected shop:', selectedShop);
+      // console.log('🔍 Current search term:', searchTerm);
+      // console.log('🔍 Current date range:', filterDateRange);
+      // console.log('🔍 Current bills count:', gstBills.length);
       
       const calculatedStats = calculateStatsFromBills(gstBills, selectedShop, searchTerm, filterDateRange);
       setStats(calculatedStats);
       
-      console.log('📊 Updated GST stats:', calculatedStats);
+      // console.log('📊 Updated GST stats:', calculatedStats);
     } else if (gstBills.length === 0) {
       // Reset stats when no bills
       setStats({
@@ -334,7 +335,7 @@ const GSTBillManagementPage = () => {
         throw new Error('Please log in to create a GST bill');
       }
       
-      console.log('🔍 Creating GST bill with data:', billData);
+      // console.log('🔍 Creating GST bill with data:', billData);
       
       const response = await fetch('http://localhost:5000/api/gst-bills', {
         method: 'POST',
@@ -345,9 +346,9 @@ const GSTBillManagementPage = () => {
         body: JSON.stringify(billData)
       });
 
-      console.log('🔍 GST Bill creation response status:', response.status);
+      // console.log('🔍 GST Bill creation response status:', response.status);
       const data = await response.json();
-      console.log('🔍 GST Bill creation response data:', data);
+      // console.log('🔍 GST Bill creation response data:', data);
       
       if (response.status === 401) {
         localStorage.removeItem('token');
@@ -356,21 +357,21 @@ const GSTBillManagementPage = () => {
       }
       
       if (response.status === 500) {
-        console.error('❌ Server error:', data);
+        // console.error('❌ Server error:', data);
         throw new Error('Server error: ' + (data.message || 'Internal server error'));
       }
       
       if (data.success) {
-        console.log('✅ GST Bill created successfully');
+        // console.log('✅ GST Bill created successfully');
         fetchGSTBills();
         fetchStats();
         alert('GST Bill created successfully!');
       } else {
-        console.error('❌ API returned error:', data.message);
+        // console.error('❌ API returned error:', data.message);
         throw new Error(data.message || 'Failed to create GST bill');
       }
     } catch (error) {
-      console.error('❌ Error saving GST bill:', error);
+      // console.error('❌ Error saving GST bill:', error);
       throw error;
     }
   };
@@ -394,7 +395,7 @@ const GSTBillManagementPage = () => {
         throw new Error('Please log in to update a GST bill');
       }
       
-      console.log('🔍 Updating GST bill with data:', billData);
+      // console.log('🔍 Updating GST bill with data:', billData);
       
       const response = await fetch(`http://localhost:5000/api/gst-bills/${selectedBill._id}`, {
         method: 'PUT',
@@ -405,9 +406,9 @@ const GSTBillManagementPage = () => {
         body: JSON.stringify(billData)
       });
 
-      console.log('🔍 GST Bill update response status:', response.status);
+      // console.log('🔍 GST Bill update response status:', response.status);
       const data = await response.json();
-      console.log('🔍 GST Bill update response data:', data);
+      // console.log('🔍 GST Bill update response data:', data);
       
       if (response.status === 401) {
         localStorage.removeItem('token');
@@ -416,21 +417,21 @@ const GSTBillManagementPage = () => {
       }
       
       if (response.status === 500) {
-        console.error('❌ Server error:', data);
+        // console.error('❌ Server error:', data);
         throw new Error('Server error: ' + (data.message || 'Internal server error'));
       }
       
       if (data.success) {
-        console.log('✅ GST Bill updated successfully');
+        // console.log('✅ GST Bill updated successfully');
         fetchGSTBills();
         fetchStats();
         alert('GST Bill updated successfully!');
       } else {
-        console.error('❌ API returned error:', data.message);
+        // console.error('❌ API returned error:', data.message);
         throw new Error(data.message || 'Failed to update GST bill');
       }
     } catch (error) {
-      console.error('❌ Error updating GST bill:', error);
+      // console.error('❌ Error updating GST bill:', error);
       throw error;
     }
   };
@@ -455,7 +456,7 @@ const GSTBillManagementPage = () => {
           throw new Error(data.message);
         }
       } catch (error) {
-        console.error('Error deleting GST bill:', error);
+        // console.error('Error deleting GST bill:', error);
         alert('Error deleting GST bill');
       }
     }
@@ -502,7 +503,7 @@ const GSTBillManagementPage = () => {
         <div className="flex flex-wrap gap-2 md:gap-3">
           <button
             onClick={async () => {
-              console.log('🔄 Refreshing all GST data from database...');
+              // console.log('🔄 Refreshing all GST data from database...');
               await fetchShops();
               await fetchGSTBills();
               await fetchStats();
@@ -603,14 +604,14 @@ const GSTBillManagementPage = () => {
             <select
               value={selectedShop}
               onChange={(e) => {
-                console.log('🏪 Shop changed to:', e.target.value);
+                // console.log('🏪 Shop changed to:', e.target.value);
                 setSelectedShop(e.target.value);
                 
                 if (gstBills.length > 0) {
                   setTimeout(() => {
                     const calculatedStats = calculateStatsFromBills(gstBills, e.target.value, searchTerm, filterDateRange);
                     setStats(calculatedStats);
-                    console.log('📊 Stats updated for shop change:', calculatedStats);
+                    // console.log('📊 Stats updated for shop change:', calculatedStats);
                   }, 100);
                 }
               }}
@@ -636,14 +637,14 @@ const GSTBillManagementPage = () => {
             <select
               value={filterDateRange}
               onChange={(e) => {
-                console.log('📅 Date range changed to:', e.target.value);
+                // console.log('📅 Date range changed to:', e.target.value);
                 setFilterDateRange(e.target.value);
                 
                 if (gstBills.length > 0) {
                   setTimeout(() => {
                     const calculatedStats = calculateStatsFromBills(gstBills, selectedShop, searchTerm, e.target.value);
                     setStats(calculatedStats);
-                    console.log('📊 Stats updated for date range change:', calculatedStats);
+                    // console.log('📊 Stats updated for date range change:', calculatedStats);
                   }, 100);
                 }
               }}
@@ -670,14 +671,14 @@ const GSTBillManagementPage = () => {
                 placeholder="Search GST bills..."
                 value={searchTerm}
                 onChange={(e) => {
-                  console.log('🔍 Search term changed to:', e.target.value);
+                  // console.log('🔍 Search term changed to:', e.target.value);
                   setSearchTerm(e.target.value);
                   
                   if (gstBills.length > 0) {
                     setTimeout(() => {
                       const calculatedStats = calculateStatsFromBills(gstBills, selectedShop, e.target.value, filterDateRange);
                       setStats(calculatedStats);
-                      console.log('📊 Stats updated for search term change:', calculatedStats);
+                      // console.log('📊 Stats updated for search term change:', calculatedStats);
                     }, 100);
                   }
                 }}
@@ -689,7 +690,7 @@ const GSTBillManagementPage = () => {
           <div className="flex items-end">
             <button
               onClick={() => {
-                console.log('🧹 Clearing all filters');
+                // console.log('🧹 Clearing all filters');
                 setSelectedShop('');
                 setSearchTerm('');
                 setFilterDateRange('');
@@ -698,7 +699,7 @@ const GSTBillManagementPage = () => {
                   setTimeout(() => {
                     const calculatedStats = calculateStatsFromBills(gstBills, '', '', '');
                     setStats(calculatedStats);
-                    console.log('📊 Stats updated after clearing filters:', calculatedStats);
+                    // console.log('📊 Stats updated after clearing filters:', calculatedStats);
                   }, 100);
                 }
               }}
@@ -759,14 +760,14 @@ const GSTBillManagementPage = () => {
             }
           }
           
-          console.log('🔍 Filtered GST bills:', {
-            selectedShop,
-            searchTerm,
-            filterDateRange,
-            originalCount: gstBills.length,
-            filteredCount: filteredBills.length,
-            filteredBills: filteredBills.map(b => ({ id: b._id, shop: b.shopName, amount: b.grandTotal }))
-          });
+          // console.log('🔍 Filtered GST bills:', {
+          //   selectedShop,
+          //   searchTerm,
+          //   filterDateRange,
+          //   originalCount: gstBills.length,
+          //   filteredCount: filteredBills.length,
+          //   filteredBills: filteredBills.map(b => ({ id: b._id, shop: b.shopName, amount: b.grandTotal }))
+          // });
           
           if (filteredBills.length === 0) {
             return (

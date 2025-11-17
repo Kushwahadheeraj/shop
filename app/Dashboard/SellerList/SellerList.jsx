@@ -7,7 +7,9 @@ import API_BASE_URL from "@/lib/apiConfig";
 const getImageUrl = (avatar) => {
   if (!avatar) return null;
   if (avatar.startsWith('/uploads/')) {
-    return `http://localhost:5000${avatar}`;
+    // Remove /api from API_BASE_URL for image URLs
+    const baseUrl = API_BASE_URL.replace(/\/api$/, '');
+    return `${baseUrl}${avatar}`;
   }
   return avatar;
 };

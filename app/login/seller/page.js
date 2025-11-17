@@ -1,8 +1,12 @@
 "use client";
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect, useMemo, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import API_BASE_URL from "@/lib/apiConfig";
 import { useAuth } from "@/components/AuthContext";
+
+const SECRET_PARAM = "access";
+const ACCESS_STORAGE_KEY = "seller_portal_access";
+const SECRET_KEY = process.env.NEXT_PUBLIC_SELLER_LOGIN_KEY;
 
 function SellerLoginPageContent() {
   const router = useRouter();
@@ -23,7 +27,42 @@ function SellerLoginPageContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [hasPortalAccess, setHasPortalAccess] = useState(false);
+  const [accessChecked, setAccessChecked] = useState(false);
   const { login, isAuthenticated, loading: authLoading } = useAuth();
+
+  const secretFromUrl = useMemo(
+    () => searchParams.get(SECRET_PARAM),
+    [searchParams]
+  );
+
+  useEffect(() => {
+    // If no secret enforced, allow access
+    if (!SECRET_KEY) {
+      setHasPortalAccess(true);
+      setAccessChecked(true);
+      return;
+    }
+
+    // Already unlocked in session
+    if (typeof window !== "undefined") {
+      const unlocked = sessionStorage.getItem(ACCESS_STORAGE_KEY);
+      if (unlocked === "true") {
+        setHasPortalAccess(true);
+        setAccessChecked(true);
+        return;
+      }
+    }
+
+    // Check URL token
+    if (secretFromUrl && secretFromUrl === SECRET_KEY) {
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem(ACCESS_STORAGE_KEY, "true");
+      }
+      setHasPortalAccess(true);
+    }
+    setAccessChecked(true);
+  }, [secretFromUrl]);
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -128,13 +167,26 @@ function SellerLoginPageContent() {
     }
   };
 
-  // Show loading while checking authentication
-  if (authLoading) {
+  // Show loading while checking authentication or secret access
+  if (authLoading || !accessChecked) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#f8f8f8]">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!hasPortalAccess) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#f8f8f8]">
+        <div className="bg-white rounded shadow-lg w-full max-w-md p-8 text-center space-y-2">
+          <p className="text-lg font-semibold text-gray-800">Portal locked</p>
+          <p className="text-sm text-gray-500">
+            Access link invalid. Contact your account manager for the latest seller portal URL.
+          </p>
         </div>
       </div>
     );

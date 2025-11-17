@@ -147,7 +147,7 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
     setHsnForRow(rowIndex);
     try {
       if (!hsnList.length) {
-        const res = await fetch(`${API_BASE_URL}/hsn-codes`);
+        const res = await fetch('/api/hsn-codes');
         const data = await res.json();
         // accept either {data: [...]} or array
         const list = Array.isArray(data) ? data : (data.data || data.items || []);
@@ -366,7 +366,7 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
   const saveShop = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/api/shops', {
+      const res = await fetch(`${API_BASE_URL}/shops`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({ name: shopForm.name, address: `${shopForm.street}, ${shopForm.city}, ${shopForm.state}, ${shopForm.country} - ${shopForm.pincode}` })

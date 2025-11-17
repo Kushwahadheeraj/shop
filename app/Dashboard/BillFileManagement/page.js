@@ -59,7 +59,7 @@ const BillFileManagementPage = () => {
       const token = localStorage.getItem('token');
       const currentSellerId = getSellerId();
       const qs = currentSellerId ? `?sellerId=${encodeURIComponent(currentSellerId)}` : '';
-      const response = await fetch(api(`/api/shops${qs}`), {
+      const response = await fetch(api(`/shops${qs}`), {
         headers: token ? { 'Authorization': `Bearer ${token}` } : {}
       });
       const data = await response.json().catch(() => ({}));
@@ -89,7 +89,7 @@ const BillFileManagementPage = () => {
       if (filterEndDate) params.append('endDate', filterEndDate);
       
       const qs = params.toString();
-      const response = await fetch(api(`/api/bill-files/summary${qs ? `?${qs}` : ''}`), {
+      const response = await fetch(api(`/bill-files/summary${qs ? `?${qs}` : ''}`), {
         headers: token ? { 'Authorization': `Bearer ${token}` } : {}
       });
       const data = await response.json();
@@ -148,8 +148,8 @@ const BillFileManagementPage = () => {
     formData.append('file', file);
 
     const token = localStorage.getItem('token');
-    // Use Next.js API route
-    const response = await fetch('/api/upload/cloudinary', {
+    // Use backend API on port 5000
+    const response = await fetch(`${API_BASE_URL}/upload/cloudinary`, {
       method: 'POST',
       body: formData,
       headers: {

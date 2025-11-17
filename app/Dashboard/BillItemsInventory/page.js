@@ -59,7 +59,7 @@ const BillItemsInventoryPage = () => {
       const params = new URLSearchParams();
       if (currentSellerId) params.append('sellerId', currentSellerId);
       
-      const response = await fetch(api(`/api/simple-bills?${params.toString()}`), {
+      const response = await fetch(api(`/simple-bills?${params.toString()}`), {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -121,7 +121,7 @@ const BillItemsInventoryPage = () => {
       if (currentSellerId) params.append('sellerId', currentSellerId);
       
       // Use /api/bills endpoint like BillManagement does
-      const response = await fetch(api(`/api/bills?${params.toString()}`), {
+      const response = await fetch(api(`/bills?${params.toString()}`), {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       

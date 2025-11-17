@@ -12,6 +12,10 @@ import ContactsManager from './components/ContactsManager';
 import API_BASE_URL from '@/lib/apiConfig';
 
 const GSTBillManagementPage = () => {
+  // Backend helpers
+  const join = (base, path) => `${base.replace(/\/$/, '')}${path}`;
+  const api = (path) => join(API_BASE_URL, path);
+  
   const router = useRouter();
   const { isAuthenticated, isSeller, loading: authLoading } = useAuth();
   const [showAddGSTBillForm, setShowAddGSTBillForm] = useState(false);
@@ -116,7 +120,7 @@ const GSTBillManagementPage = () => {
         if (dr.startDate) params.append('startDate', dr.startDate);
         if (dr.endDate) params.append('endDate', dr.endDate);
       }
-      const res = await fetch(`/api/gst-bills?${params.toString()}`, {
+      const res = await fetch(api(`/gst-bills?${params.toString()}`), {
         headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
       if (!res.ok) {
@@ -217,7 +221,7 @@ const GSTBillManagementPage = () => {
         if (dr.startDate) params.append('startDate', dr.startDate);
         if (dr.endDate) params.append('endDate', dr.endDate);
       }
-      const res = await fetch(`/api/gst-bills/stats?${params.toString()}`, {
+      const res = await fetch(api(`/gst-bills/stats?${params.toString()}`), {
         headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
       if (res.ok) {
@@ -337,7 +341,7 @@ const GSTBillManagementPage = () => {
       
       // console.log('🔍 Creating GST bill with data:', billData);
       
-      const response = await fetch('http://localhost:5000/api/gst-bills', {
+      const response = await fetch(api('/gst-bills'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -397,7 +401,7 @@ const GSTBillManagementPage = () => {
       
       // console.log('🔍 Updating GST bill with data:', billData);
       
-      const response = await fetch(`http://localhost:5000/api/gst-bills/${selectedBill._id}`, {
+      const response = await fetch(api(`/gst-bills/${selectedBill._id}`), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -440,7 +444,7 @@ const GSTBillManagementPage = () => {
     if (window.confirm('Are you sure you want to delete this GST bill?')) {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`http://localhost:5000/api/gst-bills/${billId}`, {
+        const response = await fetch(api(`/gst-bills/${billId}`), {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`

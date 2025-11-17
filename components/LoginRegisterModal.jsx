@@ -1,17 +1,41 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import API_BASE_URL from "@/lib/apiConfig";
 
+const SELLER_LINK_ACCESS_KEY = "sellerLinkUnlocked";
+
 export default function LoginRegisterModal({ open, onClose }) {
   const [login, setLogin] = useState({ username: "", password: "", remember: false });
   const [register, setRegister] = useState({ username: "", email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showSellerLink, setShowSellerLink] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    if (!open) return;
+    if (typeof window === "undefined") return;
+
+    const alreadyUnlocked = sessionStorage.getItem(SELLER_LINK_ACCESS_KEY);
+    if (alreadyUnlocked === "true") {
+      setShowSellerLink(true);
+    }
+
+    const handleSecretCombo = (event) => {
+      if (event.ctrlKey && event.altKey && event.key.toLowerCase() === "s") {
+        event.preventDefault();
+        sessionStorage.setItem(SELLER_LINK_ACCESS_KEY, "true");
+        setShowSellerLink(true);
+      }
+    };
+
+    window.addEventListener("keydown", handleSecretCombo);
+    return () => window.removeEventListener("keydown", handleSecretCombo);
+  }, [open]);
 
   if (!open) return null;
 
@@ -161,12 +185,14 @@ export default function LoginRegisterModal({ open, onClose }) {
             <Button disabled={loading} className="bg-yellow-300 hover:bg-yellow-300 text-white font-bold text-sm md:text-base py-2 px-5 w-auto self-start">{loading ? 'Please wait...' : 'REGISTER'}</Button>
           </form>
         </div>
-        {/* Seller Login Redirect */}
-        <div className="absolute bottom-2 right-2 w-full flex justify-end">
-          <Link href="/login/seller" className="text-xs text-blue-600 hover:underline font-semibold">
-            Seller Login
-          </Link>
-        </div>
+        {/* Seller Login Redirect - hidden behind secret combo */}
+        {showSellerLink && (
+          <div className="absolute bottom-2 right-2 w-full flex justify-end">
+            <Link href="/login/seller" className="text-xs text-blue-600 hover:underline font-semibold">
+              Seller Login
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -61,7 +61,7 @@ const BillManagementPage = () => {
       setShopsLoading(true);
       const token = localStorage.getItem('token');
       const qs = sellerId ? `?sellerId=${encodeURIComponent(sellerId)}` : '';
-      const response = await fetch(api(`/api/shops${qs}`), { headers: token ? { 'Authorization': `Bearer ${token}` } : {} });
+      const response = await fetch(api(`/shops${qs}`), { headers: token ? { 'Authorization': `Bearer ${token}` } : {} });
       // console.log('🔍 Shops API response status:', response.status);
       const data = await response.json().catch(() => ({}));
       const list = toArray(data);
@@ -109,7 +109,7 @@ const BillManagementPage = () => {
         if (dateRange.endDate) params.append('endDate', dateRange.endDate);
       }
       
-      const response = await fetch(api(`/api/bills?${params.toString()}`), { headers: token ? { 'Authorization': `Bearer ${token}` } : {} });
+      const response = await fetch(api(`/bills?${params.toString()}`), { headers: token ? { 'Authorization': `Bearer ${token}` } : {} });
       
       // console.log('🔍 Bills API response status:', response.status);
       
@@ -543,7 +543,7 @@ const BillManagementPage = () => {
         return;
       }
       
-      const response = await fetch(`/api/bills/${paymentData.billId}/payment`, {
+      const response = await fetch(api(`/bills/${paymentData.billId}/payment`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -617,7 +617,7 @@ const BillManagementPage = () => {
           //   remainingPayment
           // });
           
-          const response = await fetch(`/api/bills/${bill._id}/payment`, {
+          const response = await fetch(api(`/bills/${bill._id}/payment`), {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -676,7 +676,7 @@ const BillManagementPage = () => {
       
       // console.log('🔍 Updating bill with data:', billData);
       
-      const response = await fetch(`/api/bills/${selectedBill._id}`, {
+      const response = await fetch(api(`/bills/${selectedBill._id}`), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -720,7 +720,7 @@ const BillManagementPage = () => {
     if (window.confirm('Are you sure you want to delete this bill?')) {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`/api/bills/${billId}`, {
+        const response = await fetch(api(`/bills/${billId}`), {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`

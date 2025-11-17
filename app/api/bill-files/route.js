@@ -5,7 +5,7 @@ export async function GET(request) {
     const auth = request.headers.get('authorization') || '';
     const url = new URL(request.url);
     const qs = url.search || '';
-    const res = await fetch(`${BACKEND}/api/bill-files${qs}`, {
+    const res = await fetch(`${BACKEND}/bill-files${qs}`, {
       headers: { 'Authorization': auth }
     });
     const data = await res.json();
@@ -25,7 +25,7 @@ export async function POST(request) {
   try {
     const auth = request.headers.get('authorization') || '';
     const body = await request.text();
-    const res = await fetch(`${BACKEND}/api/bill-files`, {
+    const res = await fetch(`${BACKEND}/bill-files`, {
       method: 'POST',
       headers: { 'Authorization': auth, 'Content-Type': 'application/json' },
       body

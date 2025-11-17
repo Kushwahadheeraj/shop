@@ -92,7 +92,7 @@ const ShopFormModal = ({ isOpen, mode = 'add', initialShop, onClose, onSaved }) 
         isDefault: form.isDefault,
         customFields: form.customFields.map(({ label, value }) => ({ label, value }))
       };
-      const res = await fetch(mode === 'edit' && initialShop?._id ? `http://localhost:5000/api/gst-shops/${initialShop._id}` : 'http://localhost:5000/api/gst-shops', {
+      const res = await fetch(mode === 'edit' && initialShop?._id ? `${API_BASE_URL}/gst-shops/${initialShop._id}` : `${API_BASE_URL}/gst-shops`, {
         method: mode === 'edit' && initialShop?._id ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(payload)

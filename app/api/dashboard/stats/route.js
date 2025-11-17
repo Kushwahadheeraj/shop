@@ -7,13 +7,13 @@ export async function GET(req) {
     const period = searchParams.get('period') || '30'; // days
     
     // Fetch GST bills data
-    const gstBillsRes = await fetch(`${BACKEND}/api/gst-bills`, { 
+    const gstBillsRes = await fetch(`${BACKEND}/gst-bills`, { 
       headers: { 'Authorization': auth } 
     });
     const gstBillsData = await gstBillsRes.json();
     
     // Fetch regular bills data
-    const billsRes = await fetch(`${BACKEND}/api/bills`, { 
+    const billsRes = await fetch(`${BACKEND}/bills`, { 
       headers: { 'Authorization': auth } 
     });
     const billsData = await billsRes.json();

@@ -5,7 +5,7 @@ export async function DELETE(request, { params }) {
     const { id } = await params;
     const auth = request.headers.get('authorization') || '';
     
-    const res = await fetch(`${BACKEND}/api/bill-files/${id}`, {
+    const res = await fetch(`${BACKEND}/bill-files/${id}`, {
       method: 'DELETE',
       headers: { 'Authorization': auth }
     });

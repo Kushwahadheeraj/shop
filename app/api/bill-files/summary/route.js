@@ -5,7 +5,7 @@ export async function GET(request) {
     const auth = request.headers.get('authorization') || '';
     const url = new URL(request.url);
     const qs = url.search || '';
-    const res = await fetch(`${BACKEND}/api/bill-files/summary${qs}`, {
+    const res = await fetch(`${BACKEND}/bill-files/summary${qs}`, {
       headers: { 'Authorization': auth }
     });
     const data = await res.json();

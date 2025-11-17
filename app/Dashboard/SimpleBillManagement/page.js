@@ -453,7 +453,7 @@ const SimpleBillManagementPage = () => {
         return;
       }
       
-      const response = await fetch(`/simple-bills/${paymentData.billId}/payment`, {
+      const response = await fetch(api(`/simple-bills/${paymentData.billId}/payment`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -503,7 +503,7 @@ const SimpleBillManagementPage = () => {
             notes: `${paymentData.notes || ''} (Part of combined payment: ₹${paymentAmount})`.trim()
           };
           
-          const response = await fetch(`/simple-bills/${bill._id}/payment`, {
+          const response = await fetch(api(`/simple-bills/${bill._id}/payment`), {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -553,7 +553,7 @@ const SimpleBillManagementPage = () => {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('Please log in to update a bill');
       
-      const response = await fetch(`/simple-bills/${selectedBill._id}`, {
+      const response = await fetch(api(`/simple-bills/${selectedBill._id}`), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -586,7 +586,7 @@ const SimpleBillManagementPage = () => {
     if (window.confirm('Are you sure you want to delete this bill?')) {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`/simple-bills/${billId}`, {
+        const response = await fetch(api(`/simple-bills/${billId}`), {
           method: 'DELETE',
           headers: { 'Authorization': `Bearer ${token}` }
         });

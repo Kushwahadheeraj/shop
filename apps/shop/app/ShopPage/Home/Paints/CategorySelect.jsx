@@ -76,8 +76,8 @@ export default function CategorySelect() {
         body: JSON.stringify({ categories: selected }),
       });
     } catch {}
-    const qs = `categories=${encodeURIComponent(JSON.stringify(selected))}`;
-    router.push(`/Dashboard/ProductList/Home/Paints?${qs}`);
+    // Redirect to shop page or stay on current page
+    router.push(`/ShopPage/Home/Paints`);
   };
 
   return (

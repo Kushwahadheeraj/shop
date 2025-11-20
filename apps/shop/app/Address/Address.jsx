@@ -30,11 +30,6 @@ export default function Address() {
             <nav className="w-full">
               <ul className="space-y-1 text-sm">
                 <li>
-                  <Link href="/dashboard" className="block hover:bg-gray-100 pl-2 py-1 cursor-pointer">
-                    DASHBOARD
-                  </Link>
-                </li>
-                <li>
                   <Link href="/Orders" className="block hover:bg-gray-100 pl-2 py-1 cursor-pointer">
                     ORDERS
                   </Link>

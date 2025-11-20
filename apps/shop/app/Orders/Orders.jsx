@@ -34,15 +34,6 @@ export default function Orders() {
               <ul className="space-y-1 text-sm">
                 <li>
                   <Link
-                    href="/dashboard"
-                    className="block hover:bg-gray-100 pl-2 py-1 cursor-pointer"
-
-                  >
-                    DASHBOARD
-                  </Link>
-                </li>
-                <li>
-                  <Link
                     href="/Orders"
                     className="block font-bold border-l-4 border-yellow-300 pl-2 bg-gray-100"
                   >

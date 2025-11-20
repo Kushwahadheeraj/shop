@@ -30,11 +30,6 @@ export default function AccountDetails() {
             <nav className="w-full">
               <ul className="space-y-1 text-sm">
                 <li>
-                  <Link href="/dashboard" className="block hover:bg-gray-100 px-2 py-2 rounded cursor-pointer">
-                    DASHBOARD
-                  </Link>
-                </li>
-                <li>
                   <Link href="/Orders" className="block hover:bg-gray-100 px-2 py-2 rounded cursor-pointer">
                     ORDERS
                   </Link>

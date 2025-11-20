@@ -28,7 +28,11 @@ const nextConfig = {
 			backend: path.join(dir, '..', '..', 'backend'),
 		};
 
+		// Exclude puppeteer and other heavy dependencies from client bundle
 		if (!isServer) {
+			config.externals = config.externals || [];
+			config.externals.push('puppeteer', 'puppeteer-core');
+			
 			config.optimization.splitChunks = {
 				chunks: 'all',
 				cacheGroups: {
@@ -56,11 +60,6 @@ const nextConfig = {
 	...(process.env.NODE_ENV === 'production' && { output: 'standalone' }),
 	// Skip static generation for error pages
 	skipTrailingSlashRedirect: true,
-	// Disable static optimization for error pages
-	onDemandEntries: {
-		maxInactiveAge: 25 * 1000,
-		pagesBufferLength: 2,
-	},
 };
 
 export default nextConfig;

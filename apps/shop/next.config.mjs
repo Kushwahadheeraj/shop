@@ -58,17 +58,19 @@ const nextConfig = {
 			config.plugins = config.plugins || [];
 			
 			// Use NormalModuleReplacementPlugin to replace next/document
+			// Match all variations: next/document, next\\document, etc.
 			config.plugins.push(
 				new webpack.NormalModuleReplacementPlugin(
-					/^next\/document$/,
+					/next[\/\\]document/,
 					noopDocPath
 				)
 			);
 			
-			// Also add alias as fallback
+			// Also add alias as fallback for all possible paths
 			config.resolve.alias = {
 				...config.resolve.alias,
 				'next/document': noopDocPath,
+				'next\\document': noopDocPath,
 			};
 		}
 

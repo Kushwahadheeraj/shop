@@ -56,6 +56,11 @@ const nextConfig = {
 	...(process.env.NODE_ENV === 'production' && { output: 'standalone' }),
 	// Skip static generation for error pages
 	skipTrailingSlashRedirect: true,
+	// Disable static optimization for error pages
+	onDemandEntries: {
+		maxInactiveAge: 25 * 1000,
+		pagesBufferLength: 2,
+	},
 };
 
 export default nextConfig;

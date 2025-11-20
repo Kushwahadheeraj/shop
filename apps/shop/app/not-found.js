@@ -1,21 +1,8 @@
-import Link from 'next/link';
-
-// Disable static generation for this page
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-
 export default function NotFound() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-      <h1 className="text-6xl font-bold text-gray-900 mb-4">404</h1>
-      <h2 className="text-2xl font-semibold text-gray-700 mb-4">Page Not Found</h2>
-      <p className="text-gray-600 mb-8">The page you are looking for does not exist.</p>
-      <Link
-        href="/"
-        className="px-6 py-3 bg-yellow-300 text-white font-bold rounded-full hover:bg-yellow-400 transition-colors"
-      >
-        Go Back Home
-      </Link>
+    <div style={{ padding: '2rem', textAlign: 'center' }}>
+      <h1>404</h1>
+      <p>Page Not Found</p>
     </div>
   );
 }

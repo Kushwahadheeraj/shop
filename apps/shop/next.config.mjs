@@ -1,3 +1,5 @@
+import path from 'path';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	images: {
@@ -15,6 +17,13 @@ const nextConfig = {
 	},
 	// Reduce memory usage during build
 	webpack: (config, { isServer }) => {
+		// Allow importing backend models via "backend/..." alias
+		config.resolve = config.resolve || {};
+		config.resolve.alias = {
+			...(config.resolve.alias || {}),
+			backend: path.join(__dirname, '../../backend'),
+		};
+
 		if (!isServer) {
 			config.optimization.splitChunks = {
 				chunks: 'all',

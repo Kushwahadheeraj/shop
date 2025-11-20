@@ -24,8 +24,8 @@ const nextConfig = {
 		config.resolve = config.resolve || {};
 		config.resolve.alias = {
 			...(config.resolve.alias || {}),
-			// `dir` for this app is ".../apps/shop", backend is at ".../backend"
-			backend: path.join(dir, '..', 'backend'),
+			// `dir` for this app is ".../apps/shop", backend is at ".../backend" (two levels up)
+			backend: path.join(dir, '..', '..', 'backend'),
 		};
 
 		if (!isServer) {

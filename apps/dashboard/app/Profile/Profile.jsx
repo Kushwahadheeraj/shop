@@ -39,7 +39,7 @@ export default function ProfilePage() {
         mobile: user.mobile || "",
         shopName: user.shopName || "",
         gstNumber: user.gstNumber || ""
-      });
+  });
     }
   }, [user]);
 
@@ -277,13 +277,13 @@ export default function ProfilePage() {
     setIsEditing(false);
     // Reset form data to current user values
     if (user) {
-      setFormData({
+    setFormData({
         username: user.username || "",
         email: user.email || "",
         mobile: user.mobile || "",
         shopName: user.shopName || "",
         gstNumber: user.gstNumber || ""
-      });
+    });
     }
     setAvatarPreview(null);
     if (fileInputRef.current) {
@@ -321,7 +321,7 @@ export default function ProfilePage() {
       const avatarUrl = user.avatar;
       if (avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://')) {
         return avatarUrl;
-      }
+    }
       // If relative URL, make it absolute
       if (avatarUrl.startsWith('/')) {
         const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
@@ -346,12 +346,12 @@ export default function ProfilePage() {
 
   // Debug information (only in development)
   if (process.env.NODE_ENV === 'development') {
-    console.log('Profile Debug Info:', {
-      user,
-      currentAvatar,
-      avatarPreview,
-      hasAvatar: !!user?.avatar
-    });
+  console.log('Profile Debug Info:', {
+    user,
+    currentAvatar,
+    avatarPreview,
+    hasAvatar: !!user?.avatar
+  });
   }
 
   return (

@@ -18,7 +18,7 @@ const nextConfig = {
 		externalDir: true,
 	},
 	// Reduce memory usage during build
-	webpack: (config, { isServer, dir }) => {
+	webpack: (config, { isServer, dir, webpack }) => {
 		// Allow importing backend models via "backend/..." alias
 		// Use `dir` from Next.js (project root) instead of `__dirname` (not defined in ESM)
 		config.resolve = config.resolve || {};
@@ -51,12 +51,15 @@ const nextConfig = {
 			};
 		}
 
-		// Ignore Html import from next/document in App Router (server-side)
+		// Replace next/document imports with stub (server-side only)
 		if (isServer) {
-			config.resolve.alias = {
-				...config.resolve.alias,
-				'next/document': path.join(dir, 'lib', 'noop-document.js'),
-			};
+			config.plugins = config.plugins || [];
+			config.plugins.push(
+				new webpack.NormalModuleReplacementPlugin(
+					/^next\/document$/,
+					path.join(dir, 'lib', 'noop-document.js')
+				)
+			);
 		}
 
 		return config;

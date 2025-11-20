@@ -16,12 +16,13 @@ const nextConfig = {
 		optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
 	},
 	// Reduce memory usage during build
-	webpack: (config, { isServer }) => {
+	webpack: (config, { isServer, dir }) => {
 		// Allow importing backend models via "backend/..." alias
+		// Use `dir` from Next.js (project root) instead of `__dirname` (not defined in ESM)
 		config.resolve = config.resolve || {};
 		config.resolve.alias = {
 			...(config.resolve.alias || {}),
-			backend: path.join(__dirname, '../../backend'),
+			backend: path.join(dir, 'backend'),
 		};
 
 		if (!isServer) {

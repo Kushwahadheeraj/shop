@@ -58,18 +58,29 @@ const nextConfig = {
 			config.plugins = config.plugins || [];
 			
 			// Use NormalModuleReplacementPlugin to replace next/document
+			// This catches both direct imports and imports from dependencies
 			config.plugins.push(
 				new webpack.NormalModuleReplacementPlugin(
-					/^next\/document$/,
-					noopDocPath
+					/next\/document/,
+					(resource) => {
+						resource.request = noopDocPath;
+					}
 				)
 			);
 			
-			// Also add alias as fallback
+			// Also add alias as fallback for all contexts
 			config.resolve.alias = {
 				...config.resolve.alias,
 				'next/document': noopDocPath,
 			};
+			
+			// Exclude qrcode.react from server-side bundle if it's causing issues
+			config.externals = config.externals || [];
+			if (Array.isArray(config.externals)) {
+				config.externals.push({
+					'qrcode.react': 'commonjs qrcode.react',
+				});
+			}
 		}
 
 		return config;

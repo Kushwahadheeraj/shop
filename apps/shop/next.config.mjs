@@ -52,19 +52,25 @@ const nextConfig = {
 		}
 
 		// Replace next/document imports with stub (server-side only)
-		// pages/_document.js can still use real next/document (it's in pages directory)
+		// This prevents Html import errors from dependencies
 		if (isServer) {
 			const noopDocPath = path.resolve(dir, 'lib', 'noop-document.js');
 			
 			config.plugins = config.plugins || [];
 			
-			// Replace next/document for dependencies, but pages/_document.js will use real one
+			// Replace ALL next/document imports with stub (including from node_modules)
 			config.plugins.push(
 				new webpack.NormalModuleReplacementPlugin(
-					/next[\/\\]document$/,
+					/^next[\/\\]document$/,
 					noopDocPath
 				)
 			);
+			
+			// Also add resolve alias as additional fallback
+			config.resolve.alias = {
+				...config.resolve.alias,
+				'next/document': noopDocPath,
+			};
 		}
 
 		return config;

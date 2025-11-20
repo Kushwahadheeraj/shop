@@ -798,9 +798,9 @@ export default function CheckoutPage() {
                         </h3>
                         <p className="text-xs text-gray-600 mb-2">Pack of {item.quantity || 1}</p>
                         
-                        {/* Seller Info */}
+                        {/* Store Info */}
                         <div className="flex items-center gap-2 mb-2">
-                          <span className="text-xs text-gray-600">Seller: Kushwaha Hardware</span>
+                          <span className="text-xs text-gray-600">Store: Kushwaha Hardware</span>
                           <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Assured</span>
                         </div>
                         

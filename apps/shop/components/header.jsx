@@ -722,7 +722,7 @@ export default function Header() {
                     {/* caret */}
                     <div className='absolute -top-2 right-10 w-0 h-0 border-l-8 border-r-8 border-b-8 border-l-transparent border-r-transparent border-b-white'></div>
                     <div className='py-2'>
-                      <Link href='/AccountDetails' className='block px-6 py-3 hover:bg-gray-50 font-medium'>Dashboard</Link>
+                      <Link href='/AccountDetails' className='block px-6 py-3 hover:bg-gray-50 font-medium'>Account Details</Link>
                       <Link href='/Orders' className='block px-6 py-3 hover:bg-gray-50'>Orders</Link>
                       <Link href='/downloads' className='block px-6 py-3 hover:bg-gray-50'>Downloads</Link>
                       <Link href='/Address' className='block px-6 py-3 hover:bg-gray-50'>Addresses</Link>

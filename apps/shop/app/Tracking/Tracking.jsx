@@ -562,18 +562,6 @@ export default function Tracking() {
               <ul className="space-y-1 text-sm">
                 <li>
                   <button
-                    onClick={() => setActiveSection('dashboard')}
-                    className={`block w-full text-left font-bold border-l-4 pl-2 py-2 ${
-                      activeSection === 'dashboard' 
-                        ? 'border-yellow-300 bg-gray-100' 
-                        : 'border-transparent hover:bg-gray-100'
-                    }`}
-                  >
-                    DASHBOARD
-                  </button>
-                </li>
-                <li>
-                  <button
                     onClick={() => setActiveSection('orders')}
                     className={`block w-full text-left border-l-4 pl-2 py-2 ${
                       activeSection === 'orders' 
@@ -621,49 +609,6 @@ export default function Tracking() {
           </div>
           {/* Main Content */}
           <div className="md:w-2/3 px-8 py-8">
-            {/* Dashboard Section */}
-            {activeSection === 'dashboard' && (
-              <div>
-                <h2 className="text-2xl font-bold text-gray-800 mb-6">Dashboard</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                  <div className="bg-white p-6 rounded-lg shadow-sm border">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2">Total Orders</h3>
-                    <p className="text-3xl font-bold text-yellow-300">{orders.length}</p>
-                  </div>
-                  <div className="bg-white p-6 rounded-lg shadow-sm border">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2">Pending Orders</h3>
-                    <p className="text-3xl font-bold text-orange-600">
-                      {orders.filter(order => order.status === 'created').length}
-                    </p>
-                  </div>
-                  <div className="bg-white p-6 rounded-lg shadow-sm border">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2">Delivered Orders</h3>
-                    <p className="text-3xl font-bold text-green-600">
-                      {orders.filter(order => order.status === 'delivered').length}
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="bg-white p-6 rounded-lg shadow-sm border">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">Recent Orders</h3>
-                  {orders.slice(0, 3).map((order) => (
-                    <div key={order._id} className="flex justify-between items-center py-3 border-b border-gray-100 last:border-b-0">
-                      <div>
-                        <p className="font-medium text-gray-800">Order #{order._id.slice(-8).toUpperCase()}</p>
-                        <p className="text-sm text-gray-500">{formatDate(order.createdAt)}</p>
-                      </div>
-                      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(order.status)}`}>
-                        {order.status.toUpperCase()}
-                      </span>
-                    </div>
-                  ))}
-                  {orders.length === 0 && (
-                    <p className="text-gray-500 text-center py-4">No orders yet</p>
-                  )}
-                </div>
-              </div>
-            )}
-
             {/* Orders Section */}
             {activeSection === 'orders' && (
               <div>

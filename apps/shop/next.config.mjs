@@ -50,6 +50,15 @@ const nextConfig = {
 				},
 			};
 		}
+
+		// Ignore Html import from next/document in App Router (server-side)
+		if (isServer) {
+			config.resolve.alias = {
+				...config.resolve.alias,
+				'next/document': path.join(dir, 'lib', 'noop-document.js'),
+			};
+		}
+
 		return config;
 	},
 	// Optimize static generation

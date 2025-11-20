@@ -54,6 +54,8 @@ const nextConfig = {
 	},
 	// Only use standalone output in production
 	...(process.env.NODE_ENV === 'production' && { output: 'standalone' }),
+	// Skip static generation for error pages
+	skipTrailingSlashRedirect: true,
 };
 
 export default nextConfig;

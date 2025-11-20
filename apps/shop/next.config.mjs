@@ -12,7 +12,7 @@ const nextConfig = {
 	},
 	// Optimize build for large codebases
 	experimental: {
-		optimizeCss: true,
+		optimizeCss: false, // Disable to prevent critters errors with Html stub
 		optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
 		// Allow importing code from outside the app directory (for monorepo backend)
 		externalDir: true,

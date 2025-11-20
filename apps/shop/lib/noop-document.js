@@ -2,20 +2,24 @@
 // This file prevents Html import errors during build
 // DO NOT import this file directly - it's only used by webpack replacement
 
+// Import React for proper component rendering
+import React from 'react';
+
 // Use both CommonJS and ESM exports for compatibility
-function Html() {
-  return null;
+// Return React fragments instead of null to avoid Next.js processing errors
+function Html({ children, ...props }) {
+  return React.createElement(React.Fragment, null, children);
 }
 
-function Head() {
-  return null;
+function Head({ children, ...props }) {
+  return React.createElement(React.Fragment, null, children);
 }
 
-function Main() {
-  return null;
+function Main({ children, ...props }) {
+  return React.createElement(React.Fragment, null, children);
 }
 
-function NextScript() {
+function NextScript({ ...props }) {
   return null;
 }
 

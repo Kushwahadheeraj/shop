@@ -1,11 +1,13 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import UpdateWrapper from "@/components/UpdateWrapper";
-import ClientAuthProvider from "@/components/ClientAuthProvider";
-import ClientCartProvider from "@/components/ClientCartProvider";
-import ConditionalFooter from "@/components/ConditionalFooter";
-import ConditionalHeader from "@/components/ConditionalHeader";
-import ConditionalNavbar from "@/components/ConditionalNavbar";
+import dynamic from "next/dynamic";
+
+const UpdateWrapper = dynamic(() => import("@/components/UpdateWrapper"), { ssr: false });
+const ClientAuthProvider = dynamic(() => import("@/components/ClientAuthProvider"), { ssr: true });
+const ClientCartProvider = dynamic(() => import("@/components/ClientCartProvider"), { ssr: true });
+const ConditionalFooter = dynamic(() => import("@/components/ConditionalFooter"), { ssr: false });
+const ConditionalHeader = dynamic(() => import("@/components/ConditionalHeader"), { ssr: false });
+const ConditionalNavbar = dynamic(() => import("@/components/ConditionalNavbar"), { ssr: false });
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

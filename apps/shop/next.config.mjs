@@ -53,13 +53,23 @@ const nextConfig = {
 
 		// Replace next/document imports with stub (server-side only)
 		if (isServer) {
+			const noopDocPath = path.resolve(dir, 'lib', 'noop-document.js');
+			
 			config.plugins = config.plugins || [];
+			
+			// Use NormalModuleReplacementPlugin to replace next/document
 			config.plugins.push(
 				new webpack.NormalModuleReplacementPlugin(
 					/^next\/document$/,
-					path.join(dir, 'lib', 'noop-document.js')
+					noopDocPath
 				)
 			);
+			
+			// Also add alias as fallback
+			config.resolve.alias = {
+				...config.resolve.alias,
+				'next/document': noopDocPath,
+			};
 		}
 
 		return config;

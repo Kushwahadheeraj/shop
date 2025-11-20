@@ -1,22 +1,13 @@
 // Stub file to replace next/document imports in App Router
-import React from 'react';
+'use client';
 
-export function Html({ children, ...props }) {
-  return <>{children}</>;
-}
+// Export empty objects to prevent Html import errors
+export const Html = function Html() { return null; };
+export const Head = function Head() { return null; };
+export const Main = function Main() { return null; };
+export const NextScript = function NextScript() { return null; };
 
-export function Head({ children, ...props }) {
-  return <>{children}</>;
-}
-
-export function Main({ children, ...props }) {
-  return <>{children}</>;
-}
-
-export function NextScript({ ...props }) {
-  return null;
-}
-
+// Default export for compatibility
 export default {
   Html,
   Head,

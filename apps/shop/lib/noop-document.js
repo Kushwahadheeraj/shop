@@ -1,32 +1,30 @@
 // Stub file to replace next/document imports in App Router
 // This file prevents Html import errors during build
 
-// Export functions that match next/document API
-export function Html(props) {
-  if (typeof window === 'undefined') {
-    // Server-side: return null to prevent errors
-    return null;
-  }
+// Use both CommonJS and ESM exports for compatibility
+function Html() {
   return null;
 }
 
-export function Head(props) {
+function Head() {
   return null;
 }
 
-export function Main(props) {
+function Main() {
   return null;
 }
 
-export function NextScript(props) {
+function NextScript() {
   return null;
 }
 
-// Default export for compatibility
-export default {
-  Html,
-  Head,
-  Main,
-  NextScript,
-};
+// ESM exports
+export { Html, Head, Main, NextScript };
+export default { Html, Head, Main, NextScript };
+
+// CommonJS exports (for compatibility)
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { Html, Head, Main, NextScript };
+  module.exports.default = { Html, Head, Main, NextScript };
+}
 

@@ -14,6 +14,8 @@ const nextConfig = {
 	experimental: {
 		optimizeCss: true,
 		optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
+		// Allow importing code from outside the app directory (for monorepo backend)
+		externalDir: true,
 	},
 	// Reduce memory usage during build
 	webpack: (config, { isServer, dir }) => {
@@ -22,7 +24,8 @@ const nextConfig = {
 		config.resolve = config.resolve || {};
 		config.resolve.alias = {
 			...(config.resolve.alias || {}),
-			backend: path.join(dir, 'backend'),
+			// `dir` for this app is ".../apps/shop", backend is at ".../backend"
+			backend: path.join(dir, '..', 'backend'),
 		};
 
 		if (!isServer) {

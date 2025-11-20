@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3000",
-    "build": "NODE_OPTIONS='--max-old-space-size=8192' npx next build",
+    "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 npx next build",
     "start": "node --max-old-space-size=1024 .next/standalone/server.js",
     "lint": "next lint"
   },
@@ -50,7 +50,8 @@
     "eslint": "^9",
     "eslint-config-next": "15.3.3",
     "tailwindcss": "^4",
-    "tw-animate-css": "^1.3.2"
+    "tw-animate-css": "^1.3.2",
+    "cross-env": "^7.0.3"
   }
 }
 

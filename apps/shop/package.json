@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3000",
-    "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 npx next build",
+    "dev": "next dev -p 3000 --webpack",
+    "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 npx next build --webpack",
     "start": "node --max-old-space-size=1024 .next/standalone/server.js",
     "lint": "next lint"
   },

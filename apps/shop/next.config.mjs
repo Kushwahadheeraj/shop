@@ -12,7 +12,7 @@ const nextConfig = {
 	},
 	// Optimize build for large codebases
 	experimental: {
-		optimizeCss: false, // Disable to prevent critters errors with Html stub
+		optimizeCss: false,
 		optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
 		// Allow importing code from outside the app directory (for monorepo backend)
 		externalDir: true,
@@ -51,23 +51,6 @@ const nextConfig = {
 			};
 		}
 
-		// Disabled: App Router doesn't use next/document
-		// If any dependency tries to import next/document, it will fail at runtime
-		// This is better than replacing it with a stub that Next.js detects
-		// if (isServer) {
-		// 	const noopDocPath = path.resolve(dir, 'lib', 'noop-document.js');
-		// 	config.plugins = config.plugins || [];
-		// 	config.plugins.push(
-		// 		new webpack.NormalModuleReplacementPlugin(
-		// 			/^next[\/\\]document$/,
-		// 			noopDocPath
-		// 		)
-		// 	);
-		// 	config.resolve.alias = {
-		// 		...config.resolve.alias,
-		// 		'next/document': noopDocPath,
-		// 	};
-		// }
 
 		return config;
 	},

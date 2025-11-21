@@ -1,6 +1,5 @@
 "use client"
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import API_BASE_URL from "@/lib/apiConfig";
 import { performLogout } from '@/lib/logout';
 
@@ -9,7 +8,6 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   // Check if user is authenticated on app load
   useEffect(() => {

@@ -1,5 +1,5 @@
 'use client';
-import Update from '@/app/Update/Update';
+import Update from '@/app/Update/_components/Update';
 import Navbar from './Navbar';
 import Footer from './footer';
 import Header from './header';

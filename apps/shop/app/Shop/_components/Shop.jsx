@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import PersistentShopSidebar from "@/components/PersistentShopSidebar";
-import Update from "@/app/Update/Update";
+import Update from "@/app/Update/_components/Update";
 import { useEffect, useState } from "react";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';

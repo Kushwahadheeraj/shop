@@ -51,28 +51,23 @@ const nextConfig = {
 			};
 		}
 
-		// Replace next/document imports with stub (server-side only)
-		// This prevents Html import errors from dependencies
-		// App Router doesn't use next/document, so we can safely replace all imports
-		if (isServer) {
-			const noopDocPath = path.resolve(dir, 'lib', 'noop-document.js');
-			
-			config.plugins = config.plugins || [];
-			
-			// Replace ALL next/document imports with stub
-			config.plugins.push(
-				new webpack.NormalModuleReplacementPlugin(
-					/^next[\/\\]document$/,
-					noopDocPath
-				)
-			);
-			
-			// Also add resolve alias as additional fallback
-			config.resolve.alias = {
-				...config.resolve.alias,
-				'next/document': noopDocPath,
-			};
-		}
+		// Disabled: App Router doesn't use next/document
+		// If any dependency tries to import next/document, it will fail at runtime
+		// This is better than replacing it with a stub that Next.js detects
+		// if (isServer) {
+		// 	const noopDocPath = path.resolve(dir, 'lib', 'noop-document.js');
+		// 	config.plugins = config.plugins || [];
+		// 	config.plugins.push(
+		// 		new webpack.NormalModuleReplacementPlugin(
+		// 			/^next[\/\\]document$/,
+		// 			noopDocPath
+		// 		)
+		// 	);
+		// 	config.resolve.alias = {
+		// 		...config.resolve.alias,
+		// 		'next/document': noopDocPath,
+		// 	};
+		// }
 
 		return config;
 	},

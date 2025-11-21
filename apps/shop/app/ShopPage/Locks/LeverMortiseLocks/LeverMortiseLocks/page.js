@@ -1,0 +1,11 @@
+'use client';
+import React from 'react';
+import UniversalShopPage from '@/components/UniversalShopPage';
+
+export default function Page() {
+  return <UniversalShopPage />;
+}
+
+// Force dynamic rendering to prevent build timeouts
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";

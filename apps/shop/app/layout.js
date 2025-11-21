@@ -28,22 +28,21 @@ export const revalidate = 0;
 
 export default function RootLayout({ children }) {
   return (
-      <html lang="en">
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          <ClientAuthProvider>
-            <ClientCartProvider>
-              <UpdateWrapper />
-              <ConditionalHeader />
-              <ConditionalNavbar />
-              <main className="">
-                {children}
-              </main>
-              <ConditionalFooter />
-            </ClientCartProvider>
-          </ClientAuthProvider>
-        </body>
-      </html>
+    <html lang="en">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <ClientAuthProvider>
+          <ClientCartProvider>
+            <UpdateWrapper />
+            <ConditionalHeader />
+            <ConditionalNavbar />
+            <main>{children}</main>
+            <ConditionalFooter />
+          </ClientCartProvider>
+        </ClientAuthProvider>
+      </body>
+    </html>
   );
 }
+
 
 

@@ -3,21 +3,21 @@
   "version": "1.0.0",
   "private": true,
   "workspaces": [
-    "apps/*",
+    "app/*",
     "backend"
   ],
   "scripts": {
-    "dev:shop": "cd apps/shop && npm run dev",
-    "dev:dashboard": "cd apps/dashboard && npm run dev",
+    "dev:shop": "cd app/shop && npm run dev",
+    "dev:dashboard": "cd app/dashboard && npm run dev",
     "dev:backend": "cd backend && npm start",
     "dev:all": "concurrently \"npm run dev:backend\" \"npm run dev:shop\" \"npm run dev:dashboard\"",
     "build": "npm run build:shop",
-    "build:shop": "cd apps/shop && npm run build",
-    "build:dashboard": "cd apps/dashboard && npm run build",
+    "build:shop": "cd app/shop && npm run build",
+    "build:dashboard": "cd app/dashboard && npm run build",
     "start": "npm run start:shop",
-    "start:shop": "cd apps/shop && npm run start",
-    "start:dashboard": "cd apps/dashboard && npm run start",
-    "install:all": "npm install && cd apps/shop && npm install && cd ../dashboard && npm install && cd ../../backend && npm install"
+    "start:shop": "cd app/shop && npm run start",
+    "start:dashboard": "cd app/dashboard && npm run start",
+    "install:all": "npm install && cd app/shop && npm install && cd ../dashboard && npm install && cd ../../backend && npm install"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",

@@ -41,13 +41,21 @@ const nextConfig = {
 	webpack: (config, { isServer, dev }) => {
 		// Allow importing from backend directory
 		if (isServer) {
+			// Resolve mongoose and other backend dependencies from dashboard's node_modules first
+			// This ensures backend models can find mongoose during build
+			const dashboardNodeModules = path.resolve(__dirname, 'node_modules');
+			
 			// Add alias for backend models
 			config.resolve.alias = {
 				...config.resolve.alias,
 				'@backend': path.resolve(__dirname, '../../backend'),
+				// Force mongoose to resolve from dashboard's node_modules
+				'mongoose': path.resolve(dashboardNodeModules, 'mongoose'),
 			};
-			// Add the root directory to resolve paths for relative imports
+			
+			// Prioritize dashboard's node_modules for all dependencies
 			config.resolve.modules = [
+				dashboardNodeModules, // Dashboard's node_modules first
 				...config.resolve.modules,
 				path.resolve(__dirname, '../..'), // Root of monorepo
 			];
@@ -131,6 +139,8 @@ const nextConfig = {
 	generateBuildId: async () => {
 		return 'build-' + Date.now();
 	},
+	// Set output file tracing root to fix workspace warning
+	outputFileTracingRoot: path.resolve(__dirname, '../..'),
 	// Only use standalone output in production
 	...(process.env.NODE_ENV === 'production' && { output: 'standalone' }),
 };

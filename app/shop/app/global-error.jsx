@@ -1,11 +1,13 @@
-export default function GlobalError({ error }) {
+"use client";
+
+export default function GlobalError({ error, reset }) {
   return (
     <div style={{ padding: "40px", textAlign: "center" }}>
       <h1>Something went wrong</h1>
       <p>{error?.message}</p>
 
-      <a
-        href="/"
+      <button
+        onClick={() => reset?.()}
         style={{
           display: "inline-block",
           marginTop: "1rem",
@@ -13,11 +15,12 @@ export default function GlobalError({ error }) {
           background: "black",
           color: "white",
           borderRadius: "6px",
-          textDecoration: "none",
+          border: "none",
+          cursor: "pointer",
         }}
       >
-        Go to Home
-      </a>
+        Try again
+      </button>
     </div>
   );
 }

@@ -4,9 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3001",
-    "build": "NODE_OPTIONS='--max-old-space-size=8192' npx next build",
+    "build": "cross-env NODE_OPTIONS=\"--max-old-space-size=16384 --expose-gc\" next build",
+    "build:large": "cross-env NODE_OPTIONS=\"--max-old-space-size=20480 --expose-gc\" next build",
+    "build:max": "cross-env NODE_OPTIONS=\"--max-old-space-size=24576 --expose-gc\" next build",
     "start": "node --max-old-space-size=1024 .next/standalone/server.js",
-    "lint": "next lint"
+    "lint": "next lint",
+    "clean": "if exist .next rmdir /s /q .next && if exist out rmdir /s /q out",
+    "clean:build": "npm run clean && npm run build",
+    "next": "cross-env NODE_OPTIONS=\"--max-old-space-size=16384 --expose-gc\" next"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -47,6 +52,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "cross-env": "^10.1.0",
     "eslint": "^9",
     "eslint-config-next": "15.3.3",
     "tailwindcss": "^4",

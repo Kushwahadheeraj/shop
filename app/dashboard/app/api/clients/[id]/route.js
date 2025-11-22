@@ -3,6 +3,10 @@ import connectDB from '@/lib/db';
 import { verifyAuth } from '@/lib/auth';
 import Client from '@/lib/models/Client';
 
+// Mark as dynamic to prevent build-time execution
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 export async function GET(request, { params }) {
   try {
     const sellerId = verifyAuth(request);

@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 
+// Mark as dynamic to prevent build-time execution
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 // Import all your product models
 import ElectricalProduct from '@backend/models/ElectricalModels';
 import PaintProduct from '@backend/models/PaintModels';

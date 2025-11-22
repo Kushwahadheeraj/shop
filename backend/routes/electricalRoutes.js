@@ -4,7 +4,7 @@ const multer = require('multer');
 
 const adaptors = require('../controllers/electrical/AdaptorsController.js');
 const ceilingRoses = require('../controllers/electrical/ceilingRosesController.js');
-const wiresAndCables = require('../controllers/electrical/wiresAndCablesController.js');
+const wiresAndCables = require('../controllers/electrical/WiresAndCablesController.js');
 const waterHeater = require('../controllers/electrical/waterHeaterController.js');
 const uniSwitch = require('../controllers/electrical/uniSwitchController.js');
 const tVOutlets = require('../controllers/electrical/tVOutletsController.js');

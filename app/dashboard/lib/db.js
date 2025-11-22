@@ -2,9 +2,8 @@ import mongoose from 'mongoose';
 
 const MONGODB_URI = process.env.MONGO_URI;
 
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGO_URI environment variable inside .env');
-}
+// Don't throw during build - only check when actually connecting
+// This allows the build to complete even without MONGO_URI set
 
 /**
  * Global is used here to maintain a cached connection across hot reloads
@@ -18,6 +17,11 @@ if (!cached) {
 }
 
 async function connectDB() {
+  // Check for MONGO_URI when actually connecting (not during build)
+  if (!MONGODB_URI) {
+    throw new Error('Please define the MONGO_URI environment variable inside .env');
+  }
+  
   // Log environment variable status
   console.log('🔍 connectDB() called');
   console.log('  MONGO_URI defined:', !!MONGODB_URI);

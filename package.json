@@ -14,12 +14,13 @@
     "build": "npm run build:shop",
     "build:shop": "cd app/shop && npm run build",
     "build:dashboard": "cd app/dashboard && npm run build",
-    "build:backend": "cd backend && npm run build",
+    "build:render": "npm install && cd backend && npm install",
     "start": "npm run start:shop",
     "start:shop": "cd app/shop && npm run start",
     "start:dashboard": "cd app/dashboard && npm run start",
     "start:backend": "cd backend && npm start",
-    "install:all": "npm install && cd app/shop && npm install && cd ../dashboard && npm install && cd ../../backend && npm install"
+    "install:all": "npm install && cd app/shop && npm install && cd ../dashboard && npm install && cd ../../backend && npm install",
+    "install:backend": "npm install && cd backend && npm install"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",

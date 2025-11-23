@@ -503,4 +503,5 @@ export default function InvoicePreview() {
   );
 }
 
-
+// Mark as static - nested route under GSTBillManagement
+export const dynamic = 'force-static';

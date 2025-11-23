@@ -32,6 +32,8 @@ const nextConfig = {
 			'react-icons',
 			'@react-icons/all-files',
 		],
+		// Ensure client components don't create unnecessary lambdas
+		serverComponentsExternalPackages: ['mongoose'],
 	},
 	// Reduce memory usage
 	compiler: {

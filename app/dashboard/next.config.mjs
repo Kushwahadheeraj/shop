@@ -44,21 +44,38 @@ const nextConfig = {
 			// Resolve mongoose and other backend dependencies from dashboard's node_modules first
 			// This ensures backend models can find mongoose during build
 			const dashboardNodeModules = path.resolve(__dirname, 'node_modules');
+			const backendPath = path.resolve(__dirname, '../../backend');
 			
-			// Add alias for backend models
+			// Ensure resolve object exists
+			config.resolve = config.resolve || {};
+			
+			// CRITICAL: Force mongoose to resolve from dashboard's node_modules
+			// Backend models use require('mongoose'), so we must alias it explicitly
+			// Point to the mongoose package directory - webpack will resolve the entry point
+			const mongoosePackagePath = path.resolve(dashboardNodeModules, 'mongoose');
+			
+			// Add alias for backend models and mongoose
 			config.resolve.alias = {
 				...config.resolve.alias,
-				'@backend': path.resolve(__dirname, '../../backend'),
-				// Force mongoose to resolve from dashboard's node_modules
-				'mongoose': path.resolve(dashboardNodeModules, 'mongoose'),
+				'@backend': backendPath,
+				// Alias mongoose to dashboard's node_modules version
+				// This ensures backend models (which use require('mongoose')) can find it
+				'mongoose': mongoosePackagePath,
 			};
 			
+			// Also add to mainFields to ensure proper resolution
+			config.resolve.mainFields = ['main', 'module', ...(config.resolve.mainFields || [])];
+			
 			// Prioritize dashboard's node_modules for all dependencies
+			// This ensures that when webpack processes backend files, it looks in dashboard's node_modules
 			config.resolve.modules = [
-				dashboardNodeModules, // Dashboard's node_modules first
-				...config.resolve.modules,
-				path.resolve(__dirname, '../..'), // Root of monorepo
+				dashboardNodeModules, // Dashboard's node_modules first - CRITICAL
+				...(config.resolve.modules || []),
+				'node_modules', // Fallback to standard node_modules resolution
 			];
+			
+			// Ensure webpack doesn't try to resolve from backend's node_modules
+			config.resolve.symlinks = false;
 		}
 		
 		// Aggressive memory optimizations for production builds

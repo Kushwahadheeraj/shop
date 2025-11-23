@@ -49,23 +49,23 @@ const nextConfig = {
 			// Ensure resolve object exists
 			config.resolve = config.resolve || {};
 			
-			// CRITICAL: Force mongoose to resolve from dashboard's node_modules
-			// Backend models use require('mongoose'), so we must alias it explicitly
-			const mongoosePackagePath = path.resolve(dashboardNodeModules, 'mongoose');
+			// CRITICAL: Don't alias mongoose to an absolute path
+			// Instead, ensure module resolution finds it in dashboard's node_modules
+			// The modules array with dashboardNodeModules first should handle this
 			
-			// Add alias for backend models and mongoose
+			// Add alias for backend models (but NOT mongoose - let webpack resolve it)
 			config.resolve.alias = {
 				...config.resolve.alias,
 				'@backend': backendPath,
-				// Alias mongoose to dashboard's node_modules version
-				'mongoose': mongoosePackagePath,
+				// DO NOT alias mongoose - let webpack resolve it through modules array
 			};
 			
 			// Also add to mainFields to ensure proper resolution
 			config.resolve.mainFields = ['main', 'module', ...(config.resolve.mainFields || [])];
 			
-			// Prioritize dashboard's node_modules for all dependencies
-			// This ensures that when webpack processes backend files, it looks in dashboard's node_modules
+			// CRITICAL: Configure module resolution to always use dashboard's node_modules
+			// When webpack processes backend files, it resolves relative to backend directory
+			// We need to ensure it looks in dashboard's node_modules instead
 			config.resolve.modules = [
 				dashboardNodeModules, // Dashboard's node_modules first - CRITICAL
 				...(config.resolve.modules || []),
@@ -75,19 +75,14 @@ const nextConfig = {
 			// Ensure webpack doesn't try to resolve from backend's node_modules
 			config.resolve.symlinks = false;
 			
-			// Use webpack plugin to intercept ALL mongoose resolution
-			// This ensures backend models use dashboard's mongoose
-			config.plugins = config.plugins || [];
-			config.plugins.push(
-				new webpack.NormalModuleReplacementPlugin(
-					/^mongoose$/,
-					(resource) => {
-						// Always replace mongoose with dashboard's version
-						// This ensures backend models can find mongoose
-						resource.request = mongoosePackagePath;
-					}
-				)
-			);
+			// The modules array should handle resolution, but webpack might still
+			// try to resolve relative to backend directory. Let's add roots configuration
+			// and ensure package resolution works correctly
+			config.resolve.roots = [dashboardNodeModules];
+			
+			// Ensure package.json resolution works for mongoose
+			// This tells webpack to look for package.json in dashboard's node_modules
+			config.resolve.descriptionFiles = ['package.json'];
 		}
 		
 		// Aggressive memory optimizations for production builds

@@ -923,3 +923,7 @@ const GSTBillManagementPage = () => {
 };
 
 export default GSTBillManagementPage;
+
+// Explicitly mark as static for Vercel deployment
+// This prevents Vercel from expecting a lambda function
+export const dynamic = 'force-static';

@@ -1110,3 +1110,7 @@ const SimpleBillManagementPage = () => {
 };
 
 export default SimpleBillManagementPage;
+
+// Explicitly mark as static for Vercel deployment
+// This prevents Vercel from expecting a lambda function
+export const dynamic = 'force-static';

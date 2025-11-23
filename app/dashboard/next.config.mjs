@@ -38,7 +38,7 @@ const nextConfig = {
 		removeConsole: process.env.NODE_ENV === 'production',
 	},
 	// Reduce memory usage during build
-	webpack: (config, { isServer, dev }) => {
+	webpack: (config, { isServer, dev, webpack }) => {
 		// Allow importing from backend directory
 		if (isServer) {
 			// Resolve mongoose and other backend dependencies from dashboard's node_modules first
@@ -51,7 +51,6 @@ const nextConfig = {
 			
 			// CRITICAL: Force mongoose to resolve from dashboard's node_modules
 			// Backend models use require('mongoose'), so we must alias it explicitly
-			// Point to the mongoose package directory - webpack will resolve the entry point
 			const mongoosePackagePath = path.resolve(dashboardNodeModules, 'mongoose');
 			
 			// Add alias for backend models and mongoose
@@ -59,7 +58,6 @@ const nextConfig = {
 				...config.resolve.alias,
 				'@backend': backendPath,
 				// Alias mongoose to dashboard's node_modules version
-				// This ensures backend models (which use require('mongoose')) can find it
 				'mongoose': mongoosePackagePath,
 			};
 			
@@ -76,6 +74,20 @@ const nextConfig = {
 			
 			// Ensure webpack doesn't try to resolve from backend's node_modules
 			config.resolve.symlinks = false;
+			
+			// Use webpack plugin to intercept ALL mongoose resolution
+			// This ensures backend models use dashboard's mongoose
+			config.plugins = config.plugins || [];
+			config.plugins.push(
+				new webpack.NormalModuleReplacementPlugin(
+					/^mongoose$/,
+					(resource) => {
+						// Always replace mongoose with dashboard's version
+						// This ensures backend models can find mongoose
+						resource.request = mongoosePackagePath;
+					}
+				)
+			);
 		}
 		
 		// Aggressive memory optimizations for production builds

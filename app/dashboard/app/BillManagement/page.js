@@ -1,9 +1,5 @@
 "use client";
 
-// Route segment config - ensure this is treated as a client component
-// Client components don't need revalidate, only dynamic is needed
-export const dynamic = 'force-dynamic';
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { Plus, Search, Filter, Download, Eye, Edit, Trash2, Calendar, DollarSign, Building2, CreditCard, History, Receipt, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';

@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useMemo, useEffect } from 'react';
 import { X } from 'lucide-react';
 import API_BASE_URL from '@/lib/apiConfig';

@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from 'react';
 import { X, Save, CreditCard, Smartphone, FileText, Camera } from 'lucide-react';
 

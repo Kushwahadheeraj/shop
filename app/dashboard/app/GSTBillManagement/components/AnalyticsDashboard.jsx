@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect } from 'react';
 import { BarChart3, TrendingUp, DollarSign, Users, Package, Calendar, Download, Filter, RefreshCw, Eye, FileText, PieChart, LineChart, X, CheckCircle } from 'lucide-react';
 

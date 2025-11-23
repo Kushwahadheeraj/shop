@@ -1,3 +1,4 @@
+"use client";
 import React from 'react';
 import { X, Eye, Edit, Trash2, Printer, MapPin, Phone, Mail, CreditCard, Clock } from 'lucide-react';
 

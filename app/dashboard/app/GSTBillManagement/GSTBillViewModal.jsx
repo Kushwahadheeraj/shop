@@ -1,3 +1,4 @@
+"use client";
 import React from 'react';
 import { X, Edit, Trash2, Printer, Download, FileText } from 'lucide-react';
 

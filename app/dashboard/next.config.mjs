@@ -167,8 +167,10 @@ const nextConfig = {
 	},
 	// Set output file tracing root to fix workspace warning
 	outputFileTracingRoot: path.resolve(__dirname, '../..'),
-	// Only use standalone output in production
-	...(process.env.NODE_ENV === 'production' && { output: 'standalone' }),
+	// Only use standalone output in production, but not for Vercel
+	// Vercel handles its own deployment and doesn't need standalone output
+	// This also prevents "Unable to find lambda" errors for static client components
+	...(process.env.NODE_ENV === 'production' && !process.env.VERCEL && { output: 'standalone' }),
 };
 
 export default nextConfig;

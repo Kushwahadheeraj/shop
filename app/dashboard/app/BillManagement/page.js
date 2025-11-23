@@ -1,5 +1,8 @@
 "use client";
 
+// Explicitly mark as static - no server-side rendering needed
+export const dynamic = 'force-static';
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { Plus, Search, Filter, Download, Eye, Edit, Trash2, Calendar, DollarSign, Building2, CreditCard, History, Receipt, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';

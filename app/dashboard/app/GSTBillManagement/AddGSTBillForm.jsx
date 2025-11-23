@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect, useMemo } from 'react';
 import { X, Save, Plus, Trash2, Calculator, Calendar, Edit, Upload, ChevronDown, RefreshCw, Pen, Paperclip, FileText, StickyNote, Info, Phone, Settings, Users, Package, DollarSign, Mail, Printer, Download, Eye, Clock, CheckCircle, AlertCircle, Search } from 'lucide-react';
 import ClientManagement from './components/ClientManagement';

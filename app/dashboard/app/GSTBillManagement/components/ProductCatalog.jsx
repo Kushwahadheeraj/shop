@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2, Package, Tag, Calculator, X, Save, Upload, Image as ImageIcon, FileSearch } from 'lucide-react';
 import HSNLookup from './HSNLookup';

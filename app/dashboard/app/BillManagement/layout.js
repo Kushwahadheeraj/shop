@@ -1,6 +1,7 @@
 // Layout for BillManagement route
-// Explicitly mark as static to prevent Vercel from expecting a lambda
-export const dynamic = 'force-static';
+// Keep this segment fully dynamic because the page relies on runtime data.
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default function BillManagementLayout({ children }) {
   return children;

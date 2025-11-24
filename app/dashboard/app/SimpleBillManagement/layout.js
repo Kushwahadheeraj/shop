@@ -1,6 +1,7 @@
 // Layout for SimpleBillManagement route
-// Explicitly mark as static to prevent Vercel from expecting a lambda
-export const dynamic = 'force-static';
+// Render dynamically; this page fetches data at runtime.
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default function SimpleBillManagementLayout({ children }) {
   return children;

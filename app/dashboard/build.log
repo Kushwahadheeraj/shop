@@ -1,0 +1,12 @@
+npm warn config ignoring workspace config at C:\Users\HP\Documents\NextJS-Pro\shop\app\dashboard/.npmrc
+
+> dashboard@0.1.0 build
+> cross-env NODE_OPTIONS="--max-old-space-size=16384 --expose-gc" next build
+
+   ▲ Next.js 15.3.4
+   - Experiments (use with caution):
+     ✓ optimizeCss
+
+   Creating an optimized production build ...
+Terminate batch job (Y/N)? Terminate batch job (Y/N)? 
+^C

@@ -49,8 +49,8 @@ export async function GET(request, { params }) {
         { error: data?.message || 'Product not found' },
         { status: 404 }
       );
-    }
-
+        }
+        
     if (!response.ok) {
       console.error('Backend responded with error:', data);
       return NextResponse.json(

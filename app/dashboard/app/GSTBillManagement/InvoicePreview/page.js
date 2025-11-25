@@ -17,7 +17,7 @@ export default function InvoicePreview() {
   useEffect(() => {
     const load = async () => {
       const billId = params.get('billId');
-      if (!billId) { router.push('/Dashboard/GSTBillManagement'); return; }
+      if (!billId) { router.push('/GSTBillManagement'); return; }
       const token = localStorage.getItem('token');
       const res = await fetch(`${API_BASE_URL}/gst-bills/${billId}`, { headers: { 'Authorization': `Bearer ${token}` } });
       const data = await res.json();
@@ -34,7 +34,7 @@ export default function InvoicePreview() {
             if (acc) setBank(acc);
           }
         } catch {}
-      } else router.push('/Dashboard/GSTBillManagement');
+      } else router.push('/GSTBillManagement');
     };
     load();
   }, [params, router]);
@@ -151,7 +151,7 @@ export default function InvoicePreview() {
   return (
     <div className="p-6">
       <div className="flex justify-end gap-2 mb-4 no-print">
-        <button onClick={()=>router.push('/Dashboard/GSTBillManagement')} className="px-3 py-2 border rounded flex items-center gap-2"><Edit className="w-4 h-4"/>Edit</button>
+        <button onClick={()=>router.push('/GSTBillManagement')} className="px-3 py-2 border rounded flex items-center gap-2"><Edit className="w-4 h-4"/>Edit</button>
         <button onClick={handleDownload} className="px-3 py-2 border rounded flex items-center gap-2"><Download className="w-4 h-4"/>Download</button>
         <button onClick={handlePrint} className="px-3 py-2 border rounded flex items-center gap-2"><Printer className="w-4 h-4"/>Print</button>
       </div>

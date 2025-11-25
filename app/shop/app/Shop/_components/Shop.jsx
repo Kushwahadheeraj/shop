@@ -5,8 +5,7 @@ import { useRouter } from "next/navigation";
 import PersistentShopSidebar from "@/components/PersistentShopSidebar";
 import Update from "@/app/Update/_components/Update";
 import { useEffect, useState } from "react";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+import API_BASE_URL from "@/lib/apiConfig";
 
 
 
@@ -16,6 +15,7 @@ export default function Shop() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [imageErrors, setImageErrors] = useState({});
 
   useEffect(() => {
     if (typeof document !== "undefined") {
@@ -28,7 +28,7 @@ export default function Shop() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${API_BASE_URL}/api/simple-products`);
+        const response = await fetch(`${API_BASE_URL}/simple-products`);
         if (!response.ok) {
           throw new Error('Failed to fetch products');
         }
@@ -146,13 +146,34 @@ export default function Shop() {
                 >
                   {/* Image Section */}
                   <div className="w-full h-48 bg-white flex items-center justify-center p-6">
-                    <Image
-                      src={`${API_BASE_URL}${product.image}` || '/placeholder-product.png'}
-                      alt={product.name}
-                      width={200}
-                      height={200}
-                      className="object-contain max-h-full max-w-full group-hover:scale-105 transition-transform duration-300"
-                    />
+                    {imageErrors[product._id] || !product.image ? (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded">
+                        <span className="text-gray-400 text-xs text-center px-2">No Image</span>
+                      </div>
+                    ) : (
+                      <Image
+                        src={(() => {
+                          // If image is already a full URL, use it directly
+                          if (product.image.startsWith('http://') || product.image.startsWith('https://')) {
+                            return product.image;
+                          }
+                          // Construct the full URL
+                          // Backend stores images as /uploads/products/...
+                          // Static files are served from root, not /api
+                          const baseUrl = API_BASE_URL.replace('/api', '');
+                          const imagePath = product.image.startsWith('/') ? product.image : `/${product.image}`;
+                          return `${baseUrl}${imagePath}`;
+                        })()}
+                        alt={product.name}
+                        width={200}
+                        height={200}
+                        unoptimized={true}
+                        onError={() => {
+                          setImageErrors(prev => ({ ...prev, [product._id]: true }));
+                        }}
+                        className="object-contain max-h-full max-w-full group-hover:scale-105 transition-transform duration-300"
+                      />
+                    )}
                   </div>
                   
                   {/* Label Section */}

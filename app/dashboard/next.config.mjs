@@ -165,9 +165,10 @@ const nextConfig = {
 	generateBuildId: async () => {
 		return 'build-' + Date.now();
 	},
-	// Set output file tracing root to current directory for Vercel compatibility
-	// Vercel needs the root to be the dashboard directory, not the monorepo root
-	outputFileTracingRoot: process.env.VERCEL ? path.resolve(__dirname) : path.resolve(__dirname, '../..'),
+	// Set output file tracing root to current directory
+	// This ensures Vercel can correctly trace files during deployment
+	// For monorepo, Vercel should be configured with root directory as 'app/dashboard'
+	outputFileTracingRoot: path.resolve(__dirname),
 	// Only use standalone output in production, but not for Vercel
 	// Vercel handles its own deployment and doesn't need standalone output
 	// This also prevents "Unable to find lambda" errors for static client components

@@ -600,7 +600,7 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
       };
       // Defer saving until bank details added; store draft and go to bank step
       sessionStorage.setItem('pending_gst_bill', JSON.stringify(billData));
-      window.location.href = '/Dashboard/GSTBillManagement/BankDetails';
+      window.location.href = '/GSTBillManagement/BankDetails';
     } catch (error) {
       console.error('Error preparing GST bill:', error);
       setLoading(false);

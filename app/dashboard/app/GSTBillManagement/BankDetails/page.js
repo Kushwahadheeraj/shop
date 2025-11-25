@@ -27,12 +27,12 @@ export default function BankDetailsPage() {
     try {
       const raw = sessionStorage.getItem('pending_gst_bill');
       if (!raw) {
-        router.push('/Dashboard/GSTBillManagement');
+        router.push('/GSTBillManagement');
         return;
       }
       setPendingBill(JSON.parse(raw));
     } catch {
-      router.push('/Dashboard/GSTBillManagement');
+      router.push('/GSTBillManagement');
       return;
     }
     fetchAccounts();
@@ -58,7 +58,7 @@ export default function BankDetailsPage() {
     if (res.ok && data?.success) {
       sessionStorage.removeItem('pending_gst_bill');
       const billId = data?.data?.gstBill?._id;
-      router.push(`/Dashboard/GSTBillManagement/InvoicePreview?billId=${billId}`);
+      router.push(`/GSTBillManagement/InvoicePreview?billId=${billId}`);
     } else {
       alert(data?.message || 'Failed to save GST bill.');
     }

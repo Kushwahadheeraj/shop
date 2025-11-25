@@ -1,0 +1,6 @@
+# Ignore root package.json to prevent Vercel from installing at root level
+# This ensures all dependencies are installed only in app/dashboard
+package.json
+package-lock.json
+node_modules
+

@@ -30,6 +30,16 @@ const nextConfig = {
 	compiler: {
 		removeConsole: process.env.NODE_ENV === 'production',
 	},
+	// Disable source maps in production to prevent source-map module errors
+	productionBrowserSourceMaps: false,
+	// Ensure Next.js doesn't try to load source-map at runtime
+	webpack: (config, { isServer, dev }) => {
+		// Completely disable source maps in production
+		if (!dev) {
+			config.devtool = false;
+		}
+		return config;
+	},
 	// Vercel deployment configuration
 	outputFileTracingRoot: path.resolve(__dirname),
 };

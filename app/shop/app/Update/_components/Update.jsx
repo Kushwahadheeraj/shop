@@ -73,7 +73,9 @@ export default function Update() {
         const toAbs = (u) => {
           if (!u || typeof u !== 'string') return '/placeholder.jpg';
           if (u.startsWith('http://') || u.startsWith('https://') || u.startsWith('data:')) return u;
-          const base = API_BASE_URL.replace(/\/$/, '');
+          // Backend stores images as /uploads/products/...
+          // Static files are served from root, not /api
+          const base = API_BASE_URL.replace('/api', '').replace(/\/$/, '');
           const path = u.startsWith('/') ? u : `/${u}`;
           return `${base}${path}`;
         };
@@ -148,7 +150,7 @@ export default function Update() {
         }
 
         // Fetch orders to calculate sales
-        const ordersResponse = await fetch(`${API_BASE_URL}/api/orders`);
+        const ordersResponse = await fetch(`${API_BASE_URL}/orders`);
         let orders = [];
         if (ordersResponse.ok) {
           const ordersData = await ordersResponse.json();
@@ -187,7 +189,9 @@ export default function Update() {
         const toAbs = (u) => {
           if (!u || typeof u !== 'string') return '/placeholder.jpg';
           if (u.startsWith('http://') || u.startsWith('https://') || u.startsWith('data:')) return u;
-          const base = API_BASE_URL.replace(/\/$/, '');
+          // Backend stores images as /uploads/products/...
+          // Static files are served from root, not /api
+          const base = API_BASE_URL.replace('/api', '').replace(/\/$/, '');
           const path = u.startsWith('/') ? u : `/${u}`;
           return `${base}${path}`;
         };
@@ -294,7 +298,9 @@ export default function Update() {
         const toAbs = (u) => {
           if (!u || typeof u !== 'string') return '/placeholder.jpg';
           if (u.startsWith('http://') || u.startsWith('https://') || u.startsWith('data:')) return u;
-          const base = API_BASE_URL.replace(/\/$/, '');
+          // Backend stores images as /uploads/products/...
+          // Static files are served from root, not /api
+          const base = API_BASE_URL.replace('/api', '').replace(/\/$/, '');
           const path = u.startsWith('/') ? u : `/${u}`;
           return `${base}${path}`;
         };

@@ -32,10 +32,10 @@ export default function RootLayout({ children }) {
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ClientAuthProvider>
           <ClientCartProvider>
-            <UpdateWrapper />
             <ConditionalHeader />
             <ConditionalNavbar />
             <main>{children}</main>
+            <UpdateWrapper />
             <ConditionalFooter />
           </ClientCartProvider>
         </ClientAuthProvider>

@@ -8,7 +8,11 @@ const nextConfig = {
 			{ protocol: 'https', hostname: 'via.placeholder.com' },
 			{ protocol: 'https', hostname: 'images.unsplash.com' },
 			{ protocol: 'http', hostname: 'localhost' },
+			{ protocol: 'https', hostname: 'shop-backend-qf50.onrender.com' },
 		],
+		// Disable image optimization to prevent 404 errors with external backend images
+		// Images will load directly from backend without Next.js optimization
+		unoptimized: true,
 	},
 	// Optimize build for large codebases
 	experimental: {

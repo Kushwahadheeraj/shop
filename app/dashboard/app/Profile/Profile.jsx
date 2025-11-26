@@ -324,7 +324,7 @@ export default function ProfilePage() {
     }
       // If relative URL, make it absolute
       if (avatarUrl.startsWith('/')) {
-        const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+        const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://shop-backend-qf50.onrender.com/api';
         return `${API_BASE}${avatarUrl}`;
       }
       // If it's already a full path, return as is

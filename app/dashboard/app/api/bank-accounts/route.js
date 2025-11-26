@@ -1,4 +1,4 @@
-const BACKEND = process.env.BACKEND_URL || 'http://localhost:5000';
+const BACKEND = process.env.BACKEND_URL || 'https://shop-backend-qf50.onrender.com/api';
 
 export async function GET(req) {
   try {

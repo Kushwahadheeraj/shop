@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://shop-backend-qf50.onrender.com/api';
 
 export default function ProductAdd() {
   const router = useRouter();
@@ -58,7 +58,7 @@ export default function ProductAdd() {
       formDataToSend.append('name', formData.name.trim());
       formDataToSend.append('image', selectedFile);
 
-      const response = await fetch(`${API_BASE_URL}/api/simple-products`, {
+      const response = await fetch(`${API_BASE_URL}/simple-products`, {
         method: 'POST',
         body: formDataToSend,
       });

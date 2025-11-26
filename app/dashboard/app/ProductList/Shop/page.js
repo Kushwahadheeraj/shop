@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://shop-backend-qf50.onrender.com/api';
 
 export default function ProductList() {
   const router = useRouter();
@@ -21,7 +21,7 @@ export default function ProductList() {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/api/simple-products`);
+      const response = await fetch(`${API_BASE_URL}/simple-products`);
       const data = await response.json();
       
       if (data.success) {
@@ -48,7 +48,7 @@ export default function ProductList() {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/simple-products/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/simple-products/${id}`, {
         method: 'DELETE',
       });
 
@@ -107,7 +107,7 @@ export default function ProductList() {
         formDataToSend.append('image', editFile);
       }
 
-      const response = await fetch(`${API_BASE_URL}/api/simple-products/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/simple-products/${id}`, {
         method: 'PUT',
         body: formDataToSend,
       });
@@ -180,10 +180,19 @@ export default function ProductList() {
                 <div key={product._id} className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
                   <div className="aspect-square p-4 flex items-center justify-center">
                     <Image
-                      src={`${API_BASE_URL}${product.image}`}
+                      src={(() => {
+                        if (!product.image) return '/placeholder.png';
+                        // Backend stores images as /uploads/products/...
+                        // API_BASE_URL is https://shop-backend-qf50.onrender.com/api
+                        // Static files are served from root, not /api
+                        const baseUrl = API_BASE_URL.replace('/api', '');
+                        const imagePath = product.image.startsWith('/') ? product.image : `/${product.image}`;
+                        return `${baseUrl}${imagePath}`;
+                      })()}
                       alt={product.name}
                       width={150}
                       height={150}
+                      unoptimized={true}
                       className="object-contain max-h-full max-w-full"
                       onError={(e) => {
                         e.target.style.display = 'none';

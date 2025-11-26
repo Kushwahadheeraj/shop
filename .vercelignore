@@ -1,9 +1,4 @@
-# Ignore ONLY root-level files to prevent Vercel from installing at root level
-# This ensures all dependencies are installed only in app/dashboard
-# Use leading slash to match only root-level files
-/package.json
-/package-lock.json
-/node_modules
+# Ignore backend server code during frontend deployments
 /backend
-/app/shop
-
+# Ignore dashboard app when deploying the public shop
+/app/dashboard

@@ -3,8 +3,9 @@ import "./globals.css";
 import { AuthProvider } from '@/components/AuthContext';
 import DashboardLayout from './layout-wrapper.jsx';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Optimize: Use static generation with ISR for better performance
+export const dynamic = 'auto';
+export const revalidate = 60; // Revalidate every 60 seconds
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

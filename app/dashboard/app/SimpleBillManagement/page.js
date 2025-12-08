@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Plus, Search, Eye, Edit, Trash2, DollarSign, Building2, CreditCard, History, Receipt, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/AuthContext';
@@ -10,6 +10,7 @@ import SimpleBillViewModal from './SimpleBillViewModal';
 import EditSimpleBillForm from './EditSimpleBillForm';
 import PaymentModal from './PaymentModal';
 import API_BASE_URL from '@/lib/apiConfig';
+import { useDebounce } from '@/lib/useDebounce';
 
 const SimpleBillManagementPage = () => {
   // Backend helpers - memoize these to prevent recreation
@@ -50,6 +51,9 @@ const SimpleBillManagementPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterDateRange, setFilterDateRange] = useState('');
   const [loading, setLoading] = useState(false);
+  
+  // Debounce search to reduce filter operations (300ms delay)
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [shopsLoading, setShopsLoading] = useState(false);
   const [stats, setStats] = useState({
     totalBills: 0,
@@ -175,20 +179,52 @@ const SimpleBillManagementPage = () => {
     }
   };
 
-  // Calculate stats from local bills data - useMemo to avoid unnecessary recalculations
+  // Memoize shop lookup to avoid repeated find operations
+  const selectedShopName = useMemo(() => {
+    if (!selectedShop) return null;
+    const shop = shops.find(s => String(s?._id || s?.id || '') === String(selectedShop));
+    return shop?.name || null;
+  }, [selectedShop, shops]);
+
+  // Calculate stats from local bills data - OPTIMIZED with early returns and single pass
   const calculateStatsFromBills = useCallback((billsData, shopsData, currentSelectedShop, currentSearchTerm, currentFilterDateRange) => {
     const safeBills = Array.isArray(billsData) ? billsData : [];
-    let filteredBills = safeBills;
+    if (safeBills.length === 0) {
+      return { totalBills: 0, totalAmount: 0, paidAmount: 0, remainingAmount: 0 };
+    }
     
-    // Filter by selected shop if any
-    if (currentSelectedShop) {
-      const selectedShopObj = (Array.isArray(shopsData) ? shopsData : [])
-        .find(s => String(s?._id || s?.id || s?.shopId || '') === String(currentSelectedShop));
-      
-      const normalize = (v) => v ? String(v).toLowerCase().replace(/[^a-z0-9]/g, '') : '';
-      const selNameNorm = normalize(selectedShopObj?.name || selectedShopObj?.title || selectedShopObj?.shopName || '');
-      
-      filteredBills = filteredBills.filter(bill => {
+    // Early return if no filters
+    if (!currentSelectedShop && !currentSearchTerm && !currentFilterDateRange) {
+      const num = (v) => Number(v ?? 0);
+      const totalAmount = safeBills.reduce((sum, bill) => sum + num(bill.pricing?.totalAmount || bill.totalAmount), 0);
+      const paidAmount = safeBills.reduce((sum, bill) => sum + num(bill.payment?.paidAmount || bill.paidAmount), 0);
+      return {
+        totalBills: safeBills.length,
+        totalAmount,
+        paidAmount,
+        remainingAmount: Math.max(0, totalAmount - paidAmount)
+      };
+    }
+    
+    // Pre-compute filter values once
+    const shopObj = currentSelectedShop ? (Array.isArray(shopsData) ? shopsData : [])
+      .find(s => String(s?._id || s?.id || s?.shopId || '') === String(currentSelectedShop)) : null;
+    const normalize = (v) => v ? String(v).toLowerCase().replace(/[^a-z0-9]/g, '') : '';
+    const selNameNorm = shopObj ? normalize(shopObj?.name || shopObj?.title || shopObj?.shopName || '') : null;
+    const searchLower = currentSearchTerm ? currentSearchTerm.toLowerCase() : '';
+    const dateRange = currentFilterDateRange ? getDateRange(currentFilterDateRange) : null;
+    const startDate = dateRange?.startDate;
+    const endDate = dateRange?.endDate;
+    
+    // Single pass filter with early returns - O(n) complexity
+    const num = (v) => Number(v ?? 0);
+    let totalBills = 0;
+    let totalAmount = 0;
+    let paidAmount = 0;
+    
+    for (const bill of safeBills) {
+      // Shop filter - early return
+      if (selNameNorm) {
         let billShopId = '';
         if (typeof bill.shopId === 'string') {
           billShopId = bill.shopId;
@@ -198,49 +234,48 @@ const SimpleBillManagementPage = () => {
           billShopId = bill.shop._id;
         }
         
-        const billNameNorm = normalize(bill.shopName || bill.shop?.name || bill.shop || bill.shop_title || '');
+        if (billShopId && billShopId !== String(currentSelectedShop)) continue;
         
-        if (billShopId) return billShopId === String(currentSelectedShop);
-        if (selNameNorm && billNameNorm) {
-          return billNameNorm === selNameNorm || billNameNorm.includes(selNameNorm) || selNameNorm.includes(billNameNorm);
+        if (!billShopId) {
+          const billNameNorm = normalize(bill.shopName || bill.shop?.name || bill.shop || bill.shop_title || '');
+          if (!billNameNorm || (billNameNorm !== selNameNorm && !billNameNorm.includes(selNameNorm) && !selNameNorm.includes(billNameNorm))) {
+            continue;
+          }
         }
-        return true;
-      });
-    }
-    
-    // Filter by search term
-    if (currentSearchTerm) {
-      filteredBills = filteredBills.filter(bill => 
-        bill.billNumber?.toLowerCase().includes(currentSearchTerm.toLowerCase()) ||
-        bill.shopName?.toLowerCase().includes(currentSearchTerm.toLowerCase()) ||
-        bill.description?.toLowerCase().includes(currentSearchTerm.toLowerCase())
-      );
-    }
-    
-    // Filter by date range
-    if (currentFilterDateRange) {
-      const dateRange = getDateRange(currentFilterDateRange);
-      if (dateRange.startDate && dateRange.endDate) {
-        filteredBills = filteredBills.filter(bill => {
-          const billDate = new Date(bill.billDate || bill.createdAt || 0).toISOString().split('T')[0];
-          return billDate >= dateRange.startDate && billDate <= dateRange.endDate;
-        });
       }
+      
+      // Search filter - early return
+      if (searchLower) {
+        const billNumber = (bill.billNumber || '').toLowerCase();
+        const shopName = (bill.shopName || '').toLowerCase();
+        const description = (bill.description || '').toLowerCase();
+        
+        if (!billNumber.includes(searchLower) && 
+            !shopName.includes(searchLower) && 
+            !description.includes(searchLower)) {
+          continue;
+        }
+      }
+      
+      // Date filter - early return
+      if (startDate && endDate) {
+        const billDate = new Date(bill.billDate || bill.createdAt || 0).toISOString().split('T')[0];
+        if (billDate < startDate || billDate > endDate) continue;
+      }
+      
+      // Calculate stats in single pass
+      totalBills++;
+      totalAmount += num(bill.pricing?.totalAmount || bill.totalAmount);
+      paidAmount += num(bill.payment?.paidAmount || bill.paidAmount);
     }
-    
-    const num = (v) => Number(v ?? 0);
-    const totalBills = filteredBills.length;
-    const totalAmount = filteredBills.reduce((sum, bill) => sum + num(bill.pricing?.totalAmount || bill.totalAmount), 0);
-    const paidAmount = filteredBills.reduce((sum, bill) => sum + num(bill.payment?.paidAmount || bill.paidAmount), 0);
-    const remainingAmount = Math.max(0, totalAmount - paidAmount);
     
     return {
       totalBills,
       totalAmount,
       paidAmount,
-      remainingAmount
+      remainingAmount: Math.max(0, totalAmount - paidAmount)
     };
-  }, []); // No dependencies - all data passed as parameters
+  }, [shops]); // Only shops as dependency since we use it for shop lookup
 
   const fetchStats = useCallback(async () => {
     // Stats calculated locally
@@ -277,11 +312,11 @@ const SimpleBillManagementPage = () => {
     }
   }, [authLoading, isAuthenticated, isSeller, router]);
 
-  // Recalculate stats - only when bills, shops, or filters change
+  // Recalculate stats - only when bills, shops, or filters change (using debounced search)
   useEffect(() => {
-    const calculatedStats = calculateStatsFromBills(bills, shops, selectedShop, searchTerm, filterDateRange);
+    const calculatedStats = calculateStatsFromBills(bills, shops, selectedShop, debouncedSearchTerm, filterDateRange);
     setStats(calculatedStats);
-  }, [bills, shops, selectedShop, searchTerm, filterDateRange, calculateStatsFromBills]);
+  }, [bills, shops, selectedShop, debouncedSearchTerm, filterDateRange, calculateStatsFromBills]);
 
   if (authLoading) {
     return (
@@ -654,77 +689,89 @@ const SimpleBillManagementPage = () => {
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-          <div className="flex items-center">
-            <div className="p-3 bg-blue-100 rounded-full">
-              <DollarSign className="w-6 h-6 text-blue-600" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">
-                Total Bills {selectedShop && selectedShop !== '' ? `(${shops.find(s => s._id === selectedShop)?.name || 'Selected Shop'})` : '(All Shops)'}
+      {/* Stats Cards - Enhanced with Hindi Labels */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        {/* Kitna ka aaya saman - Total Amount */}
+        <div className="bg-gradient-to-br from-blue-50 to-white p-6 rounded-xl shadow-lg border-2 border-blue-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-base font-semibold text-gray-700 flex items-center gap-2 mb-1">
+                <Receipt className="w-5 h-5 text-blue-600" />
+                कितना का आया सामान
               </p>
-              <p className="text-2xl font-semibold text-gray-900">{stats.totalBills}</p>
+              <p className="text-xs text-gray-500 mb-2">Total Bill Amount</p>
+              <p className="text-3xl font-bold text-blue-700">{formatCurrency(stats.totalAmount)}</p>
+              <p className="text-xs text-gray-500 mt-2">
+                {selectedShop && selectedShop !== '' 
+                  ? `${shops.find(s => s._id === selectedShop)?.name || 'Selected Shop'}` 
+                  : 'All Shops'} • {stats.totalBills} Bills
+              </p>
+            </div>
+            <div className="p-4 bg-blue-100 rounded-xl">
+              <DollarSign className="w-8 h-8 text-blue-600" />
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-          <div className="flex items-center">
-            <div className="p-3 bg-green-100 rounded-full">
-              <DollarSign className="w-6 h-6 text-green-600" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Amount</p>
-              <p className="text-2xl font-semibold text-gray-900">{formatCurrency(stats.totalAmount)}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+        {/* Kitna diya gaya - Paid Amount */}
+        <div className="bg-gradient-to-br from-green-50 to-white p-6 rounded-xl shadow-lg border-2 border-green-200">
           <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="p-3 bg-yellow-100 rounded-full">
-                <DollarSign className="w-6 h-6 text-yellow-300" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Paid Amount</p>
-                <p className="text-2xl font-semibold text-gray-900">{formatCurrency(stats.paidAmount)}</p>
-              </div>
+            <div>
+              <p className="text-base font-semibold text-gray-700 flex items-center gap-2 mb-1">
+                <CreditCard className="w-5 h-5 text-green-600" />
+                कितना दिया गया
+              </p>
+              <p className="text-xs text-gray-500 mb-2">Total Paid Amount</p>
+              <p className="text-3xl font-bold text-green-700">{formatCurrency(stats.paidAmount)}</p>
+              {stats.totalAmount > 0 && (
+                <p className="text-xs text-green-600 mt-2 font-medium">
+                  {((stats.paidAmount / stats.totalAmount) * 100).toFixed(1)}% Paid
+                </p>
+              )}
+              {selectedShop && (
+                <button
+                  onClick={handleViewPaymentHistory}
+                  className="mt-2 text-xs text-green-600 hover:text-green-800 hover:underline"
+                  title="View Payment History"
+                >
+                  View History →
+                </button>
+              )}
             </div>
-            {selectedShop && (
-              <button
-                onClick={handleViewPaymentHistory}
-                className="p-2 text-yellow-300 hover:text-yellow-800 hover:bg-yellow-50 rounded-lg transition-colors"
-                title="View Payment History"
-              >
-                <History className="w-5 h-5" />
-              </button>
-            )}
+            <div className="p-4 bg-green-100 rounded-xl">
+              <CreditCard className="w-8 h-8 text-green-600" />
+            </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+        {/* Kitna baki hai - Remaining Amount */}
+        <div className="bg-gradient-to-br from-orange-50 to-white p-6 rounded-xl shadow-lg border-2 border-orange-200">
           <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="p-3 bg-red-100 rounded-full">
-                <DollarSign className="w-6 h-6 text-red-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Remaining</p>
-                <p className="text-2xl font-semibold text-gray-900">{formatCurrency(stats.remainingAmount)}</p>
-              </div>
+            <div>
+              <p className="text-base font-semibold text-gray-700 flex items-center gap-2 mb-1">
+                <History className="w-5 h-5 text-orange-600" />
+                कितना बाकी है
+              </p>
+              <p className="text-xs text-gray-500 mb-2">Total Remaining Amount</p>
+              <p className="text-3xl font-bold text-orange-700">{formatCurrency(stats.remainingAmount)}</p>
+              {stats.totalAmount > 0 && (
+                <p className="text-xs text-orange-600 mt-2 font-medium">
+                  {((stats.remainingAmount / stats.totalAmount) * 100).toFixed(1)}% Pending
+                </p>
+              )}
+              {selectedShop && stats.remainingAmount > 0 && (
+                <button
+                  onClick={handleAddPaymentFromRemaining}
+                  className="mt-2 text-xs text-orange-600 hover:text-orange-800 hover:underline"
+                  title="Add Payment"
+                >
+                  Add Payment →
+                </button>
+              )}
             </div>
-            {selectedShop && (
-              <button
-                onClick={handleAddPaymentFromRemaining}
-                className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors"
-                title="Add Payment"
-              >
-                <Receipt className="w-5 h-5" />
-              </button>
-            )}
+            <div className="p-4 bg-orange-100 rounded-xl">
+              <History className="w-8 h-8 text-orange-600" />
+            </div>
           </div>
         </div>
       </div>
@@ -813,11 +860,16 @@ const SimpleBillManagementPage = () => {
         </div>
         
         {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="text-center">
-              <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading bills...</p>
-            </div>
+          // Skeleton loading - instant render
+          <div className="p-6 space-y-4">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="animate-pulse flex space-x-4">
+                <div className="flex-1 space-y-2 py-1">
+                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                </div>
+              </div>
+            ))}
           </div>
         ) : bills.length === 0 ? (
           <div className="text-center py-12">

@@ -42,7 +42,7 @@ export default function DeliveredOrdersPage() {
         <h1 className="text-2xl font-semibold text-gray-800">Delivered Orders</h1>
         <p className="text-gray-500 text-sm">All completed deliveries</p>
         <div className="mt-3">
-          <a href="/Dashboard/Orders" className="inline-flex items-center px-3 py-2 bg-gray-700 text-white rounded-md text-sm hover:bg-gray-800">Back to active orders</a>
+          <a href="/Orders" className="inline-flex items-center px-3 py-2 bg-gray-700 text-white rounded-md text-sm hover:bg-gray-800">Back to active orders</a>
         </div>
       </div>
 

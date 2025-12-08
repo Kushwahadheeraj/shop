@@ -123,7 +123,7 @@ export default function OrdersPage() {
             <h1 className="text-2xl font-semibold text-gray-800">Orders</h1>
             <p className="text-gray-500 text-sm">View orders, update tracking, and print invoice</p>
           </div>
-          <a href="/Dashboard/Orders/Delivered" className="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700">All delivered orders</a>
+          <a href="/Orders/Delivered" className="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700">All delivered orders</a>
         </div>
       </div>
 

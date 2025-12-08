@@ -1,8 +1,8 @@
 "use client";
-import React from 'react';
+import React, { memo } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
-const AreaChartComponent = ({ data = [], type = 'orders' }) => {
+const AreaChartComponent = memo(({ data = [], type = 'orders' }) => {
   if (!data || data.length === 0) {
     return (
       <div className="h-64 flex items-center justify-center text-gray-500">
@@ -100,6 +100,8 @@ const AreaChartComponent = ({ data = [], type = 'orders' }) => {
       </ResponsiveContainer>
     </div>
   );
-};
+});
+
+AreaChartComponent.displayName = 'AreaChartComponent';
 
 export default AreaChartComponent;

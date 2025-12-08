@@ -9,7 +9,8 @@ import {
   Printer,
   FileDown,
   Plus,
-  Wand2
+  Wand2,
+  MessageCircle
 } from "lucide-react";
 import InvoiceTemplateRenderer from "../components/InvoiceTemplateRenderer";
 import InvoiceTemplates from "../components/InvoiceTemplates";
@@ -106,11 +107,11 @@ const InvoicePreviewPage = () => {
   );
 
   const handleEdit = () => {
-    router.push(`/Dashboard/InvoiceGenerator?id=${id}`);
+    router.push(`/InvoiceGenerator?id=${id}`);
   };
 
   const handleNewInvoice = () => {
-    router.push("/Dashboard/InvoiceGenerator");
+    router.push("/InvoiceGenerator");
   };
 
   const handlePrint = () => {
@@ -120,6 +121,103 @@ const InvoicePreviewPage = () => {
   const handleTemplateSelect = (template) => {
     setSelectedTemplate(template);
     setShowTemplatePicker(false);
+  };
+
+  // Create PDF blob from the invoice HTML
+  const generatePDFBlob = async () => {
+    // Dynamic imports to avoid build-time failures
+    let html2canvas;
+    let jsPDF;
+    try {
+      const html2canvasModule = await import("html2canvas");
+      const jsPDFModule = await import("jspdf");
+      html2canvas = html2canvasModule.default || html2canvasModule;
+      jsPDF = jsPDFModule.default || jsPDFModule;
+    } catch (e) {
+      throw new Error("MISSING_PDF_LIBS");
+    }
+
+    const invoiceContent =
+      document.querySelector(".invoice-print-only") ||
+      document.querySelector(".bg-white");
+    if (!invoiceContent) {
+      throw new Error("Invoice content not found");
+    }
+
+    const canvas = await html2canvas(invoiceContent, {
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      backgroundColor: "#ffffff",
+    });
+
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+    const imgWidth = canvas.width;
+    const imgHeight = canvas.height;
+    const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+    const imgScaledWidth = imgWidth * ratio;
+    const imgScaledHeight = imgHeight * ratio;
+    const xOffset = (pdfWidth - imgScaledWidth) / 2;
+    const yOffset = (pdfHeight - imgScaledHeight) / 2;
+
+    pdf.addImage(imgData, "PNG", xOffset, yOffset, imgScaledWidth, imgScaledHeight);
+    return pdf.output("blob");
+  };
+
+  // Share PDF directly to WhatsApp (no print / no manual download)
+  const handleWhatsAppShare = async () => {
+    if (!bill) return;
+    const customerPhone = bill.customerPhone || "";
+    if (!customerPhone) {
+      alert("Customer phone number is not available");
+      return;
+    }
+
+    const cleanPhone = customerPhone.replace(/[^0-9]/g, "");
+    const message = "KH&TH Invoice";
+    const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(
+      message
+    )}`;
+
+    try {
+      const pdfBlob = await generatePDFBlob();
+      const pdfFile = new File([pdfBlob], "KH&TH Invoice.pdf", {
+        type: "application/pdf",
+      });
+
+      if (
+        navigator.share &&
+        navigator.canShare &&
+        navigator.canShare({ files: [pdfFile] })
+      ) {
+        await navigator.share({
+          files: [pdfFile],
+          title: "KH&TH Invoice",
+          text: message,
+        });
+      } else {
+        // Fallback: open WhatsApp, user may need to attach manually
+        window.open(whatsappUrl, "_blank");
+        setTimeout(() => {
+          alert(
+            "Browser direct share not supported यहाँ। PDF तैयार है; कृपया WhatsApp में मैन्युअली attach करें।"
+          );
+        }, 400);
+      }
+    } catch (err) {
+      console.error("WhatsApp share failed:", err);
+      if (err.message === "MISSING_PDF_LIBS") {
+        window.open(whatsappUrl, "_blank");
+        alert(
+          "html2canvas / jspdf install नहीं हैं। कृपया यह चलाएँ:\n\ncd app\\dashboard\nnpm install html2canvas jspdf"
+        );
+      } else {
+        alert("PDF बनाते समय दिक्कत आई। कृपया दोबारा प्रयास करें।");
+      }
+    }
   };
 
   if (loading) {
@@ -141,7 +239,7 @@ const InvoicePreviewPage = () => {
           <p className="text-sm mb-4">{error || "Invoice not found."}</p>
           <div className="flex items-center gap-3 text-sm">
             <button
-              onClick={() => router.push("/Dashboard/InvoiceGenerator")}
+              onClick={() => router.push("/InvoiceGenerator")}
               className="inline-flex items-center gap-2 px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
               type="button"
             >
@@ -310,7 +408,7 @@ const InvoicePreviewPage = () => {
         <div className="no-print max-w-6xl mx-auto px-4 py-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <button
-              onClick={() => router.push("/Dashboard/InvoiceGenerator")}
+              onClick={() => router.push("/InvoiceGenerator")}
               className="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900"
               type="button"
             >
@@ -349,6 +447,14 @@ const InvoicePreviewPage = () => {
               >
                 <FileDown className="w-4 h-4" />
                 Download PDF
+              </button>
+              <button
+                onClick={handleWhatsAppShare}
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-green-500 text-white rounded-lg hover:bg-green-600"
+                type="button"
+              >
+                <MessageCircle className="w-4 h-4" />
+                WhatsApp Share
               </button>
               <button
                 onClick={handleNewInvoice}

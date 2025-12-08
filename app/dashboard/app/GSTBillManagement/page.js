@@ -1,24 +1,29 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { Plus, Search, Filter, Download, Eye, Edit, Trash2, Calendar, DollarSign, Building2, CreditCard, History, Receipt, X, FileText, Printer, BarChart3, Users } from 'lucide-react';
+import React, { useState, useEffect, useCallback, lazy, Suspense, useMemo } from 'react';
+import { Plus, Search, Eye, Edit, Trash2, DollarSign, FileText, Printer, BarChart3, Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/AuthContext';
 import AddGSTBillForm from './AddGSTBillForm';
 import GSTBillViewModal from './GSTBillViewModal';
 import EditGSTBillForm from './EditGSTBillForm';
-import InvoiceTemplates from './components/InvoiceTemplates';
-import AnalyticsDashboard from './components/AnalyticsDashboard';
-import ContactsManager from './components/ContactsManager';
 import API_BASE_URL from '@/lib/apiConfig';
+import { useDebounce } from '@/lib/useDebounce';
+
+// Lazy load heavy components to avoid webpack issues
+const InvoiceTemplates = lazy(() => import('./components/InvoiceTemplates'));
+const AnalyticsDashboard = lazy(() => import('./components/AnalyticsDashboard'));
+const ContactsManager = lazy(() => import('./components/ContactsManager'));
 
 const GSTBillManagementPage = () => {
-  // Backend helpers
-  const join = (base, path) => `${base.replace(/\/$/, '')}${path}`;
-  const api = (path) => join(API_BASE_URL, path);
-  
   const router = useRouter();
   const { isAuthenticated, isSeller, loading: authLoading } = useAuth();
+  
+  // Memoized backend helpers - prevent recreation on every render
+  const api = useCallback((path) => {
+    const base = API_BASE_URL.replace(/\/$/, '');
+    return `${base}${path.startsWith('/') ? path : `/${path}`}`;
+  }, []);
   const [showAddGSTBillForm, setShowAddGSTBillForm] = useState(false);
   const [showGSTBillViewModal, setShowGSTBillViewModal] = useState(false);
   const [showEditGSTBillForm, setShowEditGSTBillForm] = useState(false);
@@ -34,6 +39,9 @@ const GSTBillManagementPage = () => {
   const [filterDateRange, setFilterDateRange] = useState('');
   const [loading, setLoading] = useState(true);
   const [shopsLoading, setShopsLoading] = useState(true);
+  
+  // Debounce search to reduce filter operations (300ms delay)
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [stats, setStats] = useState({
     totalBills: 0,
     totalAmount: 0,
@@ -41,80 +49,112 @@ const GSTBillManagementPage = () => {
     netAmount: 0
   });
 
-  // Helper to derive start/end dates from a named range
-  const getDateRange = (range) => {
+  // Memoized date range helper - cache results for same range
+  const getDateRange = useCallback((range) => {
+    if (!range) return { startDate: null, endDate: null };
+    
     const now = new Date();
     const endDate = now.toISOString().split('T')[0];
-    switch (range) {
-      case 'today':
-        return { startDate: endDate, endDate };
-      case 'yesterday':
-        {
-          const d = new Date(now);
-          d.setDate(d.getDate() - 1);
-          const y = d.toISOString().split('T')[0];
-          return { startDate: y, endDate: y };
-        }
-      case 'thisWeek':
-        {
-          const start = new Date(now);
-          start.setDate(now.getDate() - now.getDay());
-          return { startDate: start.toISOString().split('T')[0], endDate };
-        }
-      case 'thisMonth':
-        {
-          const start = new Date(now.getFullYear(), now.getMonth(), 1);
-          return { startDate: start.toISOString().split('T')[0], endDate };
-        }
-      case 'lastMonth':
-        {
-          const start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-          const end = new Date(now.getFullYear(), now.getMonth(), 0);
-          return { startDate: start.toISOString().split('T')[0], endDate: end.toISOString().split('T')[0] };
-        }
-      case 'thisYear':
-        {
-          const start = new Date(now.getFullYear(), 0, 1);
-          return { startDate: start.toISOString().split('T')[0], endDate };
-        }
-      default:
-        return { startDate: null, endDate: null };
-    }
-  };
+    const toDate = (d) => d.toISOString().split('T')[0];
+    
+    const ranges = {
+      today: { startDate: endDate, endDate },
+      yesterday: (() => { const d = new Date(now); d.setDate(d.getDate() - 1); const y = toDate(d); return { startDate: y, endDate: y }; })(),
+      thisWeek: (() => { const start = new Date(now); start.setDate(now.getDate() - now.getDay()); return { startDate: toDate(start), endDate }; })(),
+      thisMonth: (() => { const start = new Date(now.getFullYear(), now.getMonth(), 1); return { startDate: toDate(start), endDate }; })(),
+      lastMonth: (() => { const start = new Date(now.getFullYear(), now.getMonth() - 1, 1); const end = new Date(now.getFullYear(), now.getMonth(), 0); return { startDate: toDate(start), endDate: toDate(end) }; })(),
+      thisYear: (() => { const start = new Date(now.getFullYear(), 0, 1); return { startDate: toDate(start), endDate }; })()
+    };
+    
+    return ranges[range] || { startDate: null, endDate: null };
+  }, []);
 
-  // Fetch shops
+  // Fetch shops - Include both GST shops and Clients (client list me jo names hain)
   const fetchShops = useCallback(async () => {
     try {
       setShopsLoading(true);
       const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-      const res = await fetch(`${API_BASE_URL}/shops`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {}
-      });
-      if (!res.ok) {
-        // Best-effort logging
-        try { const err = await res.json(); /* console.error('❌ Shops API error:', err); */ } catch {}
-        return;
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      
+      // Fetch both GST shops and Clients in parallel - OPTIMIZED
+      const [gstShopsRes, clientsRes] = await Promise.all([
+        fetch(`${API_BASE_URL}/gst-shops`, { headers }).catch(() => null),
+        fetch(`${API_BASE_URL}/clients`, { headers }).catch(() => null)
+      ]);
+      
+      // Process responses in parallel - OPTIMIZED
+      const [gstShopsData, clientsData] = await Promise.all([
+        gstShopsRes?.ok ? gstShopsRes.json().catch(() => null) : null,
+        clientsRes?.ok ? clientsRes.json().catch(() => null) : null
+      ]);
+      
+      const allShops = [];
+      const shopMap = new Map(); // Use Map for O(1) duplicate removal
+      
+      // Process GST shops
+      if (gstShopsData?.success && Array.isArray(gstShopsData.data)) {
+        gstShopsData.data.forEach(shop => {
+          const id = shop._id || shop.id;
+          if (id && !shopMap.has(id)) {
+            shopMap.set(id, {
+              _id: id,
+              id,
+              name: shop.name || shop.businessName || shop.shopName,
+              ...shop
+            });
+          }
+        });
       }
-      const data = await res.json();
-      if (data?.success && Array.isArray(data.data)) {
-        setShops(data.data);
-      } else if (data?.success && data?.data?.shops) {
-        setShops(data.data.shops);
+      
+      // Process Clients as shops
+      const clients = clientsData?.data?.clients || clientsData?.data || (Array.isArray(clientsData) ? clientsData : []);
+      if (Array.isArray(clients)) {
+        clients.forEach(client => {
+          const id = client._id || client.id;
+          if (id && !shopMap.has(id)) {
+            shopMap.set(id, {
+              _id: id,
+              id,
+              name: client.name || client.businessName || '',
+              isClient: true,
+              ...client
+            });
+          }
+        });
       }
+      
+      setShops(Array.from(shopMap.values()));
     } catch (e) {
       // console.error('❌ Error fetching shops:', e);
+      setShops([]);
     } finally {
       setShopsLoading(false);
     }
   }, []);
 
-  // Fetch GST bills
+  // Fetch GST bills - ALWAYS filter by shop to ensure shop-wise isolation
   const fetchGSTBills = useCallback(async () => {
     try {
       setLoading(true);
       const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
       const params = new URLSearchParams();
-      if (selectedShop) params.append('shopId', selectedShop);
+      
+      // CRITICAL: Always require shopId for shop-wise data isolation
+      if (!selectedShop) {
+        // If no shop selected, don't fetch any bills (or select first shop)
+        if (shops.length > 0) {
+          const firstShopId = shops[0]._id || shops[0].id;
+          setSelectedShop(firstShopId);
+          params.append('shopId', firstShopId);
+        } else {
+          setGstBills([]);
+          setLoading(false);
+          return;
+        }
+      } else {
+        params.append('shopId', selectedShop);
+      }
+      
       if (searchTerm) params.append('search', searchTerm);
       if (filterDateRange) {
         const dr = getDateRange(filterDateRange);
@@ -129,78 +169,92 @@ const GSTBillManagementPage = () => {
         return;
       }
       const data = await res.json();
-      // console.log('📊 GST Bills API response:', data);
       
-      // Backend returns: { success: true, data: { gstBills: [...], stats: {...} } }
-      if (data?.success && data?.data) {
-        if (Array.isArray(data.data.gstBills)) {
-          setGstBills(data.data.gstBills);
-          // console.log('✅ GST Bills set:', data.data.gstBills.length, 'bills');
-        } else if (Array.isArray(data.data)) {
-          // Fallback: if data.data is directly an array
-          setGstBills(data.data);
-          // console.log('✅ GST Bills set (direct array):', data.data.length, 'bills');
-        } else if (Array.isArray(data.bills)) {
-          // Another fallback
-          setGstBills(data.bills);
-          // console.log('✅ GST Bills set (from bills field):', data.bills.length, 'bills');
-        } else {
-          // console.warn('⚠️ No bills array found in response:', data);
-          setGstBills([]);
-        }
-      } else {
-        // console.warn('⚠️ Unexpected GST bills response format:', data);
-        setGstBills([]);
-      }
+      // Optimized response parsing - single pass
+      const bills = data?.success && data?.data 
+        ? (Array.isArray(data.data.gstBills) ? data.data.gstBills : 
+           Array.isArray(data.data) ? data.data : 
+           Array.isArray(data.bills) ? data.bills : [])
+        : [];
+      
+      setGstBills(bills);
     } catch (e) {
       // console.error('❌ Error fetching GST bills:', e);
       setGstBills([]);
     } finally {
       setLoading(false);
     }
-  }, [selectedShop, searchTerm, filterDateRange]);
+  }, [selectedShop, debouncedSearchTerm, filterDateRange, shops, api, getDateRange]);
 
-  // Calculate stats from bills data
-  const calculateStatsFromBills = useCallback((billsData, currentSelectedShop = selectedShop, currentSearchTerm = searchTerm, currentFilterDateRange = filterDateRange) => {
+  // Memoize shop lookup to avoid repeated find operations
+  const selectedShopName = useMemo(() => {
+    if (!selectedShop) return null;
+    const shop = shops.find(s => String(s?._id || s?.id || '') === String(selectedShop));
+    return shop?.name || null;
+  }, [selectedShop, shops]);
+
+  // Calculate stats from bills data - OPTIMIZED with early returns and single pass
+  const calculateStatsFromBills = useCallback((billsData, currentSelectedShop = selectedShop, currentSearchTerm = debouncedSearchTerm, currentFilterDateRange = filterDateRange) => {
     const safeBills = Array.isArray(billsData) ? billsData : [];
-    // console.log('🔍 Calculating stats from bills data:', safeBills.length, 'bills');
+    if (safeBills.length === 0) {
+      return { totalBills: 0, totalAmount: 0, totalGST: 0, netAmount: 0 };
+    }
     
-    let filteredBills = safeBills;
+    // Early return if no filters
+    if (!currentSelectedShop && !currentSearchTerm && !currentFilterDateRange) {
+      const totalAmount = safeBills.reduce((sum, bill) => sum + (parseFloat(bill.grandTotal) || 0), 0);
+      const totalGST = safeBills.reduce((sum, bill) => sum + (parseFloat(bill.gstAmount) || 0), 0);
+      const netAmount = safeBills.reduce((sum, bill) => sum + (parseFloat(bill.netAmount) || 0), 0);
+      return {
+        totalBills: safeBills.length,
+        totalAmount: isNaN(totalAmount) ? 0 : totalAmount,
+        totalGST: isNaN(totalGST) ? 0 : totalGST,
+        netAmount: isNaN(netAmount) ? 0 : netAmount
+      };
+    }
     
-    // Filter by selected shop if any
-    if (currentSelectedShop && currentSelectedShop !== '') {
-      const selectedShopObj = shops.find(s => String(s?._id || s?.id || '') === String(currentSelectedShop));
-      const selectedShopName = selectedShopObj?.name;
-      if (selectedShopName) {
-        filteredBills = filteredBills.filter(bill => bill.shopName === selectedShopName);
+    // Pre-compute filter values once
+    const shopName = currentSelectedShop ? selectedShopName : null;
+    const searchLower = currentSearchTerm ? currentSearchTerm.toLowerCase() : '';
+    const dateRange = currentFilterDateRange ? getDateRange(currentFilterDateRange) : null;
+    const startDate = dateRange?.startDate ? new Date(dateRange.startDate) : null;
+    const endDate = dateRange?.endDate ? new Date(dateRange.endDate) : null;
+    
+    // Single pass filter with early returns - O(n) complexity
+    let totalBills = 0;
+    let totalAmount = 0;
+    let totalGST = 0;
+    let netAmount = 0;
+    
+    for (const bill of safeBills) {
+      // Shop filter - early return
+      if (shopName && bill.shopName !== shopName) continue;
+      
+      // Search filter - early return
+      if (searchLower) {
+        const customerName = (bill.customerName || '').toLowerCase();
+        const invoiceNumber = (bill.invoiceNumber || '').toLowerCase();
+        const billShopName = (bill.shopName || '').toLowerCase();
+        
+        if (!customerName.includes(searchLower) && 
+            !invoiceNumber.includes(searchLower) && 
+            !billShopName.includes(searchLower)) {
+          continue;
+        }
       }
-    }
-    
-    // Filter by search term
-    if (currentSearchTerm && currentSearchTerm !== '') {
-      filteredBills = filteredBills.filter(bill => 
-        (bill.invoiceNumber || '').toLowerCase().includes(currentSearchTerm.toLowerCase()) ||
-        (bill.shopName || '').toLowerCase().includes(currentSearchTerm.toLowerCase()) ||
-        (bill.customerName || '').toLowerCase().includes(currentSearchTerm.toLowerCase())
-      );
-    }
-    
-    // Filter by date range
-    if (currentFilterDateRange && currentFilterDateRange !== '') {
-      const { startDate, endDate } = getDateRange(currentFilterDateRange);
+      
+      // Date filter - early return
       if (startDate && endDate) {
-        filteredBills = filteredBills.filter(bill => {
-          const billDate = new Date(bill.invoiceDate);
-          return billDate >= new Date(startDate) && billDate <= new Date(endDate);
-        });
+        const billDate = new Date(bill.invoiceDate);
+        if (billDate < startDate || billDate > endDate) continue;
       }
+      
+      // Calculate stats in single pass
+      totalBills++;
+      totalAmount += parseFloat(bill.grandTotal) || 0;
+      totalGST += parseFloat(bill.gstAmount) || 0;
+      netAmount += parseFloat(bill.netAmount) || 0;
     }
-    
-    // Calculate stats
-    const totalBills = filteredBills.length;
-    const totalAmount = filteredBills.reduce((sum, bill) => sum + (parseFloat(bill.grandTotal) || 0), 0);
-    const totalGST = filteredBills.reduce((sum, bill) => sum + (parseFloat(bill.gstAmount) || 0), 0);
-    const netAmount = filteredBills.reduce((sum, bill) => sum + (parseFloat(bill.netAmount) || 0), 0);
     
     return {
       totalBills,
@@ -208,7 +262,7 @@ const GSTBillManagementPage = () => {
       totalGST: isNaN(totalGST) ? 0 : totalGST,
       netAmount: isNaN(netAmount) ? 0 : netAmount
     };
-  }, [selectedShop, searchTerm, filterDateRange, shops]);
+  }, [selectedShop, debouncedSearchTerm, filterDateRange, shops, selectedShopName]);
 
   // Fetch stats (fallback to local calculation if API fails)
   const fetchStats = useCallback(async () => {
@@ -233,15 +287,15 @@ const GSTBillManagementPage = () => {
         }
       }
       // Fallback to local calculation
-      const calculated = calculateStatsFromBills(gstBills, selectedShop, searchTerm, filterDateRange);
+      const calculated = calculateStatsFromBills(gstBills, selectedShop, debouncedSearchTerm, filterDateRange);
       setStats(calculated);
     } catch (e) {
       // console.error('❌ Error fetching stats:', e);
       // Fallback to local calculation
-      const calculated = calculateStatsFromBills(gstBills, selectedShop, searchTerm, filterDateRange);
+      const calculated = calculateStatsFromBills(gstBills, selectedShop, debouncedSearchTerm, filterDateRange);
       setStats(calculated);
     }
-  }, [selectedShop, searchTerm, filterDateRange, gstBills, calculateStatsFromBills]);
+  }, [selectedShop, debouncedSearchTerm, filterDateRange, gstBills, calculateStatsFromBills]);
 
   // Load real data from database
   useEffect(() => {
@@ -251,6 +305,11 @@ const GSTBillManagementPage = () => {
       try {
         // console.log('📊 Fetching shops...');
         await fetchShops();
+        
+        // Set default shop selection - first shop if available
+        if (shops.length > 0 && !selectedShop) {
+          setSelectedShop(shops[0]._id || shops[0].id);
+        }
         
         // console.log('📊 Fetching GST bills...');
         await fetchGSTBills();
@@ -266,12 +325,19 @@ const GSTBillManagementPage = () => {
     loadRealData();
   }, []);
 
+  // Auto-select first shop when shops are loaded
+  useEffect(() => {
+    if (shops.length > 0 && !selectedShop) {
+      setSelectedShop(shops[0]._id || shops[0].id);
+    }
+  }, [shops, selectedShop]);
+
   // Refetch data when filters change
   useEffect(() => {
     if (!loading) {
       fetchGSTBills();
     }
-  }, [selectedShop, searchTerm, filterDateRange]);
+  }, [selectedShop, debouncedSearchTerm, filterDateRange, shops]);
 
   // Redirect if not authenticated or not a seller
   useEffect(() => {
@@ -284,21 +350,56 @@ const GSTBillManagementPage = () => {
     }
   }, [authLoading, isAuthenticated, isSeller, router]);
 
-  // Recalculate stats whenever bills, selectedShop, searchTerm, or filterDateRange changes
+  // Memoize filtered bills to avoid recalculating on every render
+  const filteredBills = useMemo(() => {
+    if (gstBills.length === 0) return [];
+    
+    // Early return if no filters
+    if (!selectedShop && !debouncedSearchTerm && !filterDateRange) {
+      return gstBills;
+    }
+    
+    // Pre-compute filter values once
+    const shopName = selectedShopName;
+    const searchLower = debouncedSearchTerm ? debouncedSearchTerm.toLowerCase() : '';
+    const dateRange = filterDateRange ? getDateRange(filterDateRange) : null;
+    const startDate = dateRange?.startDate ? new Date(dateRange.startDate) : null;
+    const endDate = dateRange?.endDate ? new Date(dateRange.endDate) : null;
+    
+    // Single pass filter - O(n) complexity with early returns
+    return gstBills.filter(bill => {
+      // Shop filter - early return
+      if (shopName && bill.shopName !== shopName) return false;
+      
+      // Search filter - early return
+      if (searchLower) {
+        const customerName = (bill.customerName || '').toLowerCase();
+        const invoiceNumber = (bill.invoiceNumber || '').toLowerCase();
+        const billShopName = (bill.shopName || '').toLowerCase();
+        
+        if (!customerName.includes(searchLower) && 
+            !invoiceNumber.includes(searchLower) && 
+            !billShopName.includes(searchLower)) {
+          return false;
+        }
+      }
+      
+      // Date filter - early return
+      if (startDate && endDate) {
+        const billDate = new Date(bill.invoiceDate);
+        if (billDate < startDate || billDate > endDate) return false;
+      }
+      
+      return true;
+    });
+  }, [gstBills, selectedShop, selectedShopName, debouncedSearchTerm, filterDateRange]);
+
+  // Recalculate stats whenever filtered bills change - OPTIMIZED
   useEffect(() => {
-    if (gstBills.length > 0 || shops.length > 0) {
-      // console.log('🔄 Recalculating GST stats due to bills, shop, search, or date change...');
-      // console.log('🔍 Current selected shop:', selectedShop);
-      // console.log('🔍 Current search term:', searchTerm);
-      // console.log('🔍 Current date range:', filterDateRange);
-      // console.log('🔍 Current bills count:', gstBills.length);
-      
-      const calculatedStats = calculateStatsFromBills(gstBills, selectedShop, searchTerm, filterDateRange);
+    if (filteredBills.length > 0) {
+      const calculatedStats = calculateStatsFromBills(gstBills, selectedShop, debouncedSearchTerm, filterDateRange);
       setStats(calculatedStats);
-      
-      // console.log('📊 Updated GST stats:', calculatedStats);
-    } else if (gstBills.length === 0) {
-      // Reset stats when no bills
+    } else {
       setStats({
         totalBills: 0,
         totalAmount: 0,
@@ -306,7 +407,7 @@ const GSTBillManagementPage = () => {
         netAmount: 0
       });
     }
-  }, [gstBills, selectedShop, searchTerm, filterDateRange, shops, calculateStatsFromBills]);
+  }, [filteredBills.length, calculateStatsFromBills, gstBills, selectedShop, debouncedSearchTerm, filterDateRange]);
 
   // Show loading while checking authentication
   if (authLoading) {
@@ -368,6 +469,8 @@ const GSTBillManagementPage = () => {
       
       if (data.success) {
         // console.log('✅ GST Bill created successfully');
+        // Refresh shops list to include any new shops added in client bill
+        fetchShops();
         fetchGSTBills();
         fetchStats();
         alert('GST Bill created successfully!');
@@ -428,6 +531,8 @@ const GSTBillManagementPage = () => {
       
       if (data.success) {
         // console.log('✅ GST Bill updated successfully');
+        // Refresh shops list to include any new shops added in client bill
+        fetchShops();
         fetchGSTBills();
         fetchStats();
         alert('GST Bill updated successfully!');
@@ -454,8 +559,7 @@ const GSTBillManagementPage = () => {
 
         const data = await response.json();
         if (data.success) {
-          fetchGSTBills();
-          fetchStats();
+          await fetchGSTBills(); // Wait for refresh
           alert('GST Bill deleted successfully!');
         } else {
           throw new Error(data.message);
@@ -467,21 +571,20 @@ const GSTBillManagementPage = () => {
     }
   };
 
-  const formatCurrency = (amount) => {
-    const roundedAmount = Math.round((amount + Number.EPSILON) * 100) / 100;
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR'
-    }).format(roundedAmount);
-  };
+  // Memoized format functions - prevent recreation on every render
+  const formatCurrency = useCallback((amount) => {
+    const rounded = Math.round((parseFloat(amount || 0) + Number.EPSILON) * 100) / 100;
+    return `₹${rounded.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  }, []);
 
-  const roundCurrency = (amount) => {
-    return Math.round((amount + Number.EPSILON) * 100) / 100;
-  };
-
-  const formatDate = (date) => {
-    return new Date(date).toLocaleDateString('en-IN');
-  };
+  const formatDate = useCallback((date) => {
+    if (!date) return '';
+    try {
+      return new Date(date).toLocaleDateString('en-IN');
+    } catch {
+      return '';
+    }
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -557,7 +660,7 @@ const GSTBillManagementPage = () => {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">
-                Total GST Bills {selectedShop && selectedShop !== '' ? `(${shops.find(s => s._id === selectedShop)?.name || 'Selected Shop'})` : '(All Shops)'}
+                Total GST Bills {selectedShop && selectedShop !== '' ? `(${shops.find(s => s._id === selectedShop)?.name || 'Selected Shop'})` : '(Select Shop)'}
               </p>
               <p className="text-2xl font-semibold text-gray-900">{stats.totalBills}</p>
             </div>
@@ -609,12 +712,18 @@ const GSTBillManagementPage = () => {
             <select
               value={selectedShop}
               onChange={(e) => {
-                // console.log('🏪 Shop changed to:', e.target.value);
-                setSelectedShop(e.target.value);
+                const shopId = e.target.value;
+                // console.log('🏪 Shop changed to:', shopId);
+                setSelectedShop(shopId);
+                // Clear filters when shop changes to show only that shop's data
+                if (shopId) {
+                  setSearchTerm('');
+                  setFilterDateRange('');
+                }
                 
                 if (gstBills.length > 0) {
                   setTimeout(() => {
-                    const calculatedStats = calculateStatsFromBills(gstBills, e.target.value, searchTerm, filterDateRange);
+                    const calculatedStats = calculateStatsFromBills(gstBills, shopId, searchTerm, filterDateRange);
                     setStats(calculatedStats);
                     // console.log('📊 Stats updated for shop change:', calculatedStats);
                   }, 100);
@@ -622,13 +731,14 @@ const GSTBillManagementPage = () => {
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               disabled={shopsLoading}
+              required
             >
               <option value="">
-                {shopsLoading ? 'Loading shops...' : `All Shops (${shops.length})`}
+                {shopsLoading ? 'Loading shops...' : 'Select Shop (Required)'}
               </option>
               {shops.map(shop => (
                 <option key={shop._id} value={shop._id}>
-                  {shop.name} - {(shop.street||'')}{shop.city?`, ${shop.city}`:''}{shop.stateName?`, ${shop.stateName}`:''}
+                  {shop.name}
                 </option>
               ))}
             </select>
@@ -673,7 +783,7 @@ const GSTBillManagementPage = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
                 type="text"
-                placeholder="Search GST bills..."
+                placeholder="Search by client name, invoice number..."
                 value={searchTerm}
                 onChange={(e) => {
                   // console.log('🔍 Search term changed to:', e.target.value);
@@ -723,11 +833,16 @@ const GSTBillManagementPage = () => {
         </div>
         
         {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="text-center">
-              <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading GST bills...</p>
-            </div>
+          // Skeleton loading - instant render
+          <div className="p-6 space-y-4">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="animate-pulse flex space-x-4">
+                <div className="flex-1 space-y-2 py-1">
+                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                </div>
+              </div>
+            ))}
           </div>
         ) : gstBills.length === 0 ? (
           <div className="text-center py-12">
@@ -735,141 +850,93 @@ const GSTBillManagementPage = () => {
             <p className="text-gray-500">No GST bills found</p>
             <p className="text-sm text-gray-400">Create your first GST bill to get started</p>
           </div>
-        ) : (() => {
-          // Filter bills based on selected shop and search term
-          let filteredBills = gstBills;
-          
-          // Filter by selected shop (only if a shop is actually selected)
-          if (selectedShop && selectedShop !== '') {
-            const selectedShopName = shops.find(s => s._id === selectedShop)?.name;
-            filteredBills = gstBills.filter(bill => bill.shopName === selectedShopName);
-          }
-          
-          // Filter by search term
-          if (searchTerm) {
-            filteredBills = filteredBills.filter(bill => 
-              bill.invoiceNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              bill.shopName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              bill.customerName.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-          }
-          
-          // Filter by date range
-          if (filterDateRange) {
-            const { startDate, endDate } = getDateRange(filterDateRange);
-            if (startDate && endDate) {
-              filteredBills = filteredBills.filter(bill => {
-                const billDate = new Date(bill.invoiceDate);
-                return billDate >= new Date(startDate) && billDate <= new Date(endDate);
-              });
-            }
-          }
-          
-          // console.log('🔍 Filtered GST bills:', {
-          //   selectedShop,
-          //   searchTerm,
-          //   filterDateRange,
-          //   originalCount: gstBills.length,
-          //   filteredCount: filteredBills.length,
-          //   filteredBills: filteredBills.map(b => ({ id: b._id, shop: b.shopName, amount: b.grandTotal }))
-          // });
-          
-          if (filteredBills.length === 0) {
-            return (
-              <div className="text-center py-12">
-                <FileText className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                <p className="text-gray-500">No GST bills found</p>
-                <p className="text-sm text-gray-400">
-                  {selectedShop ? 'No GST bills found for selected shop' : 'Try adjusting your filters'}
-                </p>
-              </div>
-            );
-          }
-          
-          return (
-            <div className="overflow-x-auto">
-              <table className="w-full text-xs sm:text-sm">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice #</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Shop</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Net Amount</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">GST</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredBills.map((bill) => (
-                  <tr key={bill._id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {bill.invoiceNumber}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {bill.customerName}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {bill.shopName}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {formatDate(bill.invoiceDate)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {formatCurrency(bill.netAmount)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {formatCurrency(bill.gstAmount)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {formatCurrency(bill.grandTotal)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
-                        <button 
-                          onClick={() => handleViewGSTBill(bill)}
-                          className="text-blue-600 hover:text-blue-900"
-                          title="View GST Bill"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </button>
-                        <button 
-                          onClick={() => handleEditGSTBill(bill)}
-                          className="text-green-600 hover:text-green-900"
-                          title="Edit GST Bill"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </button>
-                        <button 
-                          onClick={() => window.print()}
-                          className="text-purple-600 hover:text-purple-900"
-                          title="Print GST Bill"
-                        >
-                          <Printer className="w-4 h-4" />
-                        </button>
-                        <button 
-                          onClick={() => handleDeleteGSTBill(bill._id)}
-                          className="text-red-600 hover:text-red-900"
-                          title="Delete GST Bill"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          );
-        })()}
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs sm:text-sm">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice #</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Shop</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Net Amount</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">GST</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredBills.map((bill) => (
+                <tr key={bill._id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {bill.invoiceNumber}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {bill.customerName}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {bill.shopName}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {new Date(bill.invoiceDate).toLocaleDateString()}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    ₹{parseFloat(bill.netAmount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    ₹{parseFloat(bill.gstAmount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                    ₹{parseFloat(bill.grandTotal || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div className="flex items-center gap-2">
+                      <button 
+                        onClick={() => handleViewGSTBill(bill)}
+                        className="text-blue-600 hover:text-blue-900"
+                        title="View GST Bill"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                      <button 
+                        onClick={() => handleEditGSTBill(bill)}
+                        className="text-green-600 hover:text-green-900"
+                        title="Edit GST Bill"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button 
+                        onClick={() => window.print()}
+                        className="text-purple-600 hover:text-purple-900"
+                        title="Print GST Bill"
+                      >
+                        <Printer className="w-4 h-4" />
+                      </button>
+                      <button 
+                        onClick={() => handleDeleteGSTBill(bill._id)}
+                        className="text-red-600 hover:text-red-900"
+                        title="Delete GST Bill"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* Modals */}
       {showAddGSTBillForm && (
         <AddGSTBillForm
-          onClose={() => setShowAddGSTBillForm(false)}
+          onClose={() => {
+            setShowAddGSTBillForm(false);
+            // Refresh shops list when form closes to include any new shops added in client bill
+            fetchShops();
+          }}
           onSave={handleSaveGSTBill}
           shops={shops}
         />
@@ -901,22 +968,28 @@ const GSTBillManagementPage = () => {
       )}
 
       {showInvoiceTemplates && (
-        <InvoiceTemplates
-          onClose={() => setShowInvoiceTemplates(false)}
-          onSelectTemplate={setSelectedTemplate}
-          selectedTemplate={selectedTemplate}
-        />
+        <Suspense fallback={<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"><div className="bg-white p-4 rounded">Loading templates...</div></div>}>
+          <InvoiceTemplates
+            onClose={() => setShowInvoiceTemplates(false)}
+            onSelectTemplate={setSelectedTemplate}
+            selectedTemplate={selectedTemplate}
+          />
+        </Suspense>
       )}
 
       {showAnalyticsDashboard && (
-        <AnalyticsDashboard
-          onClose={() => setShowAnalyticsDashboard(false)}
-          bills={gstBills}
-        />
+        <Suspense fallback={<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"><div className="bg-white p-4 rounded">Loading analytics...</div></div>}>
+          <AnalyticsDashboard
+            onClose={() => setShowAnalyticsDashboard(false)}
+            bills={gstBills}
+          />
+        </Suspense>
       )}
 
       {showContacts && (
-        <ContactsManager isOpen={showContacts} onClose={()=>setShowContacts(false)} />
+        <Suspense fallback={<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"><div className="bg-white p-4 rounded">Loading contacts...</div></div>}>
+          <ContactsManager isOpen={showContacts} onClose={()=>setShowContacts(false)} />
+        </Suspense>
       )}
     </div>
   );

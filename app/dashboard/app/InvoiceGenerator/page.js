@@ -493,9 +493,9 @@ const InvoiceGeneratorPage = () => {
       if (newId) {
         setCurrentBillId(newId);
         fetchBillHistory();
-        router.push(`/Dashboard/InvoiceGenerator/${newId}`);
+        router.push(`/InvoiceGenerator/${newId}`);
       } else {
-        router.push("/Dashboard/InvoiceGenerator");
+        router.push("/InvoiceGenerator");
       }
     } catch (error) {
       // Log error details separately to avoid Next.js console interception issues
@@ -514,7 +514,7 @@ const InvoiceGeneratorPage = () => {
 
   const handleNewInvoice = useCallback(() => {
     resetForm();
-    router.push("/Dashboard/InvoiceGenerator");
+    router.push("/InvoiceGenerator");
   }, [resetForm, router]);
 
 useEffect(() => {
@@ -1121,7 +1121,7 @@ useEffect(() => {
                         }`}
                         onClick={() => {
                           setActiveTab("form");
-                          router.push(`/Dashboard/InvoiceGenerator?id=${bill._id}`);
+                          router.push(`/InvoiceGenerator?id=${bill._id}`);
                         }}
                       >
                         <div className="flex items-start justify-between mb-3">
@@ -1164,7 +1164,7 @@ useEffect(() => {
                             onClick={(e) => {
                               e.stopPropagation();
                               setActiveTab("form");
-                              router.push(`/Dashboard/InvoiceGenerator?id=${bill._id}`);
+                              router.push(`/InvoiceGenerator?id=${bill._id}`);
                             }}
                             className="flex-1 px-3 py-1.5 text-xs font-semibold text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors"
                             type="button"
@@ -1174,7 +1174,7 @@ useEffect(() => {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              router.push(`/Dashboard/InvoiceGenerator/${bill._id}`);
+                              router.push(`/InvoiceGenerator/${bill._id}`);
                             }}
                             className="flex-1 px-3 py-1.5 text-xs font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg hover:from-emerald-700 hover:to-teal-700 transition-all duration-200"
                             type="button"

@@ -17,6 +17,12 @@ const nextConfig = {
 		// Disable image optimization to prevent 404 errors with external backend images
 		unoptimized: true,
 	},
+	// Enable aggressive prefetching for instant navigation
+	onDemandEntries: {
+		// Keep pages in memory longer for instant navigation
+		maxInactiveAge: 60 * 1000, // 60 seconds
+		pagesBufferLength: 10, // Keep 10 pages in memory
+	},
 	experimental: {
 		optimizeCss: true,
 		optimizePackageImports: [
@@ -27,9 +33,17 @@ const nextConfig = {
 			'@radix-ui/react-select',
 			'react-icons',
 			'@react-icons/all-files',
+			'recharts', // Optimize recharts imports
 		],
+		// Enable instant navigation
+		ppr: false, // Disable partial prerendering for instant loads
 	},
-	serverExternalPackages: ['mongoose'],
+	// Ensure Turbopack resolves from the dashboard root
+	turbopack: {
+		root: path.resolve(__dirname),
+	},
+	// External packages that should not be bundled (server-only)
+	serverExternalPackages: ['mongoose', 'puppeteer', 'puppeteer-core', 'pdf-parse'],
 	compiler: {
 		removeConsole: process.env.NODE_ENV === 'production',
 	},
@@ -41,6 +55,55 @@ const nextConfig = {
 		if (!dev) {
 			config.devtool = false;
 		}
+		
+		// Exclude heavy dependencies from client bundle
+		if (!isServer) {
+			config.externals = config.externals || [];
+			config.externals.push('puppeteer', 'puppeteer-core', 'pdf-parse', 'mongoose');
+			
+			// Fix for webpack module resolution issues
+			config.resolve = config.resolve || {};
+			config.resolve.fallback = {
+				...config.resolve.fallback,
+				fs: false,
+				net: false,
+				tls: false,
+			};
+			
+			// Optimize chunk splitting for better caching
+			config.optimization = {
+				...config.optimization,
+				splitChunks: {
+					chunks: 'all',
+					cacheGroups: {
+						default: {
+							minChunks: 2,
+							priority: -20,
+							reuseExistingChunk: true,
+						},
+						vendor: {
+							test: /[\\/]node_modules[\\/]/,
+							name: 'vendors',
+							priority: -10,
+							reuseExistingChunk: true,
+						},
+						recharts: {
+							test: /[\\/]node_modules[\\/]recharts[\\/]/,
+							name: 'recharts',
+							priority: 10,
+							reuseExistingChunk: true,
+						},
+						radix: {
+							test: /[\\/]node_modules[\\/]@radix-ui[\\/]/,
+							name: 'radix-ui',
+							priority: 10,
+							reuseExistingChunk: true,
+						},
+					},
+				},
+			};
+		}
+		
 		return config;
 	},
 	// Vercel deployment configuration

@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Edit, Download, Printer } from 'lucide-react';
+import { Edit, Download, Printer, MessageCircle } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import InvoiceTemplateRenderer from '../components/InvoiceTemplateRenderer';
 import API_BASE_URL from '@/lib/apiConfig';
@@ -66,6 +66,115 @@ export default function InvoicePreview() {
   const handleDownload = async () => {
     // Download only the invoice content as PDF via print-to-pdf UX
     window.print();
+  };
+
+  // Create PDF blob from invoice (no forced print/download)
+  const generatePDFBlob = async () => {
+    // Dynamic import to avoid build-time failures
+    let html2canvas;
+    let jsPDF;
+    try {
+      const html2canvasModule = await import('html2canvas');
+      const jsPDFModule = await import('jspdf');
+      html2canvas = html2canvasModule.default || html2canvasModule;
+      jsPDF = jsPDFModule.default || jsPDFModule;
+    } catch (e) {
+      throw new Error('MISSING_PDF_LIBS');
+    }
+
+    const invoiceContent = document.querySelector('.invoice-sheet') || document.querySelector('.bg-white');
+    if (!invoiceContent) {
+      throw new Error('Invoice content not found');
+    }
+
+    const canvas = await html2canvas(invoiceContent, {
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      backgroundColor: '#ffffff',
+    });
+
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+    const imgWidth = canvas.width;
+    const imgHeight = canvas.height;
+    const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+    const imgScaledWidth = imgWidth * ratio;
+    const imgScaledHeight = imgHeight * ratio;
+    const xOffset = (pdfWidth - imgScaledWidth) / 2;
+    const yOffset = (pdfHeight - imgScaledHeight) / 2;
+
+    pdf.addImage(imgData, 'PNG', xOffset, yOffset, imgScaledWidth, imgScaledHeight);
+    return pdf.output('blob');
+  };
+
+  // Share PDF directly to WhatsApp; if unsupported, open chat and ask to attach
+  const handleWhatsAppShare = async () => {
+    if (!bill) return;
+    const customerPhone = bill.customerPhone || '';
+    if (!customerPhone) {
+      alert('Customer phone number is not available');
+      return;
+    }
+
+    const cleanPhone = customerPhone.replace(/[^0-9]/g, '');
+    const message = 'KH&TH Invoice';
+    const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+
+    try {
+      const pdfBlob = await generatePDFBlob();
+      const pdfFile = new File([pdfBlob], 'KH&TH Invoice.pdf', { type: 'application/pdf' });
+
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+        await navigator.share({
+          files: [pdfFile],
+          title: 'KH&TH Invoice',
+          text: message,
+        });
+      } else {
+        window.open(whatsappUrl, '_blank');
+        setTimeout(() => {
+          alert('Browser direct share supported नहीं है। PDF तैयार है; कृपया WhatsApp में मैन्युअली attach करें।');
+        }, 400);
+      }
+    } catch (err) {
+      console.error('WhatsApp share failed:', err);
+      if (err.message === 'MISSING_PDF_LIBS') {
+        window.open(whatsappUrl, '_blank');
+        alert('html2canvas / jspdf install नहीं हैं. कृपया चलाएँ:\n\ncd app\\dashboard\nnpm install html2canvas jspdf');
+      } else {
+        alert('PDF बनाते समय दिक्कत आई। कृपया दोबारा प्रयास करें।');
+      }
+    }
+  };
+
+  const handleWhatsAppShare = () => {
+    if (!bill) return;
+    
+    const customerPhone = bill.customerPhone || '';
+    if (!customerPhone) {
+      alert('Customer phone number is not available');
+      return;
+    }
+
+    const shopDetails = 'कुशवाहा हार्डवेयर एंव ट्रंक हाउस, नवलपुर चौराहा, सलेमपुर रोड, 7398222573';
+    const invoiceNumber = bill.invoiceNumber || '';
+    const invoiceDate = bill.invoiceDate ? new Date(bill.invoiceDate).toLocaleDateString('en-IN') : '';
+    const grandTotal = bill.grandTotal || bill.totalAmount || 0;
+    const formattedAmount = new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(grandTotal);
+
+    const message = `नमस्ते ${bill.customerName || 'Sir/Madam'},\n\nआपका Invoice:\n\nInvoice Number: ${invoiceNumber}\nInvoice Date: ${invoiceDate}\nTotal Amount: ${formattedAmount}\n\n${shopDetails}\n\nकृपया Invoice देखें और भुगतान करें।\n\nधन्यवाद!`;
+
+    const phoneNumber = customerPhone.replace(/[^0-9]/g, '');
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
   };
 
   if (!bill) return <div className="p-6">Loading...</div>;
@@ -154,6 +263,7 @@ export default function InvoicePreview() {
         <button onClick={()=>router.push('/GSTBillManagement')} className="px-3 py-2 border rounded flex items-center gap-2"><Edit className="w-4 h-4"/>Edit</button>
         <button onClick={handleDownload} className="px-3 py-2 border rounded flex items-center gap-2"><Download className="w-4 h-4"/>Download</button>
         <button onClick={handlePrint} className="px-3 py-2 border rounded flex items-center gap-2"><Printer className="w-4 h-4"/>Print</button>
+        <button onClick={handleWhatsAppShare} className="px-3 py-2 border rounded flex items-center gap-2 bg-green-500 text-white hover:bg-green-600"><MessageCircle className="w-4 h-4"/>WhatsApp Share</button>
       </div>
 
       {/* Render template based on templateId - Template 10 uses original detailed structure */}

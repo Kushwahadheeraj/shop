@@ -121,3 +121,40 @@ body {
   color: var(--foreground);
 }
 
+/* Instant page transitions - no reload flash */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Smooth page transitions */
+@view-transition {
+  navigation: auto;
+}
+
+/* Prevent flash of loading state */
+main {
+  opacity: 1;
+  transition: opacity 0.1s ease-in-out;
+}
+
+/* Instant skeleton animations */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Instant link transitions - no delay */
+a[href] {
+  transition: all 0.1s ease;
+}
+
+/* Optimize for instant page loads */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+

@@ -1,5 +1,6 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback, memo } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import Link from 'next/link';
@@ -7,9 +8,10 @@ import { useAuth } from '@/components/AuthContext';
 import BrandLogo from '@/components/BrandLogo';
 
 const sections = [
-  { name: 'Dashboard', path: '' },
+  { name: 'Dashboard', path: '', section: null }, // Neutral - not in any section
   {
     name: 'Product Add',
+    section: 'section1', // Section 1: Core Management
     subItems: [
       { name: 'Adhesives', path: '/ProductAdd/Adhesives' },
       { name: 'Brush', path: '/ProductAdd/Brush' },
@@ -2416,6 +2418,7 @@ const sections = [
   },
   {
     name: 'Product List',
+    section: 'section1', // Section 1: Core Management
     subItems: [
       { name: 'Adhesives', path: '/ProductList/Adhesives' },
       { name: 'Brush', path: '/ProductList/Brush' },
@@ -4823,17 +4826,19 @@ const sections = [
       },
     ],
   },
-  { name: 'Order List', path: '/Orders' },
-  { name: 'User List', path: '/EUserList' },
-  { name: 'Seller List', path: '/SellerList' },
-  { name: 'Category List', path: '/CategoryList' },
-  { name: 'Coupon List', path: '/Coupons' },
-  { name: 'Bill Management', path: '/BillManagement' },
-  { name: 'Simple Bill Management', path: '/SimpleBillManagement' },
-  { name: 'Quick Invoice Creator', path: '/InvoiceGenerator' },
-  { name: 'GST Bill Management', path: '/GSTBillManagement' },
-  { name: 'Bill Items Inventory', path: '/BillItemsInventory' },
-  { name: 'Bill File Management', path: '/BillFileManagement' },
+  { name: 'Order List', path: '/Orders', section: 'section1' }, // Section 1: Core Management
+  { name: 'User List', path: '/EUserList', section: 'section1' }, // Section 1: Core Management
+  { name: 'Category List', path: '/CategoryList', section: 'section1' }, // Section 1: Core Management
+  { name: 'Coupon List', path: '/Coupons', section: 'section1' }, // Section 1: Core Management
+  { name: 'Seller List', path: '/SellerList', section: 'section2' }, // Section 2: Other
+  { name: 'Bill Management', path: '/BillManagement', section: 'section2' }, // Section 2: Other
+  { name: 'Simple Bill Management', path: '/SimpleBillManagement', section: 'section2' }, // Section 2: Other
+  { name: 'Quick Invoice Creator', path: '/InvoiceGenerator', section: 'section2' }, // Section 2: Other
+  { name: 'GST Bill Management', path: '/GSTBillManagement', section: 'section2' }, // Section 2: Other
+  { name: 'Bill Items Inventory', path: '/BillItemsInventory', section: 'section2' }, // Section 2: Other
+  { name: 'Bill File Management', path: '/BillFileManagement', section: 'section2' }, // Section 2: Other
+  { name: 'Balance Management', path: '/BalanceManagement', section: 'section2' }, // Section 2: Other
+  { name: 'Shop Management', path: '/ShopManagement', section: 'section2' }, // Section 2: Other
 ];
 
 // Add this helper function at the top (after imports):
@@ -4861,27 +4866,50 @@ function sortSidebarItems(items) {
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
-export default function Sidebar({ onSetting, onLogout, open, onClose }) {
+// OPTIMIZED: Memoize Sidebar component
+const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
   const { isAdmin } = useAuth();
+  const router = useRouter();
   // Track open state for each collapsible item by name
   const [openSection, setOpenSection] = useState(null);
   const [openSubSection, setOpenSubSection] = useState(null);
-
-  // Filter sections based on user role
-  const filteredSections = sections.filter(section => {
-    // Only show SellerList to admin users
-    if (section.name === 'Seller List') {
-      return isAdmin();
+  
+  // OPTIMIZED: Memoize admin check
+  const isAdminUser = useMemo(() => isAdmin(), [isAdmin]);
+  
+  // OPTIMIZED: Memoize prefetch handler
+  const handleLinkHover = useCallback((path) => {
+    if (path) {
+      router.prefetch(path);
     }
-    return true;
-  });
+  }, [router]);
 
-  // Sort sections before rendering
-  const sortedSections = sortSidebarItems(filteredSections);
+  // OPTIMIZED: Memoize filtered and sorted sections with grouping
+  const organizedSections = useMemo(() => {
+    const filteredSections = sections.filter(section => {
+      // Only show SellerList to admin users
+      if (section.name === 'Seller List') {
+        return isAdminUser;
+      }
+      return true;
+    });
+    
+    // Organize into groups
+    const dashboard = filteredSections.find(s => s.name === 'Dashboard');
+    const section1 = filteredSections.filter(s => s.section === 'section1');
+    const section2 = filteredSections.filter(s => s.section === 'section2');
+    
+    return {
+      dashboard: dashboard ? [dashboard] : [],
+      section1: sortSidebarItems(section1),
+      section2: sortSidebarItems(section2)
+    };
+  }, [isAdminUser]);
 
-  const handleToggle = (name) => {
-    setOpenSection(openSection === name ? null : name);
-  };
+  // OPTIMIZED: Memoize toggle handler
+  const handleToggle = useCallback((name) => {
+    setOpenSection(prev => prev === name ? null : name);
+  }, []);
   return (
     <aside className='w-64 h-screen bg-white shadow-lg p-2 flex flex-col text-zinc-800 border border-zinc-100'>
       <div className='px-3 py-4 border-b border-gray-100'>
@@ -4889,12 +4917,15 @@ export default function Sidebar({ onSetting, onLogout, open, onClose }) {
       </div>
       <nav className='flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900'>
         <ul className='p-2 space-y-2'>
-          {sortedSections.map((section) => (
+          {/* Dashboard - Neutral (not in any section) */}
+          {organizedSections.dashboard.map((section) => (
             <div key={section.name} className='mb-2'>
               <div className='flex items-center w-full'>
                 {section.path ? (
                   <Link
                     href={section.path}
+                    prefetch={true}
+                    onMouseEnter={() => handleLinkHover(section.path)}
                     className={`flex-1 text-left px-3 py-2 rounded-lg text-sm transition group cursor-pointer ${
                       openSection === section.name
                         ? 'bg-zinc-100 font-semibold shadow'
@@ -4905,9 +4936,16 @@ export default function Sidebar({ onSetting, onLogout, open, onClose }) {
                     {section.name}
                   </Link>
                 ) : (
-                  <span className='flex-1 text-left px-2 py-2 rounded text-sm font-semibold'>
+                  <div
+                    className={`flex-1 text-left px-3 py-2 rounded-lg text-sm transition cursor-pointer ${
+                      openSection === section.name
+                        ? 'bg-zinc-100 font-semibold shadow'
+                        : 'hover:bg-yellow-300 hover:text-white'
+                    }`}
+                    onClick={() => handleToggle(section.name)}
+                  >
                     {section.name}
-                  </span>
+                  </div>
                 )}
                 {section.subItems && section.subItems.length > 0 && (
                   <button
@@ -5018,6 +5056,304 @@ export default function Sidebar({ onSetting, onLogout, open, onClose }) {
                 )}
             </div>
           ))}
+          
+          {/* Section 1: Core Management */}
+          {organizedSections.section1.length > 0 && (
+            <>
+              <li className='px-3 py-2 mt-4 mb-2'>
+                <div className='text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200 pb-1'>
+                  Core Management
+                </div>
+              </li>
+              {organizedSections.section1.map((section) => (
+                <div key={section.name} className='mb-2'>
+                  <div className='flex items-center w-full'>
+                    {section.path ? (
+                      <Link
+                        href={section.path}
+                        prefetch={true}
+                        onMouseEnter={() => handleLinkHover(section.path)}
+                        className={`flex-1 text-left px-3 py-2 rounded-lg text-sm transition group cursor-pointer ${
+                          openSection === section.name
+                            ? 'bg-zinc-100 font-semibold shadow'
+                            : 'hover:bg-yellow-300 hover:text-white'
+                        }`}
+                        onClick={() => handleToggle(section.name)}
+                      >
+                        {section.name}
+                      </Link>
+                    ) : (
+                      <div
+                        className={`flex-1 text-left px-3 py-2 rounded-lg text-sm transition cursor-pointer ${
+                          openSection === section.name
+                            ? 'bg-zinc-100 font-semibold shadow'
+                            : 'hover:bg-yellow-300 hover:text-white'
+                        }`}
+                        onClick={() => handleToggle(section.name)}
+                      >
+                        {section.name}
+                      </div>
+                    )}
+                    {section.subItems && section.subItems.length > 0 && (
+                      <button
+                        className='ml-2'
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggle(section.name);
+                        }}
+                      >
+                        {openSection === section.name ? (
+                          <FiChevronUp className='transition-transform' />
+                        ) : (
+                          <FiChevronDown className='transition-transform' />
+                        )}
+                      </button>
+                    )}
+                    {section.subItemsName && section.subItemsName.length > 0 && (
+                      <button
+                        className='ml-2'
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggle(section.name);
+                        }}
+                      >
+                        {openSection === section.name ? (
+                          <FiChevronUp className='transition-transform' />
+                        ) : (
+                          <FiChevronDown className='transition-transform' />
+                        )}
+                      </button>
+                    )}
+                    {section.subItemsNameComponent &&
+                      section.subItemsNameComponent.length > 0 && (
+                        <button
+                          className='ml-2'
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleToggle(section.name);
+                          }}
+                        >
+                          {openSection === section.name ? (
+                            <FiChevronUp className='transition-transform' />
+                          ) : (
+                            <FiChevronDown className='transition-transform' />
+                          )}
+                        </button>
+                      )}
+                    {section.subItemsNameComponentName &&
+                      section.subItemsNameComponentName.length > 0 && (
+                        <button
+                          className='ml-2'
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleToggle(section.name);
+                          }}
+                        >
+                          {openSection === section.name ? (
+                            <FiChevronUp className='transition-transform' />
+                          ) : (
+                            <FiChevronDown className='transition-transform' />
+                          )}
+                        </button>
+                      )}
+                  </div>
+                  {openSection === section.name &&
+                    (section.subItems ||
+                      section.subItemsName ||
+                      section.subItemsNameComponent ||
+                      section.subItemsNameComponentName) && (
+                      <ul className='pl-4'>
+                        {Array.isArray(section.subItems) &&
+                          section.subItems.map((item) => (
+                            <SidebarItem
+                              key={item.name}
+                              item={item}
+                              openSubSection={openSubSection}
+                              setOpenSubSection={setOpenSubSection}
+                            />
+                          ))}
+                        {Array.isArray(section.subItemsName) &&
+                          section.subItemsName.map((item) => (
+                            <SidebarItem
+                              key={item.name}
+                              item={item}
+                              openSubSection={openSubSection}
+                              setOpenSubSection={setOpenSubSection}
+                            />
+                          ))}
+                        {Array.isArray(section.subItemsNameComponent) &&
+                          section.subItemsNameComponent.map((item) => (
+                            <SidebarItem
+                              key={item.name}
+                              item={item}
+                              openSubSection={openSubSection}
+                              setOpenSubSection={setOpenSubSection}
+                            />
+                          ))}
+                        {Array.isArray(section.subItemsNameComponentName) &&
+                          section.subItemsNameComponentName.map((item) => (
+                            <SidebarItem
+                              key={item.name}
+                              item={item}
+                              openSubSection={openSubSection}
+                              setOpenSubSection={setOpenSubSection}
+                            />
+                          ))}
+                      </ul>
+                    )}
+                </div>
+              ))}
+            </>
+          )}
+          
+          {/* Section 2: Other */}
+          {organizedSections.section2.length > 0 && (
+            <>
+              <li className='px-3 py-2 mt-4 mb-2'>
+                <div className='text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200 pb-1'>
+                  Other
+                </div>
+              </li>
+              {organizedSections.section2.map((section) => (
+                <div key={section.name} className='mb-2'>
+                  <div className='flex items-center w-full'>
+                    {section.path ? (
+                      <Link
+                        href={section.path}
+                        prefetch={true}
+                        onMouseEnter={() => handleLinkHover(section.path)}
+                        className={`flex-1 text-left px-3 py-2 rounded-lg text-sm transition group cursor-pointer ${
+                          openSection === section.name
+                            ? 'bg-zinc-100 font-semibold shadow'
+                            : 'hover:bg-yellow-300 hover:text-white'
+                        }`}
+                        onClick={() => handleToggle(section.name)}
+                      >
+                        {section.name}
+                      </Link>
+                    ) : (
+                      <div
+                        className={`flex-1 text-left px-3 py-2 rounded-lg text-sm transition cursor-pointer ${
+                          openSection === section.name
+                            ? 'bg-zinc-100 font-semibold shadow'
+                            : 'hover:bg-yellow-300 hover:text-white'
+                        }`}
+                        onClick={() => handleToggle(section.name)}
+                      >
+                        {section.name}
+                      </div>
+                    )}
+                    {section.subItems && section.subItems.length > 0 && (
+                      <button
+                        className='ml-2'
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggle(section.name);
+                        }}
+                      >
+                        {openSection === section.name ? (
+                          <FiChevronUp className='transition-transform' />
+                        ) : (
+                          <FiChevronDown className='transition-transform' />
+                        )}
+                      </button>
+                    )}
+                    {section.subItemsName && section.subItemsName.length > 0 && (
+                      <button
+                        className='ml-2'
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggle(section.name);
+                        }}
+                      >
+                        {openSection === section.name ? (
+                          <FiChevronUp className='transition-transform' />
+                        ) : (
+                          <FiChevronDown className='transition-transform' />
+                        )}
+                      </button>
+                    )}
+                    {section.subItemsNameComponent &&
+                      section.subItemsNameComponent.length > 0 && (
+                        <button
+                          className='ml-2'
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleToggle(section.name);
+                          }}
+                        >
+                          {openSection === section.name ? (
+                            <FiChevronUp className='transition-transform' />
+                          ) : (
+                            <FiChevronDown className='transition-transform' />
+                          )}
+                        </button>
+                      )}
+                    {section.subItemsNameComponentName &&
+                      section.subItemsNameComponentName.length > 0 && (
+                        <button
+                          className='ml-2'
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleToggle(section.name);
+                          }}
+                        >
+                          {openSection === section.name ? (
+                            <FiChevronUp className='transition-transform' />
+                          ) : (
+                            <FiChevronDown className='transition-transform' />
+                          )}
+                        </button>
+                      )}
+                  </div>
+                  {openSection === section.name &&
+                    (section.subItems ||
+                      section.subItemsName ||
+                      section.subItemsNameComponent ||
+                      section.subItemsNameComponentName) && (
+                      <ul className='pl-4'>
+                        {Array.isArray(section.subItems) &&
+                          section.subItems.map((item) => (
+                            <SidebarItem
+                              key={item.name}
+                              item={item}
+                              openSubSection={openSubSection}
+                              setOpenSubSection={setOpenSubSection}
+                            />
+                          ))}
+                        {Array.isArray(section.subItemsName) &&
+                          section.subItemsName.map((item) => (
+                            <SidebarItem
+                              key={item.name}
+                              item={item}
+                              openSubSection={openSubSection}
+                              setOpenSubSection={setOpenSubSection}
+                            />
+                          ))}
+                        {Array.isArray(section.subItemsNameComponent) &&
+                          section.subItemsNameComponent.map((item) => (
+                            <SidebarItem
+                              key={item.name}
+                              item={item}
+                              openSubSection={openSubSection}
+                              setOpenSubSection={setOpenSubSection}
+                            />
+                          ))}
+                        {Array.isArray(section.subItemsNameComponentName) &&
+                          section.subItemsNameComponentName.map((item) => (
+                            <SidebarItem
+                              key={item.name}
+                              item={item}
+                              openSubSection={openSubSection}
+                              setOpenSubSection={setOpenSubSection}
+                            />
+                          ))}
+                      </ul>
+                    )}
+                </div>
+              ))}
+            </>
+          )}
         </ul>
       </nav>
       <div className='p-4 border-t text-black border-gray-700 flex flex-col gap-2'>
@@ -5038,9 +5374,15 @@ export default function Sidebar({ onSetting, onLogout, open, onClose }) {
       </div>
     </aside>
   );
-}
+});
 
-function SidebarItem({ item }) {
+Sidebar.displayName = 'Sidebar';
+
+export default Sidebar;
+
+// OPTIMIZED: Memoize SidebarItem to prevent unnecessary re-renders
+const SidebarItem = memo(function SidebarItem({ item }) {
+  const router = useRouter();
   const hasSubItems = Array.isArray(item.subItems) && item.subItems.length > 0;
   const hasSubItemsName =
     Array.isArray(item.subItemsName) && item.subItemsName.length > 0;
@@ -5087,6 +5429,8 @@ function SidebarItem({ item }) {
         ) ? (
           <Link
             href={item.path}
+            prefetch={true}
+            onMouseEnter={() => router.prefetch(item.path)}
             className='block px-2 py-2 rounded text-sm hover:bg-yellow-300 hover:text-white transition flex-1'
           >
             <span className='align-middle'>{item.name}</span>
@@ -5127,4 +5471,6 @@ function SidebarItem({ item }) {
       )}
     </li>
   );
-}
+});
+
+SidebarItem.displayName = 'SidebarItem';

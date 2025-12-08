@@ -1,8 +1,8 @@
 "use client";
-import React from 'react';
+import React, { memo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-const MonthlyChart = ({ data = [] }) => {
+const MonthlyChart = memo(({ data = [] }) => {
   if (!data || data.length === 0) {
     return (
       <div className="h-64 flex items-center justify-center text-gray-500">
@@ -24,9 +24,12 @@ const MonthlyChart = ({ data = [] }) => {
           <XAxis 
             dataKey="day" 
             stroke="#6b7280"
-            fontSize={12}
+            fontSize={11}
             tickLine={false}
             axisLine={false}
+            angle={-45}
+            textAnchor="end"
+            height={60}
           />
           <YAxis 
             stroke="#6b7280"
@@ -57,6 +60,8 @@ const MonthlyChart = ({ data = [] }) => {
       </ResponsiveContainer>
     </div>
   );
-};
+});
+
+MonthlyChart.displayName = 'MonthlyChart';
 
 export default MonthlyChart;

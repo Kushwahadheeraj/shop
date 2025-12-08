@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const BACKEND = process.env.BACKEND_URL || 'https://shop-backend-qf50.onrender.com/api';
+const BACKEND = process.env.BACKEND_URL || 'http://localhost:5000/api';
 
 export async function GET(request) {
   try {

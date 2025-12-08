@@ -54,18 +54,74 @@ export default function ContactsManager({ isOpen, onClose }) {
 
   const deleteClient = async (id) => {
     if (!confirm('Delete this client?')) return;
-    const token = localStorage.getItem('token');
-    const r = await fetch(`/api/clients/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
-    const d = await r.json();
-    if (d?.success) refreshClients(); else alert(d?.message || 'Delete failed');
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please log in to delete client');
+        return;
+      }
+      
+      const response = await fetch(`${API_BASE_URL}/clients/${id}`, { 
+        method: 'DELETE', 
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        } 
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData?.message || `Failed to delete client. Status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      if (data?.success) {
+        await refreshClients();
+        // Success message (optional)
+        // alert('Client deleted successfully');
+      } else {
+        alert(data?.message || 'Failed to delete client');
+      }
+    } catch (error) {
+      console.error('Error deleting client:', error);
+      alert(error?.message || 'Error deleting client. Please try again.');
+    }
   };
 
   const deleteShop = async (id) => {
     if (!confirm('Delete this shop?')) return;
-    const token = localStorage.getItem('token');
-    const r = await fetch(`/api/gst-shops/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
-    const d = await r.json();
-    if (d?.success) refreshShops(); else alert(d?.message || 'Delete failed');
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please log in to delete shop');
+        return;
+      }
+      
+      const response = await fetch(`${API_BASE_URL}/gst-shops/${id}`, { 
+        method: 'DELETE', 
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        } 
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData?.message || `Failed to delete shop. Status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      if (data?.success) {
+        await refreshShops();
+        // Success message (optional)
+        // alert('Shop deleted successfully');
+      } else {
+        alert(data?.message || 'Failed to delete shop');
+      }
+    } catch (error) {
+      console.error('Error deleting shop:', error);
+      alert(error?.message || 'Error deleting shop. Please try again.');
+    }
   };
 
   const filteredClients = clients.filter(c => {

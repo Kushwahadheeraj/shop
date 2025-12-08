@@ -106,7 +106,7 @@ export default function CategoriesView({ id }) {
       });
       if (!res.ok) throw new Error("Failed to delete category");
       setDeleteOpen(false);
-      router.push('/Dashboard/ProductList/Home/Categories');
+      router.push('/ProductList/Home/Categories');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -141,7 +141,7 @@ export default function CategoriesView({ id }) {
   if (!category) return (
     <div className="p-8 text-center">
       <p className="text-gray-500 mb-4">Category not found.</p>
-      <Button onClick={() => router.push('/Dashboard/ProductList/Home/Categories')} variant="outline">
+      <Button onClick={() => router.push('/ProductList/Home/Categories')} variant="outline">
         <ArrowLeft className="w-4 h-4 mr-2" />
         Back to Categories
       </Button>
@@ -156,7 +156,7 @@ export default function CategoriesView({ id }) {
             <Button 
               variant="outline" 
               size="sm"
-              onClick={() => router.push('/Dashboard/ProductList/Home/Categories')}
+              onClick={() => router.push('/ProductList/Home/Categories')}
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back

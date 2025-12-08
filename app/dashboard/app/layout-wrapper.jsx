@@ -14,6 +14,8 @@ export default function DashboardLayout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleSetting = () => {
+    // Prefetch before navigation for instant load
+    router.prefetch('/Settings');
     router.push('/Settings');
     setMobileOpen(false);
   };
@@ -22,39 +24,54 @@ export default function DashboardLayout({ children }) {
     logout('/login/seller');
   };
 
-  // Protect dashboard routes - only sellers can access
+  // Protect dashboard routes - only sellers can access (OPTIMIZED: Non-blocking)
   useEffect(() => {
     if (isAuthRoute) return;
-    if (!loading) {
-      if (!isAuthenticated()) {
-        router.replace('/login/seller');
-      } else if (!isSeller()) {
-        router.replace('/');
-      }
+    
+    // Fast path: Check token immediately without waiting for API
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    
+    if (!token) {
+      router.replace('/login/seller');
+      return;
     }
-  }, [loading, isAuthenticated, isSeller, router, isAuthRoute]);
+    
+    // CRITICAL: Check if user is inactive - immediately redirect
+    if (user && user.status === 'inactive') {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('token');
+        window.location.href = '/login/seller';
+      }
+      return;
+    }
+    
+    // If we have token but still loading, wait a bit (max 1 second)
+    if (loading) {
+      const timeout = setTimeout(() => {
+        // If still loading after 1s, proceed optimistically
+        if (!isAuthenticated() || !isSeller()) {
+          // Verify in background
+          if (!user || (user.role !== 'seller' && user.role !== 'admin')) {
+            router.replace('/login/seller');
+          }
+        }
+      }, 1000);
+      return () => clearTimeout(timeout);
+    }
+    
+    // Verify authentication (non-blocking)
+    if (!isAuthenticated()) {
+      router.replace('/login/seller');
+    } else if (!isSeller()) {
+      router.replace('/');
+    }
+  }, [loading, isAuthenticated, isSeller, router, isAuthRoute, user]);
 
-  // Show loading while checking authentication
-  if (!isAuthRoute && loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Don't render dashboard if not authenticated or not a seller
+  // INSTANT RENDER: Always show layout immediately, don't block on loading
+  // Authentication check happens in background, redirect if needed
   if (!isAuthRoute && (!isAuthenticated() || !isSeller())) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <p className="text-gray-600">Access denied. Redirecting...</p>
-        </div>
-      </div>
-    );
+    // Silent redirect - no loading screen
+    return null;
   }
 
   if (isAuthRoute) {

@@ -5,16 +5,12 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/AuthContext';
 
 const BillItemsInventoryPage = () => {
-  // Backend helpers
-  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.API_BASE_URL || '';
-  const join = useCallback((base, path) => `${base.replace(/\/$/, '')}${path}`, []);
-  const api = useCallback((path) => {
-    return API_BASE ? join(API_BASE, path) : path;
-  }, [API_BASE, join]);
+  // Use Next.js API routes instead of direct backend calls
   const toArray = useCallback((res) => {
     if (Array.isArray(res)) return res;
     if (Array.isArray(res?.data)) return res.data;
     if (Array.isArray(res?.data?.bills)) return res.data.bills;
+    if (Array.isArray(res?.bills)) return res.bills;
     return [];
   }, []);
   const getSellerId = useCallback(() => {
@@ -59,33 +55,57 @@ const BillItemsInventoryPage = () => {
       const params = new URLSearchParams();
       if (currentSellerId) params.append('sellerId', currentSellerId);
       
-      const response = await fetch(api(`/simple-bills?${params.toString()}`), {
+      // Use Next.js API route instead of direct backend call
+      const response = await fetch(`/api/simple-bills?${params.toString()}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
+      if (!response.ok) {
+        console.error('❌ Failed to fetch simple bills:', response.status, response.statusText);
+        setAllItems([]);
+        setUniqueCategories([]);
+        return;
+      }
+      
       const data = await response.json().catch(() => ({}));
+      console.log('📦 Simple bills response:', { 
+        success: data.success, 
+        dataType: typeof data.data,
+        isArray: Array.isArray(data.data),
+        dataLength: Array.isArray(data.data) ? data.data.length : 'N/A'
+      });
+      
       const bills = toArray(data);
+      console.log('📋 Parsed bills:', bills.length);
       
       // Extract all items from bills
       const items = [];
-      bills.forEach(bill => {
+      bills.forEach((bill, billIndex) => {
         if (Array.isArray(bill.items)) {
-          bill.items.forEach(item => {
+          bill.items.forEach((item, itemIndex) => {
             items.push({
               ...item,
-              billNumber: bill.billNumber,
-              billDate: bill.billDate || bill.createdAt,
+              billNumber: bill.billNumber || bill.billNo || `BILL-${billIndex + 1}`,
+              billDate: bill.billDate || bill.createdAt || bill.date,
               billType: 'simple',
-              shopName: bill.shopName,
+              shopName: bill.shopName || bill.shop || 'N/A',
               // For Simple Bill: unitPrice is per piece, totalPrice is quantity * unitPrice
-              unitPrice: item.unitPrice || 0,
-              totalPrice: item.totalPrice || (item.quantity * item.unitPrice) || 0,
-              quantity: item.quantity || 0,
-              category: item.category || 'Uncategorized'
+              unitPrice: item.unitPrice || item.price || 0,
+              totalPrice: item.totalPrice || item.total || (item.quantity * (item.unitPrice || item.price || 0)) || 0,
+              quantity: item.quantity || item.qty || 0,
+              category: item.category || item.type || 'Uncategorized',
+              name: item.name || item.itemName || item.productName || 'Unknown Item'
             });
           });
+        } else {
+          console.warn(`⚠️ Bill ${billIndex} has no items array:`, bill);
         }
       });
+      
+      console.log('✅ Extracted items from simple bills:', items.length);
+      if (items.length > 0) {
+        console.log('Sample item:', items[0]);
+      }
       
       setAllItems(items);
       
@@ -99,7 +119,7 @@ const BillItemsInventoryPage = () => {
       setLoading(false);
       fetchingBillsRef.current = false;
     }
-  }, [api, getSellerId, toArray, router]);
+  }, [getSellerId, toArray, router]);
 
   // Fetch GST Bills from BillManagement endpoint
   const fetchGSTBills = useCallback(async () => {
@@ -120,34 +140,57 @@ const BillItemsInventoryPage = () => {
       const params = new URLSearchParams();
       if (currentSellerId) params.append('sellerId', currentSellerId);
       
-      // Use /api/bills endpoint like BillManagement does
-      const response = await fetch(api(`/bills?${params.toString()}`), {
+      // Use Next.js API route instead of direct backend call
+      const response = await fetch(`/api/bills?${params.toString()}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
+      if (!response.ok) {
+        console.error('❌ Failed to fetch GST bills:', response.status, response.statusText);
+        setAllItems([]);
+        setUniqueCategories([]);
+        return;
+      }
+      
       const data = await response.json().catch(() => ({}));
+      console.log('📦 GST bills response:', { 
+        success: data.success, 
+        dataType: typeof data.data,
+        isArray: Array.isArray(data.data),
+        dataLength: Array.isArray(data.data) ? data.data.length : 'N/A'
+      });
+      
       const bills = toArray(data);
+      console.log('📋 Parsed GST bills:', bills.length);
       
       // Extract all items from bills (these are GST bills from BillManagement)
       const items = [];
-      bills.forEach(bill => {
+      bills.forEach((bill, billIndex) => {
         if (Array.isArray(bill.items)) {
-          bill.items.forEach(item => {
+          bill.items.forEach((item, itemIndex) => {
             items.push({
               ...item,
-              billNumber: bill.billNumber,
-              billDate: bill.billDate || bill.createdAt,
+              billNumber: bill.billNumber || bill.billNo || `BILL-${billIndex + 1}`,
+              billDate: bill.billDate || bill.createdAt || bill.date,
               billType: 'gst',
-              shopName: bill.shopName,
+              shopName: bill.shopName || bill.shop || 'N/A',
               // For BillManagement bills: unitPrice is per piece, totalPrice is quantity * unitPrice
-              unitPrice: item.unitPrice || 0,
-              totalPrice: item.totalPrice || (item.quantity * item.unitPrice) || 0,
-              quantity: item.quantity || 0,
-              category: item.category || 'Uncategorized'
+              unitPrice: item.unitPrice || item.price || 0,
+              totalPrice: item.totalPrice || item.total || (item.quantity * (item.unitPrice || item.price || 0)) || 0,
+              quantity: item.quantity || item.qty || 0,
+              category: item.category || item.type || 'Uncategorized',
+              name: item.name || item.itemName || item.productName || 'Unknown Item'
             });
           });
+        } else {
+          console.warn(`⚠️ GST Bill ${billIndex} has no items array:`, bill);
         }
       });
+      
+      console.log('✅ Extracted items from GST bills:', items.length);
+      if (items.length > 0) {
+        console.log('Sample GST item:', items[0]);
+      }
       
       setAllItems(items);
       
@@ -161,7 +204,7 @@ const BillItemsInventoryPage = () => {
       setLoading(false);
       fetchingBillsRef.current = false;
     }
-  }, [api, getSellerId, toArray, router]);
+  }, [getSellerId, toArray, router]);
 
   // Load data based on bill type
   useEffect(() => {

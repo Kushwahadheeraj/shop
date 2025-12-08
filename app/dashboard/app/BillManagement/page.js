@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Plus, Search, Eye, Edit, Trash2, DollarSign, Building2, CreditCard, History, Receipt, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/AuthContext';
+import { useDebounce } from '@/lib/useDebounce';
 import AddBillForm from './AddBillForm';
 import AddShopForm from './AddShopForm';
 import BillViewModal from './BillViewModal';
@@ -48,6 +49,9 @@ const BillManagementPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterDateRange, setFilterDateRange] = useState('');
   const [loading, setLoading] = useState(true);
+  
+  // Debounce search to reduce filter operations (300ms delay)
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [shopsLoading, setShopsLoading] = useState(true);
   const [stats, setStats] = useState({
     totalBills: 0,
@@ -326,22 +330,11 @@ const BillManagementPage = () => {
     }
   }, [authLoading, isAuthenticated, isSeller, router]);
 
-  // Recalculate stats whenever bills, selectedShop, searchTerm, or filterDateRange changes
+  // Recalculate stats whenever bills, selectedShop, debouncedSearchTerm, or filterDateRange changes
   useEffect(() => {
-    // console.log('🔄 Recalculating stats due to dependency change...');
-    // console.log('🔍 Current state:', {
-    //   billsCount: bills.length,
-    //   selectedShop,
-    //   searchTerm,
-    //   filterDateRange,
-    //   shopsCount: shops.length
-    // });
-    
-    const calculatedStats = calculateStatsFromBills(bills, selectedShop, searchTerm, filterDateRange);
+    const calculatedStats = calculateStatsFromBills(bills, selectedShop, debouncedSearchTerm, filterDateRange);
     setStats(calculatedStats);
-    
-    // console.log('📊 Updated stats:', calculatedStats);
-  }, [bills, selectedShop, searchTerm, filterDateRange, calculateStatsFromBills, shops]);
+  }, [bills, selectedShop, debouncedSearchTerm, filterDateRange, calculateStatsFromBills, shops]);
 
   // Show loading while checking authentication
   if (authLoading) {

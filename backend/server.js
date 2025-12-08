@@ -41,8 +41,10 @@ const gstBillsRoutes = require('./routes/gstBillsRoutes');
 const bankAccountsRoutes = require('./routes/bankAccountsRoutes');
 const gstShopsRoutes = require('./routes/gstShopsRoutes');
 const clientsRoutes = require('./routes/clientsRoutes');
+const balanceEntryRoutes = require('./routes/balanceEntryRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const productsRoutes = require('./routes/productsRoutes');
+const shopManagementRoutes = require('./routes/shopManagementRoutes');
 
 const app = express();
 
@@ -74,6 +76,7 @@ app.use('/api/shops', shopRoutes);
 app.use('/api/gst-shops', gstShopsRoutes);
 app.use('/api/gst-bills', gstBillsRoutes);
 app.use('/api/clients', clientsRoutes);
+app.use('/api/balance-entries', balanceEntryRoutes);
 app.use('/api/bill-files', require('./routes/billFilesRoutes'));
 app.use('/api/bank-accounts', bankAccountsRoutes);
 app.use('/api/dashboard', dashboardRoutes);
@@ -98,6 +101,7 @@ app.use('/api/tools', toolsRoutes);
 app.use('/api/uncategorized', uncategorizedRoutes);
 app.use('/api/waterproofing', waterProofingRoutes);
 app.use('/api/products', productsRoutes);
+app.use('/api/shop-management', shopManagementRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

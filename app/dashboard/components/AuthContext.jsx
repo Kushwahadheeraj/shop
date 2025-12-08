@@ -1,5 +1,5 @@
 "use client"
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import API_BASE_URL from "@/lib/apiConfig";
 import { performLogout } from '@/lib/logout';
@@ -8,76 +8,119 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  // Check if user is authenticated on app load
+  // Check if user is authenticated on app load - OPTIMIZED: Non-blocking
   useEffect(() => {
-    checkAuthStatus();
-  }, []);
-
-  const checkAuthStatus = async () => {
-    // Check if we're on the client side
+    // Fast path: Check token first, then verify async
     if (typeof window === 'undefined') {
       setLoading(false);
       return;
     }
     
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        // Get current seller profile
-        const response = await fetch(`${API_BASE_URL}/seller/profile/me`, {
-          headers: { 
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-        });
+    const storedToken = localStorage.getItem('token');
+    setToken(storedToken);
+    if (!storedToken) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+    
+    // Set loading to false immediately if token exists (optimistic)
+    // This allows navigation to proceed without waiting for API
+    setLoading(false);
+    
+    // Verify token in background (non-blocking)
+    checkAuthStatus();
+  }, []);
+
+  // OPTIMIZED: Memoize checkAuthStatus to prevent recreation
+  const checkAuthStatus = useCallback(async () => {
+    // Check if we're on the client side
+    if (typeof window === 'undefined') {
+      return;
+    }
+    
+    const storedToken = localStorage.getItem('token');
+    setToken(storedToken);
+    if (!storedToken) {
+      setUser(null);
+      return;
+    }
+    
+    try {
+      // Get current seller profile with timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+      
+      const response = await fetch(`${API_BASE_URL}/seller/profile/me`, {
+        headers: { 
+          'Authorization': `Bearer ${storedToken}`,
+          'Content-Type': 'application/json'
+        },
+        signal: controller.signal,
+        next: { revalidate: 60 } // Next.js caching
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (response.ok) {
+        const data = await response.json();
         
-        if (response.ok) {
-          const data = await response.json();
-          
-          // Handle local file URLs by prepending the correct base URL
-          let avatarUrl = data.avatar;
-          if (avatarUrl && avatarUrl.startsWith('/uploads/')) {
-            // Remove /api from the base URL for static file serving
-            const baseUrl = API_BASE_URL.replace('/api', '');
-            avatarUrl = `${baseUrl}${avatarUrl}`;
-          }
-          
-          setUser({ 
-            id: data.id,
-            username: data.username, 
-            email: data.email,
-            mobile: data.mobile,
-            shopName: data.shopName,
-            gstNumber: data.gstNumber,
-            role: data.role || 'seller',
-            status: data.status || 'active',
-            avatar: avatarUrl
-          });
-        } else if (response.status === 401) {
-          // Only remove token on 401 (Unauthorized)
+        // CRITICAL: Check if user is inactive - immediately logout if deactivated
+        if (data.status === 'inactive') {
           if (typeof window !== 'undefined') {
             localStorage.removeItem('token');
+            setUser(null);
+            // Immediately redirect to login page
+            window.location.href = '/login/seller';
           }
-          setUser(null);
-        } else {
-          // For other errors, keep token but set user to null
-          setUser(null);
+          return;
         }
-      } catch (error) {
-        console.error('Auth check failed:', error);
-        // On network error, keep token and user null (will retry later)
+        
+        // OPTIMIZED: Handle local file URLs by prepending the correct base URL
+        let avatarUrl = data.avatar;
+        if (avatarUrl && avatarUrl.startsWith('/uploads/')) {
+          // Remove /api from the base URL for static file serving
+          const baseUrl = API_BASE_URL.replace('/api', '');
+          avatarUrl = `${baseUrl}${avatarUrl}`;
+        }
+        
+        setUser({ 
+          id: data.id,
+          username: data.username, 
+          email: data.email,
+          mobile: data.mobile,
+          shopName: data.shopName,
+          gstNumber: data.gstNumber,
+          role: data.role || 'seller',
+          status: data.status || 'active',
+          avatar: avatarUrl
+        });
+      } else if (response.status === 401) {
+        // Only remove token on 401 (Unauthorized)
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('token');
+        }
+        setToken(null);
+        setUser(null);
+      } else {
+        // For other errors, keep token but set user to null
         setUser(null);
       }
-    } else {
-      setUser(null);
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        console.error('Auth check failed:', error);
+      }
+      // On network error, keep token (will retry later if needed)
+      // Don't clear user if we already have one (optimistic)
     }
-    setLoading(false);
-  };
+  }, []);
 
-  const login = async (email, password) => {
+  // OPTIMIZED: Memoize login function
+  const login = useCallback(async (email, password, redirectPath = '/') => {
     try {
       const res = await fetch(`${API_BASE_URL}/seller/login`, {
         method: 'POST',
@@ -88,8 +131,17 @@ export function AuthProvider({ children }) {
       const data = await res.json();
       
       if (data.token) {
+        // CRITICAL: Check if seller is inactive - prevent login if deactivated
+        if (data.seller && data.seller.status === 'inactive') {
+          return { 
+            success: false, 
+            error: 'Your account has been deactivated. Please contact administrator.' 
+          };
+        }
+        
         if (typeof window !== 'undefined') {
           localStorage.setItem('token', data.token);
+          setToken(data.token);
         }
         
         // Handle local file URLs by prepending the correct base URL
@@ -100,6 +152,7 @@ export function AuthProvider({ children }) {
           avatarUrl = `${baseUrl}${avatarUrl}`;
         }
         
+        // Set user immediately (optimistic update)
         setUser({ 
           id: data.seller.id,
           username: data.seller.username, 
@@ -111,6 +164,13 @@ export function AuthProvider({ children }) {
           status: data.seller.status || 'active',
           avatar: avatarUrl
         });
+        
+        // Immediately redirect without waiting - use window.location for instant redirect
+        if (typeof window !== 'undefined' && redirectPath) {
+          // Use window.location for fastest redirect (no React re-render delay)
+          window.location.href = redirectPath;
+        }
+        
         return { success: true };
       } else {
         return { success: false, error: data.message || 'Login failed' };
@@ -119,37 +179,39 @@ export function AuthProvider({ children }) {
       console.error('Login error:', error);
       return { success: false, error: 'Network error' };
     }
-  };
+  }, []);
 
-  const logout = (redirectTo = '/') => {
+  // OPTIMIZED: Memoize logout and auth check functions
+  const logout = useCallback((redirectTo = '/') => {
     setUser(null);
+    setToken(null);
     // Use centralized logout function
     performLogout(redirectTo);
-  };
+  }, []);
 
-  const isAuthenticated = () => {
+  const isAuthenticated = useCallback(() => {
     if (typeof window === 'undefined') return false;
-    const token = localStorage.getItem('token');
     return token !== null && user !== null;
-  };
+  }, [user, token]);
 
-  const isSeller = () => {
+  const isSeller = useCallback(() => {
     return user && (user.role === 'seller' || user.role === 'admin');
-  };
+  }, [user]);
 
-  const isAdmin = () => {
+  const isAdmin = useCallback(() => {
     return user && user.role === 'admin';
-  };
+  }, [user]);
 
-  const isUser = () => {
+  const isUser = useCallback(() => {
     return user && user.role === 'user';
-  };
+  }, [user]);
 
-  const isActive = () => {
+  const isActive = useCallback(() => {
     return user && user.status === 'active';
-  };
+  }, [user]);
 
-  const updateProfile = async (profileData) => {
+  // OPTIMIZED: Memoize updateProfile
+  const updateProfile = useCallback(async (profileData) => {
     try {
       if (typeof window === 'undefined') {
         return { success: false, error: 'Not available on server side' };
@@ -266,9 +328,10 @@ export function AuthProvider({ children }) {
       console.error('Profile update error:', error);
       return { success: false, error: 'Network error' };
     }
-  };
+  }, [user]);
 
-  const changePassword = async (currentPassword, newPassword) => {
+  // OPTIMIZED: Memoize changePassword
+  const changePassword = useCallback(async (currentPassword, newPassword) => {
     try {
       if (typeof window === 'undefined') {
         return { success: false, error: 'Not available on server side' };
@@ -294,23 +357,57 @@ export function AuthProvider({ children }) {
       console.error('Password change error:', error);
       return { success: false, error: 'Network error' };
     }
-  };
+  }, []);
+
+  // REAL-TIME: Periodic status check to detect deactivation (every 30 seconds)
+  useEffect(() => {
+    if (typeof window === 'undefined' || !user) return;
+    
+    // Only check if user is authenticated
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    
+    // Set up periodic status check
+    const statusCheckInterval = setInterval(() => {
+      checkAuthStatus();
+    }, 30000); // Check every 30 seconds
+    
+    return () => clearInterval(statusCheckInterval);
+  }, [user, checkAuthStatus]);
+
+  // REAL-TIME: Monitor user status and logout if deactivated
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    // If user exists but status is inactive, immediately logout
+    if (user && user.status === 'inactive') {
+      // Clear token and user
+      localStorage.removeItem('token');
+      setUser(null);
+      // Immediately redirect to login
+      window.location.href = '/login/seller';
+    }
+  }, [user]);
+
+  // OPTIMIZED: Memoize context value to prevent unnecessary re-renders
+  const contextValue = useMemo(() => ({
+    user, 
+    token,
+    login, 
+    logout, 
+    loading, 
+    isAuthenticated,
+    isSeller,
+    isAdmin,
+    isUser,
+    isActive,
+    checkAuthStatus,
+    updateProfile,
+    changePassword
+  }), [user, token, loading, login, logout, isAuthenticated, isSeller, isAdmin, isUser, isActive, checkAuthStatus, updateProfile, changePassword]);
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      login, 
-      logout, 
-      loading, 
-      isAuthenticated,
-      isSeller,
-      isAdmin,
-      isUser,
-      isActive,
-      checkAuthStatus,
-      updateProfile,
-      changePassword
-    }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

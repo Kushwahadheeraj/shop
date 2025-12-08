@@ -544,8 +544,12 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
   const validateForm = () => {
     const newErrors = {};
 
+    // CRITICAL: Shop selection is mandatory for shop-wise data isolation
     if (!formData.shopId) {
-      newErrors.shopId = 'Please select a shop';
+      newErrors.shopId = 'Please select a shop - This is required to save bills separately for each shop';
+      setErrors(newErrors);
+      alert('Please select a shop. Each shop\'s bills are saved separately.');
+      return;
     }
 
     if (!formData.customerName.trim()) {
@@ -596,7 +600,8 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
         netAmount: totals.subtotal,
         gstAmount: totals.totalGST,
         grandTotal: totals.grandTotal,
-        shopName: shops.find(s => s._id === formData.shopId)?.name || ''
+        shopId: formData.shopId, // CRITICAL: Always include shopId for shop-wise isolation
+        shopName: shops.find(s => s._id === formData.shopId)?.name || selectedGSTShop?.name || ''
       };
       // Defer saving until bank details added; store draft and go to bank step
       sessionStorage.setItem('pending_gst_bill', JSON.stringify(billData));

@@ -8,8 +8,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Select } from "@/components/ui/select";
 import { Save, Bell, Shield, Palette, Smartphone, RefreshCw, ExternalLink } from "lucide-react";
+import { sidebarSections } from "../Sidebar";
 
 const SETTINGS_STORAGE_KEY = "dashboard_settings_v1";
+const SIDEBAR_VISIBILITY_KEY = "sidebar_visibility_v1";
 
 const DEFAULT_SETTINGS = {
   notifications: {
@@ -35,6 +37,11 @@ const DEFAULT_SETTINGS = {
   },
 };
 
+const DEFAULT_SIDEBAR_VISIBILITY = {
+  hiddenSections: { section1: false, section2: false },
+  hiddenItems: [],
+};
+
 export default function SettingsPage() {
   const router = useRouter();
   const { user } = useAuth();
@@ -48,6 +55,8 @@ export default function SettingsPage() {
   const [theme, setTheme] = useState(DEFAULT_SETTINGS.theme);
   const [language, setLanguage] = useState(DEFAULT_SETTINGS.language);
   const [security, setSecurity] = useState(DEFAULT_SETTINGS.security);
+  const [sidebarVisibility, setSidebarVisibility] = useState(DEFAULT_SIDEBAR_VISIBILITY);
+  const [showSidebarVisibility, setShowSidebarVisibility] = useState(false);
 
   // Load saved settings on mount
   useEffect(() => {
@@ -61,9 +70,23 @@ export default function SettingsPage() {
         setTheme(parsed.theme || DEFAULT_SETTINGS.theme);
         setLanguage(parsed.language || DEFAULT_SETTINGS.language);
         setSecurity(parsed.security || DEFAULT_SETTINGS.security);
+        if (parsed.sidebarVisibility) {
+          setSidebarVisibility({
+            hiddenSections: parsed.sidebarVisibility.hiddenSections || DEFAULT_SIDEBAR_VISIBILITY.hiddenSections,
+            hiddenItems: parsed.sidebarVisibility.hiddenItems || DEFAULT_SIDEBAR_VISIBILITY.hiddenItems,
+          });
+        }
         if (parsed.lastSaved) {
           setLastSaved(new Date(parsed.lastSaved));
         }
+      }
+      const storedSidebar = localStorage.getItem(SIDEBAR_VISIBILITY_KEY);
+      if (storedSidebar) {
+        const parsedSidebar = JSON.parse(storedSidebar);
+        setSidebarVisibility({
+          hiddenSections: parsedSidebar.hiddenSections || DEFAULT_SIDEBAR_VISIBILITY.hiddenSections,
+          hiddenItems: parsedSidebar.hiddenItems || DEFAULT_SIDEBAR_VISIBILITY.hiddenItems,
+        });
       }
     } catch (err) {
       console.error("Failed to load settings:", err);
@@ -100,10 +123,13 @@ export default function SettingsPage() {
         theme,
         language,
         security,
+        sidebarVisibility,
         lastSaved: new Date().toISOString(),
       };
       if (typeof window !== "undefined") {
         localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(payload));
+        localStorage.setItem(SIDEBAR_VISIBILITY_KEY, JSON.stringify(sidebarVisibility));
+        window.dispatchEvent(new Event('sidebar-visibility-updated'));
       }
       await new Promise((resolve) => setTimeout(resolve, 500));
       setLastSaved(new Date(payload.lastSaved));
@@ -123,8 +149,10 @@ export default function SettingsPage() {
     setTheme(DEFAULT_SETTINGS.theme);
     setLanguage(DEFAULT_SETTINGS.language);
     setSecurity(DEFAULT_SETTINGS.security);
+    setSidebarVisibility(DEFAULT_SIDEBAR_VISIBILITY);
     if (typeof window !== "undefined") {
       localStorage.removeItem(SETTINGS_STORAGE_KEY);
+      localStorage.removeItem(SIDEBAR_VISIBILITY_KEY);
     }
     setSaveStatus("reset");
     setTimeout(() => setSaveStatus(null), 2500);
@@ -140,6 +168,36 @@ export default function SettingsPage() {
     if (saveStatus === "reset") return "Settings reset to defaults.";
     return null;
   }, [saveStatus]);
+
+  const section1Items = useMemo(
+    () => sidebarSections.filter((s) => s.section === "section1"),
+    []
+  );
+  const section2Items = useMemo(
+    () => sidebarSections.filter((s) => s.section === "section2"),
+    []
+  );
+
+  const toggleSectionVisibility = (sectionKey) => {
+    setSidebarVisibility((prev) => ({
+      ...prev,
+      hiddenSections: {
+        ...prev.hiddenSections,
+        [sectionKey]: !prev.hiddenSections?.[sectionKey],
+      },
+    }));
+  };
+
+  const toggleItemVisibility = (name) => {
+    setSidebarVisibility((prev) => {
+      const hidden = prev.hiddenItems || [];
+      const exists = hidden.includes(name);
+      return {
+        ...prev,
+        hiddenItems: exists ? hidden.filter((n) => n !== name) : [...hidden, name],
+      };
+    });
+  };
 
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
@@ -194,13 +252,86 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
+      {/* Sidebar Visibility (hidden behind subtle toggle) */}
+      {showSidebarVisibility && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              Sidebar Visibility
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="p-3 border rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-semibold">User Management (Section 1)</p>
+                  <Switch
+                    checked={!sidebarVisibility.hiddenSections?.section1}
+                    onCheckedChange={() => toggleSectionVisibility("section1")}
+                  />
+                </div>
+                <div className="space-y-2 max-h-56 overflow-y-auto">
+                  {section1Items.map((item) => (
+                    <label key={item.name} className="flex items-center gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4"
+                        checked={!sidebarVisibility.hiddenItems?.includes(item.name)}
+                        onChange={() => toggleItemVisibility(item.name)}
+                        disabled={sidebarVisibility.hiddenSections?.section1}
+                      />
+                      <span className="text-gray-700">{item.name}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div className="p-3 border rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-semibold">Other (Section 2)</p>
+                  <Switch
+                    checked={!sidebarVisibility.hiddenSections?.section2}
+                    onCheckedChange={() => toggleSectionVisibility("section2")}
+                  />
+                </div>
+                <div className="space-y-2 max-h-56 overflow-y-auto">
+                  {section2Items.map((item) => (
+                    <label key={item.name} className="flex items-center gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4"
+                        checked={!sidebarVisibility.hiddenItems?.includes(item.name)}
+                        onChange={() => toggleItemVisibility(item.name)}
+                        disabled={sidebarVisibility.hiddenSections?.section2}
+                      />
+                      <span className="text-gray-700">{item.name}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <p className="text-xs text-gray-500">
+              Hide entire section or individual items. Changes apply after Save.
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Notification Settings */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+        <CardHeader className="flex flex-col gap-0 items-start">
+          <div className="flex items-center gap-2 text-left">
             <Bell className="w-5 h-5" />
-            Notification Settings
-          </CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              Notification Settings
+            </CardTitle>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowSidebarVisibility((prev) => !prev)}
+            className="pl-7 text-[11px] text-gray-400 transition -mt-0.5"
+          >
+            system preferences
+          </button>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

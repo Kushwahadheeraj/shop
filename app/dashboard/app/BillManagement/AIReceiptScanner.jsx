@@ -231,54 +231,54 @@ const AIReceiptScanner = ({ onScanComplete, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-3 sm:p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {/* Header */}
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-              <Camera className="w-6 h-6" />
+          <div className="flex justify-between items-center mb-4 sm:mb-6">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
+              <Camera className="w-5 h-5 sm:w-6 sm:h-6" />
               AI Receipt Scanner
             </h2>
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600"
             >
-              <X className="w-6 h-6" />
+              <X className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
           </div>
 
           {!scanResult && !isScanning && (
-            <div className="text-center py-8">
-              <div className="w-24 h-24 bg-gradient-to-r from-pink-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Camera className="w-12 h-12 text-white" />
+            <div className="text-center py-6 sm:py-8">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-r from-pink-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                <Camera className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
               </div>
               
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">
                 Scan Receipt with AI
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 px-2">
                 Upload a clear photo of your receipt and our AI will automatically extract the bill details.
               </p>
 
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-full bg-gradient-to-r from-pink-500 to-orange-500 text-white py-3 px-6 rounded-lg font-medium flex items-center justify-center gap-2 hover:from-pink-600 hover:to-orange-600 transition-all"
+                  className="w-full bg-gradient-to-r from-pink-500 to-orange-500 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg text-sm sm:text-base font-medium flex items-center justify-center gap-2 hover:from-pink-600 hover:to-orange-600 transition-all"
                 >
-                  <Upload className="w-5 h-5" />
+                  <Upload className="w-4 h-4 sm:w-5 sm:h-5" />
                   Choose Image
                 </button>
                 
                 <button
                   onClick={testAPI}
                   disabled={isTestingAPI}
-                  className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-blue-600 transition-all disabled:opacity-50"
+                  className="w-full bg-blue-500 text-white py-2 px-3 sm:px-4 rounded-lg text-xs sm:text-sm font-medium flex items-center justify-center gap-2 hover:bg-blue-600 transition-all disabled:opacity-50"
                 >
                   {isTestingAPI ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" />
                   ) : (
-                    <Camera className="w-4 h-4" />
+                    <Camera className="w-3 h-3 sm:w-4 sm:h-4" />
                   )}
                   {isTestingAPI ? 'Testing API...' : 'Test API Connection'}
                 </button>
@@ -291,20 +291,20 @@ const AIReceiptScanner = ({ onScanComplete, onClose }) => {
                   className="hidden"
                 />
 
-                <p className="text-sm text-gray-500">
+                <p className="text-xs sm:text-sm text-gray-500">
                   Supported formats: JPG, PNG, PDF
                 </p>
               </div>
 
               {error && (
-                <div className={`mt-4 p-3 rounded-lg border ${
+                <div className={`mt-4 p-3 rounded-lg border text-xs sm:text-sm ${
                   error.includes('✅') 
                     ? 'bg-green-100 border-green-400 text-green-700' 
                     : 'bg-red-100 border-red-400 text-red-700'
                 }`}>
-                  {error}
+                  <div className="break-words">{error}</div>
                   {error.includes('AI service is not configured') && (
-                    <div className="mt-2 text-sm">
+                    <div className="mt-2 text-xs sm:text-sm">
                       <p className="font-medium">Setup Instructions:</p>
                       <ol className="list-decimal list-inside mt-1 space-y-1">
                         <li>Get a Gemini API key from <a href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Google AI Studio</a></li>
@@ -320,88 +320,90 @@ const AIReceiptScanner = ({ onScanComplete, onClose }) => {
           )}
 
           {isScanning && (
-            <div className="text-center py-12">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+            <div className="text-center py-8 sm:py-12">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                <Loader2 className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 animate-spin" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">
                 Processing Receipt...
               </h3>
-              <p className="text-gray-600">
+              <p className="text-sm sm:text-base text-gray-600 px-2">
                 Our AI is analyzing your receipt. This may take a few moments.
               </p>
             </div>
           )}
 
           {scanResult && (
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <div className="text-center">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle className="w-8 h-8 text-green-600" />
+                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                  <CheckCircle className="w-6 h-6 sm:w-8 sm:h-8 text-green-600" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">
                   Receipt Scanned Successfully!
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-sm sm:text-base text-gray-600 px-2">
                   Review the extracted information below and click "Use This Data" to proceed.
                 </p>
               </div>
 
               {/* Scanned Data Preview */}
-              <div className="bg-gray-50 rounded-lg p-4 space-y-4">
+              <div className="bg-gray-50 rounded-lg p-3 sm:p-4 space-y-3 sm:space-y-4">
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Shop Information</h4>
-                  <p className="text-sm text-gray-600">
-                    <strong>Name:</strong> {scanResult.shopName}
+                  <h4 className="text-sm sm:text-base font-medium text-gray-900 mb-1 sm:mb-2">Shop Information</h4>
+                  <p className="text-xs sm:text-sm text-gray-600 break-words">
+                    <strong>Name:</strong> {scanResult.shopName || 'N/A'}
                   </p>
-                  <p className="text-sm text-gray-600">
-                    <strong>Address:</strong> {scanResult.shopAddress}
+                  <p className="text-xs sm:text-sm text-gray-600 break-words">
+                    <strong>Address:</strong> {scanResult.shopAddress || 'N/A'}
                   </p>
                 </div>
 
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Items Found</h4>
+                  <h4 className="text-sm sm:text-base font-medium text-gray-900 mb-1 sm:mb-2">Items Found</h4>
                   <div className="space-y-2">
                     {scanResult.items.map((item, index) => (
-                      <div key={index} className="flex justify-between text-sm">
-                        <span>{item.name} x{item.quantity}</span>
-                        <span>₹{(item.quantity * item.unitPrice).toFixed(2)}</span>
+                      <div key={index} className="flex justify-between text-xs sm:text-sm">
+                        <span className="truncate flex-1 mr-2">{item.name} x{item.quantity}</span>
+                        <span className="flex-shrink-0">₹{(item.quantity * item.unitPrice).toFixed(2)}</span>
                       </div>
                     ))}
                     {scanResult.items.length === 0 && scanResult.description ? (
-                      <div className="text-xs text-gray-600 whitespace-pre-wrap p-2 border rounded bg-white/50">
+                      <div className="text-xs text-gray-600 whitespace-pre-wrap p-2 border rounded bg-white/50 break-words">
                         {scanResult.description}
                       </div>
                     ) : null}
                   </div>
                 </div>
 
-                <div className="border-t pt-4">
-                  <div className="flex justify-between text-sm">
+                <div className="border-t pt-3 sm:pt-4">
+                  <div className="flex justify-between text-xs sm:text-sm">
                     <span>Subtotal:</span>
                     <span>₹{scanResult.pricing.subtotal.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span>GST ({scanResult.pricing.gstRate}%):</span>
-                    <span>₹{scanResult.pricing.gstAmount.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between font-medium">
+                  {scanResult.pricing.gstRate && (
+                    <div className="flex justify-between text-xs sm:text-sm">
+                      <span>GST ({scanResult.pricing.gstRate}%):</span>
+                      <span>₹{scanResult.pricing.gstAmount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-sm sm:text-base font-medium">
                     <span>Total:</span>
                     <span>₹{scanResult.pricing.totalAmount.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
                 <button
                   onClick={handleRetry}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="flex-1 px-3 sm:px-4 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
                 >
                   Scan Another
                 </button>
                 <button
                   onClick={handleUseResult}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="flex-1 px-3 sm:px-4 py-2 text-xs sm:text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   Use This Data
                 </button>

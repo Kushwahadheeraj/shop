@@ -117,14 +117,14 @@ const InvoiceTemplates = ({ onClose, onSelectTemplate, selectedTemplate }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-100 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-gray-100 flex items-center justify-center z-50 p-3 sm:p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[95vh] overflow-y-auto">
         {/* Header */}
-        <div className="p-6 border-b bg-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">Invoice Templates</h2>
-              <p className="text-gray-600 mt-1">Choose a template that matches your business style</p>
+        <div className="p-4 sm:p-6 border-b bg-white">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
+            <div className="space-y-1">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Invoice Templates</h2>
+              <p className="text-sm sm:text-base text-gray-600">Choose a template that matches your business style</p>
             </div>
             <button
               onClick={onClose}
@@ -136,15 +136,15 @@ const InvoiceTemplates = ({ onClose, onSelectTemplate, selectedTemplate }) => {
         </div>
 
         {/* Category Filter */}
-        <div className="p-6 border-b bg-gray-50">
-          <div className="flex items-center space-x-4">
+        <div className="p-4 sm:p-6 border-b bg-gray-50">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 gap-2 sm:gap-3">
             <span className="text-sm font-medium text-gray-700">Category:</span>
-            <div className="flex space-x-2">
+            <div className="flex flex-wrap gap-2">
               {categories.map(category => (
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
                     selectedCategory === category
                       ? 'bg-purple-600 text-white'
                       : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
@@ -158,8 +158,8 @@ const InvoiceTemplates = ({ onClose, onSelectTemplate, selectedTemplate }) => {
         </div>
 
         {/* Templates Grid */}
-        <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="p-4 sm:p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {filteredTemplates.map((template) => (
               <div
                 key={template.id}

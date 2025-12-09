@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Plus, Search, Trash2, MessageCircle, X, Edit, Calendar, DollarSign, CreditCard, Receipt } from 'lucide-react';
+import { Plus, Search, Trash2, MessageCircle, X, Edit, Calendar, DollarSign, CreditCard, Receipt, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/AuthContext';
 
@@ -236,55 +236,66 @@ const BalanceManagementPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 p-3 sm:p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Balance Management</h1>
-              <p className="text-gray-600 mt-1">बाकी राशि प्रबंधन - Credit और Payment entries manage करें</p>
+        {/* Header / Hero */}
+        <div className="bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 rounded-2xl p-5 sm:p-6 lg:p-7 text-white shadow-xl border border-amber-300/40 mb-4 sm:mb-6">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <div className="bg-white/15 p-2.5 rounded-xl">
+                  <Sparkles className="w-6 h-6 sm:w-7 sm:h-7" />
+                </div>
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold leading-tight">
+                  Balance Management
+                </h1>
+              </div>
+              <p className="text-sm sm:text-base text-amber-50/90 max-w-2xl">
+                बाकी राशि, क्रेडिट/पेमेंट एंट्री और रिमाइंडर (WhatsApp) को आसानी से ट्रैक करें।
+              </p>
             </div>
-            <button
-              onClick={() => setShowAddPersonForm(true)}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
-            >
-              <Plus className="w-5 h-5" />
-              नया व्यक्ति जोड़ें
-            </button>
+            <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 w-full lg:w-auto">
+              <button
+                onClick={() => setShowAddPersonForm(true)}
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold bg-gradient-to-r from-amber-100 via-white to-amber-50 text-amber-700 rounded-xl hover:from-white hover:to-white transition-all duration-200 shadow-lg shadow-amber-400/40"
+              >
+                <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="whitespace-nowrap">नया व्यक्ति जोड़ें</span>
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Search and Stats */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <div className="flex gap-4 items-center mb-4">
+        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-4 sm:mb-6">
+          <div className="flex gap-2 sm:gap-4 items-center mb-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
               <input
                 type="text"
                 placeholder="नाम या नंबर से खोजें..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-8 sm:pl-10 pr-3 sm:pr-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <div className="text-sm text-gray-600">कुल व्यक्ति</div>
-              <div className="text-2xl font-bold text-blue-600">{persons.length}</div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mt-4">
+            <div className="bg-blue-50 p-3 sm:p-4 rounded-lg">
+              <div className="text-xs sm:text-sm text-gray-600">कुल व्यक्ति</div>
+              <div className="text-xl sm:text-2xl font-bold text-blue-600">{persons.length}</div>
             </div>
-            <div className="bg-green-50 p-4 rounded-lg">
-              <div className="text-sm text-gray-600">कुल Credit</div>
-              <div className="text-2xl font-bold text-green-600">
+            <div className="bg-green-50 p-3 sm:p-4 rounded-lg">
+              <div className="text-xs sm:text-sm text-gray-600">कुल Credit</div>
+              <div className="text-xl sm:text-2xl font-bold text-green-600 truncate">
                 {formatCurrency(persons.reduce((sum, p) => sum + p.totalCredit, 0))}
               </div>
             </div>
-            <div className="bg-orange-50 p-4 rounded-lg">
-              <div className="text-sm text-gray-600">कुल बाकी</div>
-              <div className="text-2xl font-bold text-orange-600">
+            <div className="bg-orange-50 p-3 sm:p-4 rounded-lg">
+              <div className="text-xs sm:text-sm text-gray-600">कुल बाकी</div>
+              <div className="text-xl sm:text-2xl font-bold text-orange-600 truncate">
                 {formatCurrency(persons.reduce((sum, p) => sum + p.remainingBalance, 0))}
               </div>
             </div>
@@ -300,12 +311,12 @@ const BalanceManagementPage = () => {
           ) : (
             <div className="divide-y divide-gray-200">
               {persons.map((person, index) => (
-                <div key={person.phone} className="p-6 hover:bg-gray-50">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-4 mb-2">
-                        <h3 className="text-xl font-semibold text-gray-900">{person.name}</h3>
-                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                <div key={person.phone} className="p-4 sm:p-6 hover:bg-gray-50">
+                  <div className="flex flex-col lg:flex-row justify-between items-start gap-4">
+                    <div className="flex-1 w-full min-w-0">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-2">
+                        <h3 className="text-lg sm:text-xl font-semibold text-gray-900 truncate">{person.name}</h3>
+                        <span className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap ${
                           person.remainingBalance > 0 
                             ? 'bg-orange-100 text-orange-800' 
                             : 'bg-green-100 text-green-800'
@@ -315,55 +326,55 @@ const BalanceManagementPage = () => {
                             : 'सभी भुगतान हो गया'}
                         </span>
                       </div>
-                      <div className="text-sm text-gray-600 space-y-1">
-                        <p>📞 {person.phone}</p>
-                        {person.address && <p>📍 {person.address}</p>}
-                        <div className="flex gap-4 mt-2">
-                          <span>Credit: {formatCurrency(person.totalCredit)}</span>
-                          <span>Payment: {formatCurrency(person.totalPayment)}</span>
+                      <div className="text-xs sm:text-sm text-gray-600 space-y-1">
+                        <p className="truncate">📞 {person.phone}</p>
+                        {person.address && <p className="break-words">📍 {person.address}</p>}
+                        <div className="flex flex-wrap gap-2 sm:gap-4 mt-2">
+                          <span className="whitespace-nowrap">Credit: {formatCurrency(person.totalCredit)}</span>
+                          <span className="whitespace-nowrap">Payment: {formatCurrency(person.totalPayment)}</span>
                         </div>
                       </div>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2 w-full lg:w-auto">
                       <button
                         onClick={() => {
                           setSelectedPerson(person);
                           setShowCreditForm(true);
                         }}
-                        className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 flex items-center gap-1"
+                        className="flex-1 sm:flex-none bg-blue-600 text-white px-2 sm:px-3 py-1.5 sm:py-1 rounded text-xs sm:text-sm hover:bg-blue-700 flex items-center justify-center gap-1"
                       >
-                        <CreditCard className="w-4 h-4" />
-                        Credit
+                        <CreditCard className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span className="whitespace-nowrap">Credit</span>
                       </button>
                       <button
                         onClick={() => {
                           setSelectedPerson(person);
                           setShowPaymentForm(true);
                         }}
-                        className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 flex items-center gap-1"
+                        className="flex-1 sm:flex-none bg-green-600 text-white px-2 sm:px-3 py-1.5 sm:py-1 rounded text-xs sm:text-sm hover:bg-green-700 flex items-center justify-center gap-1"
                       >
-                        <Receipt className="w-4 h-4" />
-                        Payment
+                        <Receipt className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span className="whitespace-nowrap">Payment</span>
                       </button>
                       <button
                         onClick={() => sendWhatsAppMessage(person)}
-                        className="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600 flex items-center gap-1"
+                        className="flex-1 sm:flex-none bg-green-500 text-white px-2 sm:px-3 py-1.5 sm:py-1 rounded text-xs sm:text-sm hover:bg-green-600 flex items-center justify-center gap-1"
                       >
-                        <MessageCircle className="w-4 h-4" />
-                        WhatsApp
+                        <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span className="whitespace-nowrap">WhatsApp</span>
                       </button>
                       {person.remainingBalance <= 0 && (
                         <button
                           onClick={() => handleDeletePerson(person.phone)}
-                          className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 flex items-center gap-1"
+                          className="flex-1 sm:flex-none bg-red-600 text-white px-2 sm:px-3 py-1.5 sm:py-1 rounded text-xs sm:text-sm hover:bg-red-700 flex items-center justify-center gap-1"
                         >
-                          <Trash2 className="w-4 h-4" />
-                          Delete
+                          <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
+                          <span className="whitespace-nowrap">Delete</span>
                         </button>
                       )}
                       <button
                         onClick={() => setExpandedPerson(expandedPerson === person.phone ? null : person.phone)}
-                        className="bg-gray-600 text-white px-3 py-1 rounded text-sm hover:bg-gray-700"
+                        className="flex-1 sm:flex-none bg-gray-600 text-white px-2 sm:px-3 py-1.5 sm:py-1 rounded text-xs sm:text-sm hover:bg-gray-700 whitespace-nowrap"
                       >
                         {expandedPerson === person.phone ? 'Hide' : 'Show'} Entries
                       </button>
@@ -372,16 +383,16 @@ const BalanceManagementPage = () => {
 
                   {/* Entries Table */}
                   {expandedPerson === person.phone && (
-                    <div className="mt-4 overflow-x-auto">
-                      <table className="w-full text-sm">
+                    <div className="mt-4 overflow-x-auto -mx-4 sm:mx-0">
+                      <table className="w-full text-xs sm:text-sm min-w-[600px]">
                         <thead className="bg-gray-100">
                           <tr>
-                            <th className="px-4 py-2 text-left">Date</th>
-                            <th className="px-4 py-2 text-left">Type</th>
-                            <th className="px-4 py-2 text-left">Amount</th>
-                            <th className="px-4 py-2 text-left">Description</th>
-                            <th className="px-4 py-2 text-left">Payment Date</th>
-                            <th className="px-4 py-2 text-left">Actions</th>
+                            <th className="px-2 sm:px-4 py-2 text-left">Date</th>
+                            <th className="px-2 sm:px-4 py-2 text-left">Type</th>
+                            <th className="px-2 sm:px-4 py-2 text-left">Amount</th>
+                            <th className="px-2 sm:px-4 py-2 text-left">Description</th>
+                            <th className="px-2 sm:px-4 py-2 text-left hidden sm:table-cell">Payment Date</th>
+                            <th className="px-2 sm:px-4 py-2 text-left">Actions</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -389,9 +400,9 @@ const BalanceManagementPage = () => {
                             .filter(entry => entry.amount > 0 || entry.description !== 'Person added to system') // Filter out initial 0.01 entry
                             .map((entry) => (
                             <tr key={entry._id || entry.id} className="border-b">
-                              <td className="px-4 py-2">{formatDate(entry.entryDate)}</td>
-                              <td className="px-4 py-2">
-                                <span className={`px-2 py-1 rounded text-xs ${
+                              <td className="px-2 sm:px-4 py-2 whitespace-nowrap">{formatDate(entry.entryDate)}</td>
+                              <td className="px-2 sm:px-4 py-2">
+                                <span className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs whitespace-nowrap ${
                                   entry.entryType === 'credit' 
                                     ? 'bg-orange-100 text-orange-800' 
                                     : 'bg-green-100 text-green-800'
@@ -399,15 +410,15 @@ const BalanceManagementPage = () => {
                                   {entry.entryType === 'credit' ? 'Credit' : 'Payment'}
                                 </span>
                               </td>
-                              <td className="px-4 py-2 font-semibold">{formatCurrency(entry.amount)}</td>
-                              <td className="px-4 py-2">{entry.description || '-'}</td>
-                              <td className="px-4 py-2">{entry.paymentDate ? formatDate(entry.paymentDate) : '-'}</td>
-                              <td className="px-4 py-2">
+                              <td className="px-2 sm:px-4 py-2 font-semibold whitespace-nowrap">{formatCurrency(entry.amount)}</td>
+                              <td className="px-2 sm:px-4 py-2 break-words max-w-[150px] sm:max-w-none">{entry.description || '-'}</td>
+                              <td className="px-2 sm:px-4 py-2 whitespace-nowrap hidden sm:table-cell">{entry.paymentDate ? formatDate(entry.paymentDate) : '-'}</td>
+                              <td className="px-2 sm:px-4 py-2">
                                 <button
                                   onClick={() => handleDeleteEntry(entry._id || entry.id)}
                                   className="text-red-600 hover:text-red-800"
                                 >
-                                  <Trash2 className="w-4 h-4" />
+                                  <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
                                 </button>
                               </td>
                             </tr>
@@ -425,57 +436,57 @@ const BalanceManagementPage = () => {
 
       {/* Add Person Modal */}
       {showAddPersonForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-4 sm:p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">नया व्यक्ति जोड़ें</h2>
-              <button onClick={() => setShowAddPersonForm(false)}>
-                <X className="w-6 h-6" />
+              <h2 className="text-lg sm:text-xl font-bold">नया व्यक्ति जोड़ें</h2>
+              <button onClick={() => setShowAddPersonForm(false)} className="p-1">
+                <X className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
             </div>
             <form onSubmit={handleAddPerson}>
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">नाम *</label>
+                  <label className="block text-xs sm:text-sm font-medium mb-1">नाम *</label>
                   <input
                     type="text"
                     required
                     value={personForm.name}
                     onChange={(e) => setPersonForm({ ...personForm, name: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg"
+                    className="w-full px-3 py-2 text-sm sm:text-base border rounded-lg"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">नंबर *</label>
+                  <label className="block text-xs sm:text-sm font-medium mb-1">नंबर *</label>
                   <input
                     type="tel"
                     required
                     value={personForm.phone}
                     onChange={(e) => setPersonForm({ ...personForm, phone: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg"
+                    className="w-full px-3 py-2 text-sm sm:text-base border rounded-lg"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">पता</label>
+                  <label className="block text-xs sm:text-sm font-medium mb-1">पता</label>
                   <textarea
                     value={personForm.address}
                     onChange={(e) => setPersonForm({ ...personForm, address: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg"
+                    className="w-full px-3 py-2 text-sm sm:text-base border rounded-lg"
                     rows="3"
                   />
                 </div>
               </div>
-              <div className="flex gap-2 mt-6">
+              <div className="flex flex-col sm:flex-row gap-2 mt-4 sm:mt-6">
                 <button
                   type="submit"
-                  className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+                  className="flex-1 bg-blue-600 text-white py-2 text-sm sm:text-base rounded-lg hover:bg-blue-700"
                 >
                   जोड़ें
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowAddPersonForm(false)}
-                  className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400"
+                  className="flex-1 bg-gray-300 text-gray-700 py-2 text-sm sm:text-base rounded-lg hover:bg-gray-400"
                 >
                   Cancel
                 </button>
@@ -487,21 +498,21 @@ const BalanceManagementPage = () => {
 
       {/* Add Credit Modal */}
       {showCreditForm && selectedPerson && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-4 sm:p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Credit Entry - {selectedPerson.name}</h2>
+              <h2 className="text-lg sm:text-xl font-bold truncate pr-2">Credit Entry - {selectedPerson.name}</h2>
               <button onClick={() => {
                 setShowCreditForm(false);
                 setSelectedPerson(null);
-              }}>
-                <X className="w-6 h-6" />
+              }} className="p-1 flex-shrink-0">
+                <X className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
             </div>
             <form onSubmit={handleAddCredit}>
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">राशि *</label>
+                  <label className="block text-xs sm:text-sm font-medium mb-1">राशि *</label>
                   <input
                     type="number"
                     required
@@ -509,33 +520,33 @@ const BalanceManagementPage = () => {
                     step="0.01"
                     value={creditForm.amount}
                     onChange={(e) => setCreditForm({ ...creditForm, amount: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg"
+                    className="w-full px-3 py-2 text-sm sm:text-base border rounded-lg"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">विवरण (क्या लेकर गया)</label>
+                  <label className="block text-xs sm:text-sm font-medium mb-1">विवरण (क्या लेकर गया)</label>
                   <textarea
                     value={creditForm.description}
                     onChange={(e) => setCreditForm({ ...creditForm, description: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg"
+                    className="w-full px-3 py-2 text-sm sm:text-base border rounded-lg"
                     rows="3"
                     placeholder="उदाहरण: 10 kg सीमेंट, 5 पेंट बाल्टी, आदि"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">तारीख</label>
+                  <label className="block text-xs sm:text-sm font-medium mb-1">तारीख</label>
                   <input
                     type="date"
                     value={creditForm.entryDate}
                     onChange={(e) => setCreditForm({ ...creditForm, entryDate: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg"
+                    className="w-full px-3 py-2 text-sm sm:text-base border rounded-lg"
                   />
                 </div>
               </div>
-              <div className="flex gap-2 mt-6">
+              <div className="flex flex-col sm:flex-row gap-2 mt-4 sm:mt-6">
                 <button
                   type="submit"
-                  className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+                  className="flex-1 bg-blue-600 text-white py-2 text-sm sm:text-base rounded-lg hover:bg-blue-700"
                 >
                   Add Credit
                 </button>
@@ -545,7 +556,7 @@ const BalanceManagementPage = () => {
                     setShowCreditForm(false);
                     setSelectedPerson(null);
                   }}
-                  className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400"
+                  className="flex-1 bg-gray-300 text-gray-700 py-2 text-sm sm:text-base rounded-lg hover:bg-gray-400"
                 >
                   Cancel
                 </button>
@@ -557,21 +568,21 @@ const BalanceManagementPage = () => {
 
       {/* Add Payment Modal */}
       {showPaymentForm && selectedPerson && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-4 sm:p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Payment Entry - {selectedPerson.name}</h2>
+              <h2 className="text-lg sm:text-xl font-bold truncate pr-2">Payment Entry - {selectedPerson.name}</h2>
               <button onClick={() => {
                 setShowPaymentForm(false);
                 setSelectedPerson(null);
-              }}>
-                <X className="w-6 h-6" />
+              }} className="p-1 flex-shrink-0">
+                <X className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
             </div>
             <form onSubmit={handleAddPayment}>
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">राशि *</label>
+                  <label className="block text-xs sm:text-sm font-medium mb-1">राशि *</label>
                   <input
                     type="number"
                     required
@@ -579,33 +590,33 @@ const BalanceManagementPage = () => {
                     step="0.01"
                     value={paymentForm.amount}
                     onChange={(e) => setPaymentForm({ ...paymentForm, amount: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg"
+                    className="w-full px-3 py-2 text-sm sm:text-base border rounded-lg"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">भुगतान की तारीख *</label>
+                  <label className="block text-xs sm:text-sm font-medium mb-1">भुगतान की तारीख *</label>
                   <input
                     type="date"
                     required
                     value={paymentForm.paymentDate}
                     onChange={(e) => setPaymentForm({ ...paymentForm, paymentDate: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg"
+                    className="w-full px-3 py-2 text-sm sm:text-base border rounded-lg"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">नोट्स</label>
+                  <label className="block text-xs sm:text-sm font-medium mb-1">नोट्स</label>
                   <textarea
                     value={paymentForm.notes}
                     onChange={(e) => setPaymentForm({ ...paymentForm, notes: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg"
+                    className="w-full px-3 py-2 text-sm sm:text-base border rounded-lg"
                     rows="3"
                   />
                 </div>
               </div>
-              <div className="flex gap-2 mt-6">
+              <div className="flex flex-col sm:flex-row gap-2 mt-4 sm:mt-6">
                 <button
                   type="submit"
-                  className="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700"
+                  className="flex-1 bg-green-600 text-white py-2 text-sm sm:text-base rounded-lg hover:bg-green-700"
                 >
                   Add Payment
                 </button>
@@ -615,7 +626,7 @@ const BalanceManagementPage = () => {
                     setShowPaymentForm(false);
                     setSelectedPerson(null);
                   }}
-                  className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400"
+                  className="flex-1 bg-gray-300 text-gray-700 py-2 text-sm sm:text-base rounded-lg hover:bg-gray-400"
                 >
                   Cancel
                 </button>

@@ -150,34 +150,7 @@ export default function InvoicePreview() {
     }
   };
 
-  const handleWhatsAppShare = () => {
-    if (!bill) return;
-    
-    const customerPhone = bill.customerPhone || '';
-    if (!customerPhone) {
-      alert('Customer phone number is not available');
-      return;
-    }
-
-    const shopDetails = 'कुशवाहा हार्डवेयर एंव ट्रंक हाउस, नवलपुर चौराहा, सलेमपुर रोड, 7398222573';
-    const invoiceNumber = bill.invoiceNumber || '';
-    const invoiceDate = bill.invoiceDate ? new Date(bill.invoiceDate).toLocaleDateString('en-IN') : '';
-    const grandTotal = bill.grandTotal || bill.totalAmount || 0;
-    const formattedAmount = new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(grandTotal);
-
-    const message = `नमस्ते ${bill.customerName || 'Sir/Madam'},\n\nआपका Invoice:\n\nInvoice Number: ${invoiceNumber}\nInvoice Date: ${invoiceDate}\nTotal Amount: ${formattedAmount}\n\n${shopDetails}\n\nकृपया Invoice देखें और भुगतान करें।\n\nधन्यवाद!`;
-
-    const phoneNumber = customerPhone.replace(/[^0-9]/g, '');
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
-  };
-
-  if (!bill) return <div className="p-6">Loading...</div>;
+  if (!bill) return <div className="p-3 sm:p-6">Loading...</div>;
 
   const templateId = bill.templateId || 1; // Default to template 1
 
@@ -258,17 +231,18 @@ export default function InvoicePreview() {
   };
 
   return (
-    <div className="p-6">
-      <div className="flex justify-end gap-2 mb-4 no-print">
-        <button onClick={()=>router.push('/GSTBillManagement')} className="px-3 py-2 border rounded flex items-center gap-2"><Edit className="w-4 h-4"/>Edit</button>
-        <button onClick={handleDownload} className="px-3 py-2 border rounded flex items-center gap-2"><Download className="w-4 h-4"/>Download</button>
-        <button onClick={handlePrint} className="px-3 py-2 border rounded flex items-center gap-2"><Printer className="w-4 h-4"/>Print</button>
-        <button onClick={handleWhatsAppShare} className="px-3 py-2 border rounded flex items-center gap-2 bg-green-500 text-white hover:bg-green-600"><MessageCircle className="w-4 h-4"/>WhatsApp Share</button>
+    <div className="p-3 sm:p-4 md:p-6">
+      <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 mb-4 no-print">
+        <button onClick={()=>router.push('/GSTBillManagement')} className="w-full sm:w-auto px-3 py-2 border rounded flex items-center justify-center gap-2 text-sm sm:text-base"><Edit className="w-4 h-4"/>Edit</button>
+        <button onClick={handleDownload} className="w-full sm:w-auto px-3 py-2 border rounded flex items-center justify-center gap-2 text-sm sm:text-base"><Download className="w-4 h-4"/>Download</button>
+        <button onClick={handlePrint} className="w-full sm:w-auto px-3 py-2 border rounded flex items-center justify-center gap-2 text-sm sm:text-base"><Printer className="w-4 h-4"/>Print</button>
+        <button onClick={handleWhatsAppShare} className="w-full sm:w-auto px-3 py-2 border rounded flex items-center justify-center gap-2 text-sm sm:text-base bg-green-500 text-white hover:bg-green-600"><MessageCircle className="w-4 h-4"/>WhatsApp Share</button>
       </div>
 
       {/* Render template based on templateId - Template 10 uses original detailed structure */}
       {templateId === 10 ? (
-        <div ref={printRef} className={`bg-white border border-black shadow p-6 max-w-5xl mx-auto invoice-sheet template-${templateId}`}>
+        <div className="overflow-x-auto">
+        <div ref={printRef} className={`bg-white border border-black shadow p-4 sm:p-6 max-w-5xl mx-auto invoice-sheet template-${templateId}`}>
           {/* Original Detailed Template (Template 10) */}
           <div className='border border-black'>
         <div className="border-b pb-3">
@@ -593,6 +567,7 @@ export default function InvoicePreview() {
 
        
       </div>
+        </div>
       ) : (
         <div ref={printRef} className="invoice-sheet">
           <InvoiceTemplateRenderer

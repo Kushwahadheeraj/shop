@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, lazy, Suspense, useMemo } from 'react';
-import { Plus, Search, Eye, Edit, Trash2, DollarSign, FileText, Printer, BarChart3, Users } from 'lucide-react';
+import { Plus, Search, Eye, Edit, Trash2, DollarSign, FileText, Printer, BarChart3, Users, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/AuthContext';
 import AddGSTBillForm from './AddGSTBillForm';
@@ -587,128 +587,124 @@ const GSTBillManagementPage = () => {
   }, []);
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-3 md:flex-row md:justify-between md:items-center">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">GST Bill Management</h1>
-          {/* <p className="text-gray-600">Manage your GST bills and invoices</p>
-          <div className="text-sm text-gray-500 space-y-1">
-            <p>Shops loaded: {shops.length}</p>
-            <p>GST Bills loaded: {gstBills.length}</p>
-            <p>Stats: Total {formatCurrency(stats.totalAmount)} | GST {formatCurrency(stats.totalGST)} | Net {formatCurrency(stats.netAmount)}</p>
-            <p className="text-xs text-blue-600">
-              {gstBills.length === 0 ? 'No data found' : 'Data loaded from database'}
+    <div className="space-y-4 sm:space-y-6 p-3 sm:p-4 md:p-6">
+      {/* Header / Hero */}
+      <div className="bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 rounded-2xl p-5 sm:p-6 lg:p-7 text-white shadow-xl border border-amber-300/40">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <div className="bg-white/15 p-2.5 rounded-xl">
+                <Sparkles className="w-6 h-6 sm:w-7 sm:h-7" />
+              </div>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold leading-tight">
+                GST Bill Management
+              </h1>
+            </div>
+            <p className="text-sm sm:text-base text-amber-50/90 max-w-2xl">
+              GST बिल बनाएं, टेम्पलेट चुनें, एनालिटिक्स देखें, और संपर्कों को प्रबंधित करें।
             </p>
-            <p className="text-xs text-gray-500">
-              {(selectedShop && selectedShop !== '') || searchTerm || filterDateRange ? 
-                `Showing filtered results (${stats.totalBills} bills)` : 
-                `Showing all results (${stats.totalBills} bills)`
-              }
-            </p>
-          </div> */}
-        </div>
-        <div className="flex flex-wrap gap-2 md:gap-3">
-          <button
-            onClick={async () => {
-              // console.log('🔄 Refreshing all GST data from database...');
-              await fetchShops();
-              await fetchGSTBills();
-              await fetchStats();
-            }}
-            className="flex items-center gap-2 px-4 py-2 border border-blue-300 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors"
-          >
-            🔄 Refresh Data
-          </button>
-          <button
-            onClick={() => setShowContacts(true)}
-            className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            <Users className="w-4 h-4" />
-            Contacts
-          </button>
-          <button
-            onClick={() => setShowAnalyticsDashboard(true)}
-            className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            <BarChart3 className="w-4 h-4" />
-            Analytics
-          </button>
-          <button
-            onClick={() => setShowInvoiceTemplates(true)}
-            className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            <FileText className="w-4 h-4" />
-            Templates
-          </button>
-          <button
-            onClick={() => setShowAddGSTBillForm(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            Add GST Bill
-          </button>
+          </div>
+          <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 w-full lg:w-auto">
+            <button
+              onClick={async () => {
+                await fetchShops();
+                await fetchGSTBills();
+                await fetchStats();
+              }}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold bg-white/15 hover:bg-white/25 border border-white/30 rounded-xl transition-all duration-200 shadow-md"
+            >
+              🔄 Refresh Data
+            </button>
+            <button
+              onClick={() => setShowContacts(true)}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold bg-white text-amber-700 rounded-xl hover:bg-amber-50 transition-all duration-200 shadow-md"
+            >
+              <Users className="w-4 h-4" />
+              Contacts
+            </button>
+            <button
+              onClick={() => setShowAnalyticsDashboard(true)}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold bg-white text-amber-700 rounded-xl hover:bg-amber-50 transition-all duration-200 shadow-md"
+            >
+              <BarChart3 className="w-4 h-4" />
+              Analytics
+            </button>
+            <button
+              onClick={() => setShowInvoiceTemplates(true)}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold bg-white text-amber-700 rounded-xl hover:bg-amber-50 transition-all duration-200 shadow-md"
+            >
+              <FileText className="w-4 h-4" />
+              Templates
+            </button>
+            <button
+              onClick={() => setShowAddGSTBillForm(true)}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold bg-gradient-to-r from-amber-100 via-white to-amber-50 text-amber-700 rounded-xl hover:from-white hover:to-white transition-all duration-200 shadow-lg shadow-amber-400/40"
+            >
+              <Plus className="w-4 h-4" />
+              Add GST Bill
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-gray-200">
           <div className="flex items-center">
-            <div className="p-3 bg-blue-100 rounded-full">
-              <FileText className="w-6 h-6 text-blue-600" />
+            <div className="p-2 sm:p-3 bg-blue-100 rounded-full flex-shrink-0">
+              <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">
+            <div className="ml-3 sm:ml-4 flex-1 min-w-0">
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">
                 Total GST Bills {selectedShop && selectedShop !== '' ? `(${shops.find(s => s._id === selectedShop)?.name || 'Selected Shop'})` : '(Select Shop)'}
               </p>
-              <p className="text-2xl font-semibold text-gray-900">{stats.totalBills}</p>
+              <p className="text-xl sm:text-2xl font-semibold text-gray-900 truncate">{stats.totalBills}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-gray-200">
           <div className="flex items-center">
-            <div className="p-3 bg-green-100 rounded-full">
-              <DollarSign className="w-6 h-6 text-green-600" />
+            <div className="p-2 sm:p-3 bg-green-100 rounded-full flex-shrink-0">
+              <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Amount</p>
-              <p className="text-2xl font-semibold text-gray-900">{formatCurrency(stats.totalAmount)}</p>
+            <div className="ml-3 sm:ml-4 flex-1 min-w-0">
+              <p className="text-xs sm:text-sm font-medium text-gray-600">Total Amount</p>
+              <p className="text-xl sm:text-2xl font-semibold text-gray-900 truncate">{formatCurrency(stats.totalAmount)}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-gray-200">
           <div className="flex items-center">
-            <div className="p-3 bg-purple-100 rounded-full">
-              <DollarSign className="w-6 h-6 text-purple-600" />
+            <div className="p-2 sm:p-3 bg-purple-100 rounded-full flex-shrink-0">
+              <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total GST</p>
-              <p className="text-2xl font-semibold text-gray-900">{formatCurrency(stats.totalGST)}</p>
+            <div className="ml-3 sm:ml-4 flex-1 min-w-0">
+              <p className="text-xs sm:text-sm font-medium text-gray-600">Total GST</p>
+              <p className="text-xl sm:text-2xl font-semibold text-gray-900 truncate">{formatCurrency(stats.totalGST)}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-gray-200">
           <div className="flex items-center">
-            <div className="p-3 bg-orange-100 rounded-full">
-              <DollarSign className="w-6 h-6 text-orange-600" />
+            <div className="p-2 sm:p-3 bg-orange-100 rounded-full flex-shrink-0">
+              <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Net Amount</p>
-              <p className="text-2xl font-semibold text-gray-900">{formatCurrency(stats.netAmount)}</p>
+            <div className="ml-3 sm:ml-4 flex-1 min-w-0">
+              <p className="text-xs sm:text-sm font-medium text-gray-600">Net Amount</p>
+              <p className="text-xl sm:text-2xl font-semibold text-gray-900 truncate">{formatCurrency(stats.netAmount)}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white p-4 md:p-6 rounded-lg shadow-md border border-gray-200">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+      <div className="bg-white p-4 sm:p-5 md:p-6 rounded-lg shadow-md border border-gray-200">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Shop</label>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Shop</label>
             <select
               value={selectedShop}
               onChange={(e) => {
@@ -729,7 +725,7 @@ const GSTBillManagementPage = () => {
                   }, 100);
                 }
               }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               disabled={shopsLoading}
               required
             >
@@ -748,7 +744,7 @@ const GSTBillManagementPage = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Time Period</label>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Time Period</label>
             <select
               value={filterDateRange}
               onChange={(e) => {
@@ -763,7 +759,7 @@ const GSTBillManagementPage = () => {
                   }, 100);
                 }
               }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="">All Time</option>
               <option value="1d">Last 1 Day</option>
@@ -778,9 +774,9 @@ const GSTBillManagementPage = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Search</label>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-3 h-3 sm:w-4 sm:h-4" />
               <input
                 type="text"
                 placeholder="Search by client name, invoice number..."
@@ -797,7 +793,7 @@ const GSTBillManagementPage = () => {
                     }, 100);
                   }
                 }}
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full pl-8 sm:pl-10 pr-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
           </div>
@@ -818,7 +814,7 @@ const GSTBillManagementPage = () => {
                   }, 100);
                 }
               }}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+              className="w-full px-3 sm:px-4 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
             >
               Clear Filters
             </button>
@@ -828,15 +824,15 @@ const GSTBillManagementPage = () => {
 
       {/* GST Bills Table */}
       <div className="bg-white rounded-lg shadow-md border border-gray-200">
-        <div className="px-4 md:px-6 py-3 md:py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">GST Bills</h3>
+        <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
+          <h3 className="text-base sm:text-lg font-medium text-gray-900">GST Bills</h3>
         </div>
         
         {loading ? (
           // Skeleton loading - instant render
-          <div className="p-6 space-y-4">
+          <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="animate-pulse flex space-x-4">
+              <div key={i} className="animate-pulse flex space-x-3 sm:space-x-4">
                 <div className="flex-1 space-y-2 py-1">
                   <div className="h-4 bg-gray-200 rounded w-3/4"></div>
                   <div className="h-4 bg-gray-200 rounded w-1/2"></div>
@@ -845,79 +841,79 @@ const GSTBillManagementPage = () => {
             ))}
           </div>
         ) : gstBills.length === 0 ? (
-          <div className="text-center py-12">
-            <FileText className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-            <p className="text-gray-500">No GST bills found</p>
-            <p className="text-sm text-gray-400">Create your first GST bill to get started</p>
+          <div className="text-center py-8 sm:py-12">
+            <FileText className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 text-gray-300" />
+            <p className="text-sm sm:text-base text-gray-500">No GST bills found</p>
+            <p className="text-xs sm:text-sm text-gray-400">Create your first GST bill to get started</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs sm:text-sm">
+          <div className="overflow-x-auto -mx-4 sm:mx-0">
+            <table className="w-full min-w-[780px] text-xs sm:text-sm">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice #</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Shop</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Net Amount</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">GST</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-[11px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice #</th>
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-[11px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-[11px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Shop</th>
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-[11px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-[11px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">Net</th>
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-[11px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">GST</th>
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-[11px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-[11px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredBills.map((bill) => (
                 <tr key={bill._id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {bill.invoiceNumber}
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-medium text-gray-900">
+                    <div className="truncate max-w-[120px] sm:max-w-none">{bill.invoiceNumber}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {bill.customerName}
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900">
+                    <div className="truncate max-w-[150px] sm:max-w-none">{bill.customerName}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {bill.shopName}
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900 hidden md:table-cell">
+                    <div className="truncate max-w-[160px]">{bill.shopName}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900">
                     {new Date(bill.invoiceDate).toLocaleDateString()}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900">
                     ₹{parseFloat(bill.netAmount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900 hidden lg:table-cell">
                     ₹{parseFloat(bill.gstAmount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-semibold text-gray-900">
                     ₹{parseFloat(bill.grandTotal || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex items-center gap-2">
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-medium">
+                    <div className="flex items-center gap-1 sm:gap-2">
                       <button 
                         onClick={() => handleViewGSTBill(bill)}
-                        className="text-blue-600 hover:text-blue-900"
+                        className="text-blue-600 hover:text-blue-900 p-1"
                         title="View GST Bill"
                       >
-                        <Eye className="w-4 h-4" />
+                        <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
                       <button 
                         onClick={() => handleEditGSTBill(bill)}
-                        className="text-green-600 hover:text-green-900"
+                        className="text-green-600 hover:text-green-900 p-1"
                         title="Edit GST Bill"
                       >
-                        <Edit className="w-4 h-4" />
+                        <Edit className="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
                       <button 
                         onClick={() => window.print()}
-                        className="text-purple-600 hover:text-purple-900"
+                        className="text-purple-600 hover:text-purple-900 p-1"
                         title="Print GST Bill"
                       >
-                        <Printer className="w-4 h-4" />
+                        <Printer className="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
                       <button 
                         onClick={() => handleDeleteGSTBill(bill._id)}
-                        className="text-red-600 hover:text-red-900"
+                        className="text-red-600 hover:text-red-900 p-1"
                         title="Delete GST Bill"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
                     </div>
                   </td>

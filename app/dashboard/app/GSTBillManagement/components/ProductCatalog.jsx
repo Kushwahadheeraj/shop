@@ -244,19 +244,19 @@ const ProductCatalog = ({ onClose, onSelectProduct, selectedProductId }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-100 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-gray-100 flex items-center justify-center z-50 p-3 sm:p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-7xl max-h-[95vh] overflow-y-auto">
         {/* Header */}
-        <div className="p-6 border-b bg-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">Product Catalog</h2>
-              <p className="text-gray-600 mt-1">Manage your products and inventory</p>
+        <div className="p-4 sm:p-6 border-b bg-white">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="space-y-1">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Product Catalog</h2>
+              <p className="text-sm sm:text-base text-gray-600">Manage your products and inventory</p>
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center flex-wrap gap-2 sm:gap-3">
               <button
                 onClick={() => setShowAddForm(true)}
-                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center space-x-2"
+                className="px-4 py-2 text-sm sm:text-base bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center space-x-2"
               >
                 <Plus className="h-4 w-4" />
                 <span>Add Product</span>
@@ -272,8 +272,8 @@ const ProductCatalog = ({ onClose, onSelectProduct, selectedProductId }) => {
         </div>
 
         {/* Search and Filters */}
-        <div className="p-6 border-b bg-gray-50">
-          <div className="flex items-center space-x-4">
+        <div className="p-4 sm:p-6 border-b bg-gray-50">
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto] gap-3 sm:gap-4">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
@@ -281,13 +281,13 @@ const ProductCatalog = ({ onClose, onSelectProduct, selectedProductId }) => {
                 placeholder="Search products by name, SKU, or description..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                className="w-full pl-10 pr-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
               />
             </div>
             <select
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              className="px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
             >
               {categories.map(category => (
                 <option key={category} value={category}>{category}</option>
@@ -296,7 +296,7 @@ const ProductCatalog = ({ onClose, onSelectProduct, selectedProductId }) => {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              className="px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
             >
               <option value="All">All Status</option>
               <option value="Active">Active</option>

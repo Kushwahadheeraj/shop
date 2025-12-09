@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Search, Package, DollarSign, Filter } from 'lucide-react';
+import { Search, Package, DollarSign, Filter, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/AuthContext';
 
@@ -283,18 +283,39 @@ const BillItemsInventoryPage = () => {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Bill Items Inventory</h1>
-          <p className="text-gray-600 mt-1">View all items from your bills</p>
+    <div className="space-y-4 sm:space-y-6 p-3 sm:p-4 md:p-6">
+      {/* Header / Hero */}
+      <div className="bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 rounded-2xl p-5 sm:p-6 lg:p-7 text-white shadow-xl border border-amber-300/40">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <div className="bg-white/15 p-2.5 rounded-xl">
+                <Sparkles className="w-6 h-6 sm:w-7 sm:h-7" />
+              </div>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold leading-tight">
+                Bill Items Inventory
+              </h1>
+            </div>
+            <p className="text-sm sm:text-base text-amber-50/90 max-w-2xl">
+              सभी बिलों के आइटम्स एक जगह, सर्च/फिल्टर करें और मूल्य देखें (Simple + GST)।
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2 sm:gap-3 w-full lg:w-auto">
+            <div className="inline-flex items-center gap-2 bg-white/20 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium">
+              <Package className="w-4 h-4 sm:w-5 sm:h-5" />
+              Items: {allItems.length}
+            </div>
+            <div className="inline-flex items-center gap-2 bg-white/20 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium">
+              <DollarSign className="w-4 h-4 sm:w-5 sm:h-5" />
+              Total Value: {formatCurrency(allItems.reduce((sum, item) => sum + (item.totalPrice || 0), 0))}
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Bill Type Selector */}
-      <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-        <div className="flex gap-4">
+      <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-gray-200">
+        <div className="flex gap-2 sm:gap-4">
           <button
             onClick={() => {
               setBillType('simple');
@@ -302,10 +323,10 @@ const BillItemsInventoryPage = () => {
               setSelectedCategory('');
               fetchSimpleBills();
             }}
-            className={`flex-1 px-6 py-3 rounded-lg font-medium transition-colors ${
+            className={`flex-1 px-3 sm:px-6 py-2 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-colors ${
               billType === 'simple'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white shadow-md shadow-amber-300/50'
+                : 'bg-amber-50 text-amber-800 hover:bg-amber-100'
             }`}
           >
             Simple Bill Items
@@ -317,10 +338,10 @@ const BillItemsInventoryPage = () => {
               setSelectedCategory('');
               fetchGSTBills();
             }}
-            className={`flex-1 px-6 py-3 rounded-lg font-medium transition-colors ${
+            className={`flex-1 px-3 sm:px-6 py-2 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-colors ${
               billType === 'gst'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white shadow-md shadow-amber-300/50'
+                : 'bg-amber-50 text-amber-800 hover:bg-amber-100'
             }`}
           >
             GST Bill Items
@@ -329,31 +350,32 @@ const BillItemsInventoryPage = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-gray-200">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Search className="w-4 h-4 inline mr-2" />
-              Search by Item Name, Bill Number, or Shop
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+              <Search className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Search by Item Name, Bill Number, or Shop</span>
+              <span className="sm:hidden">Search Items</span>
             </label>
             <input
               type="text"
               placeholder="Search items..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Filter className="w-4 h-4 inline mr-2" />
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+              <Filter className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1 sm:mr-2" />
               Filter by Category
             </label>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
             >
               <option value="">All Categories</option>
               {uniqueCategories.map(cat => (
@@ -370,7 +392,7 @@ const BillItemsInventoryPage = () => {
                 setSearchTerm('');
                 setSelectedCategory('');
               }}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+              className="w-full px-3 sm:px-4 py-2 text-xs sm:text-sm border border-amber-200 rounded-lg text-amber-800 bg-amber-50 hover:bg-amber-100 transition-colors"
             >
               Clear Filters
             </button>
@@ -379,41 +401,41 @@ const BillItemsInventoryPage = () => {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-gray-200">
           <div className="flex items-center">
-            <div className="p-3 bg-blue-100 rounded-full">
-              <Package className="w-6 h-6 text-blue-600" />
+            <div className="p-2 sm:p-3 bg-amber-100 rounded-full flex-shrink-0">
+              <Package className="w-5 h-5 sm:w-6 sm:h-6 text-amber-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Items</p>
-              <p className="text-2xl font-semibold text-gray-900">{filteredItems.length}</p>
+            <div className="ml-3 sm:ml-4 flex-1 min-w-0">
+              <p className="text-xs sm:text-sm font-medium text-gray-600">Total Items</p>
+              <p className="text-xl sm:text-2xl font-semibold text-gray-900 truncate">{filteredItems.length}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-gray-200">
           <div className="flex items-center">
-            <div className="p-3 bg-green-100 rounded-full">
-              <DollarSign className="w-6 h-6 text-green-600" />
+            <div className="p-2 sm:p-3 bg-amber-100 rounded-full flex-shrink-0">
+              <DollarSign className="w-5 h-5 sm:h-6 text-amber-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Quantity</p>
-              <p className="text-2xl font-semibold text-gray-900">
+            <div className="ml-3 sm:ml-4 flex-1 min-w-0">
+              <p className="text-xs sm:text-sm font-medium text-gray-600">Total Quantity</p>
+              <p className="text-xl sm:text-2xl font-semibold text-gray-900 truncate">
                 {filteredItems.reduce((sum, item) => sum + (item.quantity || 0), 0)}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-gray-200">
           <div className="flex items-center">
-            <div className="p-3 bg-purple-100 rounded-full">
-              <DollarSign className="w-6 h-6 text-purple-600" />
+            <div className="p-2 sm:p-3 bg-amber-100 rounded-full flex-shrink-0">
+              <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-amber-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Value</p>
-              <p className="text-2xl font-semibold text-gray-900">
+            <div className="ml-3 sm:ml-4 flex-1 min-w-0">
+              <p className="text-xs sm:text-sm font-medium text-gray-600">Total Value</p>
+              <p className="text-xl sm:text-2xl font-semibold text-gray-900 truncate">
                 {formatCurrency(filteredItems.reduce((sum, item) => sum + (item.totalPrice || 0), 0))}
               </p>
             </div>
@@ -423,52 +445,52 @@ const BillItemsInventoryPage = () => {
 
       {/* Items Table */}
       <div className="bg-white rounded-lg shadow-md border border-gray-200">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">
+        <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
+          <h3 className="text-base sm:text-lg font-medium text-gray-900">
             {billType === 'simple' ? 'Simple Bill' : 'GST Bill'} Items ({filteredItems.length})
           </h3>
         </div>
         
         {loading ? (
-          <div className="flex items-center justify-center py-12">
+          <div className="flex items-center justify-center py-8 sm:py-12">
             <div className="text-center">
-              <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading items...</p>
+              <div className="w-6 h-6 sm:w-8 sm:h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3 sm:mb-4"></div>
+              <p className="text-sm sm:text-base text-gray-600">Loading items...</p>
             </div>
           </div>
         ) : filteredItems.length === 0 ? (
-          <div className="text-center py-12">
-            <Package className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-            <p className="text-gray-500">No items found</p>
-            <p className="text-sm text-gray-400">Try adjusting your filters</p>
+          <div className="text-center py-8 sm:py-12">
+            <Package className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 text-gray-300" />
+            <p className="text-sm sm:text-base text-gray-500">No items found</p>
+            <p className="text-xs sm:text-sm text-gray-400">Try adjusting your filters</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <div className="overflow-x-auto -mx-4 sm:mx-0">
+            <table className="w-full min-w-[800px]">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Item Name
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Category
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Quantity
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
                     Per Piece Price
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Total Price
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
                     Bill Number
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
                     Shop Name
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
                     Bill Date
                   </th>
                 </tr>
@@ -476,30 +498,30 @@ const BillItemsInventoryPage = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredItems.map((item, index) => (
                   <tr key={index} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {item.name || 'N/A'}
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium text-gray-900">
+                      <div className="truncate max-w-[120px] sm:max-w-none">{item.name || 'N/A'}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-900">
+                      <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 text-xs font-medium bg-amber-100 text-amber-800 rounded-full whitespace-nowrap">
                         {item.category || 'Uncategorized'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-900 whitespace-nowrap">
                       {item.quantity || 0}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-900 whitespace-nowrap hidden sm:table-cell">
                       {formatCurrency(item.unitPrice || 0)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-semibold text-gray-900 whitespace-nowrap">
                       {formatCurrency(item.totalPrice || 0)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {item.billNumber || 'N/A'}
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-900 whitespace-nowrap hidden md:table-cell">
+                      <div className="truncate max-w-[100px]">{item.billNumber || 'N/A'}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {item.shopName || 'N/A'}
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-900 hidden lg:table-cell">
+                      <div className="truncate max-w-[150px]">{item.shopName || 'N/A'}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-900 whitespace-nowrap hidden md:table-cell">
                       {formatDate(item.billDate)}
                     </td>
                   </tr>

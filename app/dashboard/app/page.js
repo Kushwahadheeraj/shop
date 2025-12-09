@@ -283,10 +283,10 @@ const DashboardPage = React.memo(function DashboardPage() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6">
       {/* Header with Shop Name and Greeting - 3D Effect */}
-      <div className="mb-6">
-        <div className="relative overflow-hidden rounded-2xl p-6 shadow-2xl"
+      <div className="mb-4 sm:mb-6">
+        <div className="relative overflow-hidden rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-2xl"
           style={{
             background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 25%, #d97706 50%, #f59e0b 75%, #fbbf24 100%)',
             boxShadow: '0 20px 60px -15px rgba(245, 158, 11, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) inset',
@@ -303,16 +303,16 @@ const DashboardPage = React.memo(function DashboardPage() {
             }}
           ></div>
           
-          <div className="relative flex items-center justify-between z-10">
-            <div>
-              <h1 className="text-4xl font-bold text-white mb-1 drop-shadow-lg"
+          <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between z-10 gap-4 sm:gap-0">
+            <div className="flex-1">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-1 drop-shadow-lg"
                 style={{
                   textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3), 0 0 10px rgba(0, 0, 0, 0.2)'
                 }}
               >
                 {user?.shopName ? user.shopName : 'Welcome to your Dashboard'}
               </h1>
-              <p className="text-base text-yellow-50 font-medium drop-shadow-md"
+              <p className="text-sm sm:text-base text-yellow-50 font-medium drop-shadow-md"
                 style={{
                   textShadow: '1px 1px 2px rgba(0, 0, 0, 0.2)'
                 }}
@@ -322,10 +322,10 @@ const DashboardPage = React.memo(function DashboardPage() {
             </div>
             
             {/* Analytics Buttons - Right Side with 3D Effect */}
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto">
               <button
                 onClick={() => setActiveSection('user')}
-                className={`flex items-center gap-3 px-6 py-3 rounded-xl transition-all duration-300 font-semibold transform hover:scale-105 ${
+                className={`flex items-center justify-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 rounded-xl transition-all duration-300 font-semibold transform hover:scale-105 text-sm sm:text-base ${
                   activeSection === 'user'
                     ? 'bg-white text-yellow-600 shadow-2xl hover:shadow-3xl'
                     : 'bg-white/20 backdrop-blur-sm text-white border-2 border-white/30 hover:bg-white/30 hover:border-white/50'
@@ -336,12 +336,13 @@ const DashboardPage = React.memo(function DashboardPage() {
                   boxShadow: '0 4px 15px -3px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1) inset'
                 }}
               >
-                <BarChart3 className="w-5 h-5" />
-                User Analytics
+                <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="hidden xs:inline">User Analytics</span>
+                <span className="xs:hidden">User</span>
               </button>
               <button
                 onClick={() => setActiveSection('bill')}
-                className={`flex items-center gap-3 px-6 py-3 rounded-xl transition-all duration-300 font-semibold transform hover:scale-105 ${
+                className={`flex items-center justify-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 rounded-xl transition-all duration-300 font-semibold transform hover:scale-105 text-sm sm:text-base ${
                   activeSection === 'bill'
                     ? 'bg-white text-yellow-600 shadow-2xl hover:shadow-3xl'
                     : 'bg-white/20 backdrop-blur-sm text-white border-2 border-white/30 hover:bg-white/30 hover:border-white/50'
@@ -352,8 +353,9 @@ const DashboardPage = React.memo(function DashboardPage() {
                   boxShadow: '0 4px 15px -3px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1) inset'
                 }}
               >
-                <FileText className="w-5 h-5" />
-                Bill Analytics
+                <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="hidden xs:inline">Bill Analytics</span>
+                <span className="xs:hidden">Bill</span>
               </button>
             </div>
           </div>
@@ -361,13 +363,13 @@ const DashboardPage = React.memo(function DashboardPage() {
       </div>
 
       {/* Section Selector */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-3xl font-bold text-gray-900">
+      <div className="mb-4 sm:mb-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4 sm:gap-0">
+          <div className="flex-1">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
               {activeSection === 'user' ? 'User Analytics' : 'Bill Analytics'}
             </h2>
-            <p className="text-gray-600 mt-1">
+            <p className="text-sm sm:text-base text-gray-600 mt-1">
               {activeSection === 'user' 
                 ? 'Complete shop analytics and insights'
                 : 'Complete bill management and insights'}
@@ -376,7 +378,7 @@ const DashboardPage = React.memo(function DashboardPage() {
           <select
             value={selectedPeriod}
             onChange={(e) => setSelectedPeriod(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            className="w-full sm:w-auto px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
           >
             <option value="all">All Time</option>
             <option value="7">Last 7 days</option>
@@ -392,20 +394,20 @@ const DashboardPage = React.memo(function DashboardPage() {
         <>
 
       {/* Main Stats Cards - 11 Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
         {/* 1. Total Users */}
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Total Users</CardTitle>
+          <CardHeader className="pb-2 sm:pb-3">
+            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Total Users</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-gray-900">{formatNumber(data.totalUsers)}</div>
+              <div className="flex-1 min-w-0">
+                <div className="text-xl sm:text-2xl font-bold text-gray-900 truncate">{formatNumber(data.totalUsers)}</div>
                 <p className="text-xs text-gray-500 mt-1">Registered users</p>
               </div>
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <Users className="w-6 h-6 text-blue-600" />
+              <div className="p-2 sm:p-3 bg-blue-100 rounded-lg flex-shrink-0 ml-2">
+                <Users className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
               </div>
             </div>
           </CardContent>
@@ -413,17 +415,17 @@ const DashboardPage = React.memo(function DashboardPage() {
 
         {/* 2. New Users */}
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">New Users</CardTitle>
+          <CardHeader className="pb-2 sm:pb-3">
+            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">New Users</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-gray-900">{formatNumber(data.newUsers)}</div>
+              <div className="flex-1 min-w-0">
+                <div className="text-xl sm:text-2xl font-bold text-gray-900 truncate">{formatNumber(data.newUsers)}</div>
                 <p className="text-xs text-gray-500 mt-1">This period</p>
           </div>
-              <div className="p-3 bg-green-100 rounded-lg">
-                <Users className="w-6 h-6 text-green-600" />
+              <div className="p-2 sm:p-3 bg-green-100 rounded-lg flex-shrink-0 ml-2">
+                <Users className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
         </div>
       </div>
           </CardContent>
@@ -431,17 +433,17 @@ const DashboardPage = React.memo(function DashboardPage() {
 
         {/* 3. Total Orders */}
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Total Orders</CardTitle>
+          <CardHeader className="pb-2 sm:pb-3">
+            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Total Orders</CardTitle>
                 </CardHeader>
                 <CardContent>
             <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-gray-900">{formatNumber(data.totalOrders)}</div>
+              <div className="flex-1 min-w-0">
+                <div className="text-xl sm:text-2xl font-bold text-gray-900 truncate">{formatNumber(data.totalOrders)}</div>
                 <p className="text-xs text-gray-500 mt-1">Orders received</p>
               </div>
-              <div className="p-3 bg-yellow-100 rounded-lg">
-                <ShoppingCart className="w-6 h-6 text-yellow-600" />
+              <div className="p-2 sm:p-3 bg-yellow-100 rounded-lg flex-shrink-0 ml-2">
+                <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600" />
               </div>
             </div>
                 </CardContent>
@@ -449,17 +451,17 @@ const DashboardPage = React.memo(function DashboardPage() {
 
         {/* 4. Total Deliveries */}
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Deliveries</CardTitle>
+          <CardHeader className="pb-2 sm:pb-3">
+            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Deliveries</CardTitle>
                 </CardHeader>
                 <CardContent>
             <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-gray-900">{formatNumber(data.totalDeliveries)}</div>
+              <div className="flex-1 min-w-0">
+                <div className="text-xl sm:text-2xl font-bold text-gray-900 truncate">{formatNumber(data.totalDeliveries)}</div>
                 <p className="text-xs text-gray-500 mt-1">Completed</p>
               </div>
-              <div className="p-3 bg-purple-100 rounded-lg">
-                <Truck className="w-6 h-6 text-purple-600" />
+              <div className="p-2 sm:p-3 bg-purple-100 rounded-lg flex-shrink-0 ml-2">
+                <Truck className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
               </div>
             </div>
                 </CardContent>
@@ -467,17 +469,17 @@ const DashboardPage = React.memo(function DashboardPage() {
 
         {/* 5. Active Users */}
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Active Users</CardTitle>
+          <CardHeader className="pb-2 sm:pb-3">
+            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Active Users</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-gray-900">{formatNumber(data.activeUsers)}</div>
+              <div className="flex-1 min-w-0">
+                <div className="text-xl sm:text-2xl font-bold text-gray-900 truncate">{formatNumber(data.activeUsers)}</div>
                 <p className="text-xs text-gray-500 mt-1">With orders</p>
               </div>
-              <div className="p-3 bg-indigo-100 rounded-lg">
-                <Activity className="w-6 h-6 text-indigo-600" />
+              <div className="p-2 sm:p-3 bg-indigo-100 rounded-lg flex-shrink-0 ml-2">
+                <Activity className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600" />
               </div>
         </div>
           </CardContent>
@@ -485,17 +487,17 @@ const DashboardPage = React.memo(function DashboardPage() {
 
         {/* 6. Total Products Added */}
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Products Added</CardTitle>
+          <CardHeader className="pb-2 sm:pb-3">
+            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Products Added</CardTitle>
             </CardHeader>
             <CardContent>
             <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-gray-900">{formatNumber(data.totalProductsAdded)}</div>
+              <div className="flex-1 min-w-0">
+                <div className="text-xl sm:text-2xl font-bold text-gray-900 truncate">{formatNumber(data.totalProductsAdded)}</div>
                 <p className="text-xs text-gray-500 mt-1">Total products</p>
               </div>
-              <div className="p-3 bg-pink-100 rounded-lg">
-                <Package className="w-6 h-6 text-pink-600" />
+              <div className="p-2 sm:p-3 bg-pink-100 rounded-lg flex-shrink-0 ml-2">
+                <Package className="w-5 h-5 sm:w-6 sm:h-6 text-pink-600" />
               </div>
             </div>
             </CardContent>
@@ -503,17 +505,17 @@ const DashboardPage = React.memo(function DashboardPage() {
 
         {/* 7. Products Sold */}
           <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Products Sold</CardTitle>
+          <CardHeader className="pb-2 sm:pb-3">
+            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Products Sold</CardTitle>
             </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-                    <div>
-                <div className="text-2xl font-bold text-gray-900">{formatNumber(data.totalProductsSold)}</div>
+                    <div className="flex-1 min-w-0">
+                <div className="text-xl sm:text-2xl font-bold text-gray-900 truncate">{formatNumber(data.totalProductsSold)}</div>
                 <p className="text-xs text-gray-500 mt-1">Unique products</p>
               </div>
-              <div className="p-3 bg-red-100 rounded-lg">
-                <ShoppingCart className="w-6 h-6 text-red-600" />
+              <div className="p-2 sm:p-3 bg-red-100 rounded-lg flex-shrink-0 ml-2">
+                <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />
               </div>
                     </div>
           </CardContent>
@@ -521,19 +523,19 @@ const DashboardPage = React.memo(function DashboardPage() {
 
         {/* 8. Sales Growth */}
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Sales Growth</CardTitle>
+          <CardHeader className="pb-2 sm:pb-3">
+            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Sales Growth</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-                    <div>
-                <div className="text-2xl font-bold text-gray-900">
+                    <div className="flex-1 min-w-0">
+                <div className="text-xl sm:text-2xl font-bold text-gray-900 truncate">
                   {data.salesGrowth > 0 ? '+' : ''}{data.salesGrowth.toFixed(1)}%
                 </div>
                 <p className="text-xs text-gray-500 mt-1">vs previous period</p>
               </div>
-              <div className="p-3 bg-emerald-100 rounded-lg">
-                <TrendingUp className="w-6 h-6 text-emerald-600" />
+              <div className="p-2 sm:p-3 bg-emerald-100 rounded-lg flex-shrink-0 ml-2">
+                <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
               </div>
                     </div>
           </CardContent>
@@ -541,17 +543,17 @@ const DashboardPage = React.memo(function DashboardPage() {
 
         {/* 9. Active Coupons */}
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Active Coupons</CardTitle>
+          <CardHeader className="pb-2 sm:pb-3">
+            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Active Coupons</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-                    <div>
-                <div className="text-2xl font-bold text-gray-900">{formatNumber(data.activeCoupons || 0)}</div>
+                    <div className="flex-1 min-w-0">
+                <div className="text-xl sm:text-2xl font-bold text-gray-900 truncate">{formatNumber(data.activeCoupons || 0)}</div>
                 <p className="text-xs text-gray-500 mt-1">Currently active</p>
               </div>
-              <div className="p-3 bg-green-100 rounded-lg">
-                <Gift className="w-6 h-6 text-green-600" />
+              <div className="p-2 sm:p-3 bg-green-100 rounded-lg flex-shrink-0 ml-2">
+                <Gift className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                     </div>
                   </div>
           </CardContent>
@@ -559,13 +561,13 @@ const DashboardPage = React.memo(function DashboardPage() {
 
         {/* 10. Total Usage Limit */}
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Usage Limit</CardTitle>
+          <CardHeader className="pb-2 sm:pb-3">
+            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Usage Limit</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-                  <div>
-                <div className="text-2xl font-bold text-gray-900">
+                  <div className="flex-1 min-w-0">
+                <div className="text-xl sm:text-2xl font-bold text-gray-900 truncate">
                   {data.unlimitedCoupons > 0 
                     ? `${formatNumber(data.totalUsageLimit || 0)}+` 
                     : formatNumber(data.totalUsageLimit || 0)}
@@ -576,8 +578,8 @@ const DashboardPage = React.memo(function DashboardPage() {
                     : 'Total limit'}
                 </p>
               </div>
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <Gift className="w-6 h-6 text-blue-600" />
+              <div className="p-2 sm:p-3 bg-blue-100 rounded-lg flex-shrink-0 ml-2">
+                <Gift className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                     </div>
                   </div>
           </CardContent>
@@ -585,17 +587,17 @@ const DashboardPage = React.memo(function DashboardPage() {
 
         {/* 11. Total Used Count */}
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Coupons Used</CardTitle>
+          <CardHeader className="pb-2 sm:pb-3">
+            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Coupons Used</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold text-gray-900">{formatNumber(data.totalUsedCount || 0)}</div>
+              <div className="flex-1 min-w-0">
+                <div className="text-xl sm:text-2xl font-bold text-gray-900 truncate">{formatNumber(data.totalUsedCount || 0)}</div>
                 <p className="text-xs text-gray-500 mt-1">Total used</p>
               </div>
-              <div className="p-3 bg-orange-100 rounded-lg">
-                <Gift className="w-6 h-6 text-orange-600" />
+              <div className="p-2 sm:p-3 bg-orange-100 rounded-lg flex-shrink-0 ml-2">
+                <Gift className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600" />
                     </div>
                   </div>
             </CardContent>
@@ -603,18 +605,18 @@ const DashboardPage = React.memo(function DashboardPage() {
         </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Daily Orders Chart */}
         <Card>
-            <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="w-5 h-5" />
+            <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5" />
               Daily Orders
               </CardTitle>
-            <CardDescription>Orders received per day</CardDescription>
+            <CardDescription className="text-xs sm:text-sm">Orders received per day</CardDescription>
             </CardHeader>
-            <CardContent>
-            <Suspense fallback={<div className="h-64 flex items-center justify-center">Loading chart...</div>}>
+            <CardContent className="p-3 sm:p-6">
+            <Suspense fallback={<div className="h-48 sm:h-64 flex items-center justify-center text-sm">Loading chart...</div>}>
               <MonthlyChart data={data.monthlyData || []} />
               </Suspense>
             </CardContent>
@@ -622,15 +624,15 @@ const DashboardPage = React.memo(function DashboardPage() {
 
         {/* Orders vs Deliveries Chart */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5" />
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />
               Orders vs Deliveries
               </CardTitle>
-            <CardDescription>Comparison over time</CardDescription>
+            <CardDescription className="text-xs sm:text-sm">Comparison over time</CardDescription>
             </CardHeader>
-          <CardContent>
-            <Suspense fallback={<div className="h-64 flex items-center justify-center">Loading chart...</div>}>
+          <CardContent className="p-3 sm:p-6">
+            <Suspense fallback={<div className="h-48 sm:h-64 flex items-center justify-center text-sm">Loading chart...</div>}>
               <AreaChart data={data.areaData || []} />
             </Suspense>
             </CardContent>
@@ -638,35 +640,35 @@ const DashboardPage = React.memo(function DashboardPage() {
         </div>
 
       {/* Products Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Top Selling Products */}
           <Card>
-            <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Package className="w-5 h-5" />
+            <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <Package className="w-4 h-4 sm:w-5 sm:h-5" />
               Top Selling Products
             </CardTitle>
-            <CardDescription>Most sold products</CardDescription>
+            <CardDescription className="text-xs sm:text-sm">Most sold products</CardDescription>
             </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
+          <CardContent className="p-3 sm:p-6">
+            <div className="space-y-2 sm:space-y-3">
               {data.topSellingProducts && data.topSellingProducts.length > 0 ? (
                 data.topSellingProducts.slice(0, 10).map((product, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-600 font-bold">
+                  <div key={index} className="flex items-center justify-between p-2 sm:p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                      <div className="w-6 h-6 sm:w-8 sm:h-8 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-600 font-bold text-xs sm:text-sm flex-shrink-0">
                         {index + 1}
                       </div>
-                      <div>
-                        <p className="font-medium text-gray-900">{product.name}</p>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-gray-900 text-sm sm:text-base truncate">{product.name}</p>
                         <p className="text-xs text-gray-500">Quantity sold</p>
                       </div>
                     </div>
-                    <div className="text-lg font-bold text-gray-900">{formatNumber(product.quantity)}</div>
+                    <div className="text-base sm:text-lg font-bold text-gray-900 ml-2 flex-shrink-0">{formatNumber(product.quantity)}</div>
                   </div>
                 ))
               ) : (
-                <div className="text-center py-8 text-gray-500">No products sold yet</div>
+                <div className="text-center py-6 sm:py-8 text-gray-500 text-sm">No products sold yet</div>
               )}
             </div>
             </CardContent>
@@ -674,28 +676,28 @@ const DashboardPage = React.memo(function DashboardPage() {
 
         {/* Latest Products Added */}
           <Card>
-            <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Package className="w-5 h-5" />
+            <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <Package className="w-4 h-4 sm:w-5 sm:h-5" />
               Latest Products Added
             </CardTitle>
-            <CardDescription>Recently added products</CardDescription>
+            <CardDescription className="text-xs sm:text-sm">Recently added products</CardDescription>
             </CardHeader>
-            <CardContent>
-            <div className="space-y-3">
+            <CardContent className="p-3 sm:p-6">
+            <div className="space-y-2 sm:space-y-3">
               {data.latestProducts && Array.isArray(data.latestProducts) && data.latestProducts.length > 0 ? (
                 data.latestProducts.slice(0, 10).map((product, index) => (
-                  <div key={`latest-${index}-${product.name}`} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">
+                  <div key={`latest-${index}-${product.name}`} className="flex items-center justify-between p-2 sm:p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                      <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-xs sm:text-sm flex-shrink-0">
                           {index + 1}
                         </div>
-                        <div>
-                        <p className="font-medium text-gray-900">{product.name || 'Unknown Product'}</p>
-                        <p className="text-xs text-gray-500">{product.category || 'Uncategorized'}</p>
+                        <div className="flex-1 min-w-0">
+                        <p className="font-medium text-gray-900 text-sm sm:text-base truncate">{product.name || 'Unknown Product'}</p>
+                        <p className="text-xs text-gray-500 truncate">{product.category || 'Uncategorized'}</p>
                       </div>
                     </div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-gray-500 ml-2 flex-shrink-0 whitespace-nowrap">
                       {product.createdAt ? new Date(product.createdAt).toLocaleDateString('en-IN', {
                         year: 'numeric',
                         month: 'short',
@@ -705,8 +707,8 @@ const DashboardPage = React.memo(function DashboardPage() {
                   </div>
                 ))
               ) : (
-                <div className="text-center py-8">
-                  <div className="text-gray-500 mb-2">No products added yet</div>
+                <div className="text-center py-6 sm:py-8">
+                  <div className="text-gray-500 mb-2 text-sm">No products added yet</div>
                   {loadingData && (
                     <div className="text-xs text-gray-400">Loading products...</div>
                   )}
@@ -727,15 +729,15 @@ const DashboardPage = React.memo(function DashboardPage() {
       {/* Category Distribution Pie Chart */}
       {data.categoryData && data.categoryData.length > 0 && (
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <PieChartIcon className="w-5 h-5" />
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <PieChartIcon className="w-4 h-4 sm:w-5 sm:h-5" />
               Products by Category
             </CardTitle>
-            <CardDescription>Distribution of products across categories</CardDescription>
+            <CardDescription className="text-xs sm:text-sm">Distribution of products across categories</CardDescription>
           </CardHeader>
-          <CardContent>
-            <Suspense fallback={<div className="h-64 flex items-center justify-center">Loading chart...</div>}>
+          <CardContent className="p-3 sm:p-6">
+            <Suspense fallback={<div className="h-48 sm:h-64 flex items-center justify-center text-sm">Loading chart...</div>}>
               <PieChart data={data.categoryData} />
             </Suspense>
           </CardContent>
@@ -758,26 +760,26 @@ const DashboardPage = React.memo(function DashboardPage() {
           ) : billData ? (
             <>
               {/* Main Bill Management Stats - Kitna ka aaya, kitna diya, kitna baki */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-4 sm:mb-6">
                 {/* Kitna ka aaya saman - Total Amount */}
                 <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-white">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-base font-semibold text-gray-700 flex items-center gap-2">
-                      <Receipt className="w-5 h-5 text-blue-600" />
-                      कितना का आया सामान
+                  <CardHeader className="pb-2 sm:pb-3">
+                    <CardTitle className="text-sm sm:text-base font-semibold text-gray-700 flex items-center gap-2">
+                      <Receipt className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
+                      <span className="text-xs sm:text-base">कितना का आया सामान</span>
                     </CardTitle>
                     <CardDescription className="text-xs">Total Bill Amount</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-between">
-                      <div>
-                        <div className="text-3xl font-bold text-blue-700">
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-700 truncate">
                           {formatCurrency(billData.summary?.totalAmount || 0)}
                         </div>
-                        <p className="text-xs text-gray-500 mt-2">सभी बिलों का कुल योग</p>
+                        <p className="text-xs text-gray-500 mt-1 sm:mt-2">सभी बिलों का कुल योग</p>
                       </div>
-                      <div className="p-4 bg-blue-100 rounded-xl">
-                        <DollarSign className="w-8 h-8 text-blue-600" />
+                      <div className="p-2 sm:p-3 md:p-4 bg-blue-100 rounded-xl flex-shrink-0 ml-2">
+                        <DollarSign className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-blue-600" />
                       </div>
                     </div>
                   </CardContent>
@@ -785,28 +787,28 @@ const DashboardPage = React.memo(function DashboardPage() {
 
                 {/* Kitna diya gaya - Paid Amount */}
                 <Card className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-white">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-base font-semibold text-gray-700 flex items-center gap-2">
-                      <CreditCard className="w-5 h-5 text-green-600" />
-                      कितना दिया गया
+                  <CardHeader className="pb-2 sm:pb-3">
+                    <CardTitle className="text-sm sm:text-base font-semibold text-gray-700 flex items-center gap-2">
+                      <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
+                      <span className="text-xs sm:text-base">कितना दिया गया</span>
                     </CardTitle>
                     <CardDescription className="text-xs">Total Paid Amount</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-between">
-                      <div>
-                        <div className="text-3xl font-bold text-green-700">
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xl sm:text-2xl md:text-3xl font-bold text-green-700 truncate">
                           {formatCurrency(billData.summary?.paidAmount || 0)}
                         </div>
-                        <p className="text-xs text-gray-500 mt-2">कुल भुगतान राशि</p>
+                        <p className="text-xs text-gray-500 mt-1 sm:mt-2">कुल भुगतान राशि</p>
                         {billData.summary?.totalAmount > 0 && (
                           <p className="text-xs text-green-600 mt-1 font-medium">
                             {((billData.summary.paidAmount / billData.summary.totalAmount) * 100).toFixed(1)}% Paid
                           </p>
                         )}
                       </div>
-                      <div className="p-4 bg-green-100 rounded-xl">
-                        <CreditCard className="w-8 h-8 text-green-600" />
+                      <div className="p-2 sm:p-3 md:p-4 bg-green-100 rounded-xl flex-shrink-0 ml-2">
+                        <CreditCard className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-green-600" />
                       </div>
                     </div>
                   </CardContent>
@@ -814,28 +816,28 @@ const DashboardPage = React.memo(function DashboardPage() {
 
                 {/* Kitna baki hai - Remaining Amount */}
                 <Card className="border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-white">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-base font-semibold text-gray-700 flex items-center gap-2">
-                      <History className="w-5 h-5 text-orange-600" />
-                      कितना बाकी है
+                  <CardHeader className="pb-2 sm:pb-3">
+                    <CardTitle className="text-sm sm:text-base font-semibold text-gray-700 flex items-center gap-2">
+                      <History className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600" />
+                      <span className="text-xs sm:text-base">कितना बाकी है</span>
                     </CardTitle>
                     <CardDescription className="text-xs">Total Remaining Amount</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-between">
-                      <div>
-                        <div className="text-3xl font-bold text-orange-700">
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xl sm:text-2xl md:text-3xl font-bold text-orange-700 truncate">
                           {formatCurrency(billData.summary?.remainingAmount || 0)}
                         </div>
-                        <p className="text-xs text-gray-500 mt-2">बकाया राशि</p>
+                        <p className="text-xs text-gray-500 mt-1 sm:mt-2">बकाया राशि</p>
                         {billData.summary?.totalAmount > 0 && (
                           <p className="text-xs text-orange-600 mt-1 font-medium">
                             {((billData.summary.remainingAmount / billData.summary.totalAmount) * 100).toFixed(1)}% Pending
                           </p>
                         )}
                       </div>
-                      <div className="p-4 bg-orange-100 rounded-xl">
-                        <History className="w-8 h-8 text-orange-600" />
+                      <div className="p-2 sm:p-3 md:p-4 bg-orange-100 rounded-xl flex-shrink-0 ml-2">
+                        <History className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-orange-600" />
                       </div>
                     </div>
                   </CardContent>
@@ -843,18 +845,18 @@ const DashboardPage = React.memo(function DashboardPage() {
               </div>
 
               {/* Payment Status Charts - Half-Half Split */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
                 {/* Simple Bill Management Payment Status - Left Side */}
                 <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <PieChartIcon className="w-5 h-5" />
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                      <PieChartIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                       Simple Bill Management
                     </CardTitle>
-                    <CardDescription>भुगतान स्थिति - Paid vs Remaining</CardDescription>
+                    <CardDescription className="text-xs sm:text-sm">भुगतान स्थिति - Paid vs Remaining</CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <Suspense fallback={<div className="h-64 flex items-center justify-center">Loading chart...</div>}>
+                  <CardContent className="p-3 sm:p-6">
+                    <Suspense fallback={<div className="h-48 sm:h-64 flex items-center justify-center text-sm">Loading chart...</div>}>
                       <PieChart 
                         data={[
                           { 
@@ -877,15 +879,15 @@ const DashboardPage = React.memo(function DashboardPage() {
 
                 {/* Bill Management Payment Status - Right Side */}
                 <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <PieChartIcon className="w-5 h-5" />
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                      <PieChartIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                       Bill Management
                     </CardTitle>
-                    <CardDescription>भुगतान स्थिति - Paid vs Remaining</CardDescription>
+                    <CardDescription className="text-xs sm:text-sm">भुगतान स्थिति - Paid vs Remaining</CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <Suspense fallback={<div className="h-64 flex items-center justify-center">Loading chart...</div>}>
+                  <CardContent className="p-3 sm:p-6">
+                    <Suspense fallback={<div className="h-48 sm:h-64 flex items-center justify-center text-sm">Loading chart...</div>}>
                       <PieChart 
                         data={[
                           { 
@@ -908,19 +910,19 @@ const DashboardPage = React.memo(function DashboardPage() {
               </div>
 
               {/* Main Stats Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
                 {/* Total Bills */}
                 <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-gray-600">Total Bills</CardTitle>
+                  <CardHeader className="pb-2 sm:pb-3">
+                    <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Total Bills</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-between">
-                      <div>
-                        <div className="text-2xl font-bold text-gray-900">
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xl sm:text-2xl font-bold text-gray-900 truncate">
                           {formatNumber(billData.summary?.totalBills || 0)}
                         </div>
-                        <div className="flex items-center gap-2 mt-1">
+                        <div className="flex flex-wrap items-center gap-1 sm:gap-2 mt-1">
                           <p className="text-xs text-gray-500">Last {selectedPeriod} days</p>
                           {billData.summary?.billsGrowth !== undefined && (
                             <span className={`text-xs font-medium ${
@@ -931,8 +933,8 @@ const DashboardPage = React.memo(function DashboardPage() {
                           )}
                         </div>
                       </div>
-                      <div className="p-3 bg-blue-100 rounded-lg">
-                        <FileText className="w-6 h-6 text-blue-600" />
+                      <div className="p-2 sm:p-3 bg-blue-100 rounded-lg flex-shrink-0 ml-2">
+                        <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                       </div>
                     </div>
                   </CardContent>
@@ -940,16 +942,16 @@ const DashboardPage = React.memo(function DashboardPage() {
 
                 {/* Total Amount */}
                 <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-gray-600">Total Revenue</CardTitle>
+                  <CardHeader className="pb-2 sm:pb-3">
+                    <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Total Revenue</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-between">
-                      <div>
-                        <div className="text-2xl font-bold text-gray-900">
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xl sm:text-2xl font-bold text-gray-900 truncate">
                           {formatCurrency(billData.summary?.totalAmount || 0)}
                         </div>
-                        <div className="flex items-center gap-2 mt-1">
+                        <div className="flex flex-wrap items-center gap-1 sm:gap-2 mt-1">
                           <p className="text-xs text-gray-500">Last {selectedPeriod} days</p>
                           {billData.summary?.amountGrowth !== undefined && (
                             <span className={`text-xs font-medium ${
@@ -960,8 +962,8 @@ const DashboardPage = React.memo(function DashboardPage() {
                           )}
                         </div>
                       </div>
-                      <div className="p-3 bg-green-100 rounded-lg">
-                        <DollarSign className="w-6 h-6 text-green-600" />
+                      <div className="p-2 sm:p-3 bg-green-100 rounded-lg flex-shrink-0 ml-2">
+                        <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                       </div>
                     </div>
                   </CardContent>
@@ -969,19 +971,19 @@ const DashboardPage = React.memo(function DashboardPage() {
 
                 {/* Average Bill Value */}
                 <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-gray-600">Avg Bill Value</CardTitle>
+                  <CardHeader className="pb-2 sm:pb-3">
+                    <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Avg Bill Value</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-between">
-                      <div>
-                        <div className="text-2xl font-bold text-gray-900">
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xl sm:text-2xl font-bold text-gray-900 truncate">
                           {formatCurrency(billData.summary?.averageBillValue || 0)}
                         </div>
                         <p className="text-xs text-gray-500 mt-1">Per bill</p>
                       </div>
-                      <div className="p-3 bg-purple-100 rounded-lg">
-                        <TrendingUp className="w-6 h-6 text-purple-600" />
+                      <div className="p-2 sm:p-3 bg-purple-100 rounded-lg flex-shrink-0 ml-2">
+                        <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
                       </div>
                     </div>
                   </CardContent>
@@ -989,19 +991,19 @@ const DashboardPage = React.memo(function DashboardPage() {
 
                 {/* Total Items */}
                 <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-gray-600">Total Items</CardTitle>
+                  <CardHeader className="pb-2 sm:pb-3">
+                    <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Total Items</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-between">
-                      <div>
-                        <div className="text-2xl font-bold text-gray-900">
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xl sm:text-2xl font-bold text-gray-900 truncate">
                           {formatNumber(billData.sources?.billItemsInventory?.totalItems || 0)}
                         </div>
                         <p className="text-xs text-gray-500 mt-1">From all bills</p>
                       </div>
-                      <div className="p-3 bg-orange-100 rounded-lg">
-                        <Package className="w-6 h-6 text-orange-600" />
+                      <div className="p-2 sm:p-3 bg-orange-100 rounded-lg flex-shrink-0 ml-2">
+                        <Package className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600" />
                       </div>
                     </div>
                   </CardContent>
@@ -1009,35 +1011,35 @@ const DashboardPage = React.memo(function DashboardPage() {
               </div>
 
               {/* Source-wise Breakdown - All 6 Sources */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mt-4 sm:mt-6">
                 {/* Bill Management */}
                 <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-gray-600">Bill Management</CardTitle>
+                  <CardHeader className="pb-2 sm:pb-3">
+                    <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Bill Management</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-3 sm:p-6">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Bills:</span>
-                        <span className="text-lg font-bold text-gray-900">
+                        <span className="text-xs sm:text-sm text-gray-600">Bills:</span>
+                        <span className="text-base sm:text-lg font-bold text-gray-900">
                           {formatNumber(billData.sources?.billManagement?.count || 0)}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Total:</span>
-                        <span className="text-lg font-semibold text-blue-600">
+                        <span className="text-xs sm:text-sm text-gray-600">Total:</span>
+                        <span className="text-base sm:text-lg font-semibold text-blue-600 truncate ml-2">
                           {formatCurrency(billData.sources?.billManagement?.amount || 0)}
                         </span>
                       </div>
                       <div className="flex items-center justify-between border-t pt-2 mt-2">
-                        <span className="text-sm text-gray-600">Paid:</span>
-                        <span className="text-base font-semibold text-green-600">
+                        <span className="text-xs sm:text-sm text-gray-600">Paid:</span>
+                        <span className="text-sm sm:text-base font-semibold text-green-600 truncate ml-2">
                           {formatCurrency(billData.sources?.billManagement?.paidAmount || 0)}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Remaining:</span>
-                        <span className="text-base font-semibold text-orange-600">
+                        <span className="text-xs sm:text-sm text-gray-600">Remaining:</span>
+                        <span className="text-sm sm:text-base font-semibold text-orange-600 truncate ml-2">
                           {formatCurrency(billData.sources?.billManagement?.remainingAmount || 0)}
                         </span>
                       </div>
@@ -1047,20 +1049,20 @@ const DashboardPage = React.memo(function DashboardPage() {
 
                 {/* GST Bill Management */}
                 <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-gray-600">GST Bill Management</CardTitle>
+                  <CardHeader className="pb-2 sm:pb-3">
+                    <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">GST Bill Management</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-3 sm:p-6">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Bills:</span>
-                        <span className="text-lg font-bold text-gray-900">
+                        <span className="text-xs sm:text-sm text-gray-600">Bills:</span>
+                        <span className="text-base sm:text-lg font-bold text-gray-900">
                           {formatNumber(billData.sources?.gstBillManagement?.count || 0)}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Amount:</span>
-                        <span className="text-lg font-semibold text-green-600">
+                        <span className="text-xs sm:text-sm text-gray-600">Amount:</span>
+                        <span className="text-base sm:text-lg font-semibold text-green-600 truncate ml-2">
                           {formatCurrency(billData.sources?.gstBillManagement?.amount || 0)}
                         </span>
                       </div>
@@ -1070,32 +1072,32 @@ const DashboardPage = React.memo(function DashboardPage() {
 
                 {/* Simple Bill Management */}
                 <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-gray-600">Simple Bill Management</CardTitle>
+                  <CardHeader className="pb-2 sm:pb-3">
+                    <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Simple Bill Management</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-3 sm:p-6">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Bills:</span>
-                        <span className="text-lg font-bold text-gray-900">
+                        <span className="text-xs sm:text-sm text-gray-600">Bills:</span>
+                        <span className="text-base sm:text-lg font-bold text-gray-900">
                           {formatNumber(billData.sources?.simpleBillManagement?.count || 0)}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Total:</span>
-                        <span className="text-lg font-semibold text-blue-600">
+                        <span className="text-xs sm:text-sm text-gray-600">Total:</span>
+                        <span className="text-base sm:text-lg font-semibold text-blue-600 truncate ml-2">
                           {formatCurrency(billData.sources?.simpleBillManagement?.amount || 0)}
                         </span>
                       </div>
                       <div className="flex items-center justify-between border-t pt-2 mt-2">
-                        <span className="text-sm text-gray-600">Paid:</span>
-                        <span className="text-base font-semibold text-green-600">
+                        <span className="text-xs sm:text-sm text-gray-600">Paid:</span>
+                        <span className="text-sm sm:text-base font-semibold text-green-600 truncate ml-2">
                           {formatCurrency(billData.sources?.simpleBillManagement?.paidAmount || 0)}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Remaining:</span>
-                        <span className="text-base font-semibold text-orange-600">
+                        <span className="text-xs sm:text-sm text-gray-600">Remaining:</span>
+                        <span className="text-sm sm:text-base font-semibold text-orange-600 truncate ml-2">
                           {formatCurrency(billData.sources?.simpleBillManagement?.remainingAmount || 0)}
                         </span>
                       </div>
@@ -1105,20 +1107,20 @@ const DashboardPage = React.memo(function DashboardPage() {
 
                 {/* Quick Invoice Creator */}
                 <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-gray-600">Quick Invoice Creator</CardTitle>
+                  <CardHeader className="pb-2 sm:pb-3">
+                    <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Quick Invoice Creator</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-3 sm:p-6">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Invoices:</span>
-                        <span className="text-lg font-bold text-gray-900">
+                        <span className="text-xs sm:text-sm text-gray-600">Invoices:</span>
+                        <span className="text-base sm:text-lg font-bold text-gray-900">
                           {formatNumber(billData.sources?.quickInvoiceCreator?.count || 0)}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Amount:</span>
-                        <span className="text-lg font-semibold text-green-600">
+                        <span className="text-xs sm:text-sm text-gray-600">Amount:</span>
+                        <span className="text-base sm:text-lg font-semibold text-green-600 truncate ml-2">
                           {formatCurrency(billData.sources?.quickInvoiceCreator?.amount || 0)}
                         </span>
                       </div>
@@ -1128,20 +1130,20 @@ const DashboardPage = React.memo(function DashboardPage() {
 
                 {/* Bill Items Inventory */}
                 <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-gray-600">Bill Items Inventory</CardTitle>
+                  <CardHeader className="pb-2 sm:pb-3">
+                    <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Bill Items Inventory</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-3 sm:p-6">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Items:</span>
-                        <span className="text-lg font-bold text-gray-900">
+                        <span className="text-xs sm:text-sm text-gray-600">Items:</span>
+                        <span className="text-base sm:text-lg font-bold text-gray-900">
                           {formatNumber(billData.sources?.billItemsInventory?.count || 0)}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Total Qty:</span>
-                        <span className="text-lg font-semibold text-blue-600">
+                        <span className="text-xs sm:text-sm text-gray-600">Total Qty:</span>
+                        <span className="text-base sm:text-lg font-semibold text-blue-600 truncate ml-2">
                           {formatNumber(billData.sources?.billItemsInventory?.totalItems || 0)}
                         </span>
                       </div>
@@ -1151,20 +1153,20 @@ const DashboardPage = React.memo(function DashboardPage() {
 
                 {/* Seller List */}
                 <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-gray-600">Seller List</CardTitle>
+                  <CardHeader className="pb-2 sm:pb-3">
+                    <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Seller List</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-3 sm:p-6">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Total Sellers:</span>
-                        <span className="text-lg font-bold text-gray-900">
+                        <span className="text-xs sm:text-sm text-gray-600">Total Sellers:</span>
+                        <span className="text-base sm:text-lg font-bold text-gray-900">
                           {formatNumber(billData.sources?.sellerList?.count || 0)}
                         </span>
                       </div>
                       <div className="flex items-center justify-between border-t pt-2 mt-2">
-                        <span className="text-sm text-gray-600">Active Sellers:</span>
-                        <span className="text-base font-semibold text-green-600">
+                        <span className="text-xs sm:text-sm text-gray-600">Active Sellers:</span>
+                        <span className="text-sm sm:text-base font-semibold text-green-600 truncate ml-2">
                           {formatNumber(billData.sources?.sellerList?.activeCount || 0)}
                         </span>
                       </div>
@@ -1174,7 +1176,7 @@ const DashboardPage = React.memo(function DashboardPage() {
               </div>
 
               {/* Bill Type Breakdown */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 mt-4 sm:mt-6">
                 {billData.byType && Object.entries(billData.byType).map(([type, data]) => {
                   if (!data || data.count === 0) return null;
                   const typeNames = {
@@ -1191,17 +1193,17 @@ const DashboardPage = React.memo(function DashboardPage() {
                   };
                   return (
                     <Card key={type}>
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-sm font-medium text-gray-600">{typeNames[type] || type}</CardTitle>
+                      <CardHeader className="pb-2 sm:pb-3">
+                        <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">{typeNames[type] || type}</CardTitle>
                       </CardHeader>
                       <CardContent>
                         <div className="flex items-center justify-between">
-                          <div>
-                            <div className="text-2xl font-bold text-gray-900">{formatNumber(data.count || 0)}</div>
-                            <div className="text-sm text-gray-500 mt-1">{formatCurrency(data.amount || 0)}</div>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-xl sm:text-2xl font-bold text-gray-900 truncate">{formatNumber(data.count || 0)}</div>
+                            <div className="text-xs sm:text-sm text-gray-500 mt-1 truncate">{formatCurrency(data.amount || 0)}</div>
                           </div>
-                          <div className={`p-3 rounded-lg ${colors[type] || 'bg-gray-100'}`}>
-                            <FileText className="w-6 h-6" />
+                          <div className={`p-2 sm:p-3 rounded-lg flex-shrink-0 ml-2 ${colors[type] || 'bg-gray-100'}`}>
+                            <FileText className="w-5 h-5 sm:w-6 sm:h-6" />
                           </div>
                         </div>
                       </CardContent>
@@ -1212,16 +1214,16 @@ const DashboardPage = React.memo(function DashboardPage() {
 
               {/* Payment Status Trend Chart */}
               {billData.charts?.monthly && billData.charts.monthly.some(item => item.paidAmount > 0 || item.remainingAmount > 0) && (
-                <Card className="mt-6">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <TrendingUp className="w-5 h-5" />
+                <Card className="mt-4 sm:mt-6">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                      <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />
                       Payment Status Trend (भुगतान स्थिति)
                     </CardTitle>
-                    <CardDescription>Monthly Paid vs Remaining Amounts</CardDescription>
+                    <CardDescription className="text-xs sm:text-sm">Monthly Paid vs Remaining Amounts</CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <Suspense fallback={<div className="h-64 flex items-center justify-center">Loading chart...</div>}>
+                  <CardContent className="p-3 sm:p-6">
+                    <Suspense fallback={<div className="h-48 sm:h-64 flex items-center justify-center text-sm">Loading chart...</div>}>
                       <AreaChart 
                         data={billData.charts.monthly.map(item => ({
                           month: item.month,
@@ -1230,13 +1232,13 @@ const DashboardPage = React.memo(function DashboardPage() {
                         }))} 
                       />
                     </Suspense>
-                    <div className="mt-4 flex gap-4 justify-center text-sm">
+                    <div className="mt-3 sm:mt-4 flex flex-wrap gap-3 sm:gap-4 justify-center text-xs sm:text-sm">
                       <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 bg-green-500 rounded"></div>
+                        <div className="w-3 h-3 sm:w-4 sm:h-4 bg-green-500 rounded"></div>
                         <span className="text-gray-600">Paid (दिया गया)</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 bg-orange-500 rounded"></div>
+                        <div className="w-3 h-3 sm:w-4 sm:h-4 bg-orange-500 rounded"></div>
                         <span className="text-gray-600">Remaining (बाकी)</span>
                       </div>
                     </div>
@@ -1245,19 +1247,19 @@ const DashboardPage = React.memo(function DashboardPage() {
               )}
 
               {/* Charts Section */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mt-4 sm:mt-6">
                 {/* Monthly Bills Chart */}
                 {billData.charts?.monthly && billData.charts.monthly.length > 0 && (
                   <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <BarChart3 className="w-5 h-5" />
+                    <CardHeader className="pb-3">
+                      <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                        <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5" />
                         Monthly Bills Trend
                       </CardTitle>
-                      <CardDescription>Bills and revenue by month</CardDescription>
+                      <CardDescription className="text-xs sm:text-sm">Bills and revenue by month</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                      <Suspense fallback={<div className="h-64 flex items-center justify-center">Loading chart...</div>}>
+                    <CardContent className="p-3 sm:p-6">
+                      <Suspense fallback={<div className="h-48 sm:h-64 flex items-center justify-center text-sm">Loading chart...</div>}>
                         <MonthlyChart 
                           data={billData.charts.monthly.map(item => ({
                             day: item.month,
@@ -1273,15 +1275,15 @@ const DashboardPage = React.memo(function DashboardPage() {
                 {/* Daily Bills Chart */}
                 {billData.charts?.daily && billData.charts.daily.length > 0 && (
                   <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Activity className="w-5 h-5" />
+                    <CardHeader className="pb-3">
+                      <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                        <Activity className="w-4 h-4 sm:w-5 sm:h-5" />
                         Daily Bills Trend
                       </CardTitle>
-                      <CardDescription>Bills and revenue by day</CardDescription>
+                      <CardDescription className="text-xs sm:text-sm">Bills and revenue by day</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                      <Suspense fallback={<div className="h-64 flex items-center justify-center">Loading chart...</div>}>
+                    <CardContent className="p-3 sm:p-6">
+                      <Suspense fallback={<div className="h-48 sm:h-64 flex items-center justify-center text-sm">Loading chart...</div>}>
                         <AreaChart 
                           data={billData.charts.daily.map(item => ({
                             month: item.day,
@@ -1297,15 +1299,15 @@ const DashboardPage = React.memo(function DashboardPage() {
                 {/* Bill Type Distribution Pie Chart */}
                 {billData.charts?.billTypeDistribution && billData.charts.billTypeDistribution.length > 0 && (
                   <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <PieChartIcon className="w-5 h-5" />
+                    <CardHeader className="pb-3">
+                      <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                        <PieChartIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                         Bill Type Distribution
                       </CardTitle>
-                      <CardDescription>Distribution by bill type</CardDescription>
+                      <CardDescription className="text-xs sm:text-sm">Distribution by bill type</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                      <Suspense fallback={<div className="h-64 flex items-center justify-center">Loading chart...</div>}>
+                    <CardContent className="p-3 sm:p-6">
+                      <Suspense fallback={<div className="h-48 sm:h-64 flex items-center justify-center text-sm">Loading chart...</div>}>
                         <PieChart 
                           data={billData.charts.billTypeDistribution.map(item => ({
                             name: item.name,
@@ -1321,28 +1323,28 @@ const DashboardPage = React.memo(function DashboardPage() {
                 {/* Top Items */}
                 {billData.charts?.topItems && billData.charts.topItems.length > 0 && (
                   <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Package className="w-5 h-5" />
+                    <CardHeader className="pb-3">
+                      <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                        <Package className="w-4 h-4 sm:w-5 sm:h-5" />
                         Top Items Sold
                       </CardTitle>
-                      <CardDescription>Most sold items from bills</CardDescription>
+                      <CardDescription className="text-xs sm:text-sm">Most sold items from bills</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3">
+                    <CardContent className="p-3 sm:p-6">
+                      <div className="space-y-2 sm:space-y-3">
                         {billData.charts.topItems.slice(0, 10).map((item, index) => (
-                          <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-sm">
+                          <div key={index} className="flex items-center justify-between p-2 sm:p-3 bg-gray-50 rounded-lg">
+                            <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-xs sm:text-sm flex-shrink-0">
                                 {index + 1}
                               </div>
-                              <div>
-                                <p className="font-medium text-gray-900">{item.name}</p>
-                                <p className="text-xs text-gray-500">{item.category}</p>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-medium text-gray-900 text-sm sm:text-base truncate">{item.name}</p>
+                                <p className="text-xs text-gray-500 truncate">{item.category}</p>
                               </div>
                             </div>
-                            <div className="text-right">
-                              <p className="font-semibold text-gray-900">{formatNumber(item.quantity)}</p>
+                            <div className="text-right ml-2 flex-shrink-0">
+                              <p className="font-semibold text-gray-900 text-sm sm:text-base">{formatNumber(item.quantity)}</p>
                               <p className="text-xs text-gray-500">{formatCurrency(item.totalValue)}</p>
                             </div>
                           </div>

@@ -201,33 +201,33 @@ const EditBillForm = ({ bill, onClose, onSave, shops }) => {
   if (!bill) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-3 sm:p-4">
       <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b">
-          <div className="flex items-center space-x-3">
-            <AlertCircle className="h-6 w-6 text-blue-600" />
-            <h2 className="text-2xl font-bold text-gray-900">Edit Bill - {bill.billNumber}</h2>
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b">
+          <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
+            <AlertCircle className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 flex-shrink-0" />
+            <h2 className="text-lg sm:text-2xl font-bold text-gray-900 truncate">Edit Bill - {bill.billNumber}</h2>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1.5 sm:p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0 ml-2"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4 sm:h-5 sm:w-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-6">
           {/* Basic Information */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                 Shop <span className="text-red-500">*</span>
               </label>
               <select
                 value={formData.shopId}
                 onChange={(e) => handleInputChange('shopId', e.target.value)}
-                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                className={`w-full px-3 py-2 text-sm sm:text-base border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                   errors.shopId ? 'border-red-500' : 'border-gray-300'
                 }`}
               >
@@ -244,91 +244,91 @@ const EditBillForm = ({ bill, onClose, onSave, shops }) => {
                 })}
               </select>
               {errors.shopId && (
-                <p className="text-red-500 text-sm mt-1">{errors.shopId}</p>
+                <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.shopId}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                 Bill Date <span className="text-red-500">*</span>
               </label>
               <input
                 type="date"
                 value={formData.billDate}
                 onChange={(e) => handleInputChange('billDate', e.target.value)}
-                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                className={`w-full px-3 py-2 text-sm sm:text-base border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                   errors.billDate ? 'border-red-500' : 'border-gray-300'
                 }`}
               />
               {errors.billDate && (
-                <p className="text-red-500 text-sm mt-1">{errors.billDate}</p>
+                <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.billDate}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Due Date</label>
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Due Date</label>
               <input
                 type="date"
                 value={formData.dueDate}
                 onChange={(e) => handleInputChange('dueDate', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Description</label>
               <input
                 type="text"
                 value={formData.description}
                 onChange={(e) => handleInputChange('description', e.target.value)}
                 placeholder="Enter bill description"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
           </div>
 
           {/* Items Section */}
           <div>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Items</h3>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 mb-3 sm:mb-4">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900">Items</h3>
               <button
                 type="button"
                 onClick={addItem}
-                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-2 text-xs sm:text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
-                <Plus className="h-4 w-4" />
+                <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span>Add Item</span>
               </button>
             </div>
 
             {errors.items && (
-              <p className="text-red-500 text-sm mb-4">{errors.items}</p>
+              <p className="text-red-500 text-xs sm:text-sm mb-3 sm:mb-4">{errors.items}</p>
             )}
 
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {formData.items.map((item, index) => (
-                <div key={index} className="bg-gray-50 p-4 rounded-lg">
-                  <div className="flex items-center justify-between mb-3">
-                    <h4 className="font-medium text-gray-900">Item {index + 1}</h4>
+                <div key={index} className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                  <div className="flex items-center justify-between mb-2 sm:mb-3">
+                    <h4 className="text-sm sm:text-base font-medium text-gray-900">Item {index + 1}</h4>
                     <button
                       type="button"
                       onClick={() => removeItem(index)}
-                      className="text-red-600 hover:text-red-800"
+                      className="text-red-600 hover:text-red-800 p-1"
                     >
-                      <Minus className="h-4 w-4" />
+                      <Minus className="h-3 w-3 sm:h-4 sm:w-4" />
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4">
+                    <div className="sm:col-span-2 lg:col-span-2">
+                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
                         Item Name <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
                         value={item.name}
                         onChange={(e) => updateItem(index, 'name', e.target.value)}
-                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                        className={`w-full px-3 py-2 text-sm sm:text-base border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                           errors[`item_${index}_name`] ? 'border-red-500' : 'border-gray-300'
                         }`}
                         placeholder="Enter item name"
@@ -339,7 +339,7 @@ const EditBillForm = ({ bill, onClose, onSave, shops }) => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
                         Quantity <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -347,7 +347,7 @@ const EditBillForm = ({ bill, onClose, onSave, shops }) => {
                         min="1"
                         value={item.quantity}
                         onChange={(e) => updateItem(index, 'quantity', parseInt(e.target.value) || 0)}
-                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                        className={`w-full px-3 py-2 text-sm sm:text-base border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                           errors[`item_${index}_quantity`] ? 'border-red-500' : 'border-gray-300'
                         }`}
                       />
@@ -357,7 +357,7 @@ const EditBillForm = ({ bill, onClose, onSave, shops }) => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
                         Unit Price <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -366,7 +366,7 @@ const EditBillForm = ({ bill, onClose, onSave, shops }) => {
                         step="0.01"
                         value={item.unitPrice}
                         onChange={(e) => updateItem(index, 'unitPrice', parseFloat(e.target.value) || 0)}
-                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                        className={`w-full px-3 py-2 text-sm sm:text-base border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                           errors[`item_${index}_unitPrice`] ? 'border-red-500' : 'border-gray-300'
                         }`}
                       />
@@ -376,35 +376,35 @@ const EditBillForm = ({ bill, onClose, onSave, shops }) => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Total</label>
+                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Total</label>
                       <input
                         type="number"
                         value={item.totalPrice}
                         disabled
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100"
+                        className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg bg-gray-100"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Category</label>
                       <input
                         type="text"
                         value={item.category}
                         onChange={(e) => updateItem(index, 'category', e.target.value)}
                         placeholder="Category"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       />
                     </div>
                   </div>
 
-                  <div className="mt-3">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <div className="mt-2 sm:mt-3">
+                    <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Description</label>
                     <input
                       type="text"
                       value={item.description}
                       onChange={(e) => updateItem(index, 'description', e.target.value)}
                       placeholder="Item description"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
                 </div>
@@ -413,75 +413,75 @@ const EditBillForm = ({ bill, onClose, onSave, shops }) => {
           </div>
 
           {/* Pricing Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Pricing</h3>
-              <div className="space-y-4">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Pricing</h3>
+              <div className="space-y-3 sm:space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Subtotal</label>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Subtotal</label>
                   <input
                     type="number"
                     value={formData.pricing.subtotal}
                     disabled
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100"
+                    className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg bg-gray-100"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Discount</label>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Discount</label>
                   <input
                     type="number"
                     min="0"
                     step="0.01"
                     value={formData.pricing.discount}
                     onChange={(e) => handleInputChange('pricing.discount', parseFloat(e.target.value) || 0)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">GST Rate (%)</label>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">GST Rate (%)</label>
                   <input
                     type="number"
                     min="0"
                     max="100"
                     value={formData.pricing.gstRate}
                     onChange={(e) => handleInputChange('pricing.gstRate', parseFloat(e.target.value) || 0)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">GST Amount</label>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">GST Amount</label>
                   <input
                     type="number"
                     value={formData.pricing.gstAmount}
                     disabled
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100"
+                    className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg bg-gray-100"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Total Amount</label>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Total Amount</label>
                   <input
                     type="number"
                     value={formData.pricing.totalAmount}
                     disabled
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 font-semibold"
+                    className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg bg-gray-100 font-semibold"
                   />
                 </div>
               </div>
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Payment</h3>
-              <div className="space-y-4">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Payment</h3>
+              <div className="space-y-3 sm:space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Payment Method</label>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Payment Method</label>
                   <select
                     value={formData.payment.method}
                     onChange={(e) => handleInputChange('payment.method', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="cash">Cash</option>
                     <option value="card">Card</option>
@@ -492,11 +492,11 @@ const EditBillForm = ({ bill, onClose, onSave, shops }) => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Payment Status</label>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Payment Status</label>
                   <select
                     value={formData.payment.status}
                     onChange={(e) => handleInputChange('payment.status', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="pending">Pending</option>
                     <option value="paid">Paid</option>
@@ -506,24 +506,24 @@ const EditBillForm = ({ bill, onClose, onSave, shops }) => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Paid Amount</label>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Paid Amount</label>
                   <input
                     type="number"
                     min="0"
                     step="0.01"
                     value={formData.payment.paidAmount}
                     onChange={(e) => handleInputChange('payment.paidAmount', parseFloat(e.target.value) || 0)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Remaining Amount</label>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Remaining Amount</label>
                   <input
                     type="number"
                     value={formData.pricing.totalAmount - formData.payment.paidAmount}
                     disabled
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100"
+                    className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg bg-gray-100"
                   />
                 </div>
               </div>
@@ -532,8 +532,8 @@ const EditBillForm = ({ bill, onClose, onSave, shops }) => {
 
           {/* Recurring Section */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Recurring Settings</h3>
-            <div className="space-y-4">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Recurring Settings</h3>
+            <div className="space-y-3 sm:space-y-4">
               <div className="flex items-center">
                 <input
                   type="checkbox"
@@ -542,19 +542,19 @@ const EditBillForm = ({ bill, onClose, onSave, shops }) => {
                   onChange={(e) => handleInputChange('recurring.isRecurring', e.target.checked)}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
-                <label htmlFor="isRecurring" className="ml-2 text-sm font-medium text-gray-700">
+                <label htmlFor="isRecurring" className="ml-2 text-xs sm:text-sm font-medium text-gray-700">
                   Make this a recurring bill
                 </label>
               </div>
 
               {formData.recurring.isRecurring && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Frequency</label>
+                    <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Frequency</label>
                     <select
                       value={formData.recurring.frequency}
                       onChange={(e) => handleInputChange('recurring.frequency', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     >
                       <option value="daily">Daily</option>
                       <option value="weekly">Weekly</option>
@@ -565,12 +565,12 @@ const EditBillForm = ({ bill, onClose, onSave, shops }) => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Next Due Date</label>
+                    <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Next Due Date</label>
                     <input
                       type="date"
                       value={formData.recurring.nextDueDate}
                       onChange={(e) => handleInputChange('recurring.nextDueDate', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
                 </div>
@@ -580,31 +580,31 @@ const EditBillForm = ({ bill, onClose, onSave, shops }) => {
 
           {/* Notes */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Notes</label>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Notes</label>
             <textarea
               value={formData.notes}
               onChange={(e) => handleInputChange('notes', e.target.value)}
               rows={3}
               placeholder="Additional notes..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-end space-x-4 pt-6 border-t">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-4 pt-4 sm:pt-6 border-t">
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              className="w-full sm:w-auto px-4 sm:px-6 py-2 text-xs sm:text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center space-x-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+              className="w-full sm:w-auto flex items-center justify-center space-x-2 px-4 sm:px-6 py-2 text-xs sm:text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
             >
-              <Save className="h-4 w-4" />
+              <Save className="h-3 w-3 sm:h-4 sm:w-4" />
               <span>{loading ? 'Saving...' : 'Save Changes'}</span>
             </button>
           </div>

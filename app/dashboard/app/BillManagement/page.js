@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Plus, Search, Eye, Edit, Trash2, DollarSign, Building2, CreditCard, History, Receipt, X } from 'lucide-react';
+import { Plus, Search, Eye, Edit, Trash2, DollarSign, Building2, CreditCard, History, Receipt, X, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/AuthContext';
 import { useDebounce } from '@/lib/useDebounce';
@@ -756,53 +756,50 @@ const BillManagementPage = () => {
 
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Bill Management</h1>
-          {/* <p className="text-gray-600">Manage your bills and shop transactions</p>
-          <div className="text-sm text-gray-500 space-y-1">
-            <p>Shops loaded: {shops.length}</p>
-            <p>Bills loaded: {bills.length}</p>
-            <p>Stats: Total {formatCurrency(stats.totalAmount)} | Paid {formatCurrency(stats.paidAmount)} | Remaining {formatCurrency(stats.remainingAmount)}</p>
-            <p className="text-xs text-blue-600">
-              {bills.length === 0 ? 'No data found' : 'Data loaded from database'}
+    <div className="space-y-4 sm:space-y-6 p-3 sm:p-4 md:p-6">
+      {/* Header / Hero */}
+      <div className="bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 rounded-2xl p-5 sm:p-6 lg:p-7 text-white shadow-xl border border-amber-300/40">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <div className="bg-white/15 p-2.5 rounded-xl">
+                <Sparkles className="w-6 h-6 sm:w-7 sm:h-7" />
+              </div>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold leading-tight">
+                Bill Management
+              </h1>
+            </div>
+            <p className="text-sm sm:text-base text-amber-50/90 max-w-2xl">
+              बिल जोड़ें, दुकानों को प्रबंधित करें, भुगतान ट्रैक करें, और बकाया देखें।
             </p>
-            <p className="text-xs text-gray-500">
-              {(selectedShop && selectedShop !== '') || searchTerm || filterDateRange ? 
-                `Showing filtered results (${stats.totalBills} bills)` : 
-                `Showing all results (${stats.totalBills} bills)`
-              }
-            </p>
-          </div> */}
-        </div>
-        <div className="flex gap-3">
-          <button
-            onClick={async () => {
-              // console.log('🔄 Refreshing all data from database...');
-              await fetchShops();
-              await fetchBills();
-              await fetchStats();
-            }}
-            className="flex items-center gap-2 px-4 py-2 border border-blue-300 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors"
-          >
-            🔄 Refresh Data
-          </button>
-          <button
-            onClick={() => setShowAddShopForm(true)}
-            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-          >
-            <Building2 className="w-4 h-4" />
-            Add Shop
-          </button>
-          <button
-            onClick={() => setShowAddBillForm(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            Add Bill
-          </button>
+          </div>
+          <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 w-full lg:w-auto">
+            <button
+              onClick={async () => {
+                await fetchShops();
+                await fetchBills();
+                await fetchStats();
+              }}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold bg-white/15 hover:bg-white/25 border border-white/30 rounded-xl transition-all duration-200 shadow-md"
+            >
+              🔄 Refresh Data
+            </button>
+            <button
+              onClick={() => setShowAddShopForm(true)}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold bg-white text-amber-700 rounded-xl hover:bg-amber-50 transition-all duration-200 shadow-md"
+            >
+              <Building2 className="w-4 h-4" />
+              <span className="hidden sm:inline">Add Shop</span>
+              <span className="sm:hidden">Shop</span>
+            </button>
+            <button
+              onClick={() => setShowAddBillForm(true)}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold bg-gradient-to-r from-amber-100 via-white to-amber-50 text-amber-700 rounded-xl hover:from-white hover:to-white transition-all duration-200 shadow-lg shadow-amber-400/40"
+            >
+              <Plus className="w-4 h-4" />
+              Add Bill
+            </button>
+          </div>
         </div>
       </div>
 
@@ -817,74 +814,74 @@ const BillManagementPage = () => {
       </div> */}
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-gray-200">
           <div className="flex items-center">
-            <div className="p-3 bg-blue-100 rounded-full">
-              <DollarSign className="w-6 h-6 text-blue-600" />
+            <div className="p-2 sm:p-3 bg-blue-100 rounded-full flex-shrink-0">
+              <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">
+            <div className="ml-3 sm:ml-4 flex-1 min-w-0">
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">
                 Total Bills {selectedShop && selectedShop !== '' ? `(${shops.find(s => s._id === selectedShop)?.name || 'Selected Shop'})` : '(All Shops)'}
               </p>
-              <p className="text-2xl font-semibold text-gray-900">{stats.totalBills}</p>
+              <p className="text-xl sm:text-2xl font-semibold text-gray-900 truncate">{stats.totalBills}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-gray-200">
           <div className="flex items-center">
-            <div className="p-3 bg-green-100 rounded-full">
-              <DollarSign className="w-6 h-6 text-green-600" />
+            <div className="p-2 sm:p-3 bg-green-100 rounded-full flex-shrink-0">
+              <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Amount</p>
-              <p className="text-2xl font-semibold text-gray-900">{formatCurrency(stats.totalAmount)}</p>
+            <div className="ml-3 sm:ml-4 flex-1 min-w-0">
+              <p className="text-xs sm:text-sm font-medium text-gray-600">Total Amount</p>
+              <p className="text-xl sm:text-2xl font-semibold text-gray-900 truncate">{formatCurrency(stats.totalAmount)}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-gray-200">
           <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="p-3 bg-yellow-100 rounded-full">
-                <DollarSign className="w-6 h-6 text-yellow-300" />
+            <div className="flex items-center flex-1 min-w-0">
+              <div className="p-2 sm:p-3 bg-yellow-100 rounded-full flex-shrink-0">
+                <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-300" />
               </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Paid Amount</p>
-                <p className="text-2xl font-semibold text-gray-900">{formatCurrency(stats.paidAmount)}</p>
+              <div className="ml-3 sm:ml-4 flex-1 min-w-0">
+                <p className="text-xs sm:text-sm font-medium text-gray-600">Paid Amount</p>
+                <p className="text-xl sm:text-2xl font-semibold text-gray-900 truncate">{formatCurrency(stats.paidAmount)}</p>
               </div>
             </div>
             {selectedShop && (
               <button
                 onClick={handleViewPaymentHistory}
-                className="p-2 text-yellow-300 hover:text-yellow-800 hover:bg-yellow-50 rounded-lg transition-colors"
+                className="p-1.5 sm:p-2 text-yellow-300 hover:text-yellow-800 hover:bg-yellow-50 rounded-lg transition-colors flex-shrink-0 ml-2"
                 title="View Payment History"
               >
-                <History className="w-5 h-5" />
+                <History className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             )}
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-gray-200">
           <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="p-3 bg-red-100 rounded-full">
-                <DollarSign className="w-6 h-6 text-red-600" />
+            <div className="flex items-center flex-1 min-w-0">
+              <div className="p-2 sm:p-3 bg-red-100 rounded-full flex-shrink-0">
+                <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />
               </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Remaining</p>
-                <p className="text-2xl font-semibold text-gray-900">{formatCurrency(stats.remainingAmount)}</p>
+              <div className="ml-3 sm:ml-4 flex-1 min-w-0">
+                <p className="text-xs sm:text-sm font-medium text-gray-600">Remaining</p>
+                <p className="text-xl sm:text-2xl font-semibold text-gray-900 truncate">{formatCurrency(stats.remainingAmount)}</p>
               </div>
             </div>
             {selectedShop && (
               <button
                 onClick={handleAddPaymentFromRemaining}
-                className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors"
+                className="p-1.5 sm:p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0 ml-2"
                 title="Add Payment"
               >
-                <Receipt className="w-5 h-5" />
+                <Receipt className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             )}
           </div>
@@ -892,17 +889,17 @@ const BillManagementPage = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-gray-200">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Shop</label>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Shop</label>
             <select
               value={selectedShop}
               onChange={(e) => {
                 // console.log('🏪 Shop changed to:', e.target.value);
                 setSelectedShop(e.target.value);
               }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               disabled={shopsLoading}
             >
               <option value="">
@@ -915,19 +912,19 @@ const BillManagementPage = () => {
               ))}
             </select>
             {shops.length === 0 && !shopsLoading && (
-              <p className="text-sm text-red-500 mt-1">No shops found. Add a shop first.</p>
+              <p className="text-xs sm:text-sm text-red-500 mt-1">No shops found. Add a shop first.</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Time Period</label>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Time Period</label>
             <select
               value={filterDateRange}
               onChange={(e) => {
                 // console.log('📅 Date range changed to:', e.target.value);
                 setFilterDateRange(e.target.value);
               }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="">All Time</option>
               <option value="1d">Last 1 Day</option>
@@ -942,9 +939,9 @@ const BillManagementPage = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Search</label>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-3 h-3 sm:w-4 sm:h-4" />
               <input
                 type="text"
                 placeholder="Search bills..."
@@ -953,7 +950,7 @@ const BillManagementPage = () => {
                   // console.log('🔍 Search term changed to:', e.target.value);
                   setSearchTerm(e.target.value);
                 }}
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full pl-8 sm:pl-10 pr-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
           </div>
@@ -966,7 +963,7 @@ const BillManagementPage = () => {
                 setSearchTerm('');
                 setFilterDateRange('');
               }}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+              className="w-full px-3 sm:px-4 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
             >
               Clear Filters
             </button>
@@ -976,22 +973,22 @@ const BillManagementPage = () => {
 
       {/* Bills Table */}
       <div className="bg-white rounded-lg shadow-md border border-gray-200">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">Bills</h3>
+        <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
+          <h3 className="text-base sm:text-lg font-medium text-gray-900">Bills</h3>
         </div>
         
         {loading ? (
-          <div className="flex items-center justify-center py-12">
+          <div className="flex items-center justify-center py-8 sm:py-12">
             <div className="text-center">
-              <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading bills...</p>
+              <div className="w-6 h-6 sm:w-8 sm:h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3 sm:mb-4"></div>
+              <p className="text-sm sm:text-base text-gray-600">Loading bills...</p>
             </div>
           </div>
         ) : bills.length === 0 ? (
-          <div className="text-center py-12">
-            <DollarSign className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-            <p className="text-gray-500">No bills found</p>
-            <p className="text-sm text-gray-400">Create your first bill to get started</p>
+          <div className="text-center py-8 sm:py-12">
+            <DollarSign className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 text-gray-300" />
+            <p className="text-sm sm:text-base text-gray-500">No bills found</p>
+            <p className="text-xs sm:text-sm text-gray-400">Create your first bill to get started</p>
           </div>
         ) : (() => {
           // Filter bills based on selected shop and search term
@@ -1065,10 +1062,10 @@ const BillManagementPage = () => {
           
           if (filteredBills.length === 0) {
             return (
-              <div className="text-center py-12">
-                <DollarSign className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                <p className="text-gray-500">No bills found</p>
-                <p className="text-sm text-gray-400">
+              <div className="text-center py-8 sm:py-12">
+                <DollarSign className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 text-gray-300" />
+                <p className="text-sm sm:text-base text-gray-500">No bills found</p>
+                <p className="text-xs sm:text-sm text-gray-400">
                   {selectedShop ? 'No bills found for selected shop' : 'Try adjusting your filters'}
                 </p>
               </div>
@@ -1076,65 +1073,65 @@ const BillManagementPage = () => {
           }
           
           return (
-            <div className="overflow-x-auto">
-              <table className="w-full">
+            <div className="overflow-x-auto -mx-4 sm:mx-0">
+              <table className="w-full min-w-[700px]">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bill #</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Shop</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bill #</th>
+                    <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Shop</th>
+                    <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                    <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                    <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Payment</th>
+                    <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {(Array.isArray(filteredBills) ? filteredBills : []).map((bill) => (
                   <tr key={bill._id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {bill.billNumber}
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium text-gray-900">
+                      <div className="truncate max-w-[100px] sm:max-w-none">{bill.billNumber}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {bill.shopName}
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-900 hidden md:table-cell">
+                      <div className="truncate max-w-[150px]">{bill.shopName}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-900 whitespace-nowrap">
                       {formatDate(bill.billDate || bill.createdAt || bill.invoiceDate || bill.date)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-900 whitespace-nowrap">
                       {formatCurrency(bill.pricing?.totalAmount || bill.totalAmount || 0)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-900 whitespace-nowrap hidden lg:table-cell">
                       {formatCurrency(bill.payment?.paidAmount || bill.paidAmount || 0)} / {formatCurrency(bill.pricing?.totalAmount || bill.totalAmount || 0)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium">
+                      <div className="flex space-x-1 sm:space-x-2">
                         <button 
                           onClick={() => handleViewBill(bill)}
-                          className="text-blue-600 hover:text-blue-900"
+                          className="text-blue-600 hover:text-blue-900 p-1"
                           title="View Bill"
                         >
-                          <Eye className="w-4 h-4" />
+                          <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
                         </button>
                         <button 
                           onClick={() => handleEditBill(bill)}
-                          className="text-green-600 hover:text-green-900"
+                          className="text-green-600 hover:text-green-900 p-1"
                           title="Edit Bill"
                         >
-                          <Edit className="w-4 h-4" />
+                          <Edit className="w-3 h-3 sm:w-4 sm:h-4" />
                         </button>
                         <button 
                           onClick={() => handleAddPayment(bill)}
-                          className="text-purple-600 hover:text-purple-900"
+                          className="text-purple-600 hover:text-purple-900 p-1"
                           title="Add Payment"
                         >
-                          <CreditCard className="w-4 h-4" />
+                          <CreditCard className="w-3 h-3 sm:w-4 sm:h-4" />
                         </button>
                         <button 
                           onClick={() => handleDeleteBill(bill._id)}
-                          className="text-red-600 hover:text-red-900"
+                          className="text-red-600 hover:text-red-900 p-1"
                           title="Delete Bill"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
                         </button>
                       </div>
                     </td>
@@ -1202,19 +1199,19 @@ const BillManagementPage = () => {
 
       {/* Payment History Modal */}
       {showPaymentHistoryModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-3 sm:p-4">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-900">Payment History</h2>
+            <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Payment History</h2>
               <button
                 onClick={() => setShowPaymentHistoryModal(false)}
                 className="text-gray-400 hover:text-gray-600"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
             </div>
             
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               {(() => {
                 const selectedShopName = shops.find(s => s._id === selectedShop)?.name;
                 const shopBills = bills.filter(bill => bill.shopName === selectedShopName);
@@ -1228,39 +1225,39 @@ const BillManagementPage = () => {
 
                 if (allPayments.length === 0) {
                   return (
-                    <div className="text-center py-8">
-                      <Receipt className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                      <p className="text-gray-500">No payment history found</p>
-                      <p className="text-sm text-gray-400">Payments will appear here once added</p>
+                    <div className="text-center py-6 sm:py-8">
+                      <Receipt className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 text-gray-300" />
+                      <p className="text-sm sm:text-base text-gray-500">No payment history found</p>
+                      <p className="text-xs sm:text-sm text-gray-400">Payments will appear here once added</p>
                     </div>
                   );
                 }
 
                 return (
-                  <div className="space-y-4">
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                      <h3 className="text-sm font-medium text-blue-800 mb-2">
+                  <div className="space-y-3 sm:space-y-4">
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
+                      <h3 className="text-xs sm:text-sm font-medium text-blue-800 mb-1 sm:mb-2">
                         Payment History for {selectedShopName}
                       </h3>
-                      <p className="text-sm text-blue-600">
+                      <p className="text-xs sm:text-sm text-blue-600">
                         Total Payments: {allPayments.length} | 
                         Total Amount: {formatCurrency(allPayments.reduce((sum, p) => sum + p.amount, 0))}
                       </p>
                     </div>
                     
-                    <div className="space-y-3">
+                    <div className="space-y-2 sm:space-y-3">
                       {allPayments.map((payment, index) => (
-                        <div key={index} className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                          <div className="flex justify-between items-start">
-                            <div className="flex-1">
-                              <div className="flex items-center space-x-4 mb-2">
-                                <span className="text-sm font-medium text-gray-900">
+                        <div key={index} className="bg-gray-50 border border-gray-200 rounded-lg p-3 sm:p-4">
+                          <div className="flex flex-col sm:flex-row justify-between items-start gap-2 sm:gap-0">
+                            <div className="flex-1 w-full">
+                              <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-2">
+                                <span className="text-xs sm:text-sm font-medium text-gray-900">
                                   {payment.customerName}
                                 </span>
-                                <span className="text-sm text-gray-500">
+                                <span className="text-xs sm:text-sm text-gray-500">
                                   {formatDate(payment.paymentDate)}
                                 </span>
-                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                <span className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium ${
                                   payment.method === 'cash' ? 'bg-green-100 text-green-800' :
                                   payment.method === 'upi' ? 'bg-blue-100 text-blue-800' :
                                   payment.method === 'cheque' ? 'bg-purple-100 text-purple-800' :
@@ -1269,13 +1266,13 @@ const BillManagementPage = () => {
                                   {payment.method.toUpperCase()}
                                 </span>
                               </div>
-                              <div className="text-sm text-gray-600">
+                              <div className="text-xs sm:text-sm text-gray-600">
                                 <p>Bill: {payment.billNumber}</p>
-                                {payment.notes && <p>Notes: {payment.notes}</p>}
+                                {payment.notes && <p className="truncate">Notes: {payment.notes}</p>}
                               </div>
                             </div>
-                            <div className="text-right">
-                              <p className="text-lg font-semibold text-gray-900">
+                            <div className="text-right w-full sm:w-auto">
+                              <p className="text-base sm:text-lg font-semibold text-gray-900">
                                 {formatCurrency(payment.amount)}
                               </p>
                             </div>

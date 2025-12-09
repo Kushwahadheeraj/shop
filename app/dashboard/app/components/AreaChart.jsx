@@ -1,16 +1,28 @@
 "use client";
-import React, { memo } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 const AreaChartComponent = memo(({ data = [], type = 'orders' }) => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   if (!data || data.length === 0) {
     return (
-      <div className="h-64 flex items-center justify-center text-gray-500">
+      <div className="h-48 sm:h-64 flex items-center justify-center text-gray-500">
         <div className="text-center">
           <div className="w-12 h-12 mx-auto mb-2 bg-yellow-100 rounded-full flex items-center justify-center">
             <span className="text-2xl">📊</span>
           </div>
-          <p>No data available</p>
+          <p className="text-sm">No data available</p>
         </div>
       </div>
     );
@@ -20,7 +32,7 @@ const AreaChartComponent = memo(({ data = [], type = 'orders' }) => {
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+        <div className="bg-white p-2 sm:p-3 border border-gray-200 rounded-lg shadow-lg text-xs sm:text-sm">
           <p className="font-medium text-gray-900 mb-2">{label}</p>
           {payload.map((entry, index) => (
             <div key={index} className="flex items-center space-x-2">
@@ -28,7 +40,7 @@ const AreaChartComponent = memo(({ data = [], type = 'orders' }) => {
                 className="w-3 h-3 rounded-sm" 
                 style={{ backgroundColor: entry.color }}
               ></div>
-              <span className="text-sm text-gray-600">{entry.name}:</span>
+              <span className="text-gray-600">{entry.name}:</span>
               <span className="font-medium">{entry.value}</span>
             </div>
           ))}
@@ -38,12 +50,17 @@ const AreaChartComponent = memo(({ data = [], type = 'orders' }) => {
     return null;
   };
 
+  // Responsive margins: reduce left/right on mobile, keep desktop same
+  const chartMargin = isMobile 
+    ? { top: 20, right: 5, left: 0, bottom: 20 }
+    : { top: 20, right: 30, left: 20, bottom: 20 };
+
   return (
-    <div className="h-80 w-full">
+    <div className="h-64 sm:h-80 w-full">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart 
           data={data} 
-          margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+          margin={chartMargin}
         >
           <defs>
             <linearGradient id="ordersGradient" x1="0" y1="0" x2="0" y2="1">
@@ -59,24 +76,31 @@ const AreaChartComponent = memo(({ data = [], type = 'orders' }) => {
           <XAxis 
             dataKey="month" 
             stroke="#9ca3af"
-            fontSize={12}
+            fontSize={isMobile ? 10 : 12}
             tickLine={false}
             axisLine={false}
             tick={{ fill: '#6b7280' }}
+            angle={isMobile ? -45 : 0}
+            textAnchor={isMobile ? 'end' : 'middle'}
+            height={isMobile ? 60 : 30}
           />
           <YAxis 
             stroke="#9ca3af"
-            fontSize={12}
+            fontSize={isMobile ? 10 : 12}
             tickLine={false}
             axisLine={false}
             tick={{ fill: '#6b7280' }}
+            width={isMobile ? 30 : 40}
           />
           <Tooltip content={<CustomTooltip />} />
           <Legend 
             verticalAlign="bottom" 
-            height={36}
+            height={isMobile ? 40 : 36}
             iconType="rect"
-            wrapperStyle={{ paddingTop: '20px' }}
+            wrapperStyle={{ 
+              paddingTop: isMobile ? '10px' : '20px',
+              fontSize: isMobile ? '10px' : '12px'
+            }}
           />
           <Area 
             type="monotone" 

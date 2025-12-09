@@ -388,8 +388,8 @@ const CustomerCard = ({ bill }) => (
 const ItemsTable = ({ bill }) => {
   const items = Array.isArray(bill?.items) ? bill.items : [];
   return (
-    <div className="overflow-hidden print:overflow-visible">
-      <table className="w-full text-sm text-slate-700 bg-white border-collapse print:text-xs">
+    <div className="overflow-x-auto print:overflow-visible rounded-xl border border-slate-200/70">
+      <table className="w-full min-w-[560px] text-sm text-slate-700 bg-white border-collapse print:text-xs">
         <thead>
           <tr className="border-b-2 border-emerald-400 print:border-b-2">
             <th className="text-left py-3 px-3 font-semibold text-emerald-600 uppercase text-xs print:py-2 print:px-2">Article</th>
@@ -501,7 +501,7 @@ const TemplateWrapper = ({ bill, template }) => {
   switch (template?.id) {
     case 'classic':
       return (
-        <div className="bg-white border border-slate-300 shadow-2xl max-w-5xl w-full mx-auto rounded-2xl px-10 py-8">
+        <div className="bg-white border border-slate-300 shadow-2xl max-w-5xl w-full mx-auto rounded-2xl px-5 sm:px-8 md:px-10 py-6 sm:py-8">
           <InvoiceHeader bill={bill} />
           <CustomerCard bill={bill} />
           <ItemsTable bill={bill} />
@@ -512,7 +512,7 @@ const TemplateWrapper = ({ bill, template }) => {
       );
     case 'minimal':
       return (
-        <div className="bg-white border border-slate-200 rounded-3xl shadow-xl max-w-4xl w-full mx-auto p-10">
+        <div className="bg-white border border-slate-200 rounded-3xl shadow-xl max-w-4xl w-full mx-auto p-5 sm:p-7 md:p-10">
           <InvoiceHeader bill={bill} />
           <CustomerCard bill={bill} />
           <ItemsTable bill={bill} />
@@ -523,7 +523,7 @@ const TemplateWrapper = ({ bill, template }) => {
       );
     case 'modern':
       return (
-        <div className="bg-white border border-slate-200 rounded-3xl shadow-2xl max-w-5xl w-full mx-auto p-10">
+        <div className="bg-white border border-slate-200 rounded-3xl shadow-2xl max-w-5xl w-full mx-auto p-5 sm:p-8 md:p-10">
           <InvoiceHeader bill={bill} />
           <CustomerCard bill={bill} />
           <ItemsTable bill={bill} />
@@ -536,7 +536,7 @@ const TemplateWrapper = ({ bill, template }) => {
     default:
       // Default template - 3 column layout with 100px top padding
       return (
-        <div className="bg-white max-w-5xl w-full mx-auto p-8 print:p-0 print:max-w-full print:w-full">
+        <div className="bg-white max-w-5xl w-full mx-auto p-5 sm:p-6 md:p-8 print:p-0 print:max-w-full print:w-full">
           <InvoiceHeaderWithQR bill={bill} />
           <ItemsTable bill={bill} />
           <TotalsFooter bill={bill} />

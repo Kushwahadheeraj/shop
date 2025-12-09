@@ -254,11 +254,50 @@ const updateInvoice = async (req, res) => {
   }
 };
 
+// Delete invoice
+const deleteInvoice = async (req, res) => {
+  try {
+    if (!req.sellerId) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authentication required',
+      });
+    }
+
+    const invoice = await Invoice.findOne({
+      _id: req.params.id,
+      createdBy: req.sellerId,
+    });
+
+    if (!invoice) {
+      return res.status(404).json({
+        success: false,
+        message: 'Invoice not found',
+      });
+    }
+
+    await Invoice.deleteOne({ _id: invoice._id });
+
+    res.json({
+      success: true,
+      message: 'Invoice deleted successfully',
+    });
+  } catch (error) {
+    console.error('Error deleting invoice:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error deleting invoice',
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   createInvoice,
   getInvoices,
   getInvoiceById,
   updateInvoice,
+  deleteInvoice,
 };
 
 

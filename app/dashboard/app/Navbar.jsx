@@ -65,27 +65,55 @@ const Navbar = memo(function Navbar({ onMenuClick }) {
     return () => clearTimeout(timeout);
   }, []);
 
-  // OPTIMIZED: Theme toggle - memoized
+  // OPTIMIZED: Theme handling (syncs with Settings and OS)
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+
+    const applyTheme = (mode) => {
+      const prefersDark = media.matches;
+      const resolved = mode === "auto" ? (prefersDark ? "dark" : "light") : mode;
+      setTheme(mode);
+      document.documentElement.dataset.dashboardTheme = resolved;
+      document.documentElement.setAttribute("data-theme", resolved);
+      document.body?.setAttribute("data-theme", resolved);
+      document.documentElement.classList.toggle("dark", resolved === "dark");
+    };
+
     const stored = localStorage.getItem("theme");
     if (stored) {
-      setTheme(stored);
-      document.documentElement.classList.toggle("dark", stored === "dark");
+      applyTheme(stored);
     } else {
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const initialTheme = prefersDark ? "dark" : "light";
-      setTheme(initialTheme);
-      document.documentElement.classList.toggle("dark", prefersDark);
+      applyTheme("auto");
     }
+
+    const handleMedia = () => {
+      const current = localStorage.getItem("theme") || "auto";
+      if (current === "auto") applyTheme("auto");
+    };
+    const handleEvent = () => {
+      const current = localStorage.getItem("theme") || "auto";
+      applyTheme(current);
+    };
+
+    media.addEventListener?.("change", handleMedia);
+    window.addEventListener("theme-changed", handleEvent);
+    window.addEventListener("storage", handleEvent);
+
+    return () => {
+      media.removeEventListener?.("change", handleMedia);
+      window.removeEventListener("theme-changed", handleEvent);
+      window.removeEventListener("storage", handleEvent);
+    };
   }, []);
   
   const toggleTheme = useCallback(() => {
-    const newTheme = theme === "dark" ? "light" : "dark";
-    setTheme(newTheme);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem("theme", newTheme);
-      document.documentElement.classList.toggle("dark", newTheme === "dark");
+    const current = typeof window !== "undefined" ? localStorage.getItem("theme") || "auto" : theme;
+    const resolved = current === "dark" ? "light" : "dark";
+    setTheme(resolved);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("theme", resolved);
+      window.dispatchEvent(new Event("theme-changed"));
     }
   }, [theme]);
 
@@ -126,7 +154,7 @@ const Navbar = memo(function Navbar({ onMenuClick }) {
   }, [user.name, user.email]);
 
   return (
-    <nav className="w-full px-4 md:px-8 py-4 bg-white border-b border-zinc-100 flex items-center justify-between gap-3">
+    <nav className="w-full px-4 md:px-8 py-4 bg-white dark:bg-zinc-900 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-3 text-zinc-900 dark:text-white transition-colors">
       {/* Breadcrumbs */}
       <div className="flex items-center gap-2 text-zinc-400 text-xs md:text-sm min-w-0 whitespace-nowrap overflow-hidden">
         {/* Mobile menu button */}

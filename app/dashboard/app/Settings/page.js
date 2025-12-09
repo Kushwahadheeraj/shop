@@ -457,7 +457,6 @@ export default function SettingsPage() {
               <Select
                 value={privacy.profileVisibility}
                 onChange={(e) => handlePrivacyChange('profileVisibility', e)}
-                onValueChange={(v) => handlePrivacyChange('profileVisibility', v)}
               >
                 <option value="public">Public</option>
                 <option value="private">Private</option>
@@ -513,7 +512,6 @@ export default function SettingsPage() {
               <Select
                 value={theme}
                 onChange={(e) => setTheme(toValue(e))}
-                onValueChange={(v) => setTheme(v)}
               >
                 <option value="light">Light</option>
                 <option value="dark">Dark</option>
@@ -525,7 +523,6 @@ export default function SettingsPage() {
               <Select
                 value={language}
                 onChange={(e) => setLanguage(toValue(e))}
-                onValueChange={(v) => setLanguage(v)}
               >
                 <option value="en">English</option>
                 <option value="hi">Hindi</option>
@@ -572,7 +569,6 @@ export default function SettingsPage() {
               <Select
                 value={security.sessionTimeout}
                 onChange={(e) => handleSecurityChange('sessionTimeout', e)}
-                onValueChange={(v) => handleSecurityChange('sessionTimeout', v)}
               >
                 <option value="15">15 minutes</option>
                 <option value="30">30 minutes</option>

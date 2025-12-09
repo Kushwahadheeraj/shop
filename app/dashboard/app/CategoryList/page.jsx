@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { Sparkles } from "lucide-react";
 import API_BASE_URL from "@/lib/apiConfig";
 
 const categories = [
@@ -250,44 +251,48 @@ export default function CategoryListPage() {
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-gray-800">Category List</h1>
-        <p className="text-gray-500 text-sm">View all product categories and their inventory counts</p>
+    <div className="max-w-7xl mx-auto p-4 sm:p-6">
+      {/* Hero Header */}
+      <div className="mb-4 sm:mb-6 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-lg p-4 sm:p-6 text-white shadow-lg">
+        <div className="flex items-center gap-2 sm:gap-3 mb-2">
+          <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">Category List</h1>
+        </div>
+        <p className="text-xs sm:text-sm text-amber-50">View all product categories and their inventory counts</p>
       </div>
 
       {/* Search Bar */}
-      <div className="bg-white p-4 rounded-lg shadow mb-6">
-        <div className="flex gap-4">
+      <div className="bg-white p-3 sm:p-4 rounded-lg shadow mb-4 sm:mb-6">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <div className="flex-1">
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search categories or products..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-500"
             />
           </div>
           <button
             onClick={fetchCategoryCounts}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            className="px-4 py-2 w-full sm:w-auto bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-md hover:from-amber-600 hover:to-orange-600 transition-all shadow-md hover:shadow-lg text-sm sm:text-base whitespace-nowrap font-medium"
           >
             Refresh
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Categories List */}
         <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="p-4 border-b">
-            <h2 className="text-lg font-semibold text-gray-800">Categories</h2>
+          <div className="p-3 sm:p-4 border-b">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-800">Categories</h2>
           </div>
           <div className="max-h-96 overflow-y-auto">
             {loading ? (
-              <div className="p-8 text-center text-gray-500">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-                Loading categories...
+              <div className="p-6 sm:p-8 text-center text-gray-500">
+                <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                <span className="text-xs sm:text-sm">Loading categories...</span>
               </div>
             ) : (
               <div className="divide-y divide-gray-200">
@@ -295,21 +300,21 @@ export default function CategoryListPage() {
                   <div
                     key={category.key}
                     onClick={() => handleCategoryClick(category)}
-                    className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${
+                    className={`p-3 sm:p-4 hover:bg-gray-50 cursor-pointer transition-colors ${
                       selectedCategory?.key === category.key ? 'bg-blue-50 border-r-4 border-blue-500' : ''
                     }`}
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${category.color}`}>
+                    <div className="flex items-center justify-between gap-2 sm:gap-3">
+                      <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                        <span className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${category.color} truncate`}>
                           {category.name}
                         </span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-2xl font-bold text-gray-900">
+                      <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                        <span className="text-xl sm:text-2xl font-bold text-gray-900">
                           {categoryCounts[category.key] || 0}
                         </span>
-                        <span className="text-sm text-gray-500">products</span>
+                        <span className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">products</span>
                       </div>
                     </div>
                   </div>
@@ -321,25 +326,25 @@ export default function CategoryListPage() {
 
         {/* Subcategories List */}
         <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="p-4 border-b">
-            <h2 className="text-lg font-semibold text-gray-800">
+          <div className="p-3 sm:p-4 border-b">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-800 break-words">
               {selectedCategory ? `${selectedCategory.name} Subcategories` : 'Select a category'}
             </h2>
             {selectedCategory && (
-              <p className="text-sm text-gray-500">
+              <p className="text-xs sm:text-sm text-gray-500 mt-1 break-words">
                 {subcategories.length} subcategories found • {subcategories.reduce((sum, sub) => sum + sub.count, 0)} total products
               </p>
             )}
           </div>
           <div className="max-h-96 overflow-y-auto">
             {!selectedCategory ? (
-              <div className="p-8 text-center text-gray-500">
+              <div className="p-6 sm:p-8 text-center text-gray-500 text-xs sm:text-sm">
                 Click on a category to view its subcategories
               </div>
             ) : subcategoriesLoading ? (
-              <div className="p-8 text-center text-gray-500">Loading subcategories...</div>
+              <div className="p-6 sm:p-8 text-center text-gray-500 text-xs sm:text-sm">Loading subcategories...</div>
             ) : filteredSubcategories.length === 0 ? (
-              <div className="p-8 text-center text-gray-500">
+              <div className="p-6 sm:p-8 text-center text-gray-500 text-xs sm:text-sm break-words">
                 {searchTerm ? 'No subcategories found matching your search' : 'No subcategories in this category'}
               </div>
             ) : (
@@ -348,28 +353,28 @@ export default function CategoryListPage() {
                   <div
                     key={index}
                     onClick={() => handleSubcategoryClick(subcategory)}
-                    className={`p-3 hover:bg-gray-50 cursor-pointer transition-colors ${
+                    className={`p-2.5 sm:p-3 hover:bg-gray-50 cursor-pointer transition-colors ${
                       selectedSubcategory?.name === subcategory.name ? 'bg-green-50 border-r-4 border-green-500' : ''
                     }`}
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-gray-900 truncate">
+                        <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
+                          <span className="text-xs sm:text-sm font-medium text-gray-900 break-words">
                             {formatSubcategoryName(subcategory.name)}
                           </span>
                           {subcategory.parent && (
-                            <span className="text-xs text-gray-400">
+                            <span className="text-xs text-gray-400 break-words">
                               ({formatSubcategoryName(subcategory.parent)})
                             </span>
                           )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 ml-3">
-                        <span className="text-lg font-bold text-gray-900">
+                      <div className="flex items-center gap-1 sm:gap-2 ml-2 sm:ml-3 flex-shrink-0">
+                        <span className="text-base sm:text-lg font-bold text-gray-900">
                           {subcategory.count}
                         </span>
-                        <span className="text-xs text-gray-500">products</span>
+                        <span className="text-xs text-gray-500 whitespace-nowrap">products</span>
                       </div>
                     </div>
                   </div>
@@ -381,8 +386,8 @@ export default function CategoryListPage() {
 
         {/* Products List */}
         <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="p-4 border-b">
-            <h2 className="text-lg font-semibold text-gray-800">
+          <div className="p-3 sm:p-4 border-b">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-800 break-words">
               {selectedSubcategory 
                 ? `${formatSubcategoryName(selectedSubcategory.name)} Products` 
                 : selectedCategory 
@@ -391,8 +396,8 @@ export default function CategoryListPage() {
               }
             </h2>
             {selectedCategory && (
-              <div className="mt-2">
-                <p className="text-sm text-gray-500">
+              <div className="mt-1 sm:mt-2">
+                <p className="text-xs sm:text-sm text-gray-500 break-words">
                   {filteredProducts.length} products found
                   {selectedSubcategory && ` in ${formatSubcategoryName(selectedSubcategory.name)}`}
                 </p>
@@ -401,13 +406,13 @@ export default function CategoryListPage() {
           </div>
           <div className="max-h-96 overflow-y-auto">
             {!selectedCategory ? (
-              <div className="p-8 text-center text-gray-500">
+              <div className="p-6 sm:p-8 text-center text-gray-500 text-xs sm:text-sm">
                 Click on a category to view its products
               </div>
             ) : productsLoading ? (
-              <div className="p-8 text-center text-gray-500">Loading products...</div>
+              <div className="p-6 sm:p-8 text-center text-gray-500 text-xs sm:text-sm">Loading products...</div>
             ) : filteredProducts.length === 0 ? (
-              <div className="p-8 text-center text-gray-500">
+              <div className="p-6 sm:p-8 text-center text-gray-500 text-xs sm:text-sm break-words">
                 {searchTerm 
                   ? 'No products found matching your search' 
                   : selectedSubcategory 
@@ -419,15 +424,15 @@ export default function CategoryListPage() {
               <div className="overflow-x-auto">
                 <div className="divide-y divide-gray-200">
                   {filteredProducts.map((product, index) => (
-                    <div key={product._id || index} className="p-4 hover:bg-gray-50">
-                      <div className="flex items-center justify-between">
+                    <div key={product._id || index} className="p-3 sm:p-4 hover:bg-gray-50">
+                      <div className="flex items-center justify-between gap-2 sm:gap-3">
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-sm font-medium text-gray-900 truncate">
+                          <h3 className="text-xs sm:text-sm font-medium text-gray-900 break-words">
                             {product.name || 'Unnamed Product'}
                           </h3>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <span className="px-3 py-1 text-sm font-medium bg-green-100 text-green-800 rounded-full">
+                        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                          <span className="px-2 sm:px-3 py-1 text-xs sm:text-sm font-medium bg-green-100 text-green-800 rounded-full whitespace-nowrap">
                             {product.totalProduct || 0} products
                           </span>
                         </div>

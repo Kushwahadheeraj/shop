@@ -5032,8 +5032,8 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
   }, []);
   return (
     <aside className='w-64 h-screen bg-white shadow-lg p-2 flex flex-col text-zinc-800 border border-zinc-100'>
-      <div className='px-3 py-4 border-b border-gray-100'>
-        <BrandLogo size={56} />
+      <div className='px-3 py-4 border-b border-gray-100 flex items-center justify-center'>
+        <BrandLogo size={64} showText={true} />
       </div>
       <nav className='flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100'>
         <ul className='p-2.5 space-y-1'>

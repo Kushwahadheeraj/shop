@@ -1,41 +1,56 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 
-const hammerPath =
-  "M85.4 21.3c-2.5.2-5 1.1-6.9 2.9l-6.5 6.2c-1.8-1-3.9-.8-5.4.6l-4.5 4.3 2.3 2.4-37.9 37.9c-2.5 2.5-2.5 6.5 0 9l1.9 1.9c2.5 2.5 6.5 2.5 9 0l38-37.9 2.3 2.3 4.5-4.3c1.4-1.4 1.6-3.6.6-5.4l6.2-6.5c3.7-3.9 3.6-10.1-.3-13.9l-2.4-2.4c-1.2-1.3-3-1.9-4.9-1.7z";
-const wrenchPath =
-  "M46.2 34.2c-2.1 0-4.2.8-5.9 2.4l-9.1 8.5c-3.3 3.2-6.7 6.2-8.5 8-3.1 3.1-3.1 8 0 11l12.2 12.2c3.1 3.1 8 3.1 11 0 1.7-1.7 4.6-5.2 7.8-8.5l8.5-9.1c3.3-3.5 3.3-9.1 0-12.5l-8.3-8.3c-1.7-1.7-3.8-2.7-6-2.7zm20.1 29.2-6.9 7.4 12.1 12.2 6.9-7.4-12.1-12.2z";
-
-export default function BrandLogo({ className = "", size = 48, showText = true }) {
+export default function BrandLogo({ className = "", size = 64, showText = true }) {
+  const diamondSize = size;
+  const bgSize = size * 0.9; // Yellow diamond background size
+  
   return (
-    <div className={`flex items-center gap-2 text-gray-900 ${className}`}>
+    <div className={`flex items-center gap-2 text-zinc-900 dark:text-white w-full ${className}`}>
       <div
-        className="relative flex items-center justify-center"
-        style={{ width: size, height: size }}
+        className="relative flex items-center justify-center flex-shrink-0"
+        style={{ width: diamondSize, height: diamondSize }}
       >
-        <svg viewBox="0 0 120 120" className="w-full h-full">
-          <rect
-            x="20"
-            y="20"
-            width="80"
-            height="80"
-            rx="12"
-            transform="rotate(45 60 60)"
-            fill="#FDD210"
-            stroke="#E6B800"
-            strokeWidth="5"
+        {/* Yellow Diamond Background - matching the image design */}
+        <div
+          className="absolute rounded-lg"
+          style={{
+            background: '#FFD700',
+            transform: 'rotate(45deg)',
+            borderRadius: '10px',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+            width: bgSize,
+            height: bgSize,
+            left: '50%',
+            top: '50%',
+            marginLeft: `-${bgSize / 2}px`,
+            marginTop: `-${bgSize / 2}px`
+          }}
+        />
+        {/* Logo Image on top - centered inside diamond */}
+        <div
+          className="relative z-10 flex items-center justify-center"
+          style={{ 
+            width: size * 1.6, 
+            height: size * 1.6
+          }}
+        >
+          <Image
+            src="/logo.png"
+            alt="Kushwaha Hardware Logo"
+            width={size * 1.6}
+            height={size * 1.6}
+            className="object-contain"
+            priority
           />
-          <g transform="translate(15 15) scale(0.75)">
-            <path d={hammerPath} fill="#0A0A0A" />
-            <path d={wrenchPath} fill="#0A0A0A" />
-          </g>
-        </svg>
+        </div>
       </div>
       {showText && (
-        <div className="leading-tight uppercase font-black tracking-wide text-gray-900">
-          <p className="text-sm sm:text-base">Kushwaha</p>
-          <p className="text-[10px] sm:text-xs tracking-[0.35em] text-gray-700">Hardware</p>
+        <div className="text-left leading-tight flex-1 min-w-0">
+          <p className="text-2xl font-bold text-zinc-900 dark:text-white tracking-tight">Kushwaha</p>
+          <p className="text-lg font-semibold text-zinc-600 dark:text-zinc-200 tracking-wide">Hardware</p>
         </div>
       )}
     </div>

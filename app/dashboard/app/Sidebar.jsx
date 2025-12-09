@@ -4889,6 +4889,7 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
     hiddenSections: {},
     hiddenItems: [],
   });
+  const [sellerLoginUnread, setSellerLoginUnread] = useState(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -4924,6 +4925,58 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
 
     return () => {
       window.removeEventListener('sidebar-visibility-updated', handleCustom);
+      window.removeEventListener('storage', handleStorage);
+    };
+  }, []);
+
+  const markSellerLoginRead = useCallback(() => {
+    setSellerLoginUnread(null);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('seller_login_unread', '0');
+    }
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    const loadSellerLoginUnread = async () => {
+      try {
+        const res = await fetch('/api/notifications/login-unread', { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          const count = Number(data?.unread ?? 0);
+          if (!isMounted) return;
+          setSellerLoginUnread(count > 0 ? count : null);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('seller_login_unread', String(count));
+          }
+          return;
+        }
+      } catch (err) {
+        // non-blocking; fall back to localStorage
+      }
+
+      if (typeof window !== 'undefined') {
+        const raw = localStorage.getItem('seller_login_unread');
+        const parsed = raw ? Number(raw) : 0;
+        if (isMounted) setSellerLoginUnread(parsed > 0 ? parsed : null);
+      }
+    };
+
+    loadSellerLoginUnread();
+
+    const handleCustom = () => loadSellerLoginUnread();
+    const handleStorage = (e) => {
+      if (e.key === 'seller_login_unread') {
+        loadSellerLoginUnread();
+      }
+    };
+
+    window.addEventListener('login-notification', handleCustom);
+    window.addEventListener('storage', handleStorage);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener('login-notification', handleCustom);
       window.removeEventListener('storage', handleStorage);
     };
   }, []);
@@ -5124,9 +5177,21 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
                             ? 'bg-zinc-100 font-semibold shadow'
                             : 'hover:bg-yellow-300 hover:text-white'
                         }`}
-                        onClick={() => handleToggle(section.name)}
+                        onClick={() => {
+                          if (section.name === 'Seller List') {
+                            markSellerLoginRead();
+                          }
+                          handleToggle(section.name);
+                        }}
                       >
-                        {section.name}
+                        <span className="inline-flex items-center gap-2">
+                          {section.name}
+                          {section.name === 'Seller List' && sellerLoginUnread ? (
+                            <span className="inline-flex items-center justify-center min-w-[18px] h-4 px-1 rounded-full bg-amber-500 text-white text-[10px] leading-none shadow-sm">
+                              {sellerLoginUnread > 99 ? '99+' : sellerLoginUnread}
+                            </span>
+                          ) : null}
+                        </span>
                       </Link>
                     ) : (
                       <div
@@ -5135,9 +5200,21 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
                             ? 'bg-zinc-100 font-semibold shadow'
                             : 'hover:bg-yellow-300 hover:text-white'
                         }`}
-                        onClick={() => handleToggle(section.name)}
+                        onClick={() => {
+                          if (section.name === 'Seller List') {
+                            markSellerLoginRead();
+                          }
+                          handleToggle(section.name);
+                        }}
                       >
-                        {section.name}
+                        <span className="inline-flex items-center gap-2">
+                          {section.name}
+                          {section.name === 'Seller List' && sellerLoginUnread ? (
+                            <span className="inline-flex items-center justify-center min-w-[18px] h-4 px-1 rounded-full bg-amber-500 text-white text-[10px] leading-none shadow-sm">
+                              {sellerLoginUnread > 99 ? '99+' : sellerLoginUnread}
+                            </span>
+                          ) : null}
+                        </span>
                       </div>
                     )}
                     {section.subItems && section.subItems.length > 0 && (

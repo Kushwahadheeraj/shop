@@ -95,22 +95,65 @@ export default function SettingsPage() {
     }
   }, []);
 
-  // Apply theme preference to document
+  // Apply theme preference to document (light/dark/auto)
   useEffect(() => {
     if (typeof document === "undefined") return;
-    document.documentElement.dataset.dashboardTheme = theme;
+    const root = document.documentElement;
+    const body = document.body;
+    const media = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
+
+    const applyTheme = (mode) => {
+      const prefersDark = media?.matches;
+      const resolved = mode === "auto" ? (prefersDark ? "dark" : "light") : mode;
+      root.dataset.dashboardTheme = resolved;
+      root.setAttribute("data-theme", resolved);
+      body?.setAttribute("data-theme", resolved);
+      if (resolved === "dark") {
+        root.classList.add("dark");
+      } else {
+        root.classList.remove("dark");
+      }
+      try {
+        localStorage.setItem("theme", mode);
+        window.dispatchEvent(new Event("theme-changed"));
+      } catch (_) {
+        /* ignore */
+      }
+    };
+
+    applyTheme(theme);
+
+    const handleChange = () => {
+      if (theme === "auto") {
+        applyTheme("auto");
+      }
+    };
+
+    media?.addEventListener?.("change", handleChange);
+    return () => media?.removeEventListener?.("change", handleChange);
   }, [theme]);
 
+  // Apply language to document
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    document.documentElement.lang = language || "en";
+  }, [language]);
+
+  const toValue = (input) =>
+    typeof input === "object" && input !== null && "target" in input
+      ? input.target.value
+      : input;
+
   const handleNotificationChange = (key, value) => {
-    setNotifications(prev => ({ ...prev, [key]: value }));
+    setNotifications((prev) => ({ ...prev, [key]: value }));
   };
 
   const handlePrivacyChange = (key, value) => {
-    setPrivacy(prev => ({ ...prev, [key]: value }));
+    setPrivacy((prev) => ({ ...prev, [key]: toValue(value) }));
   };
 
   const handleSecurityChange = (key, value) => {
-    setSecurity(prev => ({ ...prev, [key]: value }));
+    setSecurity((prev) => ({ ...prev, [key]: toValue(value) }));
   };
 
   const handleSaveSettings = async () => {
@@ -200,7 +243,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-6">
+    <div className="max-w-5xl mx-auto p-4 sm:p-6 space-y-6">
       <div className="flex items-center gap-2 mb-6">
         <h1 className="text-3xl font-bold">Settings</h1>
       </div>
@@ -411,7 +454,11 @@ export default function SettingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label>Profile Visibility</Label>
-              <Select value={privacy.profileVisibility} onChange={(e) => handlePrivacyChange('profileVisibility', e.target.value)}>
+              <Select
+                value={privacy.profileVisibility}
+                onChange={(e) => handlePrivacyChange('profileVisibility', e)}
+                onValueChange={(v) => handlePrivacyChange('profileVisibility', v)}
+              >
                 <option value="public">Public</option>
                 <option value="private">Private</option>
                 <option value="friends">Friends Only</option>
@@ -463,7 +510,11 @@ export default function SettingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label>Theme</Label>
-              <Select value={theme} onChange={(e) => setTheme(e.target.value)}>
+              <Select
+                value={theme}
+                onChange={(e) => setTheme(toValue(e))}
+                onValueChange={(v) => setTheme(v)}
+              >
                 <option value="light">Light</option>
                 <option value="dark">Dark</option>
                 <option value="auto">Auto</option>
@@ -471,7 +522,11 @@ export default function SettingsPage() {
             </div>
             <div>
               <Label>Language</Label>
-              <Select value={language} onChange={(e) => setLanguage(e.target.value)}>
+              <Select
+                value={language}
+                onChange={(e) => setLanguage(toValue(e))}
+                onValueChange={(v) => setLanguage(v)}
+              >
                 <option value="en">English</option>
                 <option value="hi">Hindi</option>
                 <option value="es">Spanish</option>
@@ -514,7 +569,11 @@ export default function SettingsPage() {
             </div>
             <div>
               <Label>Session Timeout (minutes)</Label>
-              <Select value={security.sessionTimeout} onChange={(e) => handleSecurityChange('sessionTimeout', e.target.value)}>
+              <Select
+                value={security.sessionTimeout}
+                onChange={(e) => handleSecurityChange('sessionTimeout', e)}
+                onValueChange={(v) => handleSecurityChange('sessionTimeout', v)}
+              >
                 <option value="15">15 minutes</option>
                 <option value="30">30 minutes</option>
                 <option value="60">1 hour</option>
@@ -526,7 +585,7 @@ export default function SettingsPage() {
       </Card>
 
       {/* Save / Reset */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="text-sm text-gray-500">
           {lastSaved ? (
             <p>Last saved: {lastSaved.toLocaleString()}</p>
@@ -539,18 +598,18 @@ export default function SettingsPage() {
             </p>
           )}
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           <Button
             type="button"
             variant="outline"
             onClick={handleResetSettings}
             disabled={loading}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 w-full sm:w-auto"
           >
             <RefreshCw className="w-4 h-4" />
             Reset Defaults
           </Button>
-          <Button onClick={handleSaveSettings} disabled={loading}>
+          <Button onClick={handleSaveSettings} disabled={loading} className="w-full sm:w-auto">
             {loading ? (
               <>
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />

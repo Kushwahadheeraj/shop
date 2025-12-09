@@ -1,5 +1,6 @@
 // "use client";
 // import { useState } from "react";
+import { Sparkles } from "lucide-react";
 // import { Input } from "@/components/ui/input";
 // import { Button } from "@/components/ui/button";
 // import { Textarea } from "@/components/ui/textarea";
@@ -283,7 +284,18 @@
 //     <div className="max-w-4xl mx-auto p-6">
 //       <h1 className="text-2xl font-bold mb-6">Add New Product Tool</h1>
       
-//       <form onSubmit={handleSubmit} className="space-y-6">
+//       
+    <div className="max-w-7xl mx-auto p-4 sm:p-6">
+      {/* Hero Header */}
+      <div className="mb-4 sm:mb-6 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-lg p-4 sm:p-6 text-white shadow-lg">
+        <div className="flex items-center gap-2 sm:gap-3 mb-2">
+          <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">ProductTools - Select Categories</h1>
+        </div>
+        <p className="text-xs sm:text-sm text-amber-50">Fill in the product details below</p>
+      </div>
+
+    <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-4 sm:space-y-6 p-4 sm:p-8 bg-white rounded-xl shadow-lg border border-gray-200">
 //         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 //           {/* Multiple Image Upload */}
 //           <div className="md:col-span-2">
@@ -481,7 +493,7 @@
 //               type="text"
 //               value={form.discountPrice}
 //               readOnly
-//               className="bg-gray-50"
+//               className="bg-gray-50 focus:ring-amber-300 focus:border-amber-500 text-sm sm:text-base"
 //               placeholder="Auto-calculated"
 //             />
 //           </div>
@@ -571,7 +583,7 @@
 //               </div>
 //               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 //                 <div>
-//                   <label className="block text-sm font-medium mb-1">Variant Name</label>
+//                   <label className="block text-xs sm:text-sm font-medium mb-1">Variant Name</label>
 //                   <Input
 //                     type="text"
 //                     value={variant.variantName}
@@ -580,7 +592,7 @@
 //                   />
 //                 </div>
 //                 <div>
-//                   <label className="block text-sm font-medium mb-1">Price (₹)</label>
+//                   <label className="block text-xs sm:text-sm font-medium mb-1">Price (₹)</label>
 //                   <Input
 //                     type="number"
 //                     value={variant.price}
@@ -590,12 +602,12 @@
 //                   />
 //                 </div>
 //                 <div>
-//                   <label className="block text-sm font-medium mb-1">Discounted Price (₹)</label>
+//                   <label className="block text-xs sm:text-sm font-medium mb-1">Discounted Price (₹)</label>
 //                   <Input
 //                     type="text"
 //                     value={variant.discountPrice}
 //                     readOnly
-//                     className="bg-gray-50"
+//                     className="bg-gray-50 focus:ring-amber-300 focus:border-amber-500 text-sm sm:text-base"
 //                     placeholder="Auto-calculated"
 //                   />
 //                 </div>
@@ -616,15 +628,15 @@
 //           {customFields.map((f, idx) => (
 //             <div key={idx} className="mb-2 border p-2 rounded">
 //               <div className="flex gap-2 items-center mb-1">
-//                 <Input className="w-1/3" placeholder="Field Name" value={f.fieldName} onChange={e => handleCustomFieldNameChange(idx, e.target.value)} />
+//                 <Input className="w-1/3 focus:ring-amber-300 focus:border-amber-500 text-sm sm:text-base" placeholder="Field Name" value={f.fieldName} onChange={e => handleCustomFieldNameChange(idx, e.target.value)} />
 //               </div>
 //               {f.fieldValues.map((val, vIdx) => (
 //                 <div key={vIdx} className="flex gap-2 items-center mb-1">
-//                   <Input className="w-1/2" placeholder="Field Value" value={val} onChange={e => handleCustomFieldValueChange(idx, vIdx, e.target.value)} />
-//                   <Button type="button" onClick={() => handleRemoveCustomFieldValue(idx, vIdx)} className="bg-red-500 hover:bg-red-600 text-white px-2 py-1">Remove</Button>
+//                   <Input className="w-1/2 focus:ring-amber-300 focus:border-amber-500 text-sm sm:text-base" placeholder="Field Value" value={val} onChange={e => handleCustomFieldValueChange(idx, vIdx, e.target.value)} />
+//                   <Button type="button" onClick={() => handleRemoveCustomFieldValue(idx, vIdx)} className="bg-red-500 hover:bg-red-600 text-white px-2 sm:px-3 py-1 text-xs sm:text-sm w-full sm:w-auto">Remove</Button>
 //                 </div>
 //               ))}
-//               <Button type="button" onClick={() => handleAddCustomFieldValue(idx)} className="bg-green-500 hover:bg-green-600 text-white px-3 py-1">Add Value</Button>
+//               <Button type="button" onClick={() => handleAddCustomFieldValue(idx)} className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-3 py-1">Add Value</Button>
 //             </div>
 //           ))}
 //         </div>
@@ -724,9 +736,7 @@ export default function ProductForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-6 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
-      <h2 className="text-2xl font-bold mb-2 text-center">ProductTools - Select Categories</h2>
-
+    <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-4 sm:space-y-6 p-4 sm:p-8 bg-white rounded-xl shadow-lg border border-gray-200">
       <div>
         <label className="block text-sm font-medium mb-2">Categories</label>
                       <input
@@ -771,6 +781,7 @@ export default function ProductForm() {
         Show Products
       </button>
       </form>
+    </div>
   );
 }
 

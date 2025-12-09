@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -146,38 +147,48 @@ export default function ProductForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-6 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
-      <h2 className="text-2xl font-bold mb-2 text-center">Add Electrical Product</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    
+    <div className="max-w-7xl mx-auto p-4 sm:p-6">
+      {/* Hero Header */}
+      <div className="mb-4 sm:mb-6 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-lg p-4 sm:p-6 text-white shadow-lg">
+        <div className="flex items-center gap-2 sm:gap-3 mb-2">
+          <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">Add Electrical Product</h1>
+        </div>
+        <p className="text-xs sm:text-sm text-amber-50">Fill in the product details below</p>
+      </div>
+
+    <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-4 sm:space-y-6 p-4 sm:p-8 bg-white rounded-xl shadow-lg border border-gray-200">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Product Name</label>
+          <label className="block text-xs sm:text-sm font-medium mb-1">Product Name</label>
           <Input name="name" value={form.name} onChange={handleChange} placeholder="Product Name" required />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Category</label>
+          <label className="block text-xs sm:text-sm font-medium mb-1">Category</label>
           <Input name="category" value={form.category} onChange={handleChange} placeholder="Category" />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Brand</label>
+          <label className="block text-xs sm:text-sm font-medium mb-1">Brand</label>
           <Input name="brand" value={form.brand} onChange={handleChange} placeholder="Brand" />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Original Price</label>
+          <label className="block text-xs sm:text-sm font-medium mb-1">Original Price</label>
           <Input name="originalPrice" type="number" value={form.originalPrice} onChange={handleChange} placeholder="Enter original price" />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Discount (%)</label>
+          <label className="block text-xs sm:text-sm font-medium mb-1">Discount (%)</label>
           <Input name="discount" type="number" value={form.discount} onChange={handleChange} placeholder="Enter discount %" />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Final Price (auto calculated)</label>
-          <Input name="price" type="number" value={form.price} readOnly className="bg-gray-50" />
+          <label className="block text-xs sm:text-sm font-medium mb-1">Final Price (auto calculated)</label>
+          <Input name="price" type="number" value={form.price} readOnly className="bg-gray-50 focus:ring-amber-300 focus:border-amber-500 text-sm sm:text-base" />
         </div>
       </div>
 
       {/* Description */}
       <div>
-        <label className="block text-sm font-medium mb-1">Description</label>
+        <label className="block text-xs sm:text-sm font-medium mb-1">Description</label>
         <Textarea name="description" value={form.description} onChange={handleChange} placeholder="Description" />
       </div>
 
@@ -223,7 +234,7 @@ export default function ProductForm() {
 
       {/* Image */}
       <div>
-        <label className="block text-sm font-medium mb-1">Product Image</label>
+        <label className="block text-xs sm:text-sm font-medium mb-1">Product Image</label>
         <Input name="image" type="file" onChange={handleFile} accept="image/*" required />
         {photoError && <div className="text-red-500 text-xs mt-1">{photoError}</div>}
         {preview && (
@@ -253,5 +264,6 @@ export default function ProductForm() {
         Create Electrical Product
       </Button>
     </form>
+    </div>
   );
 }

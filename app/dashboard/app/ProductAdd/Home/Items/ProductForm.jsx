@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -103,7 +104,18 @@ export default function ProductForm() {
     <div className="max-w-2xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Add New Item</h1>
       
-      <form onSubmit={handleSubmit} className="space-y-6">
+      
+    <div className="max-w-7xl mx-auto p-4 sm:p-6">
+      {/* Hero Header */}
+      <div className="mb-4 sm:mb-6 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-lg p-4 sm:p-6 text-white shadow-lg">
+        <div className="flex items-center gap-2 sm:gap-3 mb-2">
+          <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">Add Product</h1>
+        </div>
+        <p className="text-xs sm:text-sm text-amber-50">Fill in the product details below</p>
+      </div>
+
+    <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-4 sm:space-y-6 p-4 sm:p-8 bg-white rounded-xl shadow-lg border border-gray-200">
         {/* Image Upload */}
         <div>
           <label className="block text-sm font-medium mb-2">Image *</label>

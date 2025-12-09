@@ -82,39 +82,39 @@ const AnalyticsDashboard = ({ onClose, bills = [] }) => {
   };
 
   const StatCard = ({ title, value, icon: Icon, color, change, changeType }) => (
-    <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-      <div className="flex items-center justify-between">
+    <div className="bg-white p-4 sm:p-5 rounded-lg shadow-sm border border-gray-200">
+      <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className="text-2xl font-bold text-gray-900">{value}</p>
+          <p className="text-xs sm:text-sm font-medium text-gray-600">{title}</p>
+          <p className="text-xl sm:text-2xl font-bold text-gray-900 break-words">{value}</p>
           {change && (
-            <p className={`text-sm ${changeType === 'positive' ? 'text-green-600' : 'text-red-600'}`}>
+            <p className={`text-xs sm:text-sm ${changeType === 'positive' ? 'text-green-600' : 'text-red-600'}`}>
               {changeType === 'positive' ? '+' : ''}{change}% from last period
             </p>
           )}
         </div>
-        <div className={`p-3 rounded-lg ${color}`}>
-          <Icon className="h-6 w-6 text-white" />
+        <div className={`p-2 sm:p-3 rounded-lg ${color}`}>
+          <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
         </div>
       </div>
     </div>
   );
 
   return (
-    <div className="fixed inset-0 bg-gray-100 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-gray-100 flex items-center justify-center z-50 p-3 sm:p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-7xl max-h-[95vh] overflow-y-auto">
         {/* Header */}
-        <div className="p-6 border-b bg-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">Analytics Dashboard</h2>
-              <p className="text-gray-600 mt-1">Track your business performance and insights</p>
+        <div className="p-4 sm:p-6 border-b bg-white">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+            <div className="space-y-1">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Analytics Dashboard</h2>
+              <p className="text-sm sm:text-base text-gray-600">Track your business performance and insights</p>
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3">
               <select
                 value={dateRange}
                 onChange={(e) => setDateRange(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                className="px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
               >
                 <option value="7">Last 7 days</option>
                 <option value="30">Last 30 days</option>
@@ -132,8 +132,8 @@ const AnalyticsDashboard = ({ onClose, bills = [] }) => {
         </div>
 
         {/* Stats Grid */}
-        <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="p-4 sm:p-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8">
             <StatCard
               title="Total Revenue"
               value={formatCurrency(analytics.totalRevenue)}
@@ -169,11 +169,11 @@ const AnalyticsDashboard = ({ onClose, bills = [] }) => {
           </div>
 
           {/* Charts Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
             {/* Revenue Chart */}
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Revenue Trend</h3>
+            <div className="bg-white p-4 sm:p-5 rounded-lg shadow-sm border border-gray-200">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900">Revenue Trend</h3>
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => setChartType('bar')}
@@ -192,24 +192,24 @@ const AnalyticsDashboard = ({ onClose, bills = [] }) => {
               <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
                 <div className="text-center">
                   <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-                  <p className="text-gray-600">Revenue chart will be displayed here</p>
+                  <p className="text-gray-600 text-sm">Revenue chart will be displayed here</p>
                 </div>
               </div>
             </div>
 
             {/* Payment Status Distribution */}
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Payment Status</h3>
-              <div className="space-y-4">
+            <div className="bg-white p-4 sm:p-5 rounded-lg shadow-sm border border-gray-200">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Payment Status</h3>
+              <div className="space-y-3 sm:space-y-4">
                 {analytics.paymentStatusData.map((item, index) => (
-                  <div key={index} className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className={`w-4 h-4 rounded-full ${item.color}`}></div>
-                      <span className="text-sm font-medium text-gray-700">{item.status}</span>
+                  <div key={index} className="flex items-center justify-between gap-2">
+                    <div className="flex items-center space-x-2 sm:space-x-3">
+                      <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full ${item.color}`}></div>
+                      <span className="text-xs sm:text-sm font-medium text-gray-700">{item.status}</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <span className="text-sm text-gray-600">{item.count}</span>
-                      <div className="w-20 bg-gray-200 rounded-full h-2">
+                      <span className="text-xs sm:text-sm text-gray-600">{item.count}</span>
+                      <div className="w-16 sm:w-20 bg-gray-200 rounded-full h-2">
                         <div
                           className={`h-2 rounded-full ${item.color}`}
                           style={{ width: `${(item.count / analytics.totalBills) * 100}%` }}
@@ -223,20 +223,20 @@ const AnalyticsDashboard = ({ onClose, bills = [] }) => {
           </div>
 
           {/* Bottom Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             {/* Top Customers */}
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Customers</h3>
-              <div className="space-y-3">
+            <div className="bg-white p-4 sm:p-5 rounded-lg shadow-sm border border-gray-200">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Top Customers</h3>
+              <div className="space-y-2.5 sm:space-y-3">
                 {analytics.topCustomers.map((customer, index) => (
                   <div key={index} className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                        <span className="text-sm font-medium text-purple-600">
+                    <div className="flex items-center space-x-2 sm:space-x-3">
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                        <span className="text-xs sm:text-sm font-medium text-purple-600">
                           {customer.name.charAt(0).toUpperCase()}
                         </span>
                       </div>
-                      <span className="text-sm font-medium text-gray-700">{customer.name}</span>
+                      <span className="text-sm font-medium text-gray-700 truncate max-w-[150px] sm:max-w-[200px]">{customer.name}</span>
                     </div>
                     <span className="text-sm font-medium text-gray-900">
                       {formatCurrency(customer.revenue)}
@@ -247,17 +247,17 @@ const AnalyticsDashboard = ({ onClose, bills = [] }) => {
             </div>
 
             {/* GST Breakdown */}
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">GST Breakdown</h3>
-              <div className="space-y-3">
+            <div className="bg-white p-4 sm:p-5 rounded-lg shadow-sm border border-gray-200">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">GST Breakdown</h3>
+              <div className="space-y-2.5 sm:space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">CGST</span>
+                  <span className="text-xs sm:text-sm text-gray-600">CGST</span>
                   <span className="text-sm font-medium text-gray-900">
                     {formatCurrency(analytics.gstBreakdown.cgst)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">SGST</span>
+                  <span className="text-xs sm:text-sm text-gray-600">SGST</span>
                   <span className="text-sm font-medium text-gray-900">
                     {formatCurrency(analytics.gstBreakdown.sgst)}
                   </span>
@@ -273,16 +273,16 @@ const AnalyticsDashboard = ({ onClose, bills = [] }) => {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-end space-x-4 mt-8 pt-6 border-t border-gray-200">
-            <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-2">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3 mt-6 sm:mt-8 pt-4 sm:pt-6 border-top border-gray-200">
+            <button className="w-full sm:w-auto px-4 py-2 text-sm sm:text-base border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2">
               <RefreshCw className="h-4 w-4" />
               <span>Refresh</span>
             </button>
-            <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-2">
+            <button className="w-full sm:w-auto px-4 py-2 text-sm sm:text-base border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2">
               <Filter className="h-4 w-4" />
               <span>Filter</span>
             </button>
-            <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center space-x-2">
+            <button className="w-full sm:w-auto px-4 py-2 text-sm sm:text-base bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center space-x-2">
               <Download className="h-4 w-4" />
               <span>Export Report</span>
             </button>

@@ -99,6 +99,8 @@ const InvoiceGeneratorPage = () => {
   const [historyLoading, setHistoryLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("form"); // 'form' or 'history'
+  const [deletingIds, setDeletingIds] = useState([]);
+  // const [deletingIds, setDeletingIds] = useState([]);
   const invoiceIdParam = searchParams?.get("id");
 
   const currentShop = useMemo(
@@ -339,6 +341,39 @@ const InvoiceGeneratorPage = () => {
     }
   }, []);
 
+  const deleteBillFromHistory = useCallback(
+    async (id) => {
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      if (!token) {
+        alert("Please login first.");
+        return;
+      }
+      if (!confirm("Delete this invoice? This cannot be undone.")) return;
+      try {
+        setDeletingIds((prev) => [...prev, id]);
+        const res = await fetch(`${API_BASE_URL}/invoices/${id}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data?.message || "Delete failed");
+        }
+        setBillHistory((prev) => prev.filter((b) => b._id !== id));
+        if (currentBillId === id) {
+          resetForm();
+          setActiveTab("form");
+        }
+      } catch (err) {
+        console.error("Delete invoice failed:", err);
+        alert(err?.message || "Failed to delete invoice");
+      } finally {
+        setDeletingIds((prev) => prev.filter((x) => x !== id));
+      }
+    },
+    [currentBillId, resetForm]
+  );
+
   const loadInvoiceById = useCallback(
     async (id) => {
       if (!id) return;
@@ -547,10 +582,10 @@ useEffect(() => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-50 p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-yellow-50/40 to-orange-50 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Professional Header */}
-        <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 rounded-2xl p-6 sm:p-8 text-white shadow-xl border border-emerald-500/20">
+        <div className="bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 rounded-2xl p-6 sm:p-8 text-white shadow-xl border border-amber-400/30">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold flex items-center gap-3 mb-2">
@@ -559,7 +594,7 @@ useEffect(() => {
                 </div>
                 Professional Invoice Generator
               </h1>
-              <p className="text-sm sm:text-base text-emerald-50/90 mt-2 max-w-2xl">
+              <p className="text-sm sm:text-base text-amber-50/90 mt-2 max-w-2xl">
                 तुरंत बिल बनाइये — दुकान के नाम से या सीधे ग्राहक के नाम से, आइटम जोड़ें और QR से पेमेंट दिखाएँ।
               </p>
             </div>
@@ -575,7 +610,7 @@ useEffect(() => {
               </button>
               <button
                 onClick={handleNewInvoice}
-                className="inline-flex items-center gap-2 bg-white text-emerald-700 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-emerald-50 transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="inline-flex items-center gap-2 bg-white text-amber-700 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-amber-50 transition-all duration-200 shadow-lg hover:shadow-xl"
                 type="button"
               >
                 <RefreshCw className="w-4 h-4" />
@@ -593,7 +628,7 @@ useEffect(() => {
               onClick={() => setActiveTab("form")}
               className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm transition-all duration-200 ${
                 activeTab === "form"
-                  ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-500/30"
+                  ? "bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white shadow-lg shadow-amber-400/30"
                   : "text-gray-600 hover:bg-gray-100"
               }`}
               type="button"
@@ -611,7 +646,7 @@ useEffect(() => {
               }}
               className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm transition-all duration-200 ${
                 activeTab === "history"
-                  ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-500/30"
+                  ? "bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white shadow-lg shadow-amber-400/30"
                   : "text-gray-600 hover:bg-gray-100"
               }`}
               type="button"
@@ -626,9 +661,9 @@ useEffect(() => {
         {activeTab === "form" ? (
           <div className="bg-white border-2 border-gray-200 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
             {/* Invoice Details Section - Full Width */}
-            <section className="bg-gradient-to-br from-gray-50 to-white border-2 border-gray-200 rounded-2xl p-5 sm:p-6 shadow-lg">
+            <section className="bg-gradient-to-br from-white to-amber-50/40 border-2 border-amber-100 rounded-2xl p-5 sm:p-6 shadow-lg">
               <div className="flex items-center gap-2 mb-5">
-                <div className="w-1 h-6 bg-gradient-to-b from-emerald-500 to-teal-500 rounded-full"></div>
+                <div className="w-1 h-6 bg-gradient-to-b from-amber-500 to-orange-500 rounded-full"></div>
                 <h2 className="text-lg sm:text-xl font-bold text-gray-900">Invoice Details</h2>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -640,7 +675,7 @@ useEffect(() => {
                     type="text"
                     value={invoiceMeta.invoiceNumber}
                     onChange={(e) => setInvoiceMeta((prev) => ({ ...prev, invoiceNumber: e.target.value }))}
-                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-white hover:bg-gray-50 font-medium text-gray-900"
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-200 bg-white hover:bg-gray-50 font-medium text-gray-900"
                   />
                 </div>
                 <div>
@@ -651,7 +686,7 @@ useEffect(() => {
                     type="date"
                     value={invoiceMeta.invoiceDate}
                     onChange={(e) => setInvoiceMeta((prev) => ({ ...prev, invoiceDate: e.target.value }))}
-                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-white hover:bg-gray-50 font-medium text-gray-900"
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-200 bg-white hover:bg-gray-50 font-medium text-gray-900"
                   />
                 </div>
                 <div>
@@ -662,7 +697,7 @@ useEffect(() => {
                     type="date"
                     value={invoiceMeta.dueDate}
                     onChange={(e) => setInvoiceMeta((prev) => ({ ...prev, dueDate: e.target.value }))}
-                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-white hover:bg-gray-50 font-medium text-gray-900"
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-200 bg-white hover:bg-gray-50 font-medium text-gray-900"
                   />
                 </div>
               </div>
@@ -673,27 +708,27 @@ useEffect(() => {
               {/* Bill From Section */}
               <section className="bg-white border-2 border-gray-200 rounded-2xl p-5 sm:p-6 shadow-lg hover:shadow-xl transition-shadow duration-200 space-y-5">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-1 h-6 bg-gradient-to-b from-emerald-500 to-teal-500 rounded-full"></div>
+              <div className="w-1 h-6 bg-gradient-to-b from-amber-500 to-orange-500 rounded-full"></div>
               <h2 className="text-lg sm:text-xl font-bold text-gray-900">Bill From</h2>
             </div>
             <div className="flex flex-wrap gap-3">
               <button
-                className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                  issuerType === "shop"
-                    ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-500/30 scale-105"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200 border-2 border-transparent hover:border-gray-300"
-                }`}
+                    className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                      issuerType === "shop"
+                        ? "bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white shadow-lg shadow-amber-400/30 scale-105"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200 border-2 border-transparent hover:border-gray-300"
+                    }`}
                 onClick={() => setIssuerType("shop")}
                 type="button"
               >
                 दुकान से बिल काटें
               </button>
               <button
-                className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                  issuerType === "custom"
-                    ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-500/30 scale-105"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200 border-2 border-transparent hover:border-gray-300"
-                }`}
+                    className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                      issuerType === "custom"
+                        ? "bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white shadow-lg shadow-amber-400/30 scale-105"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200 border-2 border-transparent hover:border-gray-300"
+                    }`}
                 onClick={() => setIssuerType("custom")}
                 type="button"
               >
@@ -702,14 +737,14 @@ useEffect(() => {
             </div>
 
             {issuerType === "shop" ? (
-              <div className="space-y-3">
+              <div className="space-y-3 w-full">
                 <label className="block text-sm font-medium text-gray-600">
                   Select Shop
                 </label>
                 <select
                   value={selectedShopId}
                   onChange={(e) => setSelectedShopId(e.target.value)}
-                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
+                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
                 >
                   <option value="">
                     {shopsLoading
@@ -725,13 +760,27 @@ useEffect(() => {
                   ))}
                 </select>
                 {currentShop && (
-                  <div className="text-sm text-gray-600 bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-200 rounded-xl p-4 shadow-sm">
-                    <div className="font-bold text-gray-900 mb-1 text-base">{currentShop.name}</div>
-                    <div className="text-gray-700 mb-2">{formatShopAddress(currentShop)}</div>
+                  <div className="text-sm text-gray-600 bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 border-2 border-amber-200 rounded-xl p-4 shadow-sm break-words">
+                    <div className="font-bold text-gray-900 mb-1 text-base leading-snug break-words">
+                      {currentShop.name}
+                    </div>
+                    <div className="text-gray-700 mb-2 leading-6 break-words">
+                      {formatShopAddress(currentShop)}
+                    </div>
                     {(currentShop.contact?.phone || currentShop.contact?.email) && (
-                      <div className="mt-2 space-y-1 pt-2 border-t border-emerald-200">
-                        {currentShop.contact?.phone && <div className="flex items-center gap-2">📞 <span className="font-medium">{currentShop.contact.phone}</span></div>}
-                        {currentShop.contact?.email && <div className="flex items-center gap-2">✉️ <span className="font-medium">{currentShop.contact.email}</span></div>}
+                      <div className="mt-2 space-y-1 pt-2 border-t border-amber-200">
+                        {currentShop.contact?.phone && (
+                          <div className="flex items-start gap-2 text-sm break-words">
+                            <span>📞</span>
+                            <span className="font-medium break-all">{currentShop.contact.phone}</span>
+                          </div>
+                        )}
+                        {currentShop.contact?.email && (
+                          <div className="flex items-start gap-2 text-sm break-words">
+                            <span>✉️</span>
+                            <span className="font-medium break-all">{currentShop.contact.email}</span>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -749,7 +798,7 @@ useEffect(() => {
                     onChange={(e) =>
                       setIssuerDetails((prev) => ({ ...prev, name: e.target.value }))
                     }
-                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
                     placeholder="उदाहरण: Sharma Traders"
                   />
                 </div>
@@ -763,7 +812,7 @@ useEffect(() => {
                     onChange={(e) =>
                       setIssuerDetails((prev) => ({ ...prev, phone: e.target.value }))
                     }
-                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
                     placeholder="+91-"
                   />
                 </div>
@@ -777,7 +826,7 @@ useEffect(() => {
                     onChange={(e) =>
                       setIssuerDetails((prev) => ({ ...prev, address: e.target.value }))
                     }
-                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
                     placeholder="पूरा पता"
                   />
                 </div>
@@ -791,7 +840,7 @@ useEffect(() => {
                     onChange={(e) =>
                       setIssuerDetails((prev) => ({ ...prev, email: e.target.value }))
                     }
-                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
                     placeholder="yourshop@example.com"
                   />
                 </div>
@@ -802,7 +851,7 @@ useEffect(() => {
               {/* Customer Details Section */}
               <section className="bg-white border-2 border-gray-200 rounded-2xl p-5 sm:p-6 shadow-lg hover:shadow-xl transition-shadow duration-200 space-y-5">
                 <div className="flex items-center gap-2 mb-4">
-                  <div className="w-1 h-6 bg-gradient-to-b from-emerald-500 to-teal-500 rounded-full"></div>
+                  <div className="w-1 h-6 bg-gradient-to-b from-amber-500 to-orange-500 rounded-full"></div>
                   <h2 className="text-lg sm:text-xl font-bold text-gray-900">Customer Details</h2>
                 </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -816,7 +865,7 @@ useEffect(() => {
                   onChange={(e) =>
                     setCustomerDetails((prev) => ({ ...prev, name: e.target.value }))
                   }
-                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
+                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
                   placeholder="ग्राहक का नाम (optional)"
                 />
               </div>
@@ -830,7 +879,7 @@ useEffect(() => {
                   onChange={(e) =>
                     setCustomerDetails((prev) => ({ ...prev, phone: e.target.value }))
                   }
-                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
                   placeholder="+91-"
                 />
               </div>
@@ -844,7 +893,7 @@ useEffect(() => {
                   onChange={(e) =>
                     setCustomerDetails((prev) => ({ ...prev, address: e.target.value }))
                   }
-                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus-border-amber-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
                   placeholder="डिलीवरी/ग्राहक पता"
                 />
               </div>
@@ -858,7 +907,7 @@ useEffect(() => {
                   onChange={(e) =>
                     setCustomerDetails((prev) => ({ ...prev, email: e.target.value }))
                   }
-                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
+                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
                   placeholder="customer@example.com"
                 />
               </div>
@@ -867,103 +916,103 @@ useEffect(() => {
             </div>
 
             {/* Items Section - Full Width */}
-            <section className="bg-white border-2 border-gray-200 rounded-2xl p-5 sm:p-6 shadow-lg hover:shadow-xl transition-shadow duration-200 space-y-5">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div className="flex items-center gap-2">
-                <div className="w-1 h-6 bg-gradient-to-b from-emerald-500 to-teal-500 rounded-full"></div>
-                <h2 className="text-lg sm:text-xl font-bold text-gray-900">Items</h2>
+            <section className="bg-white border-2 border-gray-200 rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-xl transition-shadow duration-200 space-y-5">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-1 h-6 bg-gradient-to-b from-amber-500 to-orange-500 rounded-full"></div>
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-900">Items</h2>
+                </div>
+                <button
+                  onClick={addNewItem}
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-bold bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white rounded-xl hover:from-amber-600 hover:to-orange-600 transition-all duration-200 shadow-lg shadow-amber-400/30 hover:shadow-xl hover:scale-105 w-full sm:w-auto"
+                  type="button"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Item
+                </button>
               </div>
-              <button
-                onClick={addNewItem}
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-bold bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl hover:from-emerald-700 hover:to-teal-700 transition-all duration-200 shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:scale-105"
-                type="button"
-              >
-                <Plus className="w-4 h-4" />
-                Add Item
-              </button>
-            </div>
 
-            <div className="space-y-3">
-              {items.map((item, index) => {
-                const lineTotal =
-                  Math.round(((parseFloat(item.quantity) || 0) * (parseFloat(item.unitPrice) || 0) + Number.EPSILON) * 100) /
-                  100;
-                return (
-                  <div
-                    key={`item-${index}`}
-                    className="grid grid-cols-1 sm:grid-cols-12 gap-3 bg-white border-2 border-gray-200 rounded-xl p-4 items-center hover:border-emerald-400 hover:shadow-lg transition-all duration-200"
-                  >
-                    <div className="sm:col-span-4">
-                      <input
-                        type="text"
-                        value={item.name}
-                        onChange={(e) => handleItemChange(index, "name", e.target.value)}
-                        placeholder="Item name"
-                        className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50 hover:bg-white font-medium text-gray-900"
-                      />
-                    </div>
-                    <div className="sm:col-span-2">
-                      <input
-                        type="number"
-                        min="0"
-                        value={item.quantity}
-                        onChange={(e) => handleItemChange(index, "quantity", e.target.value)}
-                        placeholder="Qty"
-                        className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50 hover:bg-white font-medium text-gray-900 text-center"
-                      />
-                    </div>
-                    <div className="sm:col-span-1">
-                      <select
-                        value={item.unit || "pc"}
-                        onChange={(e) => handleItemChange(index, "unit", e.target.value)}
-                        className="w-full px-2 py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50 hover:bg-white font-medium text-gray-900 text-sm"
-                      >
-                        {UNIT_OPTIONS.map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="sm:col-span-2">
-                      <input
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={item.unitPrice}
-                        onChange={(e) => handleItemChange(index, "unitPrice", e.target.value)}
-                        placeholder="Rate"
-                        className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50 hover:bg-white font-medium text-gray-900 text-right"
-                      />
-                    </div>
-                    <div className="sm:col-span-2 flex items-center justify-start">
-                      <div className="bg-gradient-to-r from-emerald-100 to-teal-100 border-2 border-emerald-200 px-4 py-2 rounded-lg w-full">
-                        <p className="text-sm font-bold text-emerald-700 text-right">
-                          ₹{lineTotal.toFixed(2)}
-                        </p>
+              <div className="space-y-3">
+                {items.map((item, index) => {
+                  const lineTotal =
+                    Math.round(((parseFloat(item.quantity) || 0) * (parseFloat(item.unitPrice) || 0) + Number.EPSILON) * 100) /
+                    100;
+                  return (
+                    <div
+                      key={`item-${index}`}
+                      className="grid grid-cols-1 sm:grid-cols-12 gap-3 bg-white border-2 border-gray-200 rounded-xl p-4 items-center hover:border-amber-400 hover:shadow-lg transition-all duration-200"
+                    >
+                      <div className="sm:col-span-4">
+                        <input
+                          type="text"
+                          value={item.name}
+                          onChange={(e) => handleItemChange(index, "name", e.target.value)}
+                          placeholder="Item name"
+                          className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-200 bg-gray-50 hover:bg-white font-medium text-gray-900"
+                        />
+                      </div>
+                      <div className="sm:col-span-2">
+                        <input
+                          type="number"
+                          min="0"
+                          value={item.quantity}
+                          onChange={(e) => handleItemChange(index, "quantity", e.target.value)}
+                          placeholder="Qty"
+                          className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-200 bg-gray-50 hover:bg-white font-medium text-gray-900 text-center"
+                        />
+                      </div>
+                      <div className="sm:col-span-1">
+                        <select
+                          value={item.unit || "pc"}
+                          onChange={(e) => handleItemChange(index, "unit", e.target.value)}
+                          className="w-full px-2 py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-200 bg-gray-50 hover:bg-white font-medium text-gray-900 text-sm"
+                        >
+                          {UNIT_OPTIONS.map((option) => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="sm:col-span-2">
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={item.unitPrice}
+                          onChange={(e) => handleItemChange(index, "unitPrice", e.target.value)}
+                          placeholder="Rate"
+                          className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-200 bg-gray-50 hover:bg-white font-medium text-gray-900 text-right"
+                        />
+                      </div>
+                      <div className="sm:col-span-2 flex items-center justify-start">
+                        <div className="bg-gradient-to-r from-amber-100 via-yellow-100 to-orange-100 border-2 border-amber-200 px-4 py-2 rounded-lg w-full">
+                          <p className="text-sm font-bold text-amber-800 text-right">
+                            ₹{lineTotal.toFixed(2)}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="sm:col-span-1 flex justify-end">
+                        {items.length > 1 && (
+                          <button
+                            onClick={() => removeItem(index)}
+                            className="text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg p-2 transition-all duration-200"
+                            type="button"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
+                        )}
                       </div>
                     </div>
-                    <div className="sm:col-span-1 flex justify-end">
-                      {items.length > 1 && (
-                        <button
-                          onClick={() => removeItem(index)}
-                          className="text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg p-2 transition-all duration-200"
-                          type="button"
-                        >
-                          <Trash2 className="w-5 h-5" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
             </section>
 
             {/* Notes Section - Full Width */}
             <section className="bg-white border-2 border-gray-200 rounded-2xl p-5 sm:p-6 shadow-lg hover:shadow-xl transition-shadow duration-200 space-y-4">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-1 h-6 bg-gradient-to-b from-emerald-500 to-teal-500 rounded-full"></div>
+              <div className="w-1 h-6 bg-gradient-to-b from-amber-500 to-orange-500 rounded-full"></div>
               <label className="block text-sm font-bold text-gray-900">
                 Notes (प्रिंट पर दिखेगा)
               </label>
@@ -972,26 +1021,26 @@ useEffect(() => {
               rows={3}
               value={invoiceMeta.notes}
               onChange={(e) => setInvoiceMeta((prev) => ({ ...prev, notes: e.target.value }))}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900 resize-none"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900 resize-none"
               placeholder="Thank you for shopping with us!"
             />
             </section>
 
             {/* Summary Section - Full Width at Bottom */}
-            <section className="bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-300 rounded-2xl p-5 sm:p-6 shadow-xl space-y-5">
+            <section className="bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 border-2 border-amber-300 rounded-2xl p-5 sm:p-6 shadow-xl space-y-5">
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-1 h-6 bg-gradient-to-b from-emerald-500 to-teal-500 rounded-full"></div>
+                <div className="w-1 h-6 bg-gradient-to-b from-amber-500 to-orange-500 rounded-full"></div>
                 <h2 className="text-lg sm:text-xl font-bold text-gray-900">Summary</h2>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
                 <div className="space-y-4">
-                  <div className="flex justify-between items-center py-2 border-b border-gray-200">
+                  <div className="flex justify-between items-center py-2 border-b border-gray-200 text-sm sm:text-base">
                     <span className="text-sm font-semibold text-gray-700">Subtotal</span>
                     <span className="text-base font-bold text-gray-900">
                       ₹{subtotal.toFixed(2)}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center gap-3 py-2 border-b border-gray-200">
+                    <div className="flex justify-between items-center gap-3 py-2 border-b border-gray-200 text-sm sm:text-base flex-wrap">
                     <span className="text-sm font-semibold text-gray-700">Discount</span>
                     <div className="flex items-center gap-2">
                       <input
@@ -1004,7 +1053,7 @@ useEffect(() => {
                             discountValue: e.target.value
                           }))
                         }
-                        className="w-20 sm:w-24 px-3 py-1.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-right font-medium bg-white"
+                        className="w-20 sm:w-24 px-3 py-1.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-right font-medium bg-white"
                       />
                       <select
                         value={pricingAdjustments.discountType}
@@ -1014,14 +1063,14 @@ useEffect(() => {
                             discountType: e.target.value
                           }))
                         }
-                        className="px-3 py-1.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-semibold bg-white"
+                        className="px-3 py-1.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-sm font-semibold bg-white"
                       >
                         <option value="amount">₹</option>
                         <option value="percent">%</option>
                       </select>
                     </div>
                   </div>
-                  <div className="flex justify-between items-center gap-3 py-2 border-b border-gray-200">
+                  <div className="flex justify-between items-center gap-3 py-2 border-b border-gray-200 text-sm sm:text-base flex-wrap">
                     <span className="text-sm font-semibold text-gray-700">Paid (Optional)</span>
                     <input
                       type="number"
@@ -1041,18 +1090,18 @@ useEffect(() => {
                           setPricingAdjustments((prev) => ({ ...prev, paidAmount: 0 }));
                         }
                       }}
-                      className="w-20 sm:w-24 px-3 py-1.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-right font-medium bg-white"
+                      className="w-20 sm:w-24 px-3 py-1.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-right font-medium bg-white"
                     />
                   </div>
                 </div>
                 <div className="space-y-4">
-                  <div className="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl p-5">
+                  <div className="bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 rounded-xl p-5">
                     <div className="flex justify-between items-center mb-3">
                       <span className="text-lg font-bold text-white">Total</span>
                       <span className="text-2xl font-extrabold text-white">₹{totalAmount.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between items-center pt-3 border-t border-white/30">
-                      <span className="text-sm font-semibold text-emerald-50">Balance</span>
+                      <span className="text-sm font-semibold text-amber-50">Balance</span>
                       <span className="text-lg font-bold text-white">
                         ₹{balanceAmount.toFixed(2)}
                       </span>
@@ -1061,7 +1110,7 @@ useEffect(() => {
                   <button
                     onClick={handleSaveAndPreview}
                     disabled={!preparedBill || saving}
-                    className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 text-base font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl hover:from-emerald-700 hover:to-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:scale-[1.02] disabled:hover:scale-100"
+                    className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 text-base font-bold text-white bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 rounded-xl hover:from-amber-600 hover:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg shadow-amber-400/30 hover:shadow-xl hover:scale-[1.02] disabled:hover:scale-100"
                     type="button"
                   >
                     {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <FileText className="w-5 h-5" />}
@@ -1078,14 +1127,14 @@ useEffect(() => {
           /* History Tab */
           <div className="space-y-6">
             <section className="bg-white border-2 border-gray-200 rounded-2xl p-5 sm:p-6 shadow-lg space-y-4">
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-2 sm:mb-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-1 h-6 bg-gradient-to-b from-emerald-500 to-teal-500 rounded-full"></div>
+                  <div className="w-1 h-6 bg-gradient-to-b from-amber-500 to-orange-500 rounded-full"></div>
                   <h2 className="text-lg sm:text-xl font-bold text-gray-900">Invoice History</h2>
                 </div>
                 <button
                   onClick={fetchBillHistory}
-                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl transition-all duration-200"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-amber-600 hover:text-amber-700 hover:bg-amber-50 rounded-xl transition-all duration-200 w-full sm:w-auto"
                   type="button"
                 >
                   <RefreshCw className="w-4 h-4" />
@@ -1116,8 +1165,8 @@ useEffect(() => {
                         key={bill._id}
                         className={`border-2 rounded-xl p-4 transition-all duration-200 cursor-pointer ${
                           currentBillId === bill._id
-                            ? "border-emerald-400 bg-gradient-to-br from-emerald-50 to-teal-50 shadow-md ring-2 ring-emerald-200"
-                            : "border-gray-200 hover:border-emerald-300 hover:bg-gray-50 hover:shadow-md"
+                            ? "border-amber-400 bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 shadow-md ring-2 ring-amber-200"
+                            : "border-gray-200 hover:border-amber-300 hover:bg-gray-50 hover:shadow-md"
                         }`}
                         onClick={() => {
                           setActiveTab("form");
@@ -1159,14 +1208,14 @@ useEffect(() => {
                             </span>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2 pt-3 border-t border-gray-200">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 pt-3 border-t border-gray-200">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               setActiveTab("form");
                               router.push(`/InvoiceGenerator?id=${bill._id}`);
                             }}
-                            className="flex-1 px-3 py-1.5 text-xs font-semibold text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors"
+                            className="flex-1 px-3 py-1.5 text-xs font-semibold text-amber-600 hover:text-amber-700 hover:bg-amber-50 rounded-lg transition-colors"
                             type="button"
                           >
                             Edit
@@ -1176,10 +1225,21 @@ useEffect(() => {
                               e.stopPropagation();
                               router.push(`/InvoiceGenerator/${bill._id}`);
                             }}
-                            className="flex-1 px-3 py-1.5 text-xs font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg hover:from-emerald-700 hover:to-teal-700 transition-all duration-200"
+                            className="flex-1 px-3 py-1.5 text-xs font-semibold bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all duration-200"
                             type="button"
                           >
                             Preview
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteBillFromHistory(bill._id);
+                            }}
+                            disabled={deletingIds.includes(bill._id)}
+                            className="px-3 py-1.5 text-xs font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                            type="button"
+                          >
+                            {deletingIds.includes(bill._id) ? "Deleting..." : "Delete"}
                           </button>
                         </div>
                       </div>

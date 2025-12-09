@@ -406,7 +406,7 @@ const InvoicePreviewPage = () => {
       <div className="min-h-screen bg-slate-100">
         {/* Navigation - Hidden in print */}
         <div className="no-print max-w-6xl mx-auto px-4 py-6">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <button
               onClick={() => router.push("/InvoiceGenerator")}
               className="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900"
@@ -415,10 +415,10 @@ const InvoicePreviewPage = () => {
               <ArrowLeft className="w-4 h-4" />
               Back to Invoice Creator
             </button>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 w-full sm:w-auto">
               <button
                 onClick={() => setShowTemplatePicker(true)}
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 flex-1 sm:flex-none"
                 type="button"
               >
                 <Wand2 className="w-4 h-4" />
@@ -426,7 +426,7 @@ const InvoicePreviewPage = () => {
               </button>
               <button
                 onClick={handleEdit}
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex-1 sm:flex-none"
                 type="button"
               >
                 <Edit className="w-4 h-4" />
@@ -434,7 +434,7 @@ const InvoicePreviewPage = () => {
               </button>
               <button
                 onClick={handlePrint}
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 flex-1 sm:flex-none"
                 type="button"
               >
                 <Printer className="w-4 h-4" />
@@ -442,7 +442,7 @@ const InvoicePreviewPage = () => {
               </button>
               <button
                 onClick={handlePrint}
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 flex-1 sm:flex-none"
                 type="button"
               >
                 <FileDown className="w-4 h-4" />
@@ -450,7 +450,7 @@ const InvoicePreviewPage = () => {
               </button>
               <button
                 onClick={handleWhatsAppShare}
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-green-500 text-white rounded-lg hover:bg-green-600"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium bg-green-500 text-white rounded-lg hover:bg-green-600 flex-1 sm:flex-none"
                 type="button"
               >
                 <MessageCircle className="w-4 h-4" />
@@ -458,7 +458,7 @@ const InvoicePreviewPage = () => {
               </button>
               <button
                 onClick={handleNewInvoice}
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 flex-1 sm:flex-none"
                 type="button"
               >
                 <Plus className="w-4 h-4" />
@@ -469,8 +469,12 @@ const InvoicePreviewPage = () => {
         </div>
 
         {/* Invoice - Visible in print and on screen */}
-        <div className="invoice-print-only px-4 pb-10 max-w-5xl mx-auto print:px-0 print:pb-0 print:max-w-full">
-          <InvoiceTemplateRenderer bill={bill} template={templateForRenderer} />
+        <div className="invoice-print-only px-4 pb-10 max-w-5xl mx-auto print:px-0 print:pb-0 print:max-w-full w-full">
+          <div className="w-full overflow-x-auto">
+            <div className="min-w-[320px]">
+              <InvoiceTemplateRenderer bill={bill} template={templateForRenderer} />
+            </div>
+          </div>
         </div>
 
         {showTemplatePicker && (

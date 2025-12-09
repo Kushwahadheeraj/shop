@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState, useCallback } from "react";
-import { Plus, FolderPlus, Eye, X, Trash2 } from "lucide-react";
+import { Plus, FolderPlus, Eye, X, Trash2, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { useAuth } from "@/components/AuthContext";
 import API_BASE_URL from "@/lib/apiConfig";
@@ -245,22 +245,39 @@ export default function ShopManagementPage() {
   };
 
   return (
-    <div className="p-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold text-slate-800">Shop Management</h1>
-          <button
-            onClick={() => {
-              resetForm();
-              setShowForm(true);
-            }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg shadow hover:bg-emerald-700"
-          >
-            <Plus className="w-4 h-4" />
-            Shop +
-          </button>
+    <div className="p-4 sm:p-6">
+      <div className="max-w-6xl mx-auto space-y-4">
+        {/* Hero/Header */}
+        <div className="bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 rounded-2xl p-5 sm:p-6 lg:p-7 text-white shadow-xl border border-amber-300/40">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <div className="bg-white/15 p-2.5 rounded-xl">
+                  <Sparkles className="w-6 h-6 sm:w-7 sm:h-7" />
+                </div>
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold leading-tight">
+                  Shop Management
+                </h1>
+              </div>
+              <p className="text-sm sm:text-base text-amber-50/90 max-w-2xl">
+                दुकानों को जोड़ें, अपडेट करें और उनके PDF/Images को एक ही जगह प्रबंधित करें।
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 w-full lg:w-auto">
+              <button
+                onClick={() => {
+                  resetForm();
+                  setShowForm(true);
+                }}
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm sm:text-base font-bold bg-gradient-to-r from-amber-100 via-white to-amber-50 text-amber-700 rounded-xl hover:from-white hover:to-white transition-all duration-200 shadow-lg shadow-amber-400/40"
+              >
+                <Plus className="w-4 h-4" />
+                Shop Add
+              </button>
+            </div>
+          </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {/* Left: shops list */}
           <div className="bg-white border rounded-xl shadow-sm p-4 flex flex-col">
             <div className="font-semibold text-slate-700 mb-3">Shops</div>
@@ -270,7 +287,7 @@ export default function ShopManagementPage() {
                   key={shop._id}
                   className={`group flex items-center gap-2 px-3 py-2 rounded-lg border ${
                     shop._id === selectedShopId
-                      ? "border-emerald-500 bg-emerald-50 text-emerald-700"
+                      ? "border-amber-500 bg-amber-50 text-amber-700"
                       : "border-slate-200 hover:bg-slate-50 text-slate-700"
                   }`}
                 >
@@ -287,7 +304,7 @@ export default function ShopManagementPage() {
                         setNewShopAddress(shop.address || "");
                         setShowForm(true);
                       }}
-                      className="text-xs px-2 py-1 rounded bg-blue-50 text-blue-600 border border-blue-100 hover:bg-blue-100"
+                      className="text-xs px-2 py-1 rounded bg-amber-50 text-amber-700 border border-amber-100 hover:bg-amber-100"
                     >
                       Edit
                     </button>
@@ -308,11 +325,11 @@ export default function ShopManagementPage() {
 
           {/* Right: files grid */}
           <div className="bg-white border rounded-xl shadow-sm p-4 flex flex-col min-h-[420px]">
-            <div className="flex items-center justify-between gap-3 mb-3">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
               <div className="text-lg font-semibold text-slate-800">
                 {selectedShop ? selectedShop.name : "Select a shop"}
               </div>
-              <label className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer">
+              <label className="inline-flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 cursor-pointer shadow-sm shadow-amber-300/40 w-full sm:w-auto">
                 <FolderPlus className="w-4 h-4" />
                 Add PDF/Image
                 <input
@@ -349,7 +366,7 @@ export default function ShopManagementPage() {
                       <div className="flex gap-2">
                         <button
                           onClick={() => openPreview(file)}
-                          className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-emerald-600 text-white rounded hover:bg-emerald-700 flex-1"
+                          className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white rounded hover:from-amber-600 hover:to-orange-600 flex-1"
                         >
                           <Eye className="w-3 h-3" />
                           
@@ -394,7 +411,7 @@ export default function ShopManagementPage() {
                 <input
                   value={newShopName}
                   onChange={(e) => setNewShopName(e.target.value)}
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
+                  className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                   placeholder="Shop name"
                 />
               </div>
@@ -403,7 +420,7 @@ export default function ShopManagementPage() {
                 <input
                   value={newShopPhone}
                   onChange={(e) => setNewShopPhone(e.target.value)}
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
+                  className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                   placeholder="Phone"
                 />
               </div>
@@ -412,7 +429,7 @@ export default function ShopManagementPage() {
                 <textarea
                   value={newShopAddress}
                   onChange={(e) => setNewShopAddress(e.target.value)}
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
+                  className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                   placeholder="Address"
                   rows={3}
                 />
@@ -430,7 +447,7 @@ export default function ShopManagementPage() {
               </button>
               <button
                 onClick={handleAddShop}
-                className="px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700"
+                className="px-4 py-2 rounded-lg bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white hover:from-amber-600 hover:to-orange-600 shadow-md shadow-amber-300/50"
               >
                 {editingShop ? "Save changes" : "Add shop"}
               </button>

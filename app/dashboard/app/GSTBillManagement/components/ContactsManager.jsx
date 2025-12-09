@@ -5,7 +5,7 @@ import ClientManagement from './ClientManagement';
 import ShopFormModal from './ShopFormModal';
 import API_BASE_URL from '@/lib/apiConfig';
 
-const baseBtn = "px-3 py-2 border rounded hover:bg-gray-50";
+const baseBtn = "px-3 py-2 text-sm sm:text-base border rounded hover:bg-gray-50";
 
 export default function ContactsManager({ isOpen, onClose }) {
   const [tab, setTab] = useState('clients'); // 'clients' | 'shops'
@@ -136,10 +136,10 @@ export default function ContactsManager({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-3 sm:p-4">
       <div className="bg-white w-full max-w-6xl rounded-lg shadow-xl overflow-hidden">
-        <div className="flex items-center justify-between p-4 border-b">
-          <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 border-b">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
             <button className={`${baseBtn} ${tab==='clients'?'bg-purple-50 border-purple-300 text-purple-700':''}`} onClick={()=>setTab('clients')}>
               <Users className="w-4 h-4 inline mr-1"/> Clients ({clients.length})
             </button>
@@ -147,17 +147,17 @@ export default function ContactsManager({ isOpen, onClose }) {
               <Building2 className="w-4 h-4 inline mr-1"/> Shops ({shops.length})
             </button>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="relative">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
+            <div className="relative w-full sm:w-64">
               <Search className="w-4 h-4 text-gray-400 absolute left-2 top-1/2 -translate-y-1/2"/>
-              <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search..." className="pl-7 pr-2 py-2 border rounded"/>
+              <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search..." className="w-full pl-7 pr-2 py-2 text-sm border rounded"/>
             </div>
             {tab==='clients' ? (
-              <button className="px-3 py-2 bg-green-600 text-white rounded flex items-center gap-2" onClick={()=>{ setEditingClient(null); setShowClientModal(true); }}>
+              <button className="px-3 py-2 text-sm sm:text-base bg-green-600 text-white rounded flex items-center justify-center gap-2" onClick={()=>{ setEditingClient(null); setShowClientModal(true); }}>
                 <Plus className="w-4 h-4"/> Add Client
               </button>
             ) : (
-              <button className="px-3 py-2 bg-green-600 text-white rounded flex items-center gap-2" onClick={()=>{ setEditingShop({}); setShowShopModal(true); }}>
+              <button className="px-3 py-2 text-sm sm:text-base bg-green-600 text-white rounded flex items-center justify-center gap-2" onClick={()=>{ setEditingShop({}); setShowShopModal(true); }}>
                 <Plus className="w-4 h-4"/> Add Shop
               </button>
             )}
@@ -170,7 +170,7 @@ export default function ContactsManager({ isOpen, onClose }) {
             <div className="py-12 text-center text-gray-600">Loading...</div>
           ) : tab==='clients' ? (
             <div className="overflow-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-xs sm:text-sm">
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="text-left p-2">Name</th>
@@ -200,7 +200,7 @@ export default function ContactsManager({ isOpen, onClose }) {
             </div>
           ) : (
             <div className="overflow-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-xs sm:text-sm">
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="text-left p-2">Name</th>

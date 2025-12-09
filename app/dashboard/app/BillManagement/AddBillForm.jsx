@@ -270,42 +270,42 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-3 sm:p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {/* Header */}
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Add Bill</h2>
+          <div className="flex justify-between items-center mb-4 sm:mb-6">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Add Bill</h2>
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600"
             >
-              <X className="w-6 h-6" />
+              <X className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
           </div>
 
           {/* AI Scan Button */}
-          <div className="mb-6">
+          <div className="mb-4 sm:mb-6">
             <button
               type="button"
               onClick={handleScanReceipt}
-              className="w-full bg-gradient-to-r from-pink-500 to-orange-500 text-white py-3 px-6 rounded-lg font-medium flex items-center justify-center gap-2 hover:from-pink-600 hover:to-orange-600 transition-all"
+              className="w-full bg-gradient-to-r from-pink-500 to-orange-500 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg text-sm sm:text-base font-medium flex items-center justify-center gap-2 hover:from-pink-600 hover:to-orange-600 transition-all"
             >
-              <Camera className="w-5 h-5" />
+              <Camera className="w-4 h-4 sm:w-5 sm:h-5" />
               Scan Receipt with AI
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             {/* Shop Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                 Shop *
               </label>
               <select
                 value={formData.shopId}
                 onChange={(e) => handleInputChange('shopId', e.target.value)}
-                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                className={`w-full px-3 py-2 text-sm sm:text-base border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                   errors.shopId ? 'border-red-500' : 'border-gray-300'
                 }`}
               >
@@ -318,30 +318,30 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
                   </option>
                 ))}
               </select>
-              {errors.shopId && <p className="text-red-500 text-sm mt-1">{errors.shopId}</p>}
+              {errors.shopId && <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.shopId}</p>}
             </div>
 
             {/* Amount and Payment Method */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                   Total Amount
                 </label>
                 <input
                   type="number"
                   value={isNaN(formData.pricing.totalAmount) ? 0 : formData.pricing.totalAmount.toFixed(2)}
                   readOnly
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                  className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg bg-gray-50"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                   Payment Method
                 </label>
                 <select
                   value={formData.payment.method}
                   onChange={(e) => handleNestedInputChange('payment', 'method', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="cash">Cash</option>
                   <option value="card">Card</option>
@@ -354,29 +354,29 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
 
             {/* Items Section */}
             <div>
-              <div className="flex justify-between items-center mb-4">
-                <label className="block text-sm font-medium text-gray-700">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 mb-3 sm:mb-4">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700">
                   Items *
                 </label>
                 <button
                   type="button"
                   onClick={addItem}
-                  className="flex items-center gap-2 text-blue-600 hover:text-blue-700"
+                  className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-blue-600 hover:text-blue-700"
                 >
-                  <Plus className="w-4 h-4" />
+                  <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
                   Add Item
                 </button>
               </div>
               
               {formData.items.map((item, index) => (
-                <div key={index} className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4 p-4 border border-gray-200 rounded-lg">
-                  <div className="md:col-span-2">
+                <div key={index} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4 mb-3 sm:mb-4 p-3 sm:p-4 border border-gray-200 rounded-lg">
+                  <div className="sm:col-span-2 lg:col-span-2">
                     <input
                       type="text"
                       placeholder="Item name"
                   value={item.name || ''}
                       onChange={(e) => handleItemChange(index, 'name', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
                   <div>
@@ -386,7 +386,7 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
                       value={item.quantity ?? ''}
                       onChange={(e) => handleItemChange(index, 'quantity', e.target.value)}
                       min="1"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
                   <div>
@@ -397,7 +397,7 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
                       onChange={(e) => handleItemChange(index, 'unitPrice', e.target.value)}
                       min="0"
                       step="0.01"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
                   <div>
@@ -406,39 +406,39 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
                       placeholder="Category"
                       value={item.category || ''}
                       onChange={(e) => handleItemChange(index, 'category', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
-                  <div className="flex items-center">
+                  <div className="flex items-center justify-end sm:justify-start">
                     <button
                       type="button"
                       onClick={() => removeItem(index)}
                       disabled={formData.items.length === 1}
-                      className="text-red-500 hover:text-red-700 disabled:text-gray-300 disabled:cursor-not-allowed"
+                      className="text-red-500 hover:text-red-700 disabled:text-gray-300 disabled:cursor-not-allowed p-1"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
                     </button>
                   </div>
                 </div>
               ))}
-              {errors.items && <p className="text-red-500 text-sm mt-1">{errors.items}</p>}
+              {errors.items && <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.items}</p>}
             </div>
 
             {/* Pricing Details */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                   Subtotal
                 </label>
                 <input
                   type="number"
                   value={isNaN(formData.pricing.subtotal) ? 0 : formData.pricing.subtotal.toFixed(2)}
                   readOnly
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                  className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg bg-gray-50"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                   GST Rate (%)
                 </label>
                 <input
@@ -447,26 +447,26 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
                   onChange={(e) => handleNestedInputChange('pricing', 'gstRate', parseFloat(e.target.value) || 0)}
                   min="0"
                   max="100"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                   GST Amount
                 </label>
                 <input
                   type="number"
                   value={isNaN(formData.pricing.gstAmount) ? 0 : formData.pricing.gstAmount.toFixed(2)}
                   readOnly
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                  className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg bg-gray-50"
                 />
               </div>
             </div>
 
             {/* Discount and Paid Amount */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                   Discount
                 </label>
                 <input
@@ -475,11 +475,11 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
                   onChange={(e) => handleNestedInputChange('pricing', 'discount', parseFloat(e.target.value) || 0)}
                   min="0"
                   step="0.01"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                   Paid Amount
                 </label>
                 <input
@@ -488,43 +488,43 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
                   onChange={(e) => handleNestedInputChange('payment', 'paidAmount', parseFloat(e.target.value) || 0)}
                   min="0"
                   step="0.01"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
             </div>
 
             {/* Date Fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                   Bill Date *
                 </label>
                 <input
                   type="date"
                   value={formData.billDate}
                   onChange={(e) => handleInputChange('billDate', e.target.value)}
-                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                  className={`w-full px-3 py-2 text-sm sm:text-base border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                     errors.billDate ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
-                {errors.billDate && <p className="text-red-500 text-sm mt-1">{errors.billDate}</p>}
+                {errors.billDate && <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.billDate}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                   Due Date
                 </label>
                 <input
                   type="date"
                   value={formData.dueDate || ''}
                   onChange={(e) => handleInputChange('dueDate', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
             </div>
 
             {/* Description */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                 Description
               </label>
               <input
@@ -532,16 +532,16 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
                 placeholder="Enter description"
                 value={formData.description || ''}
                 onChange={(e) => handleInputChange('description', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
             {/* Recurring Transaction */}
-            <div className="border-t pt-4">
-              <div className="flex items-center justify-between">
+            <div className="border-t pt-3 sm:pt-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
                 <div>
-                  <h3 className="text-lg font-medium text-gray-900">Recurring Transaction</h3>
-                  <p className="text-sm text-gray-500">Set up a recurring schedule for this transaction</p>
+                  <h3 className="text-base sm:text-lg font-medium text-gray-900">Recurring Transaction</h3>
+                  <p className="text-xs sm:text-sm text-gray-500">Set up a recurring schedule for this transaction</p>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input
@@ -555,14 +555,14 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
               </div>
               
               {formData.recurring.isRecurring && (
-                <div className="mt-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className="mt-3 sm:mt-4">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                     Frequency
                   </label>
                   <select
                     value={formData.recurring.frequency}
                     onChange={(e) => handleNestedInputChange('recurring', 'frequency', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="daily">Daily</option>
                     <option value="weekly">Weekly</option>
@@ -575,18 +575,18 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex justify-end gap-4 pt-6 border-t">
+            <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4 pt-4 sm:pt-6 border-t">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                className="w-full sm:w-auto px-4 sm:px-6 py-2 text-sm sm:text-base border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full sm:w-auto px-4 sm:px-6 py-2 text-sm sm:text-base bg-black text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isSubmitting ? 'Creating...' : 'Create Bill'}
               </button>

@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { X, Save, Plus, Trash2, Calculator, Calendar, Edit, Upload, ChevronDown, RefreshCw, Pen, Paperclip, FileText, StickyNote, Info, Phone, Settings, Users, Package, DollarSign, Mail, Printer, Download, Eye, Clock, CheckCircle, AlertCircle, Search } from 'lucide-react';
 import ClientManagement from './components/ClientManagement';
 import ShopFormModal from './components/ShopFormModal';
@@ -8,6 +9,7 @@ import InvoiceTemplates from './components/InvoiceTemplates';
 import API_BASE_URL from '@/lib/apiConfig';
 
 const AddGSTBillForm = ({ onClose, onSave, shops }) => {
+  const router = useRouter();
   // Detect small screens to switch to stacked mobile layout for item rows
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   useEffect(() => {
@@ -605,7 +607,7 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
       };
       // Defer saving until bank details added; store draft and go to bank step
       sessionStorage.setItem('pending_gst_bill', JSON.stringify(billData));
-      window.location.href = '/GSTBillManagement/BankDetails';
+      router.push('/GSTBillManagement/BankDetails');
     } catch (error) {
       console.error('Error preparing GST bill:', error);
       setLoading(false);
@@ -862,14 +864,14 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
           </div>
         )}
                   
-        <form onSubmit={handleSubmit} className="p-6">
+        <form onSubmit={handleSubmit} className="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6">
           {/* Main Content */}
           <div className="mb-8">
 
             {/* Billed By and Billed To Sections Side by Side */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6">
               {/* Billed By Section */}
-              <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+            <div className="bg-white p-4 sm:p-5 lg:p-6 rounded-lg shadow-sm border border-gray-200">
                 <div className="mb-4">
                   <h3 className="text-lg font-semibold text-gray-900">Billed By</h3>
                   <span className="text-sm text-gray-600 ml-2">Your Details</span>
@@ -940,7 +942,7 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
             </div>
 
               {/* Billed To Section */}
-              <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+            <div className="bg-white p-4 sm:p-5 lg:p-6 rounded-lg shadow-sm border border-gray-200">
                 <div className="mb-4">
                   <h3 className="text-lg font-semibold text-gray-900">Billed To</h3>
                   <span className="text-sm text-gray-600 ml-2">Client's Details</span>
@@ -1079,30 +1081,30 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
             </div>
 
             {/* Currency and Format Section */}
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+            <div className="bg-white p-4 sm:p-5 lg:p-6 rounded-lg shadow-sm border border-gray-200">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Currency & Format</h3>
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">Currency*</label>
-                  <div className="flex items-center space-x-3">
-                  <button type="button" onClick={()=>setShowTaxConfig(true)} className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">
+                  <label className="block text-sm font-medium text-gray-700 mb-2 sm:mb-3">Currency*</label>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                    <select className="w-full sm:w-auto px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                      <option>Indian Rupee (INR, ₹)</option>
+                    </select>
+                    <button type="button" onClick={()=>setShowTaxConfig(true)} className="w-full sm:w-auto flex items-center justify-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">
                       <span className="text-purple-600 font-bold">%</span>
                       <span>Configure GST</span>
                     </button>
-                    <select className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
-                      <option>Indian Rupee (INR, ₹)</option>
-                    </select>
-                    <button className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">
+                    <button className="w-full sm:w-auto flex items-center justify-center space-x-2 px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">
                       <span className="text-purple-600 font-bold">123</span>
                       <span>Number and Currency Format</span>
                     </button>
-                    <button className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">
+                    <button className="w-full sm:w-auto flex items-center justify-center space-x-2 px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">
                       <div className="w-3 h-3 grid grid-cols-2 gap-0.5">
                         <div className="w-1 h-1 bg-purple-600 rounded-sm"></div>
                         <div className="w-1 h-1 bg-purple-600 rounded-sm"></div>
                         <div className="w-1 h-1 bg-purple-600 rounded-sm"></div>
                         <div className="w-1 h-1 bg-purple-600 rounded-sm"></div>
-                  </div>
+                      </div>
                       <span>Edit Columns/Formulas</span>
                     </button>
                   </div>
@@ -1113,23 +1115,158 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
 
           {/* Items Table */}
           <div className="mb-8">
-            <div className="bg-purple-600 text-white p-4 rounded-t-lg">
-              <div className={`grid ${gstType==='IGST' ? 'grid-cols-10' : 'grid-cols-11'} gap-4 text-sm font-medium`}>
-                <div className="col-span-2">Item</div>
-                <div>HSN/SAC</div>
-                <div>GST Rate</div>
-                <div>Quantity</div>
-                <div>Unit</div>
-                <div>Rate</div>
-                <div>Amount</div>
-                {gstType==='IGST' ? (<div>IGST</div>) : (<><div>CGST</div><div>SGST</div></>)}
-                <div>Total</div>
+            <div className="bg-purple-600 text-white p-3 sm:p-4 rounded-t-lg">
+              <div className="overflow-x-auto sm:overflow-visible">
+                <div className={`grid ${gstType==='IGST' ? 'grid-cols-10' : 'grid-cols-11'} gap-3 sm:gap-4 text-xs sm:text-sm font-medium min-w-[680px] sm:min-w-0`}>
+                  <div className="col-span-2">Item</div>
+                  <div>HSN/SAC</div>
+                  <div>GST Rate</div>
+                  <div>Quantity</div>
+                  <div>Unit</div>
+                  <div>Rate</div>
+                  <div>Amount</div>
+                  {gstType==='IGST' ? (<div>IGST</div>) : (<><div>CGST</div><div>SGST</div></>)}
+                  <div>Total</div>
+                </div>
               </div>
             </div>
-            
+
             <div className="border border-gray-300 rounded-b-lg">
               {formData.items.map((item, index) => {
                 const isExpanded = expandedItemIndex === index;
+
+                // Mobile stacked card (no desktop change)
+                if (isSmallScreen) {
+                  return (
+                    <div key={index} className="p-4 border-b border-gray-200 last:border-b-0 space-y-3 bg-white">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <div className="text-sm font-semibold text-gray-900">0{index + 1}</div>
+                          <div className="text-xs text-purple-600">Item</div>
+                        </div>
+                        {formData.items.length > 1 && (
+                          <button type="button" onClick={() => removeItem(index)} className="text-red-600 hover:text-red-800">
+                            <X className="h-4 w-4" />
+                          </button>
+                        )}
+                      </div>
+
+                      <div className="space-y-3">
+                        <div>
+                          <label className="text-xs text-gray-600">Item</label>
+                          <input
+                            type="text"
+                            value={item.name}
+                            onChange={(e) => handleItemChange(index, 'name', e.target.value)}
+                            placeholder="Name/SKU Id (Required)"
+                            className="w-full mt-1 px-3 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
+                          />
+                          <button type="button" onClick={() => handleItemChange(index, 'description', item.description || '')} className="mt-2 inline-flex items-center text-xs text-purple-600 space-x-2">
+                            <Plus className="h-3 w-3" />
+                            <span>Add Description</span>
+                          </button>
+                        </div>
+
+                        <div>
+                          <label className="text-xs text-gray-600 flex items-center justify-between">
+                            <span>HSN/SAC</span>
+                            <button type="button" onClick={()=>openHSNModal(index)}><Search className="h-3.5 w-3.5 text-gray-500" /></button>
+                          </label>
+                          <input
+                            type="text"
+                            value={item.hsnSac}
+                            onChange={(e) => handleItemChange(index, 'hsnSac', e.target.value)}
+                            placeholder="#"
+                            className="w-full mt-1 px-3 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="text-xs text-gray-600">GST Rate</label>
+                            <select
+                              value={item.gstRate}
+                              onChange={(e) => handleItemChange(index, 'gstRate', e.target.value)}
+                              className="w-full mt-1 px-3 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
+                            >
+                              <option value={0}>0%</option>
+                              <option value={3}>3%</option>
+                              <option value={5}>5%</option>
+                              <option value={12}>12%</option>
+                              <option value={18}>18%</option>
+                              <option value={28}>28%</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="text-xs text-gray-600">Quantity</label>
+                            <input
+                              type="number"
+                              value={item.quantity}
+                              onChange={(e) => handleItemChange(index, 'quantity', e.target.value)}
+                              className="w-full mt-1 px-3 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="text-xs text-gray-600">Unit</label>
+                            <select
+                              value={item.unit || 'pcs'}
+                              onChange={(e)=>handleItemChange(index, 'unit', e.target.value)}
+                              className="w-full mt-1 px-3 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
+                            >
+                              {QUANTITY_UNITS.map(u => <option key={u} value={u}>{u}</option>)}
+                            </select>
+                          </div>
+                          <div>
+                            <label className="text-xs text-gray-600">Rate</label>
+                            <input
+                              type="number"
+                              value={item.unitPrice}
+                              onChange={(e) => handleItemChange(index, 'unitPrice', e.target.value)}
+                              className="w-full mt-1 px-3 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="text-xs text-gray-600">Amount</label>
+                            <input
+                              type="text"
+                              value={formatCurrency(item.amount)}
+                              readOnly
+                              className="w-full mt-1 px-3 py-2 border border-gray-300 rounded text-sm bg-gray-50"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-xs text-gray-600">{gstType==='IGST' ? 'IGST' : 'CGST'}</label>
+                            <input type="text" value={formatCurrency(gstType==='IGST'?item.igst:item.cgst)} readOnly className="w-full mt-1 px-3 py-2 border border-gray-300 rounded text-sm bg-gray-50" />
+                          </div>
+                        </div>
+                        {gstType!=='IGST' && (
+                          <div>
+                            <label className="text-xs text-gray-600">SGST</label>
+                            <input type="text" value={formatCurrency(item.sgst)} readOnly className="w-full mt-1 px-3 py-2 border border-gray-300 rounded text-sm bg-gray-50" />
+                          </div>
+                        )}
+
+                        <div>
+                          <label className="text-xs text-gray-600">Total</label>
+                          <input
+                            type="text"
+                            value={formatCurrency(item.total)}
+                            readOnly
+                            className="w-full mt-1 px-3 py-2 border border-gray-300 rounded text-sm bg-gray-50"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+
+                // Desktop/tablet grid (unchanged)
                 return (
                   <div key={index} className={`grid ${isExpanded ? 'grid-cols-1' : (gstType==='IGST' ? 'grid-cols-10' : 'grid-cols-11')} gap-4 p-4 border-b border-gray-200 last:border-b-0`}>
                     <div className={`${isExpanded ? 'col-span-1' : 'col-span-2'}`}>
@@ -1140,7 +1277,7 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
                         onFocus={() => setExpandedItemIndex(index)}
                         onBlur={() => setExpandedItemIndex(null)}
                       placeholder="Name/SKU Id (Required)"
-                        className={`w-full ${isExpanded ? 'h-12 px-3' : 'px-2'} py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-purple-500 focus:border-purple-500`}
+                         className={`w-full ${isExpanded ? 'h-12 px-3' : 'px-2'} py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-purple-500 focus:border-purple-500`}
                     />
                   </div>
                     {isExpanded ? null : (
@@ -1406,23 +1543,20 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
           
 
           {/* Footer */}
-          <div className="flex items-center justify-between pt-6 border-t border-gray-200">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 pt-4 sm:pt-6 border-t border-gray-200">
             <div className="flex items-center space-x-4"> </div>
-             
-            
-          
-            <div className="flex items-center space-x-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
-            >
-              Save As Draft
+            <div className="flex flex-col sm:flex-row w-full sm:w-auto items-stretch sm:items-center gap-2 sm:gap-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="w-full sm:w-auto px-5 sm:px-6 py-2 text-sm sm:text-base border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+              >
+                Save As Draft
               </button>
-            <button
-              type="submit"
-              disabled={loading}
-                className="px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors disabled:opacity-50 font-medium shadow-sm flex items-center space-x-2"
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full sm:w-auto px-5 sm:px-6 py-2 text-sm sm:text-base bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors disabled:opacity-50 font-medium shadow-sm flex items-center justify-center space-x-2"
               >
                 {loading ? (
                   <>
@@ -1435,7 +1569,7 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
                     <span>Save & Continue</span>
                   </>
                 )}
-            </button>
+              </button>
             </div>
           </div>
         </form>

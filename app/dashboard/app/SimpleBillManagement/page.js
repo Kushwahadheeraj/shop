@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { Plus, Search, Eye, Edit, Trash2, DollarSign, Building2, CreditCard, History, Receipt, X } from 'lucide-react';
+import { Plus, Search, Eye, Edit, Trash2, DollarSign, Building2, CreditCard, History, Receipt, X, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/AuthContext';
 import AddSimpleBillForm from './AddSimpleBillForm';
@@ -656,90 +656,102 @@ const SimpleBillManagementPage = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Simple Bill Management</h1>
-        </div>
-        <div className="flex gap-3">
-          <button
-            onClick={async () => {
-              await fetchShops();
-              await fetchBills();
-              await fetchStats();
-            }}
-            className="flex items-center gap-2 px-4 py-2 border border-blue-300 rounded-lg text-blue-700 hover:bg-blue-50 transition-colors"
-          >
-            🔄 Refresh Data
-          </button>
-          <button
-            onClick={() => setShowAddShopForm(true)}
-            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-          >
-            <Building2 className="w-4 h-4" />
-            Add Shop
-          </button>
-          <button
-            onClick={() => setShowAddBillForm(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            Add Bill
-          </button>
+      {/* Header / Hero */}
+      <div className="bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 rounded-2xl p-5 sm:p-6 lg:p-7 text-white shadow-xl border border-amber-300/40">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <div className="bg-white/15 p-2.5 rounded-xl">
+                <Sparkles className="w-6 h-6 sm:w-7 sm:h-7" />
+              </div>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold leading-tight">
+                Simple Bill Management
+              </h1>
+            </div>
+            <p className="text-sm sm:text-base text-amber-50/90 max-w-2xl">
+              जल्दी बिल बनाएँ — दुकान चुनें, सामान जोड़ें, भुगतान जोड़ें और तुरंत ट्रैक करें।
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 w-full lg:w-auto">
+            <button
+              onClick={async () => {
+                await fetchShops();
+                await fetchBills();
+                await fetchStats();
+              }}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm sm:text-base font-semibold bg-white/15 hover:bg-white/25 border border-white/30 rounded-xl transition-all duration-200 shadow-md"
+            >
+              🔄 Refresh Data
+            </button>
+            <button
+              onClick={() => setShowAddShopForm(true)}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm sm:text-base font-semibold bg-white text-amber-700 rounded-xl hover:bg-amber-50 transition-all duration-200 shadow-md"
+            >
+              <Building2 className="w-4 h-4" />
+              Add Shop
+            </button>
+            <button
+              onClick={() => setShowAddBillForm(true)}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm sm:text-base font-bold bg-gradient-to-r from-amber-100 via-white to-amber-50 text-amber-700 rounded-xl hover:from-white hover:to-white transition-all duration-200 shadow-lg shadow-amber-400/40"
+            >
+              <Plus className="w-4 h-4" />
+              New Bill
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Stats Cards - Enhanced with Hindi Labels */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6">
         {/* Kitna ka aaya saman - Total Amount */}
-        <div className="bg-gradient-to-br from-blue-50 to-white p-6 rounded-xl shadow-lg border-2 border-blue-200">
+        <div className="bg-gradient-to-br from-blue-50 to-white p-5 sm:p-6 rounded-xl shadow-lg border-2 border-amber-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-base font-semibold text-gray-700 flex items-center gap-2 mb-1">
+              <p className="text-sm sm:text-base font-semibold text-gray-700 flex items-center gap-2 mb-1">
                 <Receipt className="w-5 h-5 text-blue-600" />
                 कितना का आया सामान
               </p>
               <p className="text-xs text-gray-500 mb-2">Total Bill Amount</p>
-              <p className="text-3xl font-bold text-blue-700">{formatCurrency(stats.totalAmount)}</p>
+              <p className="text-2xl sm:text-3xl font-bold text-blue-700">{formatCurrency(stats.totalAmount)}</p>
               <p className="text-xs text-gray-500 mt-2">
                 {selectedShop && selectedShop !== '' 
                   ? `${shops.find(s => s._id === selectedShop)?.name || 'Selected Shop'}` 
                   : 'All Shops'} • {stats.totalBills} Bills
               </p>
             </div>
-            <div className="p-4 bg-blue-100 rounded-xl">
-              <DollarSign className="w-8 h-8 text-blue-600" />
+            <div className="p-3 sm:p-4 bg-blue-100 rounded-xl">
+              <DollarSign className="w-7 h-7 sm:w-8 sm:h-8 text-blue-600" />
             </div>
           </div>
         </div>
 
         {/* Kitna diya gaya - Paid Amount */}
-        <div className="bg-gradient-to-br from-green-50 to-white p-6 rounded-xl shadow-lg border-2 border-green-200">
+        <div className="bg-gradient-to-br from-green-50 to-white p-5 sm:p-6 rounded-xl shadow-lg border-2 border-amber-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-base font-semibold text-gray-700 flex items-center gap-2 mb-1">
+              <p className="text-sm sm:text-base font-semibold text-gray-700 flex items-center gap-2 mb-1">
                 <CreditCard className="w-5 h-5 text-green-600" />
                 कितना दिया गया
               </p>
               <p className="text-xs text-gray-500 mb-2">Total Paid Amount</p>
-              <p className="text-3xl font-bold text-green-700">{formatCurrency(stats.paidAmount)}</p>
+              <p className="text-2xl sm:text-3xl font-bold text-green-700">{formatCurrency(stats.paidAmount)}</p>
               {stats.totalAmount > 0 && (
-                <p className="text-xs text-green-600 mt-2 font-medium">
+                <p className="text-xs text-green-700 mt-2 font-medium">
                   {((stats.paidAmount / stats.totalAmount) * 100).toFixed(1)}% Paid
                 </p>
               )}
               {selectedShop && (
                 <button
                   onClick={handleViewPaymentHistory}
-                  className="mt-2 text-xs text-green-600 hover:text-green-800 hover:underline"
+                  className="mt-2 text-xs text-green-700 hover:text-green-800 hover:underline"
                   title="View Payment History"
                 >
                   View History →
                 </button>
               )}
             </div>
-            <div className="p-4 bg-green-100 rounded-xl">
-              <CreditCard className="w-8 h-8 text-green-600" />
+            <div className="p-3 sm:p-4 bg-green-100 rounded-xl">
+              <CreditCard className="w-7 h-7 sm:w-8 sm:h-8 text-green-600" />
             </div>
           </div>
         </div>
@@ -942,54 +954,54 @@ const SimpleBillManagementPage = () => {
           
           return (
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full min-w-[720px]">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bill #</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Shop</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">Bill #</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">Shop</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">Payment</th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {filteredBills.map((bill) => (
                     <tr key={bill._id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                         {bill.billNumber}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm text-gray-900">
                         {bill.shopName}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm text-gray-900">
                         {formatDate(bill.billDate || bill.createdAt)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm text-gray-900">
                         {formatCurrency(bill.pricing?.totalAmount || bill.totalAmount || 0)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm text-gray-900">
                         {formatCurrency(bill.payment?.paidAmount || bill.paidAmount || 0)} / {formatCurrency(bill.pricing?.totalAmount || bill.totalAmount || 0)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex space-x-2">
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex flex-wrap gap-2">
                           <button 
                             onClick={() => handleViewBill(bill)}
-                            className="text-blue-600 hover:text-blue-900"
+                            className="text-amber-600 hover:text-amber-800"
                             title="View Bill"
                           >
                             <Eye className="w-4 h-4" />
                           </button>
                           <button 
                             onClick={() => handleEditBill(bill)}
-                            className="text-green-600 hover:text-green-900"
+                            className="text-amber-600 hover:text-amber-800"
                             title="Edit Bill"
                           >
                             <Edit className="w-4 h-4" />
                           </button>
                           <button 
                             onClick={() => handleAddPayment(bill)}
-                            className="text-purple-600 hover:text-purple-900"
+                            className="text-amber-600 hover:text-amber-800"
                             title="Add Payment"
                           >
                             <CreditCard className="w-4 h-4" />

@@ -133,14 +133,14 @@ const HSNLookup = ({ onClose, onSelectHSN, selectedHSN }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-100 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-gray-100 flex items-center justify-center z-50 p-3 sm:p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[95vh] overflow-y-auto">
         {/* Header */}
-        <div className="p-6 border-b bg-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">HSN Code Lookup</h2>
-              <p className="text-gray-600 mt-1">Search and select HSN codes with descriptions</p>
+        <div className="p-4 sm:p-6 border-b bg-white">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
+            <div className="space-y-1">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">HSN Code Lookup</h2>
+              <p className="text-sm sm:text-base text-gray-600">Search and select HSN codes with descriptions</p>
             </div>
             <button
               onClick={onClose}
@@ -152,8 +152,8 @@ const HSNLookup = ({ onClose, onSelectHSN, selectedHSN }) => {
         </div>
 
         {/* Search and Filters */}
-        <div className="p-6 border-b bg-gray-50">
-          <div className="flex items-center space-x-4">
+        <div className="p-4 sm:p-6 border-b bg-gray-50">
+          <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] lg:grid-cols-[1fr_auto_auto] gap-3 sm:gap-4">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
@@ -161,13 +161,13 @@ const HSNLookup = ({ onClose, onSelectHSN, selectedHSN }) => {
                 placeholder="Search by HSN code or description..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                className="w-full pl-10 pr-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
               />
             </div>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              className="px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
             >
               {categories.map(category => (
                 <option key={category} value={category}>{category}</option>
@@ -175,7 +175,7 @@ const HSNLookup = ({ onClose, onSelectHSN, selectedHSN }) => {
             </select>
             <button
               onClick={handleOpenHSNList}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
+              className="w-full sm:w-auto px-4 py-2 text-sm sm:text-base bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
             >
               <FileText className="h-4 w-4" />
               <span>Open Full List</span>
@@ -184,7 +184,7 @@ const HSNLookup = ({ onClose, onSelectHSN, selectedHSN }) => {
         </div>
 
         {/* HSN List */}
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {filteredHSN.length === 0 ? (
             <div className="text-center py-12">
               <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -192,7 +192,7 @@ const HSNLookup = ({ onClose, onSelectHSN, selectedHSN }) => {
               <p className="text-gray-600">Try adjusting your search terms or category filter</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {filteredHSN.map((hsn, index) => (
                 <div
                   key={index}
@@ -220,7 +220,7 @@ const HSNLookup = ({ onClose, onSelectHSN, selectedHSN }) => {
                         </button>
                       </div>
                       <p className="text-sm text-gray-600 mb-2">{hsn.description}</p>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center flex-wrap gap-2">
                         <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
                           {hsn.category}
                         </span>
@@ -235,7 +235,7 @@ const HSNLookup = ({ onClose, onSelectHSN, selectedHSN }) => {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2 text-sm text-gray-500">
+                    <div className="flex items-center space-x-2 text-xs sm:text-sm text-gray-500">
                       <Info className="h-4 w-4" />
                       <span>Click to select</span>
                     </div>
@@ -244,7 +244,7 @@ const HSNLookup = ({ onClose, onSelectHSN, selectedHSN }) => {
                         e.stopPropagation();
                         handleSelectHSN(hsn);
                       }}
-                      className="px-3 py-1 bg-purple-600 text-white rounded text-sm hover:bg-purple-700 transition-colors"
+                      className="px-3 py-1 bg-purple-600 text-white rounded text-xs sm:text-sm hover:bg-purple-700 transition-colors"
                     >
                       Select
                     </button>
@@ -256,9 +256,9 @@ const HSNLookup = ({ onClose, onSelectHSN, selectedHSN }) => {
         </div>
 
         {/* Quick Reference */}
-        <div className="p-6 border-t bg-gray-50">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Quick Reference</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+        <div className="p-4 sm:p-6 border-t bg-gray-50">
+          <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4">Quick Reference</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 text-xs sm:text-sm">
             <div className="bg-white p-3 rounded-lg border">
               <div className="font-medium text-gray-900">Steel Products</div>
               <div className="text-gray-600">7214, 7215, 7216</div>

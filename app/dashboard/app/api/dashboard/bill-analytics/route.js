@@ -85,7 +85,7 @@ export async function GET(request) {
 
     const sellerId = getSellerIdFromToken(auth);
     const params = sellerId ? `?sellerId=${sellerId}` : '';
-    
+
     console.log('📊 Bill Analytics Request:', {
       period,
       sellerId: sellerId || 'NOT FOUND',

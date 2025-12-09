@@ -355,260 +355,264 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-gray-800">Profile</h2>
-        {!isEditing && (
-          <button
-            onClick={() => setIsEditing(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Edit Profile
-          </button>
-        )}
+    <div className="max-w-3xl mx-auto space-y-5 sm:space-y-6 p-3 sm:p-4 md:p-6">
+      {/* Hero */}
+      <div className="bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 rounded-2xl p-5 sm:p-6 lg:p-7 text-white shadow-xl border border-amber-300/40">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <div className="bg-white/15 p-2.5 rounded-xl">
+                <svg className="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a3.75 3.75 0 11-3.75 3.75A3.75 3.75 0 0112 6.75zm0 0V4.5m0 2.25v2.25m0 6.75v-2.25m0 2.25v2.25m0 0H9.75m2.25 0h2.25" />
+                </svg>
+              </div>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold leading-tight">
+                Profile
+              </h2>
+            </div>
+            <p className="text-sm sm:text-base text-amber-50/90 max-w-2xl">
+              अपनी प्रोफाइल अपडेट करें, दुकान की जानकारी जोड़ें, और पासवर्ड बदलें—सब एक ही जगह।
+            </p>
+          </div>
+          {!isEditing && (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="inline-flex items-center justify-center px-4 py-2 text-sm sm:text-base font-bold bg-gradient-to-r from-amber-100 via-white to-amber-50 text-amber-700 rounded-xl hover:from-white hover:to-white transition-all duration-200 shadow-lg shadow-amber-400/40"
+            >
+              Edit Profile
+            </button>
+          )}
+        </div>
       </div>
 
-      {message && (
-        <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
-          {message}
-        </div>
-      )}
-
-      {error && (
-        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-          {error}
-        </div>
-      )}
-
-      {missingProfileFields.length > 0 && (
-        <div className="mb-4 p-3 bg-yellow-100 border border-yellow-300 text-yellow-700 rounded text-sm">
-          <strong>Missing Information:</strong> Please provide values for:{" "}
-          {missingProfileFields.join(", ")} before saving your profile.
-        </div>
-      )}
-
-      {/* Debug Info */}
-      {/* {process.env.NODE_ENV === 'development' && (
-        <div className="mb-4 p-3 bg-yellow-100 border border-yellow-300 text-yellow-700 rounded text-sm">
-          <strong>Debug Info:</strong><br/>
-          User Avatar: {user?.avatar || 'None'}<br/>
-          Current Avatar URL: {currentAvatar}<br/>
-          Has Preview: {avatarPreview ? 'Yes' : 'No'}
-        </div> 
-      )} */}
-
-      {/* Profile Information */}
-      <div className="bg-gray-50 p-6 rounded-lg mb-6">
-        <h3 className="text-xl font-semibold mb-4">Personal Information</h3>
-        
-        {!isEditing ? (
-          <div className="space-y-4">
-            {/* Avatar Display */}
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <img
-                  src={currentAvatar} 
-                  alt="Profile" 
-                  className="w-20 h-20 rounded-full object-cover border-4 border-white shadow-lg"
-                  onError={handleImageError}
-                />
-              </div>
-              {/* <div>
-                <h4 className="text-lg font-semibold">{user?.username || "N/A"}</h4>
-                <p className="text-gray-600">{user?.email || "N/A"}</p>
-              </div> */}
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <span className="font-medium text-gray-700">Username:</span>
-                <p className="text-gray-900">{user?.username || "N/A"}</p>
-              </div>
-              <div>
-                <span className="font-medium text-gray-700">Email:</span>
-                <p className="text-gray-900">{user?.email || "N/A"}</p>
-              </div>
-              <div>
-                <span className="font-medium text-gray-700">Mobile Number:</span>
-                <p className="text-gray-900">{user?.mobile || "N/A"}</p>
-              </div>
-              <div>
-                <span className="font-medium text-gray-700">Shop Name:</span>
-                <p className="text-gray-900">{user?.shopName || "N/A"}</p>
-              </div>
-              <div>
-                <span className="font-medium text-gray-700">GST Number:</span>
-                <p className="text-gray-900 font-mono">{user?.gstNumber || "N/A"}</p>
-              </div>
-              <div>
-                <span className="font-medium text-gray-700">Role:</span>
-                <p className="text-gray-900 capitalize">{user?.role || "N/A"}</p>
-              </div>
-            </div>
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-5 sm:p-6 space-y-4 sm:space-y-6">
+        {message && (
+          <div className="mb-4 p-3 bg-amber-100 border border-amber-300 text-amber-800 rounded">
+            {message}
           </div>
-        ) : (
-          <form onSubmit={handleProfileUpdate} className="space-y-6">
-            {/* Avatar Upload */}
-            <div className="text-center">
-              <div className="relative inline-block">
-                <img
-                  src={currentAvatar} 
-                  alt="Profile Preview" 
-                  className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg mx-auto"
-                  onError={handleImageError}
+        )}
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            {error}
+          </div>
+        )}
+
+        {missingProfileFields.length > 0 && (
+          <div className="mb-4 p-3 bg-amber-100 border border-amber-300 text-amber-800 rounded text-sm">
+            <strong>Missing Information:</strong> Please provide values for: {missingProfileFields.join(", ")} before saving your profile.
+          </div>
+        )}
+
+        {/* Profile Information */}
+        <div className="bg-gray-50 p-5 sm:p-6 rounded-lg border border-gray-100">
+          <h3 className="text-lg sm:text-xl font-semibold mb-4">Personal Information</h3>
+
+          {!isEditing ? (
+            <div className="space-y-4">
+              {/* Avatar Display */}
+              <div className="flex items-center space-x-4">
+                <div className="relative">
+                  <img
+                    src={currentAvatar}
+                    alt="Profile"
+                    className="w-20 h-20 rounded-full object-cover border-4 border-white shadow-lg"
+                    onError={handleImageError}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                <span className="font-medium text-gray-700">Username:</span>
+                <p className="text-gray-900 break-words">{user?.username || "N/A"}</p>
+                </div>
+                <div>
+                  <span className="font-medium text-gray-700">Email:</span>
+                <p className="text-gray-900 break-all">{user?.email || "N/A"}</p>
+                </div>
+                <div>
+                  <span className="font-medium text-gray-700">Mobile Number:</span>
+                <p className="text-gray-900 break-words">{user?.mobile || "N/A"}</p>
+                </div>
+                <div>
+                  <span className="font-medium text-gray-700">Shop Name:</span>
+                <p className="text-gray-900 break-words">{user?.shopName || "N/A"}</p>
+                </div>
+                <div>
+                  <span className="font-medium text-gray-700">GST Number:</span>
+                <p className="text-gray-900 font-mono break-words">{user?.gstNumber || "N/A"}</p>
+                </div>
+                <div>
+                  <span className="font-medium text-gray-700">Role:</span>
+                <p className="text-gray-900 capitalize break-words">{user?.role || "N/A"}</p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <form onSubmit={handleProfileUpdate} className="space-y-6">
+              {/* Avatar Upload */}
+              <div className="text-center">
+                <div className="relative inline-block">
+                  <img
+                    src={currentAvatar}
+                    alt="Profile Preview"
+                    className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg mx-auto"
+                    onError={handleImageError}
+                  />
+                  <button
+                    type="button"
+                    onClick={triggerFileInput}
+                    className="absolute bottom-0 right-0 bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white p-2 rounded-full hover:from-amber-600 hover:to-orange-600 transition-colors shadow-lg shadow-amber-400/40"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </button>
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarChange}
+                  className="hidden"
                 />
+                <p className="text-sm text-gray-500 mt-2">Click the camera icon to change avatar</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Username *
+                  </label>
+                  <input
+                    type="text"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleInputChange}
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 ${
+                      formData.username && formData.username.trim() === "" ? "border-red-500" : "border-gray-300"
+                    }`}
+                    required
+                  />
+                  {formData.username && formData.username.trim() === "" && (
+                    <p className="text-red-500 text-xs mt-1">Username is required</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Email *
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 ${
+                      formData.email && !isValidEmail(formData.email) ? "border-red-500" : "border-gray-300"
+                    }`}
+                    required
+                  />
+                  {(fieldErrors.email || (formData.email && !isValidEmail(formData.email))) && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {fieldErrors.email || "Please enter a valid email address"}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Mobile Number *
+                  </label>
+                  <input
+                    type="tel"
+                    name="mobile"
+                    value={formData.mobile}
+                    onChange={handleInputChange}
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 ${
+                      formData.mobile && !isValidMobile(formData.mobile) ? "border-red-500" : "border-gray-300"
+                    }`}
+                    placeholder="10 digits starting with 6-9"
+                    required
+                  />
+                  {(fieldErrors.mobile || (formData.mobile && !isValidMobile(formData.mobile))) && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {fieldErrors.mobile || "Please enter a valid 10-digit mobile number"}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Shop Name *
+                  </label>
+                  <input
+                    type="text"
+                    name="shopName"
+                    value={formData.shopName}
+                    onChange={handleInputChange}
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 ${
+                      formData.shopName && formData.shopName.trim() === "" ? "border-red-500" : "border-gray-300"
+                    }`}
+                    required
+                  />
+                  {(fieldErrors.shopName || (formData.shopName && formData.shopName.trim() === "")) && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {fieldErrors.shopName || "Shop name is required"}
+                    </p>
+                  )}
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    GST Number *
+                  </label>
+                  <input
+                    type="text"
+                    name="gstNumber"
+                    value={formData.gstNumber}
+                    onChange={handleInputChange}
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono ${
+                      formData.gstNumber && !isValidGST(formData.gstNumber) ? "border-red-500" : "border-gray-300"
+                    }`}
+                    placeholder="e.g., 27AAPFU0939F1Z5"
+                    required
+                  />
+                  {(fieldErrors.gstNumber || (formData.gstNumber && !isValidGST(formData.gstNumber))) && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {fieldErrors.gstNumber || "Please enter a valid GST number (15 characters)"}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-2 sm:space-x-3">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="px-4 py-2 bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition-colors disabled:opacity-50 shadow-md shadow-amber-300/50 text-sm sm:text-base"
+                >
+                  {loading ? "Saving..." : "Save Changes"}
+                </button>
                 <button
                   type="button"
-                  onClick={triggerFileInput}
-                  className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors shadow-lg"
+                  onClick={cancelEdit}
+                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm sm:text-base"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
+                  Cancel
                 </button>
               </div>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleAvatarChange}
-                className="hidden"
-              />
-              <p className="text-sm text-gray-500 mt-2">Click the camera icon to change avatar</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Username *
-                </label>
-                <input
-                  type="text"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleInputChange}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    formData.username && formData.username.trim() === "" ? "border-red-500" : "border-gray-300"
-                  }`}
-                  required
-                />
-                {formData.username && formData.username.trim() === "" && (
-                  <p className="text-red-500 text-xs mt-1">Username is required</p>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email *
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    formData.email && !isValidEmail(formData.email) ? "border-red-500" : "border-gray-300"
-                  }`}
-                  required
-                />
-                {(fieldErrors.email || (formData.email && !isValidEmail(formData.email))) && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {fieldErrors.email || "Please enter a valid email address"}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Mobile Number *
-                </label>
-                <input
-                  type="tel"
-                  name="mobile"
-                  value={formData.mobile}
-                  onChange={handleInputChange}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    formData.mobile && !isValidMobile(formData.mobile) ? "border-red-500" : "border-gray-300"
-                  }`}
-                  placeholder="10 digits starting with 6-9"
-                  required
-                />
-                {(fieldErrors.mobile || (formData.mobile && !isValidMobile(formData.mobile))) && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {fieldErrors.mobile || "Please enter a valid 10-digit mobile number"}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Shop Name *
-                </label>
-                <input
-                  type="text"
-                  name="shopName"
-                  value={formData.shopName}
-                  onChange={handleInputChange}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    formData.shopName && formData.shopName.trim() === "" ? "border-red-500" : "border-gray-300"
-                  }`}
-                  required
-                />
-                {(fieldErrors.shopName || (formData.shopName && formData.shopName.trim() === "")) && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {fieldErrors.shopName || "Shop name is required"}
-                  </p>
-                )}
-              </div>
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  GST Number *
-                </label>
-                <input
-                  type="text"
-                  name="gstNumber"
-                  value={formData.gstNumber}
-                  onChange={handleInputChange}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono ${
-                    formData.gstNumber && !isValidGST(formData.gstNumber) ? "border-red-500" : "border-gray-300"
-                  }`}
-                  placeholder="e.g., 27AAPFU0939F1Z5"
-                  required
-                />
-                {(fieldErrors.gstNumber || (formData.gstNumber && !isValidGST(formData.gstNumber))) && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {fieldErrors.gstNumber || "Please enter a valid GST number (15 characters)"}
-                  </p>
-                )}
-              </div>
-            </div>
-            
-            <div className="flex space-x-3">
-              <button
-                type="submit"
-                disabled={loading}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
-              >
-                {loading ? "Saving..." : "Save Changes"}
-              </button>
-              <button
-                type="button"
-                onClick={cancelEdit}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        )}
+            </form>
+          )}
+        </div>
       </div>
 
       {/* Change Password Section */}
-      <div className="bg-gray-50 p-6 rounded-lg">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-semibold">Change Password</h3>
+      <div className="bg-gray-50 p-5 sm:p-6 rounded-lg border border-gray-100">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+          <h3 className="text-lg sm:text-xl font-semibold">Change Password</h3>
           {!isChangingPassword && (
             <button
               onClick={() => setIsChangingPassword(true)}
-              className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+              className="px-4 py-2 bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition-colors shadow-md shadow-amber-300/50 text-sm sm:text-base"
             >
               Change Password
             </button>
@@ -626,7 +630,7 @@ export default function ProfilePage() {
                 name="currentPassword"
                 value={passwordData.currentPassword}
                 onChange={handlePasswordChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                 required
               />
             </div>
@@ -639,12 +643,12 @@ export default function ProfilePage() {
                 name="newPassword"
                 value={passwordData.newPassword}
                 onChange={handlePasswordChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                 required
                 minLength={6}
               />
             </div>
-      <div>
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Confirm New Password
               </label>
@@ -653,23 +657,23 @@ export default function ProfilePage() {
                 name="confirmPassword"
                 value={passwordData.confirmPassword}
                 onChange={handlePasswordChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                 required
                 minLength={6}
               />
             </div>
-            <div className="flex space-x-3">
+            <div className="flex flex-col sm:flex-row gap-2 sm:space-x-3">
               <button
                 type="submit"
                 disabled={loading}
-                className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition-colors disabled:opacity-50 shadow-md shadow-amber-300/50 text-sm sm:text-base"
               >
                 {loading ? "Changing..." : "Change Password"}
               </button>
               <button
                 type="button"
                 onClick={cancelPasswordChange}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
+                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm sm:text-base"
               >
                 Cancel
               </button>

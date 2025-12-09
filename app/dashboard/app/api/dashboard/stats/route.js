@@ -65,7 +65,9 @@ export async function GET(req) {
     
     // Calculate date range
     const endDate = new Date();
-    const startDate = new Date(endDate.getTime() - parseInt(period) * 24 * 60 * 60 * 1000);
+    // Handle 'all' period - use a very old date to include all data
+    const periodDays = period === 'all' ? 3650 : parseInt(period) || 30; // 10 years for 'all', default to 30 days
+    const startDate = new Date(endDate.getTime() - periodDays * 24 * 60 * 60 * 1000);
     const startTime = startDate.getTime();
     const endTime = endDate.getTime();
     
@@ -448,7 +450,7 @@ export async function GET(req) {
     console.log('===========================');
     
     // 9. Sales Growth
-    const prevStartDate = new Date(startDate.getTime() - parseInt(period) * 24 * 60 * 60 * 1000);
+    const prevStartDate = new Date(startDate.getTime() - periodDays * 24 * 60 * 60 * 1000);
     const prevOrders = orders.filter(order => {
       if (!order.createdAt) return false;
       try {
@@ -504,8 +506,10 @@ export async function GET(req) {
     
     // Generate chart data
     // Daily orders chart
+    // For 'all' period, use last 365 days for chart (or generate for all available dates)
+    const chartPeriodDays = period === 'all' ? 365 : periodDays;
     const dailyOrdersMap = new Map();
-    for (let i = 0; i < parseInt(period); i++) {
+    for (let i = 0; i < chartPeriodDays; i++) {
       const date = new Date(endDate);
       date.setDate(date.getDate() - i);
       const dayKey = date.toISOString().split('T')[0];
@@ -525,18 +529,19 @@ export async function GET(req) {
     
     const monthlyData = Array.from(dailyOrdersMap.values())
       .sort((a, b) => a.date.localeCompare(b.date))
-      .map(item => ({ day: item.day, orders: item.orders }));
+      .map(item => ({ day: item.day, orders: item.orders, date: item.date }));
     
     // Sales vs Deliveries chart - calculate actual deliveries per day
     const dailyDeliveriesMap = new Map();
-    for (let i = 0; i < parseInt(period); i++) {
+    for (let i = 0; i < chartPeriodDays; i++) {
       const date = new Date(endDate);
       date.setDate(date.getDate() - i);
       const dayKey = date.toISOString().split('T')[0];
       dailyDeliveriesMap.set(dayKey, 0);
     }
     
-    orders.forEach(order => {
+    // Use filteredOrders for consistency with orders chart
+    filteredOrders.forEach(order => {
       if (order.createdAt && (order.status === 'delivered' || 
           (order.tracking && Array.isArray(order.tracking) && order.tracking.some(t => t.status === 'delivered')))) {
         const date = new Date(order.createdAt);

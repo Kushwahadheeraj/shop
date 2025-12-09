@@ -308,13 +308,24 @@ export default function SellerList() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">User Management</h1>
-        <p className="text-gray-600">
-          Manage all registered users (excluding admin). Change roles, activate/deactivate users, and delete user accounts. 
-          Click the role buttons to toggle between User and Seller roles.
-        </p>
+    <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
+      {/* Hero */}
+      <div className="bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 rounded-2xl p-5 sm:p-6 lg:p-7 text-white shadow-xl border border-amber-300/40">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <div className="bg-white/15 p-2.5 rounded-xl">
+                <span className="text-xl sm:text-2xl font-bold">👥</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold leading-tight">
+                User Management
+              </h1>
+            </div>
+            <p className="text-sm sm:text-base text-amber-50/90 max-w-2xl">
+              Manage users, roles, and access. Admin accounts stay protected.
+            </p>
+          </div>
+        </div>
       </div>
 
       {error && (
@@ -324,8 +335,8 @@ export default function SellerList() {
       )}
 
       {/* Filters */}
-      <div className="bg-white p-4 rounded-lg shadow mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="bg-white p-4 sm:p-5 rounded-lg shadow mb-4 sm:mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Search
@@ -336,7 +347,7 @@ export default function SellerList() {
               value={filters.search}
               onChange={handleFilterChange}
               placeholder="Search by name or email..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm sm:text-base"
             />
           </div>
           <div>
@@ -347,7 +358,7 @@ export default function SellerList() {
               name="status"
               value={filters.status}
               onChange={handleFilterChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm sm:text-base"
             >
               <option value="all">All Status</option>
               <option value="active">Active</option>
@@ -363,7 +374,7 @@ export default function SellerList() {
               name="role"
               value={filters.role}
               onChange={handleFilterChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm sm:text-base"
             >
               <option value="all">All Roles</option>
               <option value="user">User</option>
@@ -373,7 +384,7 @@ export default function SellerList() {
           <div className="flex items-end">
             <button
               onClick={fetchSellers}
-              className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              className="w-full px-4 py-2 bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white rounded-md hover:from-amber-600 hover:to-orange-600 transition-colors text-sm sm:text-base shadow-md shadow-amber-400/30"
             >
               Refresh
             </button>
@@ -384,25 +395,25 @@ export default function SellerList() {
       {/* Sellers Table */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
+          <table className="min-w-[720px] md:min-w-full divide-y divide-gray-200 text-sm">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
                   User
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Email
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Role
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Joined
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -410,7 +421,7 @@ export default function SellerList() {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredSellers.map((seller) => (
                 <tr key={seller.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="flex-shrink-0 h-10 w-10">
                         <img
@@ -425,32 +436,32 @@ export default function SellerList() {
                           }}
                         />
                       </div>
-                      <div className="ml-4">
+                      <div className="ml-3 sm:ml-4">
                         <div className="text-sm font-medium text-gray-900">
                           {seller.username || 'No Username'}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-xs sm:text-sm text-gray-500 break-all">
                           ID: {seller.id}
                         </div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {seller.email || 'No Email'}
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm text-gray-900">
+                    <span className="break-words text-xs sm:text-sm">{seller.email || 'No Email'}</span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                    <span className={`inline-flex px-2 py-1 text-[11px] sm:text-xs font-semibold rounded-full ${
                       seller.role === 'admin' 
-                        ? 'bg-purple-100 text-purple-800' 
+                        ? 'bg-amber-100 text-amber-800'
                         : seller.role === 'seller'
-                        ? 'bg-blue-100 text-blue-800'
+                        ? 'bg-amber-200 text-amber-800'
                         : 'bg-gray-100 text-gray-800'
                     }`}>
                       {seller.role || 'user'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                    <span className={`inline-flex px-2 py-1 text-[11px] sm:text-xs font-semibold rounded-full ${
                       seller.status === 'active' 
                         ? 'bg-green-100 text-green-800'
                         : seller.status === 'inactive'
@@ -460,15 +471,15 @@ export default function SellerList() {
                       {seller.status || 'active'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500">
                     {seller.createdAt ? new Date(seller.createdAt).toLocaleDateString() : 'Unknown'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex flex-col space-y-2">
                       {/* View Details Button */}
                       <button
                         onClick={() => viewSellerDetails(seller)}
-                        className="text-blue-600 hover:text-blue-900 text-xs font-medium"
+                        className="text-amber-600 hover:text-amber-700 text-xs font-medium text-left"
                       >
                         View Details
                       </button>
@@ -478,13 +489,13 @@ export default function SellerList() {
                           {/* Role Management Toggle Buttons */}
                           <div>
                             <div className="text-xs text-gray-500 mb-1">Change Role:</div>
-                            <div className="flex space-x-1">
+                            <div className="flex flex-wrap gap-2 sm:space-x-1">
                               <button
                                 onClick={() => handleRoleChange(seller.id, 'user')}
                                 className={`px-3 py-1 text-xs font-medium rounded transition-colors ${
                                   seller.role === 'user'
-                                    ? 'bg-gray-600 text-white'
-                                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                    ? 'bg-amber-500 text-white'
+                                    : 'bg-amber-100 text-amber-800 hover:bg-amber-200'
                                 }`}
                               >
                                 User
@@ -493,8 +504,8 @@ export default function SellerList() {
                                 onClick={() => handleRoleChange(seller.id, 'seller')}
                                 className={`px-3 py-1 text-xs font-medium rounded transition-colors ${
                                   seller.role === 'seller'
-                                    ? 'bg-blue-600 text-white'
-                                    : 'bg-blue-200 text-blue-700 hover:bg-blue-300'
+                                    ? 'bg-amber-600 text-white'
+                                    : 'bg-amber-100 text-amber-800 hover:bg-amber-200'
                                 }`}
                               >
                                 Seller
@@ -503,10 +514,10 @@ export default function SellerList() {
                           </div>
                           
                           {/* Access Control Buttons */}
-                          <div className="flex space-x-2">
+                          <div className="flex flex-wrap gap-2">
                             <button
                               onClick={() => openAccessModal(seller)}
-                              className="text-indigo-600 hover:text-indigo-900 text-xs"
+                              className="text-amber-600 hover:text-amber-700 text-xs"
                             >
                               Edit Access
                             </button>
@@ -546,13 +557,13 @@ export default function SellerList() {
 
       {/* Access Control Modal */}
       {showAccessModal && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div className="mt-3">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white border shadow-lg rounded-xl p-5 sm:p-6">
+            <div className="mt-1 space-y-4">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
                 Update Seller Access
               </h3>
-              <div className="mb-4">
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Seller Email
                 </label>
@@ -560,20 +571,20 @@ export default function SellerList() {
                   type="email"
                   value={accessEmail}
                   onChange={(e) => setAccessEmail(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
                   placeholder="Enter new email"
                 />
               </div>
-              <div className="flex justify-end space-x-3">
+              <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3">
                 <button
                   onClick={closeAccessModal}
-                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors"
+                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors text-sm sm:text-base"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={updateSellerAccess}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm sm:text-base"
                 >
                   Update
                 </button>
@@ -585,16 +596,17 @@ export default function SellerList() {
 
       {/* Seller Details Modal */}
       {showDetailsModal && selectedSellerDetails && (
-        <div className="fixed inset-0 bg-gray-100 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div className="mt-3">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium text-gray-900">
+        <div className="fixed inset-0 bg-gray-100 bg-opacity-60 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white border shadow-lg rounded-xl p-5 sm:p-6 max-h-[85vh] overflow-y-auto">
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
                   Seller Details
                 </h3>
                 <button
                   onClick={closeDetailsModal}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="text-gray-400 hover:text-gray-600 self-start sm:self-auto"
+                  aria-label="Close"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -602,7 +614,7 @@ export default function SellerList() {
                 </button>
               </div>
               
-              <div className="space-y-4">
+              <div className="space-y-5">
                 {/* Profile Image and Basic Info */}
                 <div className="flex items-center space-x-4">
                   <img
@@ -620,15 +632,15 @@ export default function SellerList() {
                     <h4 className="text-lg font-semibold text-gray-900">
                       {selectedSellerDetails.username || 'No Username'}
                     </h4>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 break-words">
                       {selectedSellerDetails.email || 'No Email'}
                     </p>
-                    <div className="flex space-x-2 mt-1">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                    <div className="flex flex-wrap gap-2 mt-1">
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                         selectedSellerDetails.role === 'admin' 
-                          ? 'bg-purple-100 text-purple-800' 
+                          ? 'bg-amber-100 text-amber-800' 
                           : selectedSellerDetails.role === 'seller'
-                          ? 'bg-blue-100 text-blue-800'
+                          ? 'bg-amber-200 text-amber-800'
                           : 'bg-gray-100 text-gray-800'
                       }`}>
                         {selectedSellerDetails.role || 'user'}
@@ -652,7 +664,7 @@ export default function SellerList() {
                   <div className="space-y-2">
                     <div>
                       <label className="text-xs text-gray-500">Mobile Number</label>
-                      <p className="text-sm text-gray-900">
+                      <p className="text-sm text-gray-900 break-words">
                         {selectedSellerDetails.mobile || 'Not provided'}
                       </p>
                     </div>
@@ -665,13 +677,13 @@ export default function SellerList() {
                   <div className="space-y-2">
                     <div>
                       <label className="text-xs text-gray-500">Shop Name</label>
-                      <p className="text-sm text-gray-900">
+                      <p className="text-sm text-gray-900 break-words">
                         {selectedSellerDetails.shopName || 'Not provided'}
                       </p>
                     </div>
                     <div>
                       <label className="text-xs text-gray-500">GST Number</label>
-                      <p className="text-sm text-gray-900 font-mono">
+                      <p className="text-sm text-gray-900 font-mono break-words">
                         {selectedSellerDetails.gstNumber || 'Not provided'}
                       </p>
                     </div>
@@ -684,7 +696,7 @@ export default function SellerList() {
                   <div className="space-y-2">
                     <div>
                       <label className="text-xs text-gray-500">User ID</label>
-                      <p className="text-sm text-gray-900 font-mono">
+                      <p className="text-sm text-gray-900 font-mono break-words">
                         {selectedSellerDetails.id}
                       </p>
                     </div>
@@ -698,10 +710,10 @@ export default function SellerList() {
                 </div>
               </div>
 
-              <div className="flex justify-end mt-6">
+              <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3 mt-2 sm:mt-4">
                 <button
                   onClick={closeDetailsModal}
-                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors"
+                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors text-sm sm:text-base"
                 >
                   Close
                 </button>

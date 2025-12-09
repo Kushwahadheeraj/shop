@@ -132,13 +132,24 @@
   background-color: #16181d !important;
   color: #f5f6f7 !important;
 }
+/* Dark mode text color overrides - all black/dark text becomes white */
 .dark .text-black,
+.dark .text-gray-900,
 .dark .text-gray-800,
 .dark .text-gray-700,
+.dark .text-gray-600,
+.dark .text-slate-900,
 .dark .text-slate-800,
 .dark .text-slate-700,
+.dark .text-slate-600,
+.dark .text-neutral-900,
 .dark .text-neutral-800,
-.dark .text-neutral-700 {
+.dark .text-neutral-700,
+.dark .text-neutral-600,
+.dark .text-zinc-900,
+.dark .text-zinc-800,
+.dark .text-zinc-700,
+.dark .text-zinc-600 {
   color: #f5f6f7 !important;
 }
 .dark .border,
@@ -168,6 +179,7 @@
 .dark a {
   color: #e6c563;
 }
+
 * {
   border-color: var(--border);
 }

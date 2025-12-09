@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useMemo, useCallback, memo } from 'react';
+import React, { useState, useMemo, useCallback, memo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useAuth } from '@/components/AuthContext';
 import BrandLogo from '@/components/BrandLogo';
 
-const sections = [
+export const sidebarSections = [
   { name: 'Dashboard', path: '', section: null }, // Neutral - not in any section
   {
     name: 'Product Add',
@@ -4885,12 +4885,58 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
   }, [router]);
 
   // OPTIMIZED: Memoize filtered and sorted sections with grouping
+  const [visibilityConfig, setVisibilityConfig] = useState({
+    hiddenSections: {},
+    hiddenItems: [],
+  });
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const loadVisibility = () => {
+      try {
+        const raw = localStorage.getItem('sidebar_visibility_v1');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          setVisibilityConfig({
+            hiddenSections: parsed.hiddenSections || {},
+            hiddenItems: parsed.hiddenItems || [],
+          });
+        } else {
+          setVisibilityConfig({ hiddenSections: {}, hiddenItems: [] });
+        }
+      } catch (err) {
+        console.error('Failed to load sidebar visibility:', err);
+      }
+    };
+
+    loadVisibility();
+
+    const handleCustom = () => loadVisibility();
+    const handleStorage = (e) => {
+      if (e.key === 'sidebar_visibility_v1') {
+        loadVisibility();
+      }
+    };
+
+    window.addEventListener('sidebar-visibility-updated', handleCustom);
+    window.addEventListener('storage', handleStorage);
+
+    return () => {
+      window.removeEventListener('sidebar-visibility-updated', handleCustom);
+      window.removeEventListener('storage', handleStorage);
+    };
+  }, []);
+
   const organizedSections = useMemo(() => {
-    const filteredSections = sections.filter(section => {
+    const filteredSections = sidebarSections.filter(section => {
       // Only show SellerList to admin users
       if (section.name === 'Seller List') {
         return isAdminUser;
       }
+      const hiddenSection = visibilityConfig.hiddenSections?.[section.section];
+      if (hiddenSection) return false;
+      if (visibilityConfig.hiddenItems?.includes(section.name)) return false;
       return true;
     });
     
@@ -4904,7 +4950,7 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
       section1: sortSidebarItems(section1),
       section2: sortSidebarItems(section2)
     };
-  }, [isAdminUser]);
+  }, [isAdminUser, visibilityConfig]);
 
   // OPTIMIZED: Memoize toggle handler
   const handleToggle = useCallback((name) => {

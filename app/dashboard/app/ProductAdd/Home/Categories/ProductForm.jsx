@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { Sparkles } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -171,7 +172,18 @@ export default function ProductForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-6 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
+    
+    <div className="max-w-7xl mx-auto p-4 sm:p-6">
+      {/* Hero Header */}
+      <div className="mb-4 sm:mb-6 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-lg p-4 sm:p-6 text-white shadow-lg">
+        <div className="flex items-center gap-2 sm:gap-3 mb-2">
+          <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">{isEditing ? 'Edit Category' : 'Add Category'}</h1>
+        </div>
+        <p className="text-xs sm:text-sm text-amber-50">Fill in the product details below</p>
+      </div>
+
+    <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-4 sm:space-y-6 p-4 sm:p-8 bg-white rounded-xl shadow-lg border border-gray-200">
       <div className="flex items-center gap-4 mb-6">
         {isEditing && (
           <Button 
@@ -184,10 +196,7 @@ export default function ProductForm() {
             Back
           </Button>
         )}
-        <h2 className="text-2xl font-bold text-center flex-1">
-          {isEditing ? 'Edit Category' : 'Add Category'}
-        </h2>
-      </div>
+        </div>
       
       {/* Category Name */}
       <div>
@@ -198,7 +207,7 @@ export default function ProductForm() {
           onChange={handleChange} 
           placeholder="Enter category name" 
           required 
-          className="w-full"
+          className="w-full focus:ring-amber-300 focus:border-amber-500 text-sm sm:text-base"
         />
       </div>
 
@@ -251,7 +260,7 @@ export default function ProductForm() {
           onChange={handleFile} 
           accept="image/*" 
           required={!isEditing || !existingImage}
-          className="w-full"
+          className="w-full focus:ring-amber-300 focus:border-amber-500 text-sm sm:text-base"
         />
         {photoError && <div className="text-red-500 text-xs mt-1">{photoError}</div>}
         
@@ -283,5 +292,6 @@ export default function ProductForm() {
         {isEditing ? 'Update Category' : 'Create Category'}
       </Button>
     </form>
+    </div>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -192,43 +193,53 @@ export default function ProductForm({ onSave }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-6 p-8 bg-white rounded-xl shadow-lg border border-gray-200">
-      <h2 className="text-2xl font-bold mb-2 text-center">Add SlbmFaucetTall Product</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    
+    <div className="max-w-7xl mx-auto p-4 sm:p-6">
+      {/* Hero Header */}
+      <div className="mb-4 sm:mb-6 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-lg p-4 sm:p-6 text-white shadow-lg">
+        <div className="flex items-center gap-2 sm:gap-3 mb-2">
+          <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">Add SlbmFaucetTall Product</h1>
+        </div>
+        <p className="text-xs sm:text-sm text-amber-50">Fill in the product details below</p>
+      </div>
+
+    <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-4 sm:space-y-6 p-4 sm:p-8 bg-white rounded-xl shadow-lg border border-gray-200">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Product Name</label>
+          <label className="block text-xs sm:text-sm font-medium mb-1">Product Name</label>
           <Input name="name" value={form.name} onChange={handleChange} placeholder="Product Name" required />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">SKU</label>
+          <label className="block text-xs sm:text-sm font-medium mb-1">SKU</label>
           <Input name="sku" value={form.sku} onChange={handleChange} placeholder="SKU" />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Fix Price</label>
+          <label className="block text-xs sm:text-sm font-medium mb-1">Fix Price</label>
           <Input name="fixPrice" type="number" value={form.fixPrice} onChange={handleChange} placeholder="Fix Price" required />
         </div>
         
         <div>
-          <label className="block text-sm font-medium mb-1">Min Price</label>
+          <label className="block text-xs sm:text-sm font-medium mb-1">Min Price</label>
           <Input name="minPrice" type="number" value={form.minPrice} onChange={handleChange} placeholder="Min Price" />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Max Price</label>
+          <label className="block text-xs sm:text-sm font-medium mb-1">Max Price</label>
           <Input name="maxPrice" type="number" value={form.maxPrice} onChange={handleChange} placeholder="Max Price" />
         </div><div>
-          <label className="block text-sm font-medium mb-1">Discount (%)</label>
+          <label className="block text-xs sm:text-sm font-medium mb-1">Discount (%)</label>
           <Input name="discount" type="number" value={form.discount} onChange={handleChange} placeholder="Discount (%)" />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Discounted Price (auto)</label>
+          <label className="block text-xs sm:text-sm font-medium mb-1">Discounted Price (auto)</label>
           <Input name="discountPrice" type="number" value={form.discountPrice} readOnly />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Total Product</label>
+          <label className="block text-xs sm:text-sm font-medium mb-1">Total Product</label>
           <Input name="totalProduct" type="number" value={form.totalProduct} onChange={handleChange} placeholder="Total Product" />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Category</label>
+          <label className="block text-xs sm:text-sm font-medium mb-1">Category</label>
           <Input name="category" value={form.category} readOnly />
         </div>
       </div>
@@ -238,15 +249,15 @@ export default function ProductForm({ onSave }) {
         {customFields.map((f, idx) => (
           <div key={idx} className="mb-2 border p-2 rounded">
             <div className="flex gap-2 items-center mb-1">
-              <Input className="w-1/3" placeholder="Field Name" value={f.fieldName} onChange={e => handleCustomFieldNameChange(idx, e.target.value)} />
+              <Input className="w-1/3 focus:ring-amber-300 focus:border-amber-500 text-sm sm:text-base" placeholder="Field Name" value={f.fieldName} onChange={e => handleCustomFieldNameChange(idx, e.target.value)} />
             </div>
             {f.fieldValues.map((val, vIdx) => (
               <div key={vIdx} className="flex gap-2 items-center mb-1">
-                <Input className="w-1/2" placeholder="Field Value" value={val} onChange={e => handleCustomFieldValueChange(idx, vIdx, e.target.value)} />
-                <Button type="button" onClick={() => handleRemoveCustomFieldValue(idx, vIdx)} className="bg-red-500 hover:bg-red-600 text-white px-2 py-1">Remove</Button>
+                <Input className="w-1/2 focus:ring-amber-300 focus:border-amber-500 text-sm sm:text-base" placeholder="Field Value" value={val} onChange={e => handleCustomFieldValueChange(idx, vIdx, e.target.value)} />
+                <Button type="button" onClick={() => handleRemoveCustomFieldValue(idx, vIdx)} className="bg-red-500 hover:bg-red-600 text-white px-2 sm:px-3 py-1 text-xs sm:text-sm w-full sm:w-auto">Remove</Button>
               </div>
             ))}
-            <Button type="button" onClick={() => handleAddCustomFieldValue(idx)} className="bg-green-500 hover:bg-green-600 text-white px-3 py-1">Add Value</Button>
+            <Button type="button" onClick={() => handleAddCustomFieldValue(idx)} className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-3 py-1">Add Value</Button>
           </div>
         ))}
       </div>
@@ -255,33 +266,33 @@ export default function ProductForm({ onSave }) {
         <div className="flex justify-between items-center">
           <label className="block text-sm font-medium">Variants</label>
           <div className="flex gap-2">
-            <Button type="button" onClick={calculatePriceRange} className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1">Calculate Price Range</Button>
-            <Button type="button" onClick={handleAddVariant} className="bg-green-500 hover:bg-green-600 text-white px-3 py-1">Add Variant</Button>
+            <Button type="button" onClick={calculatePriceRange} className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-3 py-1">Calculate Price Range</Button>
+            <Button type="button" onClick={handleAddVariant} className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-3 py-1">Add Variant</Button>
           </div>
         </div>{form.variants.map((v, idx) => (
-          <div key={idx} className="flex gap-2 items-center">
-            <Input className="w-1/3" placeholder="Variant Name" value={v.variantName} onChange={e => handleVariantChange(idx, 'variantName', e.target.value)} />
-            <Input className="w-1/3" type="number" placeholder="Fix Price" value={v.price} onChange={e => handleVariantChange(idx, 'price', e.target.value)} />
-            <Input className="w-1/3" type="number" placeholder="Discounted Price (auto)" value={v.discountPrice} readOnly />
-            <Button type="button" onClick={() => handleRemoveVariant(idx)} className="bg-red-500 hover:bg-red-600 text-white px-2 py-1">Remove</Button>
+          <div key={idx} className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+            <Input className="w-1/3 focus:ring-amber-300 focus:border-amber-500 text-sm sm:text-base" placeholder="Variant Name" value={v.variantName} onChange={e => handleVariantChange(idx, 'variantName', e.target.value)} />
+            <Input className="w-1/3 focus:ring-amber-300 focus:border-amber-500 text-sm sm:text-base" type="number" placeholder="Fix Price" value={v.price} onChange={e => handleVariantChange(idx, 'price', e.target.value)} />
+            <Input className="w-1/3 focus:ring-amber-300 focus:border-amber-500 text-sm sm:text-base" type="number" placeholder="Discounted Price (auto)" value={v.discountPrice} readOnly />
+            <Button type="button" onClick={() => handleRemoveVariant(idx)} className="bg-red-500 hover:bg-red-600 text-white px-2 sm:px-3 py-1 text-xs sm:text-sm w-full sm:w-auto">Remove</Button>
           </div>
         ))}
       </div>
       {/* Description */}
       <div>
-        <label className="block text-sm font-medium mb-1">Description</label>
+        <label className="block text-xs sm:text-sm font-medium mb-1">Description</label>
         <Textarea name="description" value={form.description} onChange={handleChange} placeholder="Description" />
       </div>
       {/* Images */}
       <div>
-        <label className="block text-sm font-medium mb-1">Photos <span className="text-xs text-gray-400">(1-5 allowed)</span></label>
+        <label className="block text-xs sm:text-sm font-medium mb-1">Photos <span className="text-xs text-gray-400">(1-5 allowed)</span></label>
         <Input name="photos" type="file" multiple onChange={handleFiles} accept="image/*" />
         {photoError && <div className="text-red-500 text-xs mt-1">{photoError}</div>}
         {preview.length > 0 && (
-          <div className="flex flex-row gap-3 mt-2 flex-wrap">
+          <div className="flex flex-row gap-2 sm:gap-3 mt-2 flex-wrap">
             {preview.map((url, idx) => (
               <div key={idx} className="relative">
-                <img src={url} alt={'Preview ' + (idx + 1)} className="w-24 h-24 object-cover rounded border" />
+                <img src={url} alt={'Preview ' + (idx + 1)} className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded border" />
                 <button type="button" onClick={() => handleRemovePhoto(idx)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">×</button>
               </div>
             ))}
@@ -290,21 +301,22 @@ export default function ProductForm({ onSave }) {
       </div>
       {/* Tags */}
       <div>
-        <label className="block text-sm font-medium mb-1">Tags</label>
+        <label className="block text-xs sm:text-sm font-medium mb-1">Tags</label>
         <div className="flex gap-2 mb-2">
           <Input value={tagInput} onChange={e => setTagInput(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddTag(); }}} placeholder="Type tag and press Enter or Add" />
-          <Button type="button" onClick={handleAddTag} className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1">Add</Button>
+          <Button type="button" onClick={handleAddTag} className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-3 py-1">Add</Button>
         </div>
         <div className="flex flex-wrap gap-2">
           {form.tags.map((tag, idx) => (
-            <span key={tag} className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold flex items-center">
+            <span key={tag} className="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-semibold flex items-center">
               {tag}
               <button type="button" onClick={() => handleRemoveTag(idx)} className="ml-2 text-red-500">×</button>
             </span>
           ))}
         </div>
       </div>
-      <Button type="submit" className="w-full mt-4">Create Product</Button>
+      <Button type="submit" className="w-full mt-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-sm sm:text-base font-medium shadow-md hover:shadow-lg">Create Product</Button>
     </form>
+    </div>
   );
 }

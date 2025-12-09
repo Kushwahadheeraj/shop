@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useMemo, useCallback, memo, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import Link from 'next/link';
@@ -398,8 +398,8 @@ export const sidebarSections = [
         ],
       },
       { name: 'Home Decor', path: '/ProductAdd/HomeDecor' },
-      { name: 'House Hold Ladder', path: '/ProductAdd/HouseHold' },
-      { name: 'Lighting', path: '/ProductAdd/Lighting' },
+      // { name: 'House Hold Ladder', path: '/ProductAdd/HouseHold' },
+      // { name: 'Lighting', path: '/ProductAdd/Lighting' },
       {
         name: 'Locks & accessories',
         subItemsName: [
@@ -2808,8 +2808,8 @@ export const sidebarSections = [
         
          
       { name: 'Home Decor', path: '/ProductList/HomeDecor' },
-      { name: 'House Hold Ladder', path: '/ProductList/HouseHold' },
-      { name: 'Lighting', path: '/ProductList/Lighting' },
+      // { name: 'House Hold Ladder', path: '/ProductList/HouseHold' },
+      // { name: 'Lighting', path: '/ProductList/Lighting' },
       {
         name: 'Locks & accessories',
         subItemsName: [
@@ -4870,12 +4870,33 @@ function sortSidebarItems(items) {
 const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
   const { isAdmin } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   // Track open state for each collapsible item by name
   const [openSection, setOpenSection] = useState(null);
   const [openSubSection, setOpenSubSection] = useState(null);
   
   // OPTIMIZED: Memoize admin check
   const isAdminUser = useMemo(() => isAdmin(), [isAdmin]);
+  
+  // Helper function to check if a path is active
+  const isActivePath = useCallback((path) => {
+    if (!path) return false;
+    // Handle empty path (Dashboard)
+    if (path === '' || path === '/') {
+      return pathname === '/dashboard/app' || pathname === '/dashboard/app/';
+    }
+    // Normalize paths for comparison
+    const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+    const normalizedPathname = pathname || '';
+    // Check if pathname matches the path (with or without /dashboard/app prefix)
+    const fullPath = normalizedPathname.startsWith('/dashboard/app') 
+      ? normalizedPathname 
+      : `/dashboard/app${normalizedPathname}`;
+    const checkPath = normalizedPath.startsWith('/dashboard/app')
+      ? normalizedPath
+      : `/dashboard/app${normalizedPath}`;
+    return fullPath === checkPath || fullPath.startsWith(checkPath + '/');
+  }, [pathname]);
   
   // OPTIMIZED: Memoize prefetch handler
   const handleLinkHover = useCallback((path) => {
@@ -5014,107 +5035,68 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
       <div className='px-3 py-4 border-b border-gray-100'>
         <BrandLogo size={56} />
       </div>
-      <nav className='flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900'>
-        <ul className='p-2 space-y-2'>
+      <nav className='flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100'>
+        <ul className='p-2.5 space-y-1'>
           {/* Dashboard - Neutral (not in any section) */}
-          {organizedSections.dashboard.map((section) => (
-            <div key={section.name} className='mb-2'>
-              <div className='flex items-center w-full'>
+          {organizedSections.dashboard.map((section) => {
+            const hasSubItems = section.subItems || section.subItemsName || section.subItemsNameComponent || section.subItemsNameComponentName;
+            const isActive = section.path ? isActivePath(section.path) : false;
+            const isExpanded = openSection === section.name;
+            
+            return (
+              <div key={section.name} className='mb-1.5'>
                 {section.path ? (
                   <Link
                     href={section.path}
                     prefetch={true}
                     onMouseEnter={() => handleLinkHover(section.path)}
-                    className={`flex-1 text-left px-3 py-2 rounded-lg text-sm transition group cursor-pointer ${
-                      openSection === section.name
-                        ? 'bg-zinc-100 font-semibold shadow'
-                        : 'hover:bg-yellow-300 hover:text-white'
+                    className={`flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-sm transition-all duration-200 cursor-pointer group ${
+                      isActive
+                        ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold shadow-md'
+                        : isExpanded
+                        ? 'bg-zinc-100 text-zinc-900 font-medium'
+                        : 'text-zinc-700 hover:bg-gradient-to-r hover:from-amber-500 hover:to-orange-500 hover:text-white'
                     }`}
                     onClick={() => handleToggle(section.name)}
                   >
-                    {section.name}
+                    <span className="flex-1">{section.name}</span>
+                    {hasSubItems && (
+                      <span className={`ml-2 flex-shrink-0 transition-transform duration-200 ${
+                        isActive ? 'text-white' : isExpanded ? 'text-zinc-600' : 'text-zinc-400 group-hover:text-white'
+                      }`}>
+                        {isExpanded ? (
+                          <FiChevronUp className='w-4 h-4' />
+                        ) : (
+                          <FiChevronDown className='w-4 h-4' />
+                        )}
+                      </span>
+                    )}
                   </Link>
                 ) : (
                   <div
-                    className={`flex-1 text-left px-3 py-2 rounded-lg text-sm transition cursor-pointer ${
-                      openSection === section.name
-                        ? 'bg-zinc-100 font-semibold shadow'
-                        : 'hover:bg-yellow-300 hover:text-white'
+                    className={`flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-sm transition-all duration-200 cursor-pointer ${
+                      isExpanded
+                        ? 'bg-zinc-100 text-zinc-900 font-medium'
+                        : 'text-zinc-700 hover:bg-gradient-to-r hover:from-amber-500 hover:to-orange-500 hover:text-white'
                     }`}
                     onClick={() => handleToggle(section.name)}
                   >
-                    {section.name}
+                    <span className="flex-1">{section.name}</span>
+                    {hasSubItems && (
+                      <span className={`ml-2 flex-shrink-0 transition-transform duration-200 ${
+                        isExpanded ? 'text-zinc-600' : 'text-zinc-400'
+                      }`}>
+                        {isExpanded ? (
+                          <FiChevronUp className='w-4 h-4' />
+                        ) : (
+                          <FiChevronDown className='w-4 h-4' />
+                        )}
+                      </span>
+                    )}
                   </div>
                 )}
-                {section.subItems && section.subItems.length > 0 && (
-                  <button
-                    className='ml-2'
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleToggle(section.name);
-                    }}
-                  >
-                    {openSection === section.name ? (
-                      <FiChevronUp className='transition-transform' />
-                    ) : (
-                      <FiChevronDown className='transition-transform' />
-                    )}
-                  </button>
-                )}
-                {section.subItemsName && section.subItemsName.length > 0 && (
-                  <button
-                    className='ml-2'
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleToggle(section.name);
-                    }}
-                  >
-                    {openSection === section.name ? (
-                      <FiChevronUp className='transition-transform' />
-                    ) : (
-                      <FiChevronDown className='transition-transform' />
-                    )}
-                  </button>
-                )}
-                {section.subItemsNameComponent &&
-                  section.subItemsNameComponent.length > 0 && (
-                    <button
-                      className='ml-2'
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleToggle(section.name);
-                      }}
-                    >
-                      {openSection === section.name ? (
-                        <FiChevronUp className='transition-transform' />
-                      ) : (
-                        <FiChevronDown className='transition-transform' />
-                      )}
-                    </button>
-                  )}
-                {section.subItemsNameComponentName &&
-                  section.subItemsNameComponentName.length > 0 && (
-                    <button
-                      className='ml-2'
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleToggle(section.name);
-                      }}
-                    >
-                      {openSection === section.name ? (
-                        <FiChevronUp className='transition-transform' />
-                      ) : (
-                        <FiChevronDown className='transition-transform' />
-                      )}
-                    </button>
-                  )}
-              </div>
-              {openSection === section.name &&
-                (section.subItems ||
-                  section.subItemsName ||
-                  section.subItemsNameComponent ||
-                  section.subItemsNameComponentName) && (
-                  <ul className='pl-4'>
+                {isExpanded && hasSubItems && (
+                  <ul className='pl-4 mt-1 space-y-0.5'>
                     {Array.isArray(section.subItems) &&
                       section.subItems.map((item) => (
                         <SidebarItem
@@ -5153,8 +5135,9 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
                       ))}
                   </ul>
                 )}
-            </div>
-          ))}
+              </div>
+            );
+          })}
           
           {/* Section 1: Core Management */}
           {organizedSections.section1.length > 0 && (
@@ -5164,18 +5147,24 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
                   Core Management
                 </div>
               </li>
-              {organizedSections.section1.map((section) => (
-                <div key={section.name} className='mb-2'>
-                  <div className='flex items-center w-full'>
+              {organizedSections.section1.map((section) => {
+                const hasSubItems = section.subItems || section.subItemsName || section.subItemsNameComponent || section.subItemsNameComponentName;
+                const isActive = section.path ? isActivePath(section.path) : false;
+                const isExpanded = openSection === section.name;
+                
+                return (
+                  <div key={section.name} className='mb-1.5'>
                     {section.path ? (
                       <Link
                         href={section.path}
                         prefetch={true}
                         onMouseEnter={() => handleLinkHover(section.path)}
-                        className={`flex-1 text-left px-3 py-2 rounded-lg text-sm transition group cursor-pointer ${
-                          openSection === section.name
-                            ? 'bg-zinc-100 font-semibold shadow'
-                            : 'hover:bg-yellow-300 hover:text-white'
+                        className={`flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-sm transition-all duration-200 cursor-pointer group ${
+                          isActive
+                            ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold shadow-md'
+                            : isExpanded
+                            ? 'bg-zinc-100 text-zinc-900 font-medium'
+                            : 'text-zinc-700 hover:bg-gradient-to-r hover:from-amber-500 hover:to-orange-500 hover:text-white'
                         }`}
                         onClick={() => {
                           if (section.name === 'Seller List') {
@@ -5184,7 +5173,7 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
                           handleToggle(section.name);
                         }}
                       >
-                        <span className="inline-flex items-center gap-2">
+                        <span className="inline-flex items-center gap-2 flex-1">
                           {section.name}
                           {section.name === 'Seller List' && sellerLoginUnread ? (
                             <span className="inline-flex items-center justify-center min-w-[18px] h-4 px-1 rounded-full bg-amber-500 text-white text-[10px] leading-none shadow-sm">
@@ -5192,13 +5181,24 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
                             </span>
                           ) : null}
                         </span>
+                        {hasSubItems && (
+                          <span className={`ml-2 flex-shrink-0 transition-transform duration-200 ${
+                            isActive ? 'text-white' : isExpanded ? 'text-zinc-600' : 'text-zinc-400 group-hover:text-white'
+                          }`}>
+                            {isExpanded ? (
+                              <FiChevronUp className='w-4 h-4' />
+                            ) : (
+                              <FiChevronDown className='w-4 h-4' />
+                            )}
+                          </span>
+                        )}
                       </Link>
                     ) : (
                       <div
-                        className={`flex-1 text-left px-3 py-2 rounded-lg text-sm transition cursor-pointer ${
-                          openSection === section.name
-                            ? 'bg-zinc-100 font-semibold shadow'
-                            : 'hover:bg-yellow-300 hover:text-white'
+                        className={`flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-sm transition-all duration-200 cursor-pointer ${
+                          isExpanded
+                            ? 'bg-zinc-100 text-zinc-900 font-medium'
+                            : 'text-zinc-700 hover:bg-gradient-to-r hover:from-amber-500 hover:to-orange-500 hover:text-white'
                         }`}
                         onClick={() => {
                           if (section.name === 'Seller List') {
@@ -5207,7 +5207,7 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
                           handleToggle(section.name);
                         }}
                       >
-                        <span className="inline-flex items-center gap-2">
+                        <span className="inline-flex items-center gap-2 flex-1">
                           {section.name}
                           {section.name === 'Seller List' && sellerLoginUnread ? (
                             <span className="inline-flex items-center justify-center min-w-[18px] h-4 px-1 rounded-full bg-amber-500 text-white text-[10px] leading-none shadow-sm">
@@ -5215,77 +5215,21 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
                             </span>
                           ) : null}
                         </span>
+                        {hasSubItems && (
+                          <span className={`ml-2 flex-shrink-0 transition-transform duration-200 ${
+                            isExpanded ? 'text-zinc-600' : 'text-zinc-400'
+                          }`}>
+                            {isExpanded ? (
+                              <FiChevronUp className='w-4 h-4' />
+                            ) : (
+                              <FiChevronDown className='w-4 h-4' />
+                            )}
+                          </span>
+                        )}
                       </div>
                     )}
-                    {section.subItems && section.subItems.length > 0 && (
-                      <button
-                        className='ml-2'
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleToggle(section.name);
-                        }}
-                      >
-                        {openSection === section.name ? (
-                          <FiChevronUp className='transition-transform' />
-                        ) : (
-                          <FiChevronDown className='transition-transform' />
-                        )}
-                      </button>
-                    )}
-                    {section.subItemsName && section.subItemsName.length > 0 && (
-                      <button
-                        className='ml-2'
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleToggle(section.name);
-                        }}
-                      >
-                        {openSection === section.name ? (
-                          <FiChevronUp className='transition-transform' />
-                        ) : (
-                          <FiChevronDown className='transition-transform' />
-                        )}
-                      </button>
-                    )}
-                    {section.subItemsNameComponent &&
-                      section.subItemsNameComponent.length > 0 && (
-                        <button
-                          className='ml-2'
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleToggle(section.name);
-                          }}
-                        >
-                          {openSection === section.name ? (
-                            <FiChevronUp className='transition-transform' />
-                          ) : (
-                            <FiChevronDown className='transition-transform' />
-                          )}
-                        </button>
-                      )}
-                    {section.subItemsNameComponentName &&
-                      section.subItemsNameComponentName.length > 0 && (
-                        <button
-                          className='ml-2'
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleToggle(section.name);
-                          }}
-                        >
-                          {openSection === section.name ? (
-                            <FiChevronUp className='transition-transform' />
-                          ) : (
-                            <FiChevronDown className='transition-transform' />
-                          )}
-                        </button>
-                      )}
-                  </div>
-                  {openSection === section.name &&
-                    (section.subItems ||
-                      section.subItemsName ||
-                      section.subItemsNameComponent ||
-                      section.subItemsNameComponentName) && (
-                      <ul className='pl-4'>
+                    {isExpanded && hasSubItems && (
+                      <ul className='pl-4 mt-1 space-y-0.5'>
                         {Array.isArray(section.subItems) &&
                           section.subItems.map((item) => (
                             <SidebarItem
@@ -5324,8 +5268,9 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
                           ))}
                       </ul>
                     )}
-                </div>
-              ))}
+                  </div>
+                );
+              })}
             </>
           )}
           
@@ -5337,104 +5282,65 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
                   Other
                 </div>
               </li>
-              {organizedSections.section2.map((section) => (
-                <div key={section.name} className='mb-2'>
-                  <div className='flex items-center w-full'>
+              {organizedSections.section2.map((section) => {
+                const hasSubItems = section.subItems || section.subItemsName || section.subItemsNameComponent || section.subItemsNameComponentName;
+                const isActive = section.path ? isActivePath(section.path) : false;
+                const isExpanded = openSection === section.name;
+                
+                return (
+                  <div key={section.name} className='mb-1.5'>
                     {section.path ? (
                       <Link
                         href={section.path}
                         prefetch={true}
                         onMouseEnter={() => handleLinkHover(section.path)}
-                        className={`flex-1 text-left px-3 py-2 rounded-lg text-sm transition group cursor-pointer ${
-                          openSection === section.name
-                            ? 'bg-zinc-100 font-semibold shadow'
-                            : 'hover:bg-yellow-300 hover:text-white'
+                        className={`flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-sm transition-all duration-200 cursor-pointer group ${
+                          isActive
+                            ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold shadow-md'
+                            : isExpanded
+                            ? 'bg-zinc-100 text-zinc-900 font-medium'
+                            : 'text-zinc-700 hover:bg-gradient-to-r hover:from-amber-500 hover:to-orange-500 hover:text-white'
                         }`}
                         onClick={() => handleToggle(section.name)}
                       >
-                        {section.name}
+                        <span className="flex-1">{section.name}</span>
+                        {hasSubItems && (
+                          <span className={`ml-2 flex-shrink-0 transition-transform duration-200 ${
+                            isActive ? 'text-white' : isExpanded ? 'text-zinc-600' : 'text-zinc-400 group-hover:text-white'
+                          }`}>
+                            {isExpanded ? (
+                              <FiChevronUp className='w-4 h-4' />
+                            ) : (
+                              <FiChevronDown className='w-4 h-4' />
+                            )}
+                          </span>
+                        )}
                       </Link>
                     ) : (
                       <div
-                        className={`flex-1 text-left px-3 py-2 rounded-lg text-sm transition cursor-pointer ${
-                          openSection === section.name
-                            ? 'bg-zinc-100 font-semibold shadow'
-                            : 'hover:bg-yellow-300 hover:text-white'
+                        className={`flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-sm transition-all duration-200 cursor-pointer ${
+                          isExpanded
+                            ? 'bg-zinc-100 text-zinc-900 font-medium'
+                            : 'text-zinc-700 hover:bg-gradient-to-r hover:from-amber-500 hover:to-orange-500 hover:text-white'
                         }`}
                         onClick={() => handleToggle(section.name)}
                       >
-                        {section.name}
+                        <span className="flex-1">{section.name}</span>
+                        {hasSubItems && (
+                          <span className={`ml-2 flex-shrink-0 transition-transform duration-200 ${
+                            isExpanded ? 'text-zinc-600' : 'text-zinc-400'
+                          }`}>
+                            {isExpanded ? (
+                              <FiChevronUp className='w-4 h-4' />
+                            ) : (
+                              <FiChevronDown className='w-4 h-4' />
+                            )}
+                          </span>
+                        )}
                       </div>
                     )}
-                    {section.subItems && section.subItems.length > 0 && (
-                      <button
-                        className='ml-2'
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleToggle(section.name);
-                        }}
-                      >
-                        {openSection === section.name ? (
-                          <FiChevronUp className='transition-transform' />
-                        ) : (
-                          <FiChevronDown className='transition-transform' />
-                        )}
-                      </button>
-                    )}
-                    {section.subItemsName && section.subItemsName.length > 0 && (
-                      <button
-                        className='ml-2'
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleToggle(section.name);
-                        }}
-                      >
-                        {openSection === section.name ? (
-                          <FiChevronUp className='transition-transform' />
-                        ) : (
-                          <FiChevronDown className='transition-transform' />
-                        )}
-                      </button>
-                    )}
-                    {section.subItemsNameComponent &&
-                      section.subItemsNameComponent.length > 0 && (
-                        <button
-                          className='ml-2'
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleToggle(section.name);
-                          }}
-                        >
-                          {openSection === section.name ? (
-                            <FiChevronUp className='transition-transform' />
-                          ) : (
-                            <FiChevronDown className='transition-transform' />
-                          )}
-                        </button>
-                      )}
-                    {section.subItemsNameComponentName &&
-                      section.subItemsNameComponentName.length > 0 && (
-                        <button
-                          className='ml-2'
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleToggle(section.name);
-                          }}
-                        >
-                          {openSection === section.name ? (
-                            <FiChevronUp className='transition-transform' />
-                          ) : (
-                            <FiChevronDown className='transition-transform' />
-                          )}
-                        </button>
-                      )}
-                  </div>
-                  {openSection === section.name &&
-                    (section.subItems ||
-                      section.subItemsName ||
-                      section.subItemsNameComponent ||
-                      section.subItemsNameComponentName) && (
-                      <ul className='pl-4'>
+                    {isExpanded && hasSubItems && (
+                      <ul className='pl-4 mt-1 space-y-0.5'>
                         {Array.isArray(section.subItems) &&
                           section.subItems.map((item) => (
                             <SidebarItem
@@ -5473,8 +5379,9 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
                           ))}
                       </ul>
                     )}
-                </div>
-              ))}
+                  </div>
+                );
+              })}
             </>
           )}
         </ul>
@@ -5506,6 +5413,7 @@ export default Sidebar;
 // OPTIMIZED: Memoize SidebarItem to prevent unnecessary re-renders
 const SidebarItem = memo(function SidebarItem({ item }) {
   const router = useRouter();
+  const pathname = usePathname();
   const hasSubItems = Array.isArray(item.subItems) && item.subItems.length > 0;
   const hasSubItemsName =
     Array.isArray(item.subItemsName) && item.subItemsName.length > 0;
@@ -5515,6 +5423,21 @@ const SidebarItem = memo(function SidebarItem({ item }) {
   const hasSubItemsNameComponentName =
     Array.isArray(item.subItemsNameComponentName) &&
     item.subItemsNameComponentName.length > 0;
+
+  // Helper function to check if a path is active
+  const isActivePath = useCallback((path) => {
+    if (!path) return false;
+    const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+    const normalizedPathname = pathname || '';
+    // Check if pathname matches the path (with or without /dashboard/app prefix)
+    const fullPath = normalizedPathname.startsWith('/dashboard/app') 
+      ? normalizedPathname 
+      : `/dashboard/app${normalizedPathname}`;
+    const checkPath = normalizedPath.startsWith('/dashboard/app')
+      ? normalizedPath
+      : `/dashboard/app${normalizedPath}`;
+    return fullPath === checkPath || fullPath.startsWith(checkPath + '/');
+  }, [pathname]);
 
   // Local state for this item's expand/collapse
   const [isOpen, setIsOpen] = useState(false);
@@ -5530,50 +5453,52 @@ const SidebarItem = memo(function SidebarItem({ item }) {
     }
   };
 
+  const isActive = item.path ? isActivePath(item.path) : false;
+
   return (
-    <li>
-      <div
-        className={`flex items-center cursor-pointer ${
-          hasSubItems ||
-          hasSubItemsName ||
-          hasSubItemsNameComponent ||
-          hasSubItemsNameComponentName
-            ? 'hover:bg-yellow-300 hover:text-white'
-            : ''
-        }`}
-        onClick={handleRowClick}
-      >
-        {item.path &&
-        !(
-          hasSubItems ||
-          hasSubItemsName ||
-          hasSubItemsNameComponent ||
-          hasSubItemsNameComponentName
-        ) ? (
-          <Link
-            href={item.path}
-            prefetch={true}
-            onMouseEnter={() => router.prefetch(item.path)}
-            className='block px-2 py-2 rounded text-sm hover:bg-yellow-300 hover:text-white transition flex-1'
-          >
-            <span className='align-middle'>{item.name}</span>
-          </Link>
-        ) : (
-          <span className='block px-2 py-2 rounded text-sm flex-1'>
-            <span className='align-middle'>{item.name}</span>
+    <li className='mb-0.5'>
+      {item.path &&
+      !(
+        hasSubItems ||
+        hasSubItemsName ||
+        hasSubItemsNameComponent ||
+        hasSubItemsNameComponentName
+      ) ? (
+        <Link
+          href={item.path}
+          prefetch={true}
+          onMouseEnter={() => router.prefetch(item.path)}
+          className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm transition-all duration-200 ${
+            isActive
+              ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold shadow-md'
+              : 'text-zinc-700 hover:bg-gradient-to-r hover:from-amber-500 hover:to-orange-500 hover:text-white'
+          }`}
+        >
+          <span className='flex-1'>{item.name}</span>
+        </Link>
+      ) : (
+        <div
+          className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm transition-all duration-200 cursor-pointer ${
+            isOpen
+              ? 'bg-zinc-50 text-zinc-900 font-medium'
+              : 'text-zinc-700 hover:bg-gradient-to-r hover:from-amber-500 hover:to-orange-500 hover:text-white'
+          }`}
+          onClick={handleRowClick}
+        >
+          <span className='flex-1'>{item.name}</span>
+          <span className={`ml-2 flex-shrink-0 transition-transform duration-200 ${
+            isOpen ? 'text-zinc-600' : 'text-zinc-400'
+          }`}>
+            {isOpen ? (
+              <FiChevronUp className='w-4 h-4' />
+            ) : (
+              <FiChevronDown className='w-4 h-4' />
+            )}
           </span>
-        )}
-        {(hasSubItems ||
-          hasSubItemsName ||
-          hasSubItemsNameComponent ||
-          hasSubItemsNameComponentName) && (
-          <span className='ml-2'>
-            {isOpen ? <FiChevronUp /> : <FiChevronDown />}
-          </span>
-        )}
-      </div>
+        </div>
+      )}
       {isOpen && (
-        <ul className='pl-4'>
+        <ul className='pl-4 mt-0.5 space-y-0.5'>
           {hasSubItems &&
             item.subItems.map((child) => (
               <SidebarItem key={child.name} item={child} />

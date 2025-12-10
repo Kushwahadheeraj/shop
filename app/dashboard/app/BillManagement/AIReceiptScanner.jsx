@@ -52,22 +52,35 @@ const AIReceiptScanner = ({ onScanComplete, onClose }) => {
         data = await res.json(); 
         console.log('API Response data:', data);
       } catch (e) { 
-        console.error('Failed to parse API response:', e);
-        data = null; 
+        // Fallback: try text so we at least see the body in console
+        try {
+          const txt = await res.text();
+          console.error('Failed to parse API response JSON. Raw text:', txt);
+          data = txt ? { message: txt } : null;
+        } catch (e2) {
+          console.error('Failed to parse API response:', e, e2);
+          data = null; 
+        }
       }
       if (!res.ok && (!data || !data.raw)) {
-        const msg = data?.message || `Scan API error (${res.status})`;
+        const msg = data?.message || data?.error || `Scan API error (${res.status})`;
         console.error('API Error:', { status: res.status, message: msg, data });
-        
-        // Special handling for missing API key
-        if (data?.error === 'MISSING_API_KEY') {
-          setError('AI service is not configured. Please set up Gemini API key to use this feature.');
-        } else if (data?.error === 'GEMINI_API_ERROR') {
-          setError(`AI service error: ${msg}. Please check your API key and try again.`);
+
+        // New free-mode error hints
+        if (data?.error === 'MISSING_IMAGE') {
+          setError('Image data missing. कृपया दोबारा इमेज चुनें।');
+        } else if (data?.error === 'OCR_ERROR') {
+          setError('OCR service error. दोबारा ट्राई करें या साफ़ फोटो अपलोड करें।');
+        } else if (data?.error === 'HF_ERROR') {
+          setError('AI parsing में दिक्कत आई, टेक्स्ट से बेसिक रिज़ल्ट दिखाया जाएगा।');
+        } else if (data?.error === 'MISSING_API_KEY') {
+          setError('AI service configured नहीं है. पहले कॉन्फ़िग करें।');
+        } else if (data?.error === 'OPENAI_API_ERROR') {
+          setError(`AI service error: ${msg}. अक्सर key invalid या quota खत्म होने पर होता है.`);
         } else {
           setError(msg);
         }
-        
+
         setScanResult({
           shopName: '', shopAddress: '', billDate: new Date().toISOString().split('T')[0],
           items: [], pricing: { subtotal: 0, gstAmount: 0, totalAmount: 0 },
@@ -77,7 +90,7 @@ const AIReceiptScanner = ({ onScanComplete, onClose }) => {
       }
       if (!data?.success) {
         if (data?.raw) {
-          setError('Could not fully extract fields. Showing AI text output below.');
+          setError('Fields पूरी तरह नहीं निकले। नीचे AI का टेक्स्ट दिख रहा है।');
           setScanResult({
             shopName: '',
             shopAddress: '',
@@ -89,7 +102,7 @@ const AIReceiptScanner = ({ onScanComplete, onClose }) => {
           });
           return;
         }
-        const msg = data?.message || 'No structured data returned. Try a clearer image.';
+        const msg = data?.message || 'कोई structured डेटा नहीं मिला। इमेज और साफ़ करके ट्राई करें।';
         setError(msg);
         setScanResult({
           shopName: '', shopAddress: '', billDate: new Date().toISOString().split('T')[0],
@@ -307,9 +320,9 @@ const AIReceiptScanner = ({ onScanComplete, onClose }) => {
                     <div className="mt-2 text-xs sm:text-sm">
                       <p className="font-medium">Setup Instructions:</p>
                       <ol className="list-decimal list-inside mt-1 space-y-1">
-                        <li>Get a Gemini API key from <a href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Google AI Studio</a></li>
+                        <li>Get an OpenAI API key from <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">OpenAI</a></li>
                         <li>Create a <code className="bg-gray-200 px-1 rounded">.env.local</code> file in your project root</li>
-                        <li>Add: <code className="bg-gray-200 px-1 rounded">GEMINI_API_KEY=your_api_key_here</code></li>
+                        <li>Add: <code className="bg-gray-200 px-1 rounded">OPENAI_API_KEY=your_api_key_here</code></li>
                         <li>Restart your development server</li>
                       </ol>
                     </div>

@@ -4,18 +4,6 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   try {
     const API_KEY = process.env.OPENAI_API_KEY || process.env.NEXT_PUBLIC_OPENAI_API_KEY || '';
-    const useMock = process.env.OPENAI_MOCK === '0';
-
-    if (!API_KEY && useMock) {
-      return NextResponse.json({
-        success: true,
-        message: 'Mock success (no API key). Set OPENAI_API_KEY for real calls.',
-        response: 'API is working (mock)',
-        mock: true,
-        modelUsed: 'mock-gpt-4o-mini'
-      }, { status: 200 });
-    }
-
     if (!API_KEY) {
       return NextResponse.json({
         success: false,
@@ -64,19 +52,8 @@ export async function GET() {
       const lastError = data?.error?.message || `HTTP ${resp.status}: ${resp.statusText}`;
       const errType = data?.error?.type;
       let userMessage = `OpenAI API Error: ${lastError}`;
-      const isQuota = errType === 'insufficient_quota' || /quota/i.test(lastError || '');
-
-      if (isQuota) {
+      if (errType === 'insufficient_quota' || /quota/i.test(lastError || '')) {
         userMessage = 'OpenAI quota is 0 or exhausted. Add billing or use a key with quota.';
-        if (useMock) {
-          return NextResponse.json({
-            success: true,
-            message: 'Mock success (quota exceeded). Replace with a key that has quota for real calls.',
-            response: 'API is working (mock)',
-            mock: true,
-            modelUsed: 'mock-gpt-4o-mini'
-          }, { status: 200 });
-        }
       } else if (resp.status === 401) {
         userMessage = 'Invalid OpenAI API key. Please check your key.';
       }
@@ -98,7 +75,6 @@ export async function GET() {
       response: text,
       apiKeyLength: API_KEY.length,
       modelUsed: testBody.model,
-      mock: false
     }, { status: 200 });
 
   } catch (error) {
@@ -110,3 +86,4 @@ export async function GET() {
     }, { status: 500 });
   }
 }
+

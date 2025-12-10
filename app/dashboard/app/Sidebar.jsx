@@ -4911,6 +4911,7 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
     hiddenItems: [],
   });
   const [sellerLoginUnread, setSellerLoginUnread] = useState(null);
+  const [orderUnread, setOrderUnread] = useState(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -4957,6 +4958,13 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
     }
   }, []);
 
+  const markOrderRead = useCallback(() => {
+    setOrderUnread(null);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('order_unread', '0');
+    }
+  }, []);
+
   useEffect(() => {
     let isMounted = true;
     const loadSellerLoginUnread = async () => {
@@ -4998,6 +5006,51 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
     return () => {
       isMounted = false;
       window.removeEventListener('login-notification', handleCustom);
+      window.removeEventListener('storage', handleStorage);
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    const loadOrderUnread = async () => {
+      try {
+        const res = await fetch('/api/notifications/orders-unread', { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          const count = Number(data?.unread ?? 0);
+          if (!isMounted) return;
+          setOrderUnread(count > 0 ? count : null);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('order_unread', String(count));
+          }
+          return;
+        }
+      } catch (err) {
+        // non-blocking; fall back to localStorage
+      }
+
+      if (typeof window !== 'undefined') {
+        const raw = localStorage.getItem('order_unread');
+        const parsed = raw ? Number(raw) : 0;
+        if (isMounted) setOrderUnread(parsed > 0 ? parsed : null);
+      }
+    };
+
+    loadOrderUnread();
+
+    const handleCustom = () => loadOrderUnread();
+    const handleStorage = (e) => {
+      if (e.key === 'order_unread') {
+        loadOrderUnread();
+      }
+    };
+
+    window.addEventListener('order-notification', handleCustom);
+    window.addEventListener('storage', handleStorage);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener('order-notification', handleCustom);
       window.removeEventListener('storage', handleStorage);
     };
   }, []);
@@ -5170,6 +5223,9 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
                           if (section.name === 'Seller List') {
                             markSellerLoginRead();
                           }
+                          if (section.name === 'Order List') {
+                            markOrderRead();
+                          }
                           handleToggle(section.name);
                         }}
                       >
@@ -5178,6 +5234,11 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
                           {section.name === 'Seller List' && sellerLoginUnread ? (
                             <span className="inline-flex items-center justify-center min-w-[18px] h-4 px-1 rounded-full bg-amber-500 text-white text-[10px] leading-none shadow-sm">
                               {sellerLoginUnread > 99 ? '99+' : sellerLoginUnread}
+                            </span>
+                          ) : null}
+                          {section.name === 'Order List' && orderUnread ? (
+                            <span className="inline-flex items-center justify-center min-w-[18px] h-4 px-1 rounded-full bg-amber-500 text-white text-[10px] leading-none shadow-sm">
+                              {orderUnread > 99 ? '99+' : orderUnread}
                             </span>
                           ) : null}
                         </span>

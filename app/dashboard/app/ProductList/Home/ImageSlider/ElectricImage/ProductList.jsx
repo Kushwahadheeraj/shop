@@ -101,9 +101,9 @@ export default function ProductList() {
           <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4 text-gray-400" />
           <p className="text-gray-500">Loading image slider items...</p>
         </div>
-    </div>
-  );
-}
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-6">
@@ -265,6 +265,7 @@ export default function ProductList() {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 } 

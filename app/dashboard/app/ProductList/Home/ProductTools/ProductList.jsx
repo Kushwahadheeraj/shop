@@ -166,7 +166,6 @@ export default function ProductList() {
           <p className="text-gray-500">Loading product tools...</p>
         </div>
       </div>
-    </div>
   );
 }
 
@@ -479,5 +478,6 @@ export default function ProductList() {
         </CardContent>
       </Card>
     </div>
+    </div>
   );
-}
+} 

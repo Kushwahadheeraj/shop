@@ -630,5 +630,6 @@ export default function ProductForm() {
         </Button>
       </form>
     </div>
+    </div>
   );
 }

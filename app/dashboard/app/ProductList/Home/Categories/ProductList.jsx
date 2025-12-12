@@ -130,9 +130,8 @@ export default function ProductList() {
           <p className="text-gray-500">Loading categories...</p>
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-6">
@@ -322,6 +321,7 @@ export default function ProductList() {
           </div>
         </CardContent>
       </Card>
+    </div>
     </div>
   );
 } 

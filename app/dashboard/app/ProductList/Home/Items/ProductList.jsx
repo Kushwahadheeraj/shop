@@ -139,7 +139,6 @@ export default function ProductList() {
           <p className="text-gray-500">Loading items...</p>
         </div>
       </div>
-    </div>
   );
 }
 
@@ -329,6 +328,7 @@ export default function ProductList() {
           </div>
         </CardContent>
       </Card>
+    </div>
     </div>
   );
 } 

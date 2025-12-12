@@ -114,15 +114,22 @@ const AddSimpleBillForm = ({ onClose, onSave, shops = [] }) => {
     setShowAIScanner(true);
   };
 
-  const handleAIScanComplete = async (scannedData) => {
-    const matchingShop = shops.find(shop => 
-      shop.name.toLowerCase().includes(scannedData.shopName.toLowerCase()) ||
-      scannedData.shopName.toLowerCase().includes(shop.name.toLowerCase())
-    );
-
+  const handleAIScanComplete = (scannedData = {}) => {
+    const shopName = (scannedData.shopName || '').toLowerCase();
+    const matchingShop = shops.find(shop => shop.name?.toLowerCase().includes(shopName) || shopName.includes(shop.name?.toLowerCase?.() || ''));
     const selectedShopId = matchingShop ? matchingShop._id : (shops.length > 0 ? shops[0]._id : '');
 
-    // Remove GST from scanned data
+    const sanitizedItems = Array.isArray(scannedData.items)
+      ? scannedData.items.map(it => ({
+          name: it.name || '',
+          quantity: parseFloat(it.quantity) || 0,
+          unitPrice: parseFloat(it.unitPrice) || 0,
+          category: it.category || '',
+          description: it.description || '',
+          hsn: it.hsn || ''
+        }))
+      : [];
+
     const sanitizedPricing = {
       subtotal: parseFloat(scannedData.pricing?.subtotal) || 0,
       discount: parseFloat(scannedData.pricing?.discount) || 0,
@@ -135,65 +142,16 @@ const AddSimpleBillForm = ({ onClose, onSave, shops = [] }) => {
       paidAmount: parseFloat(scannedData.payment?.paidAmount) || 0
     };
 
+    // Populate form only. No popups, no auto-save; user will save manually.
     setFormData(prev => ({
       ...prev,
       shopId: selectedShopId,
-      items: scannedData.items || [],
+      items: sanitizedItems.length ? sanitizedItems : prev.items,
       pricing: sanitizedPricing,
       payment: sanitizedPayment,
       billDate: scannedData.billDate || new Date().toISOString().split('T')[0],
       description: scannedData.description || ''
     }));
-
-    if (!matchingShop && shops.length > 0) {
-      alert(`Shop "${scannedData.shopName}" not found. Using "${shops[0].name}" as default. Please change if needed.`);
-    } else if (shops.length === 0) {
-      alert('No shops available. Please add a shop first before scanning receipts.');
-      return;
-    }
-
-    try {
-      const items = Array.isArray(scannedData.items) ? scannedData.items.map(it => ({
-        name: it.name || '',
-        quantity: parseFloat(it.quantity) || 0,
-        unitPrice: parseFloat(it.unitPrice) || 0,
-        category: it.category || '',
-        description: it.description || ''
-      })) : [];
-
-      const hasItems = items.some(it => it.name && it.quantity > 0);
-      const sub = items.reduce((s, it) => s + (it.quantity * it.unitPrice), 0);
-      const discount = typeof scannedData?.pricing?.discount === 'number' ? scannedData.pricing.discount : 0;
-      const totalAmount = Math.max(0, sub - discount); // NO GST
-
-      if (hasItems) {
-        setIsSubmitting(true);
-        const processedData = {
-          ...formData,
-          shopId: matchingShop ? matchingShop._id : '',
-          items,
-          pricing: {
-            subtotal: Math.round((sub + Number.EPSILON) * 100) / 100,
-            discount: Math.round((discount + Number.EPSILON) * 100) / 100,
-            totalAmount: Math.round((totalAmount + Number.EPSILON) * 100) / 100,
-          },
-          payment: {
-            method: scannedData?.payment?.method || 'cash',
-            status: scannedData?.payment?.status || 'pending',
-            paidAmount: parseFloat(scannedData?.payment?.paidAmount) || 0,
-          },
-          billDate: scannedData.billDate || formData.billDate,
-          description: scannedData.description || formData.description,
-        };
-
-        await onSave(processedData);
-        onClose();
-      }
-    } catch (e) {
-      // ignore auto-save failure
-    } finally {
-      setIsSubmitting(false);
-    }
   };
 
   const validateForm = () => {

@@ -116,7 +116,10 @@ const AddSimpleBillForm = ({ onClose, onSave, shops = [] }) => {
 
   const handleAIScanComplete = (scannedData = {}) => {
     const shopName = (scannedData.shopName || '').toLowerCase();
-    const matchingShop = shops.find(shop => shop.name?.toLowerCase().includes(shopName) || shopName.includes(shop.name?.toLowerCase?.() || ''));
+    const matchingShop = shops.find(shop => {
+      const lower = shop.name?.toLowerCase() || '';
+      return lower.includes(shopName) || shopName.includes(lower);
+    });
     const selectedShopId = matchingShop ? matchingShop._id : (shops.length > 0 ? shops[0]._id : '');
 
     const sanitizedItems = Array.isArray(scannedData.items)
@@ -125,8 +128,7 @@ const AddSimpleBillForm = ({ onClose, onSave, shops = [] }) => {
           quantity: parseFloat(it.quantity) || 0,
           unitPrice: parseFloat(it.unitPrice) || 0,
           category: it.category || '',
-          description: it.description || '',
-          hsn: it.hsn || ''
+          description: it.description || ''
         }))
       : [];
 

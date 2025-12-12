@@ -13,11 +13,11 @@ export default function BrandLogo({ className = "", size = 64, showText = true }
         className="relative flex items-center justify-center flex-shrink-0"
         style={{ width: diamondSize, height: diamondSize }}
       >
-        {/* Yellow Diamond Background - matching the image design */}
+        {/* Amber/Yellow Diamond Background with gradient */}
         <div
           className="absolute rounded-lg"
           style={{
-            background: '#FFD700',
+            background: 'linear-gradient(135deg, #fcd34d 0%, #f59e0b 50%, #fbbf24 100%)',
             transform: 'rotate(45deg)',
             borderRadius: '10px',
             boxShadow: '0 2px 6px rgba(0,0,0,0.15)',

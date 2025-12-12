@@ -7,10 +7,18 @@ import Navbar from './Navbar';
 import { useState } from 'react';
 
 export default function DashboardLayout({ children }) {
-  const { user, loading, logout, isAuthenticated, isSeller } = useAuth();
+  const auth = useAuth();
+  // Safety check for SSR/build time
+  const { user, loading, logout, isAuthenticated, isSeller } = auth || {
+    user: null,
+    loading: false,
+    logout: async () => {},
+    isAuthenticated: () => false,
+    isSeller: () => false
+  };
   const router = useRouter();
   const pathname = usePathname();
-  const isAuthRoute = pathname.startsWith('/login');
+  const isAuthRoute = pathname?.startsWith('/login') || false;
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleSetting = () => {

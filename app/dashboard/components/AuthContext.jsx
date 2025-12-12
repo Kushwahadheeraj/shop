@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import API_BASE_URL from "@/lib/apiConfig";
@@ -414,5 +414,24 @@ export function AuthProvider({ children }) {
 }
 
 export function useAuth() {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext);
+  // Safety check for SSR/build time when context might not be available
+  if (!context) {
+    return {
+      user: null,
+      token: null,
+      loading: false,
+      login: async () => {},
+      logout: async () => {},
+      isAuthenticated: () => false,
+      isSeller: () => false,
+      isAdmin: () => false,
+      isUser: () => false,
+      isActive: () => false,
+      checkAuthStatus: async () => {},
+      updateProfile: async () => {},
+      changePassword: async () => {}
+    };
+  }
+  return context;
 } 

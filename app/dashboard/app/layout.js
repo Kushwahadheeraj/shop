@@ -19,6 +19,11 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "Dashboard - Hardware Shop",
   description: "Seller/Admin Dashboard",
+  icons: {
+    icon: '/logo.png',
+    shortcut: '/logo.png',
+    apple: '/logo.png',
+  },
 };
 
 export default function RootLayout({ children }) {

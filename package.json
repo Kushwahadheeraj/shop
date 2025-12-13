@@ -12,7 +12,7 @@
     "dev:backend": "cd backend && npm start",
     "dev:all": "concurrently \"npm run dev:backend\" \"npm run dev:shop\" \"npm run dev:dashboard\"",
     "build": "npm run build:render",
-    "vercel-build": "npm run build:shop",
+    "vercel-build": "cd app/dashboard && npm install && npm run build",
     "build:shop": "cd app/shop && npm run build",
     "build:dashboard": "cd app/dashboard && npm run build",
     "build:render": "npm install && cd backend && npm install",

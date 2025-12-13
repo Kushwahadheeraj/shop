@@ -1,7 +1,7 @@
 {
-  "buildCommand": "cd app/dashboard && npm install && npm run build",
-  "devCommand": "cd app/dashboard && npm run dev",
-  "installCommand": "cd app/dashboard && npm install",
+  "buildCommand": "npm install && npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
   "framework": "nextjs",
-  "rootDirectory": "app/dashboard"
+  "rootDirectory": "."
 }

@@ -1,7 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from '@/components/AuthContext';
-import DashboardLayout from './layout-wrapper.jsx';
+import ClientProviders from '@/components/ClientProviders';
 
 // Optimize: Use static generation with ISR for better performance
 export const dynamic = 'auto';
@@ -26,11 +25,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <AuthProvider>
-          <DashboardLayout>
-            {children}
-          </DashboardLayout>
-        </AuthProvider>
+        <ClientProviders>
+          {children}
+        </ClientProviders>
       </body>
     </html>
   );

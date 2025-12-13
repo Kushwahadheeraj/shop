@@ -7,15 +7,8 @@ import Navbar from './Navbar';
 import { useState } from 'react';
 
 export default function DashboardLayout({ children }) {
-  const auth = useAuth();
-  // Safety check for SSR/build time
-  const { user, loading, logout, isAuthenticated, isSeller } = auth || {
-    user: null,
-    loading: false,
-    logout: async () => {},
-    isAuthenticated: () => false,
-    isSeller: () => false
-  };
+  // useAuth() already handles SSR/build time fallback with stable references
+  const { user, loading, logout, isAuthenticated, isSeller } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const isAuthRoute = pathname?.startsWith('/login') || false;

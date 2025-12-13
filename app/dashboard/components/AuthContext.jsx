@@ -6,6 +6,25 @@ import { performLogout } from '@/lib/logout';
 
 const AuthContext = createContext();
 
+// Stable fallback object for SSR/build time when context is unavailable
+// All functions are stable references to prevent infinite loops in dependency arrays
+// Return structures match real implementations to prevent silent failures
+const AUTH_FALLBACK = {
+  user: null,
+  token: null,
+  loading: false,
+  login: async () => ({ success: false, error: 'Authentication not available' }),
+  logout: () => {}, // logout is not async in real implementation
+  isAuthenticated: () => false,
+  isSeller: () => false,
+  isAdmin: () => false,
+  isUser: () => false,
+  isActive: () => false,
+  checkAuthStatus: async () => {}, // checkAuthStatus doesn't return a value
+  updateProfile: async () => ({ success: false, error: 'Profile update not available' }),
+  changePassword: async () => ({ success: false, error: 'Password change not available' })
+};
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
@@ -416,22 +435,6 @@ export function AuthProvider({ children }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   // Safety check for SSR/build time when context might not be available
-  if (!context) {
-    return {
-      user: null,
-      token: null,
-      loading: false,
-      login: async () => {},
-      logout: async () => {},
-      isAuthenticated: () => false,
-      isSeller: () => false,
-      isAdmin: () => false,
-      isUser: () => false,
-      isActive: () => false,
-      checkAuthStatus: async () => {},
-      updateProfile: async () => {},
-      changePassword: async () => {}
-    };
-  }
-  return context;
+  // Return stable fallback object to prevent infinite loops in dependency arrays
+  return context || AUTH_FALLBACK;
 } 

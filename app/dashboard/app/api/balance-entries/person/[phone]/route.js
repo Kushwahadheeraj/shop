@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 const BACKEND = process.env.BACKEND_URL || 
   process.env.NEXT_PUBLIC_BACKEND_URL || 
   process.env.NEXT_PUBLIC_API_BASE_URL ||
-  'http://localhost:5000/api';
+  'https://shop-backend-qf50.onrender.com/api';
 
 export async function DELETE(req, { params }) {
   try {

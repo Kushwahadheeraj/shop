@@ -1,5 +1,5 @@
 {
-  "installCommand": "npm ci --prefer-offline --progress=false",
+  "installCommand": "npm install --prefer-offline --progress=false",
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
   "framework": "nextjs"

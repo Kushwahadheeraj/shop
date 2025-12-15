@@ -9,8 +9,9 @@
   "scripts": {
     "dev:shop": "cd app/shop && npm run dev",
     "dev:backend": "cd backend && npm start",
+    "build": "cd backend && npm install",
+    "start": "cd backend && npm start",
     "build:render": "npm install && cd backend && npm install",
-    "start": "npm run start:backend",
     "start:backend": "cd backend && npm start",
     "install:backend": "npm install && cd backend && npm install"
   },

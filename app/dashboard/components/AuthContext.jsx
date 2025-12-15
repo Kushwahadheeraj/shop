@@ -477,8 +477,8 @@ export function useAuth() {
     // We already verified React.useContext exists above, so we can use it
     // But double-check with optional chaining just to be safe
     if (!React?.useContext || typeof React.useContext !== 'function') {
-      return AUTH_FALLBACK;
-    }
+    return AUTH_FALLBACK;
+  }
   }
   
   // Additional safety: Try-catch to handle any edge cases during build

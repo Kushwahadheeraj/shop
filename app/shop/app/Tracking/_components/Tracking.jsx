@@ -9,7 +9,7 @@ import Image from "next/image";
 import API_BASE_URL from "@/lib/apiConfig";
 import { performLogout } from "@/lib/logout";
 
-export default function Tracking() {
+export default function Tracking({ initialSection = 'orders' }) {
   const [orderId, setOrderId] = useState("");
   const [email, setEmail] = useState("");
   const [user, setUser] = useState(null);
@@ -19,7 +19,7 @@ export default function Tracking() {
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [activeSection, setActiveSection] = useState('orders');
+  const [activeSection, setActiveSection] = useState(initialSection || 'orders');
   const [addresses, setAddresses] = useState([]);
   const [showAddAddress, setShowAddAddress] = useState(false);
   const [editingAddressId, setEditingAddressId] = useState(null);
@@ -492,13 +492,13 @@ export default function Tracking() {
   };
 
   return (
-    <div className="bg-[#f8f8f8] mt-36 min-h-screen py-8">
-      <div className="max-w-6xl mx-auto bg-white rounded shadow-sm">
-        <h1 className="text-3xl font-extrabold text-center py-6 tracking-widest">TRACK YOUR ORDER</h1>
+    <div className="bg-[#f8f8f8] min-h-screen py-8 px-4 md:px-6 mt-20 md:mt-28 lg:mt-32">
+      <div className="w-full max-w-6xl mx-auto bg-white rounded shadow-sm">
+        <h1 className="text-2xl md:text-3xl font-extrabold text-center py-6 tracking-widest">TRACK YOUR ORDER</h1>
         <Separator />
-        <div className="flex flex-col md:flex-row">
+        <div className="flex flex-col md:flex-row gap-6 md:gap-8">
           {/* Sidebar */}
-          <div className="md:w-1/3 border-r px-8 py-8 flex flex-col items-center">
+          <div className="md:w-1/3 w-full border-b md:border-b-0 md:border-r px-4 md:px-6 lg:px-8 py-6 md:py-8 flex flex-col items-center">
             <div className="flex flex-col items-center mb-6">
               <div className="relative">
                 <div className="bg-gray-200 rounded-full w-20 h-20 flex items-center justify-center mb-2 overflow-hidden">
@@ -564,8 +564,8 @@ export default function Tracking() {
                   <button
                     onClick={() => setActiveSection('orders')}
                     className={`block w-full text-left border-l-4 pl-2 py-2 ${
-                      activeSection === 'orders' 
-                        ? 'border-yellow-300 bg-gray-100 font-bold' 
+                      activeSection === 'orders'
+                        ? 'border-yellow-300 bg-gray-100 font-bold'
                         : 'border-transparent hover:bg-gray-100'
                     }`}
                   >
@@ -574,10 +574,22 @@ export default function Tracking() {
                 </li>
                 <li>
                   <button
+                    onClick={() => setActiveSection('downloads')}
+                    className={`block w-full text-left border-l-4 pl-2 py-2 ${
+                      activeSection === 'downloads'
+                        ? 'border-yellow-300 bg-gray-100 font-bold'
+                        : 'border-transparent hover:bg-gray-100'
+                    }`}
+                  >
+                    DOWNLOADS
+                  </button>
+                </li>
+                <li>
+                  <button
                     onClick={() => setActiveSection('addresses')}
                     className={`block w-full text-left border-l-4 pl-2 py-2 ${
-                      activeSection === 'addresses' 
-                        ? 'border-yellow-300 bg-gray-100 font-bold' 
+                      activeSection === 'addresses'
+                        ? 'border-yellow-300 bg-gray-100 font-bold'
                         : 'border-transparent hover:bg-gray-100'
                     }`}
                   >
@@ -588,8 +600,8 @@ export default function Tracking() {
                   <button
                     onClick={() => setActiveSection('account')}
                     className={`block w-full text-left border-l-4 pl-2 py-2 ${
-                      activeSection === 'account' 
-                        ? 'border-yellow-300 bg-gray-100 font-bold' 
+                      activeSection === 'account'
+                        ? 'border-yellow-300 bg-gray-100 font-bold'
                         : 'border-transparent hover:bg-gray-100'
                     }`}
                   >
@@ -608,7 +620,7 @@ export default function Tracking() {
             </nav>
           </div>
           {/* Main Content */}
-          <div className="md:w-2/3 px-8 py-8">
+          <div className="md:w-2/3 w-full px-4 md:px-6 lg:px-8 py-8">
             {/* Orders Section */}
             {activeSection === 'orders' && (
               <div>
@@ -777,6 +789,16 @@ export default function Tracking() {
                     </div>
                   )}
                 </div>
+              </div>
+            )}
+
+            {/* Downloads Section */}
+            {activeSection === 'downloads' && (
+              <div className="flex items-start justify-between gap-6">
+                <Button className="bg-yellow-300 hover:bg-yellow-300 text-white font-bold px-8 py-3">
+                  BROWSE PRODUCTS
+                </Button>
+                <p className="text-gray-600 mt-2">No downloads available yet.</p>
               </div>
             )}
 
@@ -1057,10 +1079,10 @@ export default function Tracking() {
 
             {/* Account Details Section */}
             {activeSection === 'account' && (
-              <div>
-                <div className="flex justify-between items-center mb-6">
+              <div className="space-y-4">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-4 mb-2">
                   <h2 className="text-2xl font-bold text-gray-800">Account Details</h2>
-                  <div className="flex space-x-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <Button
                       onClick={() => setIsEditingProfile(true)}
                       variant="outline"
@@ -1078,9 +1100,9 @@ export default function Tracking() {
                   </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-lg shadow-sm border">
-                  <div className="flex items-center space-x-6 mb-6">
-                    <div className="relative">
+                <div className="bg-white p-5 md:p-6 rounded-lg shadow-sm border space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+                    <div className="relative self-center sm:self-auto">
                       <div className="bg-gray-200 rounded-full w-20 h-20 flex items-center justify-center overflow-hidden">
                         {user?.avatar ? (
                           <Image
@@ -1102,11 +1124,11 @@ export default function Tracking() {
                         <Camera className="w-3 h-3" />
                       </button>
                     </div>
-                    <div>
+                    <div className="space-y-1">
                       <h3 className="text-xl font-semibold text-gray-800">
                         {user?.username || user?.name || user?.email || 'User'}
                       </h3>
-                      <p className="text-gray-600">Member since {user?.createdAt ? formatDate(user.createdAt) : 'Unknown'}</p>
+                      <p className="text-gray-600 text-sm">Member since {user?.createdAt ? formatDate(user.createdAt) : 'Unknown'}</p>
                     </div>
                   </div>
 
@@ -1132,9 +1154,9 @@ export default function Tracking() {
 
                   {/* Profile Edit Form */}
                   {isEditingProfile && (
-                    <div className="mb-6 p-4 bg-yellow-50 rounded-lg border border-yellow-300">
-                      <h4 className="text-lg font-semibold text-gray-800 mb-4">Edit Profile Information</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="mb-4 p-4 bg-yellow-50 rounded-lg border border-yellow-300">
+                      <h4 className="text-lg font-semibold text-gray-800 mb-3">Edit Profile Information</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
                           <Input
@@ -1152,7 +1174,7 @@ export default function Tracking() {
                           />
                         </div>
                       </div>
-                      <div className="flex justify-end space-x-2 mt-4">
+                      <div className="flex flex-col sm:flex-row sm:justify-end gap-2 mt-4">
                         <Button
                           variant="outline"
                           onClick={cancelEditing}
@@ -1173,9 +1195,9 @@ export default function Tracking() {
 
                   {/* Password Change Form */}
                   {isEditingPassword && (
-                    <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                      <h4 className="text-lg font-semibold text-gray-800 mb-4">Change Password</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                      <h4 className="text-lg font-semibold text-gray-800 mb-3">Change Password</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">Old Password</label>
                           <Input
@@ -1204,7 +1226,7 @@ export default function Tracking() {
                           />
                         </div>
                       </div>
-                      <div className="flex justify-end space-x-2 mt-4">
+                      <div className="flex flex-col sm:flex-row sm:justify-end gap-2 mt-4">
                         <Button
                           variant="outline"
                           onClick={cancelEditing}

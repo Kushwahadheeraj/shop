@@ -718,7 +718,7 @@ export default function Header() {
                   <span className='inline-block text-white text-base leading-none'>👤</span>
                 </button>
                 {userOpen && (
-                  <div className='absolute right-0 top-full mt-2 w-[22rem] bg-white rounded-xl border shadow-2xl text-[15px] z-[1000] cursor-default'>
+                  <div className='absolute right-0 top-full  w-[22rem] bg-white rounded-xl border shadow-2xl text-[15px] z-[1000] cursor-default'>
                     {/* caret */}
                     <div className='absolute -top-2 right-10 w-0 h-0 border-l-8 border-r-8 border-b-8 border-l-transparent border-r-transparent border-b-white'></div>
                     <div className='py-2'>

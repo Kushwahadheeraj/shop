@@ -1,5 +1,5 @@
-import AccountDetails from "./_components/AccountDetails";
+import Tracking from "../Tracking/_components/Tracking";
 
 export default function AccountDetailsPage() {
-  return <AccountDetails />;
-} 
+  return <Tracking initialSection="account" />;
+}

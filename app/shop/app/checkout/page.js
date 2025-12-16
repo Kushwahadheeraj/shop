@@ -35,9 +35,10 @@ export default function CheckoutPage() {
   });
 
   const [addresses, setAddresses] = useState([]);
-  const [selectedAddressId, setSelectedAddressId] = useState(null);
+  // Index of selected address in 'addresses' array (0..n-1)
+  const [selectedAddressIndex, setSelectedAddressIndex] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [editingAddressId, setEditingAddressId] = useState(null);
+  const [editingAddressIndex, setEditingAddressIndex] = useState(null);
   const [isChangingAddress, setIsChangingAddress] = useState(true); // Start with address selection view
   const [showPlatformFeePopup, setShowPlatformFeePopup] = useState(false);
   const [newAddress, setNewAddress] = useState({
@@ -101,54 +102,61 @@ export default function CheckoutPage() {
     }
   }, [isLoading, isAuthenticated, router]);
 
-  // Load addresses and form data from localStorage
+  // Load addresses from API + form data from localStorage
   useEffect(() => {
     if (!isAuthenticated) return; // Don't load data if not authenticated
     
-    try {
-      console.log('=== CHECKOUT EMAIL DEBUG ===');
-      console.log('All localStorage keys:', Object.keys(localStorage));
-      
-      // Load saved addresses
-      const rawAddresses = typeof window !== "undefined" ? localStorage.getItem(ADDRESS_STORAGE_KEY) : null;
-      if (rawAddresses) {
-        const savedAddresses = JSON.parse(rawAddresses);
-        setAddresses(savedAddresses);
-        // Don't auto-select default address - let user choose
+    const loadData = async () => {
+      try {
+        // Load saved addresses from backend
+        const token = typeof window !== 'undefined' ? localStorage.getItem('euser_token') : null;
+        if (token) {
+          const res = await fetch(`${API_BASE_URL}/euser/addresses`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const data = await res.json();
+          if (res.ok && data.success && Array.isArray(data.addresses)) {
+            setAddresses(data.addresses);
+          }
       }
       
-      // First load saved form data
-      const raw = typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
+        // Load saved form data from localStorage (for notes, etc.)
+        const raw = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
       let savedForm = {};
       if (raw) {
         savedForm = JSON.parse(raw);
-        console.log('Saved form data:', savedForm);
       }
       
-      // Always load user data and override email (force user's email)
+        // Always override email with user email
       const rawUser = typeof window !== 'undefined' ? localStorage.getItem('euser') : null;
-      console.log('Raw euser data:', rawUser);
-      
       if (rawUser) {
         const user = JSON.parse(rawUser);
-        console.log('Parsed user:', user);
-        if (user?.email) {
-          savedForm.email = user.email; // Always use user's email
-          console.log('✅ Email set to:', user.email);
-        } else {
-          console.log('❌ No email found in user object');
+          if (user?.email) savedForm.email = user.email;
         }
-      } else {
-        console.log('❌ No euser found in localStorage - User needs to login first');
-        console.log('Please login using the login/register button in the header');
-      }
-      
-      console.log('Final form data being set:', savedForm);
+
       setForm((f) => ({ ...f, ...savedForm }));
     } catch (err) {
-      console.error('Failed to load form data:', err);
+        console.error('Failed to load checkout data:', err);
     }
-  }, []);
+    };
+
+    loadData();
+  }, [isAuthenticated]);
+
+  // When addresses change, auto-select default/first but don't auto-collapse;
+  // user will confirm with "DELIVER HERE".
+  useEffect(() => {
+    if (addresses.length === 0) {
+      setSelectedAddressIndex(null);
+      setIsChangingAddress(true);
+      return;
+    }
+    setSelectedAddressIndex((prev) => {
+      if (typeof prev === 'number' && addresses[prev]) return prev;
+      const preferredIndex = addresses.findIndex((a) => a.isDefault);
+      return preferredIndex !== -1 ? preferredIndex : 0;
+    });
+  }, [addresses]);
 
   // Save to localStorage when form changes (but don't overwrite email from user)
   useEffect(() => {
@@ -217,29 +225,37 @@ export default function CheckoutPage() {
   const updateNewAddress = (key) => (e) => setNewAddress((a) => ({ ...a, [key]: e.target.value }));
 
   // Address management functions
-  const addAddress = () => {
+  const addAddress = async () => {
     if (addresses.length >= 6) {
       alert('Maximum 6 addresses allowed');
       return;
     }
     
-    const address = {
-      ...newAddress,
-      id: Date.now().toString(),
-      email: form.email, // Use current user's email
-    };
-    
-    const updatedAddresses = [...addresses, address];
-    setAddresses(updatedAddresses);
-    localStorage.setItem(ADDRESS_STORAGE_KEY, JSON.stringify(updatedAddresses));
-    // Also hydrate the checkout form and persist it for later steps
-    setForm((f) => ({ ...f, ...address }));
     try {
-      const formToSave = { ...form, ...address };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(formToSave));
-    } catch {}
-    
-    // Reset form
+      const token = typeof window !== 'undefined' ? localStorage.getItem('euser_token') : null;
+      if (!token) {
+        alert('Please login again');
+        return;
+      }
+
+      const payload = { ...newAddress, email: form.email };
+      const res = await fetch(`${API_BASE_URL}/euser/addresses`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.message || 'Failed to add address');
+
+      setAddresses(data.addresses);
+
+      const newIndex = data.addresses.length - 1;
+      setSelectedAddressIndex(newIndex);
+      setIsChangingAddress(false);
+
     setNewAddress({
       firstName: "",
       lastName: "",
@@ -254,67 +270,85 @@ export default function CheckoutPage() {
       isDefault: false,
     });
     setShowAddForm(false);
+    } catch (err) {
+      console.error('Failed to add address:', err);
+      alert(err.message || 'Failed to add address');
+    }
   };
 
-  const editAddress = (addressId) => {
-    const address = addresses.find(addr => addr.id === addressId);
+  const editAddress = (index) => {
+    const address = addresses[index];
     if (address) {
       setNewAddress({ ...address });
-      setEditingAddressId(addressId);
+      setEditingAddressIndex(index);
       setShowAddForm(true);
     }
   };
 
-  const updateAddress = () => {
-    const updatedAddresses = addresses.map(addr => 
-      addr.id === editingAddressId ? { ...newAddress, id: editingAddressId, email: form.email } : addr
-    );
-    setAddresses(updatedAddresses);
-    localStorage.setItem(ADDRESS_STORAGE_KEY, JSON.stringify(updatedAddresses));
-    // If the edited address is the selected one, sync it into the checkout form and storage
-    if (selectedAddressId === editingAddressId) {
-      const merged = { ...newAddress, id: editingAddressId, email: form.email };
-      setForm((f) => ({ ...f, ...merged }));
-      try {
-        const formToSave = { ...form, ...merged };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(formToSave));
-      } catch {}
-    }
-    
-    // Reset form
-    setNewAddress({
-      firstName: "",
-      lastName: "",
-      country: "India",
-      street: "",
-      city: "",
-      state: "",
-      pin: "",
-      phone: "",
-      type: "HOME",
-      landmark: "",
-      isDefault: false,
-    });
-    setShowAddForm(false);
-    setEditingAddressId(null);
-  };
-
-  const deleteAddress = (addressId) => {
-    if (confirm('Are you sure you want to delete this address?')) {
-      const updatedAddresses = addresses.filter(addr => addr.id !== addressId);
-      setAddresses(updatedAddresses);
-      localStorage.setItem(ADDRESS_STORAGE_KEY, JSON.stringify(updatedAddresses));
-      
-      if (selectedAddressId === addressId) {
-        setSelectedAddressId(null);
+  const updateAddress = async () => {
+    if (editingAddressIndex === null || editingAddressIndex === undefined) return;
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('euser_token') : null;
+      if (!token) {
+        alert('Please login again');
+        return;
       }
+
+      const res = await fetch(`${API_BASE_URL}/euser/addresses`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ index: editingAddressIndex, address: { ...newAddress, email: form.email } }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.message || 'Failed to update address');
+
+      setAddresses(data.addresses);
+    setShowAddForm(false);
+      setEditingAddressIndex(null);
+    } catch (err) {
+      console.error('Failed to update address:', err);
+      alert(err.message || 'Failed to update address');
     }
   };
 
-  const selectAddress = (addressId) => {
-    setSelectedAddressId(addressId);
+  const deleteAddress = async (index) => {
+    if (!confirm('Are you sure you want to delete this address?')) return;
+
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('euser_token') : null;
+      if (!token) {
+        alert('Please login again');
+        return;
+      }
+
+      const res = await fetch(`${API_BASE_URL}/euser/addresses`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ index }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.message || 'Failed to delete address');
+
+      setAddresses(data.addresses);
+      if (selectedAddressIndex === index) {
+        setSelectedAddressIndex(null);
+      }
+    } catch (err) {
+      console.error('Failed to delete address:', err);
+      alert(err.message || 'Failed to delete address');
+    }
+  };
+
+  const selectAddress = (index) => {
+    setSelectedAddressIndex(index);
     // Don't change isChangingAddress here - keep showing address list with DELIVER HERE button
-    const address = addresses.find(addr => addr.id === addressId);
+    const address = addresses[index];
     if (address) {
       setForm(prev => ({ ...prev, ...address, email: prev.email }));
       try {
@@ -326,7 +360,7 @@ export default function CheckoutPage() {
 
   const cancelAddEdit = () => {
     setShowAddForm(false);
-    setEditingAddressId(null);
+    setEditingAddressIndex(null);
     setNewAddress({
       firstName: "",
       lastName: "",
@@ -356,8 +390,8 @@ export default function CheckoutPage() {
   };
 
   const changeAddress = () => {
+    // Just reopen the list with current selection; don't clear selected address
     setIsChangingAddress(true);
-    setSelectedAddressId(null);
   };
 
   const placeOrder = async (e) => {
@@ -369,7 +403,7 @@ export default function CheckoutPage() {
       const emailFromUser = user?.email || '';
 
       // Get selected address details
-      const selectedAddress = addresses.find(addr => addr.id === selectedAddressId);
+      const selectedAddress = typeof selectedAddressIndex === 'number' ? addresses[selectedAddressIndex] : null;
       
       const payload = {
         userId,
@@ -425,7 +459,7 @@ export default function CheckoutPage() {
       window.__checkout_navigating__ = true;
       setTimeout(() => { try { delete window.__checkout_navigating__; } catch {} }, 5000);
     }
-    const selected = addresses.find((a) => a.id === selectedAddressId);
+        const selected = typeof selectedAddressIndex === 'number' ? addresses[selectedAddressIndex] : null;
     if (!selected) {
       alert('Please select a delivery address first');
       return;
@@ -504,16 +538,20 @@ export default function CheckoutPage() {
           {/* Billing form */}
           <form onSubmit={placeOrder} className="lg:col-span-2">
             {/* LOGIN Section */}
-            <div className="bg-blue-600 text-white p-4 rounded mb-4">
+            <div className={`${isAuthenticated ? 'bg-green-50 border border-green-200 text-green-800' : 'bg-blue-600 text-white'} p-4 rounded mb-4`}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="text-lg font-bold">1 LOGIN</span>
-                  <span className="text-green-300">✓</span>
+                  {isAuthenticated && <span className="text-green-600">✓</span>}
                 </div>
+                {!isAuthenticated && (
                 <button type="button" onClick={() => router.push('/login')} className="text-sm underline">CHANGE</button>
+                )}
               </div>
               <div className="mt-2 text-sm">
-                {form.email ? `${form.firstName || 'User'} ${form.lastName || ''} +91${form.phone || ''}` : 'Please login first'}
+                {isAuthenticated
+                  ? (form.email ? `${form.firstName || 'User'} ${form.lastName || ''} ${form.phone ? '+91'+form.phone : ''}` : 'Logged in')
+                  : 'Please login first'}
               </div>
             </div>
 
@@ -523,9 +561,9 @@ export default function CheckoutPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="text-lg font-bold">2 DELIVERY ADDRESS</span>
-                  {selectedAddressId && !isChangingAddress && <span className="text-green-300">✓</span>}
+                  {selectedAddressIndex !== null && !isChangingAddress && <span className="text-green-300">✓</span>}
                 </div>
-                {selectedAddressId && !isChangingAddress && (
+                {selectedAddressIndex !== null && !isChangingAddress && (
                   <button 
                     type="button"
                     onClick={changeAddress}
@@ -536,10 +574,10 @@ export default function CheckoutPage() {
                 )}
               </div>
               {/* Show selected address details when address is selected and not changing */}
-              {selectedAddressId && !isChangingAddress && (
+              {selectedAddressIndex !== null && !isChangingAddress && (
                 <div className="mt-2 text-sm">
                   {(() => {
-                    const address = addresses.find(addr => addr.id === selectedAddressId);
+                    const address = addresses[selectedAddressIndex];
                     return address ? `${address.firstName} ${address.lastName}, ${address.street}, ${address.city}, ${address.state} - ${address.pin}` : '';
                   })()}
                 </div>
@@ -549,56 +587,74 @@ export default function CheckoutPage() {
             {/* Address List - Always show initially, hide only when address is selected and not changing */}
             {isChangingAddress && (
               <div className="space-y-3 mb-4">
-                {addresses.map((address) => (
-                <div key={address.id} className={`border rounded-lg p-4 ${selectedAddressId === address.id ? 'border-blue-500 bg-blue-50' : 'border-gray-300'}`}>
-                  <div className="flex items-start gap-3">
+                {addresses.map((address, index) => (
+                <div
+                  key={index}
+                  className={`border rounded-lg p-4 w-full ${
+                    selectedAddressIndex === index
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-gray-300'
+                  }`}
+                >
+                  {/* Card layout */}
+                  <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
                     <input
                       type="radio"
                       name="address"
-                      checked={selectedAddressId === address.id}
-                      onChange={() => selectAddress(address.id)}
+                      checked={selectedAddressIndex === index}
+                      onChange={() => selectAddress(index)}
                       className="mt-1"
                     />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="font-semibold">{address.firstName} {address.lastName}</span>
-                        <span className="bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs font-medium">
+                    <div className="flex-1 w-full">
+                      <div className="flex flex-wrap items-center gap-2 mb-1">
+                        <span className="font-semibold text-sm sm:text-base">
+                          {address.firstName} {address.lastName}
+                        </span>
+                        <span className="bg-gray-200 text-gray-700 px-2 py-1 rounded text-[10px] sm:text-xs font-medium">
                           {address.type}
                         </span>
+                        {address.isDefault && (
+                          <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-[10px] sm:text-xs font-semibold">
+                            DEFAULT
+                          </span>
+                        )}
                       </div>
-                      <div className="text-sm text-gray-600 mb-1">+91{address.phone}</div>
-                      <div className="text-sm text-gray-700">
+                      <div className="text-xs sm:text-sm text-gray-600 mb-1 break-words">
+                        +91{address.phone}
+                      </div>
+                      <div className="text-xs sm:text-sm text-gray-700 leading-snug break-words">
                         {address.street}, {address.city}, {address.state} - {address.pin}
                       </div>
                       {address.landmark && (
-                        <div className="text-xs text-gray-500 mt-1">
+                        <div className="text-[11px] sm:text-xs text-gray-500 mt-1">
                           <span className="font-medium">Landmark:</span> {address.landmark}
                         </div>
                       )}
                     </div>
-                    <div className="flex gap-2">
+                    {/* Actions */}
+                    <div className="flex sm:flex-col md:flex-row gap-2 self-stretch sm:self-auto">
                       <button
                         type="button"
-                        onClick={() => editAddress(address.id)}
-                        className="text-blue-600 text-sm underline"
+                        onClick={() => editAddress(index)}
+                        className="text-blue-600 text-xs sm:text-sm underline"
                       >
                         EDIT
                       </button>
                       <button
                         type="button"
-                        onClick={() => deleteAddress(address.id)}
-                        className="text-red-600 text-sm underline"
+                        onClick={() => deleteAddress(index)}
+                        className="text-red-600 text-xs sm:text-sm underline"
                       >
                         DELETE
                       </button>
                     </div>
                   </div>
-                  {selectedAddressId === address.id && (
+                  {selectedAddressIndex === index && (
                     <div className="mt-3">
                       <button
                         type="button"
                         onClick={() => {
-                          setSelectedAddressId(address.id);
+                          setSelectedAddressIndex(index);
                           setIsChangingAddress(false);
                         }}
                         className="bg-orange-500 text-white px-6 py-2 rounded font-semibold"
@@ -635,7 +691,7 @@ export default function CheckoutPage() {
             {showAddForm && (
               <div className="border rounded-lg p-4 mb-4 bg-gray-50">
                 <h3 className="font-semibold mb-4">
-                  {editingAddressId ? 'Edit Address' : 'Add New Address'}
+                  {editingAddressIndex !== null ? 'Edit Address' : 'Add New Address'}
                 </h3>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -750,10 +806,10 @@ export default function CheckoutPage() {
                 <div className="mt-4 flex gap-2">
                   <button
                     type="button"
-                    onClick={editingAddressId ? updateAddress : addAddress}
+                    onClick={editingAddressIndex !== null ? updateAddress : addAddress}
                     className="bg-blue-600 text-white px-4 py-2 rounded text-sm"
                   >
-                    {editingAddressId ? 'UPDATE ADDRESS' : 'ADD ADDRESS'}
+                    {editingAddressIndex !== null ? 'UPDATE ADDRESS' : 'ADD ADDRESS'}
                   </button>
                   <button
                     type="button"
@@ -767,15 +823,15 @@ export default function CheckoutPage() {
             )}
 
             {/* ORDER SUMMARY Section - Always show header, but content only when address selected */}
-            <div className={`${selectedAddressId && !isChangingAddress ? 'opacity-100' : 'opacity-50 pointer-events-none'} bg-blue-600 text-white p-4 rounded mb-4`} >
+            <div className={`${selectedAddressIndex !== null && !isChangingAddress ? 'opacity-100' : 'opacity-50 pointer-events-none'} bg-blue-600 text-white p-4 rounded mb-4`} >
               <div className="flex items-center gap-2">
                 <span className="text-lg font-bold">3 ORDER SUMMARY</span>
-                {selectedAddressId && !isChangingAddress && <span className="text-green-300">✓</span>}
+                {selectedAddressIndex !== null && !isChangingAddress && <span className="text-green-300">✓</span>}
               </div>
             </div>
 
             {/* Order Items Display - Only show when address is selected and not changing */}
-            {selectedAddressId && !isChangingAddress && (
+            {selectedAddressIndex !== null && !isChangingAddress && (
               <div className="space-y-4 mb-6">
                 {items.map((item, index) => (
                   <div key={item.id || index} className="border rounded-lg p-4 bg-white shadow-sm">
@@ -890,10 +946,12 @@ export default function CheckoutPage() {
           </form>
 
           {/* Summary */}
-          <aside className="bg-white p-4 sm:p-5 border border-gray-300 h-fit shadow-[inset_0_0_0_2px_#f3c34b]">
-            <h3 className="text-gray-900 font-semibold mb-4 tracking-wide">PRICE DETAILS</h3>
-            <div className="space-y-3 text-sm">
-              <div className="flex justify-between items-center">
+          <aside className="bg-white p-3 sm:p-5 border border-gray-300 h-fit shadow-[inset_0_0_0_2px_#f3c34b] w-full">
+            <h3 className="text-gray-900 font-semibold mb-3 sm:mb-4 tracking-wide text-base sm:text-lg">
+              PRICE DETAILS
+            </h3>
+            <div className="space-y-3 text-xs sm:text-sm">
+              <div className="flex justify-between items-center gap-3">
                 <div className="flex items-center gap-2">
                   <span>Price ({items.length} item{items.length !== 1 ? 's' : ''})</span>
                   <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -903,7 +961,7 @@ export default function CheckoutPage() {
                 <span className="font-semibold">{currency(subtotal)}</span>
               </div>
               
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center gap-3">
                 <div className="flex items-center gap-2">
                   <span>Platform Fee</span>
                   <svg 
@@ -931,7 +989,7 @@ export default function CheckoutPage() {
               </div>
 
               <div className="border-t border-dashed border-gray-300 pt-3">
-                <div className="flex justify-between items-center font-bold text-lg">
+                <div className="flex justify-between items-center font-bold text-base sm:text-lg">
                   <span>Total Payable</span>
                   <span>{currency(grandTotal)}</span>
                 </div>
@@ -939,12 +997,12 @@ export default function CheckoutPage() {
 
               {/* Coupon Apply */}
               <div className="mt-4">
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <input
                     value={couponCode}
                     onChange={(e)=>{ setCouponCode(e.target.value); setCouponError(""); }}
                     placeholder="Enter coupon code"
-                    className="flex-1 border px-3 py-2 text-sm"
+                    className="flex-1 border px-3 py-2 text-xs sm:text-sm"
                   />
                   <button
                     type="button"
@@ -965,24 +1023,28 @@ export default function CheckoutPage() {
                         setCouponError(e.message || 'Invalid coupon');
                       }
                     }}
-                    className="px-3 py-2 bg-blue-600 text-white text-sm rounded"
+                    className="px-3 py-2 bg-blue-600 text-white text-xs sm:text-sm rounded w-full sm:w-auto"
                   >Apply</button>
                 </div>
                 {appliedCoupon && (
-                  <div className="text-green-600 text-sm mt-2">Applied {appliedCoupon.code}: -{currency(appliedCoupon.discount)}</div>
+                  <div className="text-green-600 text-xs sm:text-sm mt-2">
+                    Applied {appliedCoupon.code}: -{currency(appliedCoupon.discount)}
+                  </div>
                 )}
                 {couponError && (
-                  <div className="text-red-600 text-sm mt-2">{couponError}</div>
+                  <div className="text-red-600 text-xs sm:text-sm mt-2">
+                    {couponError}
+                  </div>
                 )}
               </div>
 
               {totalSavings > 0 && (
-                <div className="text-green-600 text-sm font-medium">
+                <div className="text-green-600 text-xs sm:text-sm font-medium">
                   Your Total Savings on this order {currency(totalSavings)}
                 </div>
               )}
 
-              <div className="flex items-center gap-2 text-gray-600 text-xs mt-4">
+              <div className="flex items-center gap-2 text-gray-600 text-[11px] sm:text-xs mt-4">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>

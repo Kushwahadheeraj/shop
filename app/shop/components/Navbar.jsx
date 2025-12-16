@@ -3,16 +3,18 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 const getNavItems = (isLoggedIn) => {
+  const rootPath = (folder) => `/ShopPage/${folder}`;
+
   const baseItems = [
     { label: 'HOME', href: '/' },
     { label: 'SHOP', href: '/Shop' },
-    { label: 'PAINTS', href: '#', hasDropdown: true },
-    { label: 'ELECTRICALS', href: '#', hasDropdown: true },
-    { label: 'SANITARY WARE & FAUCETS', href: '#', hasDropdown: true },
-    { label: 'CEMENTS & POP', href: '#' },
-    { label: 'ADHESIVE', href: '#' },
-    { label: 'CLEANING', href: '#' },
-    { label: 'TOOLS', href: '#', hasDropdown: true },
+    { label: 'PAINTS', href: rootPath('Paint'), hasDropdown: true },
+    { label: 'ELECTRICALS', href: rootPath('Electrical'), hasDropdown: true },
+    { label: 'SANITARY WARE & FAUCETS', href: rootPath('Sanitary'), hasDropdown: true },
+    { label: 'CEMENTS & POP', href: rootPath('Cements') },
+    { label: 'ADHESIVE', href: rootPath('Adhesives') },
+    { label: 'CLEANING', href: rootPath('Cleaning') },
+    { label: 'TOOLS', href: rootPath('Tools'), hasDropdown: true },
   ];
 
   if (isLoggedIn) {
@@ -103,6 +105,12 @@ export default function Navbar() {
                   setActivePage(item.label);
                   if (item.hasDropdown) {
                     e.preventDefault();
+                    const folder = folderMap[item.label];
+                    if (folder) {
+                      router.push(`/ShopPage/${folder}`);
+                    } else {
+                      router.push(item.href);
+                    }
                     return;
                   }
                   const folder = simpleNavMap[item.label];

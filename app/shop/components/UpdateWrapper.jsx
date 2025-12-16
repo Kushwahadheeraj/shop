@@ -1,6 +1,6 @@
 'use client';
 import { usePathname } from 'next/navigation';
-import Update from '@/app/Update/_components/Update';
+import Update from '@/app/Update/Update';
 
 export default function UpdateWrapper() {
   const pathname = usePathname();

@@ -1,27 +1,30 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import * as SeparatorPrimitive from "@radix-ui/react-separator"
+import * as React from "react";
+import { cn } from "@/lib/utils";
 
-import { cn } from "@/lib/utils"
-
+// Lightweight separator without Radix dependency for better stability
 function Separator({
   className,
   orientation = "horizontal",
   decorative = true,
   ...props
 }) {
+  const isVertical = orientation === "vertical";
+
   return (
-    <SeparatorPrimitive.Root
+    <div
       data-slot="separator"
-      decorative={decorative}
-      orientation={orientation}
+      role={decorative ? "none" : "separator"}
+      aria-orientation={orientation}
       className={cn(
-        "bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px",
+        "bg-border shrink-0",
+        isVertical ? "w-px h-full" : "h-px w-full",
         className
       )}
-      {...props} />
+      {...props}
+    />
   );
 }
 
-export { Separator }
+export { Separator };

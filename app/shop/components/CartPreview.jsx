@@ -5,14 +5,16 @@ import { useCart } from '@/components/CartContext';
 
 export default function CartPreview({ open }) {
 	const { items, total } = useCart() || { items: [], total: 0 };
+  const hasItems = Array.isArray(items) && items.length > 0;
 	if (!open) return null;
 	return (
 		<div className="absolute right-0 top-full w-80 bg-white text-gray-900 rounded-xl shadow-2xl border border-gray-200 z-[1000]">
 			<div className="max-h-80 overflow-auto divide-y">
-				{items.length === 0 && (
+        {!hasItems && (
 					<div className="p-4 text-sm text-gray-500">Your cart is empty.</div>
 				)}
-				{items.map((it) => {
+        {hasItems &&
+          items.map((it) => {
 					const compositeKey = `${it._id || it.id}||${JSON.stringify({
 						color: it.color || '',
 						colour: it.colour || '',
@@ -48,8 +50,28 @@ export default function CartPreview({ open }) {
 					<span className="text-lg font-bold">₹{Number(total).toLocaleString()}</span>
 				</div>
 				<div className="flex gap-2">
-					<Link href="/cart" className="flex-1 text-center bg-yellow-300 hover:bg-yellow-300 text-white font-semibold py-2 rounded-md text-sm">VIEW CART</Link>
-					<Link href="/checkout" className="flex-1 text-center bg-gray-900 hover:bg-black text-white font-semibold py-2 rounded-md text-sm">CHECKOUT</Link>
+          <Link
+            href="/cart"
+            className="flex-1 text-center bg-yellow-300 hover:bg-yellow-300 text-white font-semibold py-2 rounded-md text-sm"
+          >
+            VIEW CART
+          </Link>
+          {hasItems ? (
+            <Link
+              href="/checkout"
+              className="flex-1 text-center bg-gray-900 hover:bg-black text-white font-semibold py-2 rounded-md text-sm"
+            >
+              CHECKOUT
+            </Link>
+          ) : (
+            <button
+              type="button"
+              disabled
+              className="flex-1 text-center bg-gray-200 text-gray-400 font-semibold py-2 rounded-md text-sm cursor-not-allowed"
+            >
+              CHECKOUT
+            </button>
+          )}
 				</div>
 			</div>
 		</div>

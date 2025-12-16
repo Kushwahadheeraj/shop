@@ -1,5 +1,5 @@
-import Orders from "./_components/Orders";
+import Tracking from "../Tracking/_components/Tracking";
 
 export default function OrdersPage() {
-  return <Orders />;
-} 
+  return <Tracking initialSection="orders" />;
+}

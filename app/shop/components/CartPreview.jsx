@@ -7,7 +7,7 @@ export default function CartPreview({ open }) {
 	const { items, total } = useCart() || { items: [], total: 0 };
 	if (!open) return null;
 	return (
-		<div className="absolute right-0 top-full mt-2 w-80 bg-white text-gray-900 rounded-xl shadow-2xl border border-gray-200 z-[1000]">
+		<div className="absolute right-0 top-full w-80 bg-white text-gray-900 rounded-xl shadow-2xl border border-gray-200 z-[1000]">
 			<div className="max-h-80 overflow-auto divide-y">
 				{items.length === 0 && (
 					<div className="p-4 text-sm text-gray-500">Your cart is empty.</div>

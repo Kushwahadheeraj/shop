@@ -1,5 +1,5 @@
-import Address from "./_components/Address";
+import Tracking from "../Tracking/_components/Tracking";
 
 export default function AddressPage() {
-  return <Address />;
-} 
+  return <Tracking initialSection="addresses" />;
+}

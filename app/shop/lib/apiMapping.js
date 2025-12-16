@@ -27,7 +27,8 @@ export const API_MAPPINGS = {
   'electrical/doorbells': 'electrical/doorBells/get',
   'electrical/dpswitch': 'electrical/dPswitch/get',
   'electrical/earthingaccessories': 'electrical/earthingAccessories/get',
-  'electrical/elcbsrccbs': 'electrical/eLCBsRCCBs/get',
+  'electrical/elcbsrccbs': 'electrical/eLCBsRCCBs/get', // Backend route: /eLCBsRCCBs/get (exact case match)
+  'electrical/elcbsorrccbs': 'electrical/eLCBsRCCBs/get', // Alternative spelling: "ELCBs OR RCCBs" -> elcbsorrccbs
   'electrical/flexibleconduit': 'electrical/flexibleConduit/get',
   'electrical/flexiblewires': 'electrical/flexibleWires/get',
   'electrical/fusecarriers': 'electrical/fuseCarriers/get',
@@ -73,7 +74,7 @@ export const API_MAPPINGS = {
   'electrical/ventilationexhaustfans': 'electrical/ventilationexhaustfans/get',
   'electrical/wallmountingfans': 'electrical/wallmountingfans/get',
 
-  // Lights
+  // Lights (direct paths)
   'electrical/ceilinglight': 'electrical/ceilinglight/get',
   'electrical/cfl': 'electrical/cfl/get',
   'electrical/desklight': 'electrical/desklight/get',
@@ -100,6 +101,104 @@ export const API_MAPPINGS = {
   'electrical/tubelight': 'electrical/tubelight/get',
   'electrical/underwaterlights': 'electrical/underwaterlights/get',
   'electrical/walllight': 'electrical/walllight/get',
+  
+  // Lights group (skip "lights" group name - all light types are direct routes)
+  'electrical/lights/ceilinglight': 'electrical/ceilinglight/get',
+  'electrical/lights/cfl': 'electrical/cfl/get',
+  'electrical/lights/desklight': 'electrical/desklight/get',
+  'electrical/lights/focuslight': 'electrical/focuslight/get',
+  'electrical/lights/gardenlight': 'electrical/gardenlight/get',
+  'electrical/lights/gatelight': 'electrical/gatelight/get',
+  'electrical/lights/gls': 'electrical/gls/get',
+  'electrical/lights/home': 'electrical/home/get',
+  'electrical/lights/lamps': 'electrical/lamps/get',
+  'electrical/lights/ledbatten': 'electrical/ledbatten/get',
+  'electrical/lights/ledbulbs': 'electrical/ledbulbs/get',
+  'electrical/lights/leddownlightersspotlight': 'electrical/leddownlightersspotlight/get',
+  'electrical/lights/ledluminaires': 'electrical/ledluminaires/get',
+  'electrical/lights/ledpanellight': 'electrical/ledpanellight/get',
+  'electrical/lights/ledspotlight': 'electrical/ledspotlight/get',
+  'electrical/lights/ledstreetlight': 'electrical/ledstreetlight/get',
+  'electrical/lights/ledstrips': 'electrical/ledstrips/get',
+  'electrical/lights/ledsurfacelight': 'electrical/ledsurfacelight/get',
+  'electrical/lights/lightelectronics': 'electrical/lightelectronics/get',
+  'electrical/lights/mirrorlight': 'electrical/mirrorlight/get',
+  'electrical/lights/reflections': 'electrical/reflections/get',
+  'electrical/lights/standardincandescent': 'electrical/standardincandescent/get',
+  'electrical/lights/tbulb': 'electrical/tbulb/get',
+  'electrical/lights/tubelight': 'electrical/tubelight/get',
+  'electrical/lights/underwaterlights': 'electrical/underwaterlights/get',
+  'electrical/lights/walllight': 'electrical/walllight/get',
+
+  // Lights with LIGHTING group (skip group name)
+  'electrical/lighting/lightelectronics': 'electrical/lightelectronics/get',
+  'electrical/lighting/lamps': 'electrical/lamps/get',
+  'electrical/lighting/reflections': 'electrical/reflections/get',
+  'electrical/lighting/reflectors': 'electrical/reflections/get',
+  'electrical/lighting/standardincandescent': 'electrical/standardincandescent/get',
+  'electrical/lighting/cfl': 'electrical/cfl/get',
+  'electrical/lighting/desklight': 'electrical/desklight/get',
+  'electrical/lighting/focuslight': 'electrical/focuslight/get',
+
+  // LED LIGHTING group (skip group name)
+  'electrical/ledlighting/tubelight': 'electrical/tubelight/get',
+  'electrical/ledlighting/ledbulbs': 'electrical/ledbulbs/get',
+  'electrical/ledlighting/leddownlightersspotlight': 'electrical/leddownlightersspotlight/get',
+  'electrical/ledlighting/ledstrips': 'electrical/ledstrips/get',
+  'electrical/ledlighting/ceilinglight': 'electrical/ceilinglight/get',
+  'electrical/ledlighting/walllight': 'electrical/walllight/get',
+
+  // FANS group (skip group name)
+  'electrical/fans/ceilingfans': 'electrical/ceilingfans/get',
+  'electrical/fans/cabinfans': 'electrical/cabinfans/get',
+  'electrical/fans/ventilationexhaustfans': 'electrical/ventilationexhaustfans/get',
+  'electrical/fans/ventilationexhaust': 'electrical/ventilationexhaustfans/get',
+  'electrical/fans/wallmountingfans': 'electrical/wallmountingfans/get',
+  'electrical/fans/pedestalfans': 'electrical/pedestalfans/get',
+  'electrical/fans/tablefans': 'electrical/tablefans/get',
+
+  // CABLES & WIRES group
+  'electrical/cableswires/housewires': 'electrical/wiresandcables/get',
+  'electrical/cableswires/flexiblewires': 'electrical/flexiblewires/get',
+
+  // WATER PUMPS group
+  'electrical/waterpumps/motors': 'electrical/motors/get',
+
+  // PLUGS & ADAPTORS group
+  'electrical/plugsadaptors/pintop': 'electrical/pintop/get',
+  'electrical/plugsadaptors/adaptors': 'electrical/adaptors/get',
+
+  // SWITCHES & GEARS group
+  'electrical/switchesgears/switches': 'electrical/switches/get',
+  'electrical/switchesgears/dimmer': 'electrical/dimmer/get',
+  'electrical/switchesgears/sockets': 'electrical/sockets/get',
+  'electrical/switchesgears/regulators': 'electrical/regulators/get',
+  'electrical/switchesgears/indicator': 'electrical/indicator/get',
+  'electrical/switchesgears/dpswitch': 'electrical/dPswitch/get',
+  'electrical/switchesgears/tvoutlets': 'electrical/tVOutlets/get',
+  'electrical/switchesgears/switchsocketcombined': 'electrical/switchAndSocket/get',
+  'electrical/switchesgears/switchplates': 'electrical/switchPlates/get',
+  'electrical/switchesgears/ceilingroses': 'electrical/ceilingRoses/get',
+
+  // PROTECTION DEVICES group
+  'electrical/protectiondevices/mcb': 'electrical/mCB/get',
+  'electrical/protectiondevices/elcbsorrccbs': 'electrical/eLCBsRCCBs/get', // "ELCBs OR RCCBs" -> elcbsorrccbs
+  'electrical/protectiondevices/elcbsrccbs': 'electrical/eLCBsRCCBs/get', // Alternative: elcbsrccbs
+  'electrical/protectiondevices/distributionboards': 'electrical/distributionBoards/get',
+  'electrical/protectiondevices/fusecarriers': 'electrical/fuseCarriers/get',
+  'electrical/protectiondevices/kitkatfuses': 'electrical/kITKATFuses/get',
+  'electrical/protectiondevices/isolators': 'electrical/isolators/get',
+
+  // MODULAR/SURFACE BOX group
+  'electrical/modularsurfacebox/electricalfittings': 'electrical/electricalFittings/get',
+  'electrical/modularsurfacebox/flexibleconduit': 'electrical/flexibleConduit/get',
+  'electrical/modularsurfacebox/holders': 'electrical/holders/get',
+  
+  // ELECTRICAL FITTINGS group (accessories, circulardeepbox, etc. are direct routes, not nested)
+  'electrical/electricalfittings/accessories': 'electrical/accessories/get',
+  'electrical/electricalfittings/circulardeepbox': 'electrical/circulardeepbox/get',
+  'electrical/electricalfittings/circularsurfacebox': 'electrical/circularsurfacebox/get',
+  'electrical/electricalfittings/rigidtype': 'electrical/rigidtype/get',
 
   // Locks subcategories
   'locks': 'locks/get',
@@ -280,7 +379,7 @@ export const API_MAPPINGS = {
   'paint/emulsiontileguard': 'paint/emulsion-tile-guard/get',
   'paint/emulsionwalltexture': 'paint/emulsion-wall-texture/get',
   'paint/enamelglossenamel': 'paint/enamel-gloss-enamel/get',
-  'paint/enamelsatenamel': 'paint/enamel-satin-enamel/get',
+  'paint/enamelsatinenamel': 'paint/enamel-satin-enamel/get',
   'paint/enamelsyntheticenamel': 'paint/enamel-synthetic-enamel/get',
   'paint/exteriorpaints': 'paint/exterior-paints/get',
   'paint/floorpaints': 'paint/floor-paints/get',
@@ -325,6 +424,77 @@ export const API_MAPPINGS = {
   'paint/woodfinisheswoodputty': 'paint/wood-finishes-wood-putty/get',
   'paint/woodmetal': 'paint/wood-metal/get',
 
+  // Paint with EMULSION group
+  'paint/emulsion/interioremulsion': 'paint/emulsion-interior-emulsion/get',
+  'paint/emulsion/exterioremulsion': 'paint/emulsion-exterior-emulsion/get',
+  'paint/emulsion/walltexture': 'paint/emulsion-wall-texture/get',
+  'paint/emulsion/tileguard': 'paint/emulsion-tile-guard/get',
+
+  // Paint with ENAMEL group
+  'paint/enamel/satenamel': 'paint/enamel-satin-enamel/get',
+  'paint/enamel/satinenamel': 'paint/enamel-satin-enamel/get', // Alternative spelling
+  'paint/enamel/glossenamel': 'paint/enamel-gloss-enamel/get',
+  'paint/enamel/syntheticenamel': 'paint/enamel-synthetic-enamel/get',
+
+  // Paint with DISTEMPER group
+  'paint/distemper/acrylicdistemper': 'paint/distemper-acrylic-distemper/get',
+  'paint/distemper/syntheticdistemper': 'paint/distemper-synthetic-distemper/get',
+
+  // Paint with PRIMER group
+  'paint/primer/interiorprimer': 'paint/primer-interior-primer/get',
+  'paint/primer/exteriorprimer': 'paint/primer-exterior-primer/get',
+  'paint/primer/cementprimer': 'paint/primer-cement-primer/get',
+  'paint/primer/woodprimer': 'paint/primer-wood-primer/get',
+  'paint/primer/metalprimer': 'paint/primer-metal-primer/get',
+  'paint/primer/acrylicprimer': 'paint/primer-acrylic-primer/get',
+  'paint/primer/solventprimer': 'paint/primer-solvent-primer/get',
+
+  // Paint with STAINERS group
+  'paint/stainers/universalstainers': 'paint/stainers-universal-stainers/get',
+  'paint/stainers/woodstainers': 'paint/stainers-wood-stainers/get',
+
+  // Paint with BRUSHES & ROLLERS group
+  'paint/brushesrollers/paintbrushes': 'paint/brushes-rollers-paint-brushes/get',
+  'paint/brushesrollers/rollers': 'paint/brushes-rollers-rollers/get',
+  'paint/brushesrollers/spraypaints': 'paint/brushes-rollers-spray-paints/get',
+
+  // Paint with WATERPROOFING & FILLERS group
+  'paint/waterproofingfillers/crackfillers': 'paint/waterproofing-crack-fillers/get',
+  'paint/waterproofingfillers/waterproofbasecoat': 'paint/waterproofing-waterproof-basecoat/get',
+
+  // Paint with PAINTING ACCESSORIES group
+  'paint/paintingaccessories/sandpaperrolls': 'paint/painting-accessories-sandpaper-rolls/get',
+  'paint/paintingaccessories/paintingtools': 'paint/painting-accessories-painting-tools/get',
+  'paint/paintingaccessories/stencils': 'paint/painting-accessories-stencils/get',
+
+  // Paint with WOOD FINISHES group
+  'paint/woodfinishes/polish': 'paint/wood-finishes-polish/get',
+  'paint/woodfinishes/varnishblackboardpaint': 'paint/wood-finishes-varnish-black-board-paint/get',
+  'paint/woodfinishes/melamyne': 'paint/wood-finishes-melamyne/get',
+  'paint/woodfinishes/pu': 'paint/wood-finishes-pu/get',
+  'paint/woodfinishes/sealer': 'paint/wood-finishes-sealer/get',
+  'paint/woodfinishes/nc': 'paint/wood-finishes-nc/get',
+  'paint/woodfinishes/glasscoatings': 'paint/wood-finishes-glass-coatings/get',
+  'paint/woodfinishes/woodputty': 'paint/wood-finishes-wood-putty/get',
+
+  // Paint with ADHESIVE & THINNER group
+  'paint/adhesivethinner/adhesive': 'paint/adhesive-thinner-adhesive/get',
+  'paint/adhesivethinner/thinner': 'paint/adhesive-thinner-thinner/get',
+
+  // Paint with WALL PUTTY group
+  'paint/wallputty/powderwallputty': 'paint/wall-putty-powder-wall-putty/get',
+  'paint/wallputty/acrylicwallputty': 'paint/wall-putty-acrylic-wall-putty/get',
+  'paint/wallputty/kpfwallputty': 'paint/wall-putty-kpf-wall-putty/get',
+
+  // Paint with AUTOMOTIVE PAINTS group
+  'paint/automotivepaints/aspapaints': 'paint/automative-paints-aspa-paints/get',
+
+  // Paint with TOP BRANDS group
+  'paint/topbrands/asianpaints': 'paint/top-brands-asian-paints/get',
+  'paint/topbrands/jkwallputty': 'paint/top-brands-jk-wall-putty/get',
+  'paint/topbrands/gempaints': 'paint/top-brands-asian-paints/get', // Fallback if gem paints doesn't exist
+  'paint/topbrands/agsarpaints': 'paint/top-brands-asian-paints/get', // Fallback if agsar paints doesn't exist
+
   // Pipe subcategories
   'pipe': 'pipe/get',
   'pipe/finolexpipes': 'pipe/finolex-pipes/get',
@@ -352,6 +522,9 @@ export const API_MAPPINGS = {
   'sanitary': 'sanitary/get',
   'sanitary/acrylicproducts': 'sanitary/acrylic-products/get',
   'sanitary/bathroomaccessories': 'sanitary/bathroom-accessories/get',
+  
+  // Sanitary - Bathsense mappings
+  'sanitary/bathsense': 'sanitary/bathsense-pfittings-faucets-bathsense-essentials/get', // Default
   'sanitary/bathsensepfittingsfaucetsaltius': 'sanitary/bathsense-pfittings-faucets-altius/get',
   'sanitary/bathsensepfittingsfaucetsbathsenseessentials': 'sanitary/bathsense-pfittings-faucets-bathsense-essentials/get',
   'sanitary/bathsensepfittingsfaucetsbathsenseshowers': 'sanitary/bathsense-pfittings-faucets-bathsense-showers/get',
@@ -366,58 +539,138 @@ export const API_MAPPINGS = {
   'sanitary/bathsensesanitarywarewashbasins': 'sanitary/bathsense-sanitaryware-washbasins/get',
   'sanitary/bathsensesanitarywarewatercloset': 'sanitary/bathsense-sanitaryware-water-closet/get',
   'sanitary/closets': 'sanitary/closets/get',
+  
+  // Sanitary - Coral Bath Fixtures mappings
+  'sanitary/coralbathfixtures': 'sanitary/coral-bath-fixtures-eurosmart-series/get', // Default
   'sanitary/coralbathfixtureseurosmartseries': 'sanitary/coral-bath-fixtures-eurosmart-series/get',
   'sanitary/coralbathfixturesflowmoreseries': 'sanitary/coral-bath-fixtures-flowmore-series/get',
   'sanitary/coralbathfixturesnewsuperglowseries': 'sanitary/coral-bath-fixtures-new-super-glow-series/get',
   'sanitary/coralbathfixturesroyaleseries': 'sanitary/coral-bath-fixtures-royale-series/get',
   'sanitary/coralbathfixturestreemoseries': 'sanitary/coral-bath-fixtures-treemo-series/get',
   'sanitary/coralbathfixturesxrossaseries': 'sanitary/coral-bath-fixtures-xrossa-series/get',
+  
+  // Sanitary - Corsa mappings (simplified, direct item names)
+  'sanitary/corsa': 'sanitary/corsa-bathroom-faucets-almond/get', // Default
+  'sanitary/corsabathroomfaucetsalmond': 'sanitary/corsa-bathroom-faucets-almond/get',
+  'sanitary/corsabathroomfaucetsarrow': 'sanitary/corsa-bathroom-faucets-arrow/get',
+  'sanitary/corsabathroomfaucetsbold': 'sanitary/corsa-bathroom-faucets-bold/get',
+  'sanitary/corsabathroomfaucetsbudget': 'sanitary/corsa-bathroom-faucets-budget/get',
+  'sanitary/corsabathroomfaucetsconcept': 'sanitary/corsa-bathroom-faucets-concept/get',
+  'sanitary/corsabathroomfaucetsdeluxe': 'sanitary/corsa-bathroom-faucets-deluxe/get',
+  'sanitary/corsabathroomfaucetseeco': 'sanitary/corsa-bathroom-faucets-eeco/get',
+  'sanitary/corsabathroomfaucetsexpert': 'sanitary/corsa-bathroom-faucets-expert/get',
+  'sanitary/corsabathroomfaucetsflorence': 'sanitary/corsa-bathroom-faucets-florence/get',
+  'sanitary/corsabathroomfaucetsglassbowlfaucet': 'sanitary/corsa-bathroom-faucets-glass-bowl-faucet/get',
+  'sanitary/corsabathroomfaucetsidea': 'sanitary/corsa-bathroom-faucets-idea/get',
+  'sanitary/corsabathroomfaucetsjazz': 'sanitary/corsa-bathroom-faucets-jazz/get',
+  'sanitary/corsabathroomfaucetsket': 'sanitary/corsa-bathroom-faucets-ket/get',
+  'sanitary/corsabathroomfaucetsmilano': 'sanitary/corsa-bathroom-faucets-milano/get',
+  'sanitary/corsabathroomfaucetsnano': 'sanitary/corsa-bathroom-faucets-nano/get',
+  'sanitary/corsabathroomfaucetsnexa': 'sanitary/corsa-bathroom-faucets-nexa/get',
+  'sanitary/corsabathroomfaucetsniagra': 'sanitary/corsa-bathroom-faucets-niagra/get',
+  'sanitary/corsabathroomfaucetsnice': 'sanitary/corsa-bathroom-faucets-nice/get',
+  'sanitary/corsabathroomfaucetsomega': 'sanitary/corsa-bathroom-faucets-omega/get',
+  'sanitary/corsabathroomfaucetspassion': 'sanitary/corsa-bathroom-faucets-passion/get',
+  'sanitary/corsabathroomfaucetsroyal': 'sanitary/corsa-bathroom-faucets-royal/get',
+  'sanitary/corsabathroomfaucetsslimline': 'sanitary/corsa-bathroom-faucets-slimline/get',
+  'sanitary/corsabathroomfaucetssplash': 'sanitary/corsa-bathroom-faucets-splash/get',
+  'sanitary/corsabathroomfaucetssquaref': 'sanitary/corsa-bathroom-faucets-square-f/get',
+  'sanitary/corsabathroomfaucetssquares': 'sanitary/corsa-bathroom-faucets-square-s/get',
+  'sanitary/corsabathroomfaucetssuper': 'sanitary/corsa-bathroom-faucets-super/get',
+  'sanitary/corsabathroomfaucetstri': 'sanitary/corsa-bathroom-faucets-tri/get',
+  
+  // Sanitary - Essess mappings (no single endpoint, use first available)
+  'sanitary/essess': 'sanitary/essess-accessories-series1-croma/get', // Default - fixed route name (series1 not series-1)
+  
+  // Sanitary - Hindware mappings (no single endpoint, use first available)
+  'sanitary/hindware': 'sanitary/hindware-faucets-angular-stop-cock/get', // Default - first hindware faucet route
+  
+  // Sanitary - Parryware mappings (no single endpoint, use first available)
+  'sanitary/parryware': 'sanitary/parryware-accessories-accessories/get', // Default - first parryware route
+  
+  // Sanitary - Leo Bath Fittings mappings
+  'sanitary/leobathfittings': 'sanitary/leo-bath-fittings-bathroom-accessories-bathroom-accessories/get', // Default - note duplicate in route name
+  
+  // Sanitary - WaterTec (already added above)
+  
+  // Sanitary - Hardware & Bathroom Accessories
+  'sanitary/hardwarebathroomaccessories': 'sanitary/bathroom-accessories/get',
+  'sanitary/hardware': 'sanitary/bathroom-accessories/get',
+  
+  // Sanitary - Taps
+  'sanitary/taps': 'sanitary/water-tec-taps/get', // Default to water-tec-taps
+  
+  // WaterTec subcategories
+  'sanitary/watertec': 'sanitary/water-tec-showers/get', // Default to showers if no subcategory
+  'sanitary/water-tec': 'sanitary/water-tec-showers/get', // Handle hyphenated version
+  'sanitary/watertec/showers': 'sanitary/water-tec-showers/get',
+  'sanitary/watertec/taps': 'sanitary/water-tec-taps/get',
+  'sanitary/watertec/bathroomaccessories': 'sanitary/water-tec-bathroom-accessories/get',
+  'sanitary/watertec/allied': 'sanitary/water-tec-allied/get',
+  'sanitary/watertec/aqua': 'sanitary/water-tec-aqua/get',
+  'sanitary/watertec/aspire': 'sanitary/water-tec-aspire/get',
+  'sanitary/watertec/cistern': 'sanitary/water-tec-cistern/get',
+  'sanitary/watertec/concealedcistern': 'sanitary/water-tec-concealed-cistern/get',
+  'sanitary/watertec/connectiontube': 'sanitary/water-tec-connection-tube/get',
+  'sanitary/watertec/ebony': 'sanitary/water-tec-ebony/get',
+  'sanitary/watertec/eco': 'sanitary/water-tec-eco/get',
+  'sanitary/watertec/eva': 'sanitary/water-tec-eva/get',
+  'sanitary/watertec/flora': 'sanitary/water-tec-flora/get',
+  'sanitary/watertec/healthfaucets': 'sanitary/water-tec-health-faucets/get',
+  'sanitary/watertec/quattro': 'sanitary/water-tec-quattro/get',
+  'sanitary/watertec/toiletseatcovers': 'sanitary/water-tec-toilet-seat-covers/get',
+  'sanitary/watertec/tseries': 'sanitary/water-tec-t-series/get',
+  'sanitary/watertec/tseriesalt': 'sanitary/water-tec-t-series-alt/get',
+  'sanitary/watertec/valves': 'sanitary/water-tec-valves/get',
 
   // Tools subcategories
   'tools': 'tools/get',
-  'tools/abrasives': 'tools/abrasives/get',
+  'tools/handtools': 'tools/handtools/get',
+  'tools/abrasives': 'tools/abrasives/cutOffWheel/get', // No single endpoint, use cutOffWheel as default
   'tools/abrasives/cutoffwheel': 'tools/abrasives/cutOffWheel/get',
   'tools/abrasives/diamondblades': 'tools/abrasives/diamondBlades/get',
   'tools/allenkeys': 'tools/allen-keys/get',
   'tools/brush': 'tools/brush/get',
   'tools/carpenterpincer': 'tools/carpenter-pincer/get',
-  'tools/centrepunches': 'tools/centre-punches/get',
   'tools/chisels': 'tools/chisels/get',
   'tools/clamps': 'tools/clamps/get',
   'tools/cutters': 'tools/cutters/get',
   'tools/files': 'tools/files/get',
   'tools/gardentools': 'tools/garden-tools/get',
-  'tools/gearpullers': 'tools/gear-pullers/get',
-  'tools/glasscutter': 'tools/glass-cutter/get',
   'tools/gluegun': 'tools/gluegun/get',
   'tools/greasegun': 'tools/grease-gun/get',
-  'tools/hacksawblades': 'tools/hacksaw-blades/get',
   'tools/hammer': 'tools/hammer/get',
-  'tools/hammerdrlls': 'tools/hammer-drlls/get',
-  'tools/handtools': 'tools/handtools/get',
   'tools/level': 'tools/level/get',
   'tools/lubrications': 'tools/lubrications/get',
-  'tools/measurementscale': 'tools/measurement-scale/get',
-  'tools/measuringtape': 'tools/measuring-tape/get',
-  'tools/multimeter': 'tools/multimeter/get',
   'tools/plier': 'tools/plier/get',
+  'tools/piler': 'tools/plier/get', // Alternative spelling
   'tools/polishingaccessories': 'tools/polishing-accessories/get',
-  'tools/powertools': 'tools/powertools/get',
+  'tools/powertools': 'tools/powertools/drill/get', // No single endpoint, use drill as default
   'tools/powertools/drill': 'tools/powertools/drill/get',
   'tools/powertools/grinders': 'tools/powertools/grinders/get',
   'tools/powertools/marblecutter': 'tools/powertools/marble-cutter/get',
-  'tools/saw': 'tools/saw/get',
   'tools/screwdriver': 'tools/screw-driver/get',
   'tools/silicongun': 'tools/silicon-gun/get',
   'tools/socketset': 'tools/socketset/get',
+  'tools/sparemallets': 'tools/spare-malets/get', // Fixed: "Spare Mallets" -> "sparemallets"
+  'tools/sparemalets': 'tools/spare-malets/get', // Alternative spelling
   'tools/spanners': 'tools/spanners/get',
-  'tools/sparemalets': 'tools/spare-malets/get',
+  'tools/spanner': 'tools/spanners/get', // Singular form
+  'tools/saw': 'tools/saw/get',
   'tools/toolcompartments': 'tools/tool-compartments/get',
   'tools/toolkitset': 'tools/toolkitset/get',
   'tools/varioustoolbits': 'tools/various-tool-bits/get',
   'tools/woodchisel': 'tools/wood-chisel/get',
   'tools/wooditems': 'tools/wood-items/get',
   'tools/wrench': 'tools/wrench/get',
+  'tools/centrepunches': 'tools/centre-punches/get',
+  'tools/gearpullers': 'tools/gear-pullers/get',
+  'tools/glasscutter': 'tools/glass-cutter/get',
+  'tools/hacksawblades': 'tools/hacksaw-blades/get',
+  'tools/hammerdrlls': 'tools/hammer-drlls/get',
+  'tools/measurementscale': 'tools/measurement-scale/get',
+  'tools/measuringtape': 'tools/measuring-tape/get',
+  'tools/multimeter': 'tools/multimeter/get',
 
   // Waterproofing subcategories
   'waterproofing': 'waterproofing/get',
@@ -504,6 +757,40 @@ export function getApiEndpoint(pathSegments) {
     const collapsedPath = API_MAPPINGS[collapsedKey];
     if (collapsedPath) {
       return collapsedPath;
+    }
+  }
+
+  // Handle nested paths with group names (e.g., electrical/lighting/lamps -> electrical/lamps)
+  // Common group names that should be skipped
+  const groupNamesToSkip = [
+    // Electrical groups
+    'lighting', 'ledlighting', 'fans', 'cableswires', 'waterpumps', 
+    'plugsadaptors', 'switchesgears', 'protectiondevices', 'modularsurfacebox',
+    'electricalfittings', // Skip electricalfittings group - accessories, circulardeepbox are direct routes
+    'lights', // Skip lights group - all light types are direct routes under electrical
+    // Paint groups
+    'emulsion', 'enamel', 'distemper', 'primer', 'stainers', 'brushesrollers',
+    'waterproofingfillers', 'paintingaccessories', 'woodfinishes', 'adhesivethinner',
+    'wallputty', 'automotivepaints', 'topbrands',
+    // Sanitary groups (if any)
+    'bathsense', 'coralbathfixtures', 'corsa', 'essess', 'hindware', 'parryware',
+    'leobathfittings', 'watertec', 'hardwarebathroomaccessories',
+    // Tools groups
+    'powertools', 'abrasives', 'handtools'
+  ];
+
+  if (pathSegments.length >= 3) {
+    const head = pathSegments[0].toLowerCase().replace(/[^a-z0-9]/g, '');
+    const middle = pathSegments[1].toLowerCase().replace(/[^a-z0-9]/g, '');
+    const tail = pathSegments[pathSegments.length - 1].toLowerCase().replace(/[^a-z0-9]/g, '');
+    
+    // If middle segment is a group name, skip it and try direct mapping
+    if (groupNamesToSkip.includes(middle)) {
+      const directKey = `${head}/${tail}`;
+      const directPath = API_MAPPINGS[directKey];
+      if (directPath) {
+        return directPath;
+      }
     }
   }
 

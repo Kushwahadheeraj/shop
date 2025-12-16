@@ -564,8 +564,8 @@ export default function Tracking({ initialSection = 'orders' }) {
                   <button
                     onClick={() => setActiveSection('orders')}
                     className={`block w-full text-left border-l-4 pl-2 py-2 ${
-                      activeSection === 'orders'
-                        ? 'border-yellow-300 bg-gray-100 font-bold'
+                      activeSection === 'orders' 
+                        ? 'border-yellow-300 bg-gray-100 font-bold' 
                         : 'border-transparent hover:bg-gray-100'
                     }`}
                   >
@@ -588,8 +588,8 @@ export default function Tracking({ initialSection = 'orders' }) {
                   <button
                     onClick={() => setActiveSection('addresses')}
                     className={`block w-full text-left border-l-4 pl-2 py-2 ${
-                      activeSection === 'addresses'
-                        ? 'border-yellow-300 bg-gray-100 font-bold'
+                      activeSection === 'addresses' 
+                        ? 'border-yellow-300 bg-gray-100 font-bold' 
                         : 'border-transparent hover:bg-gray-100'
                     }`}
                   >
@@ -600,8 +600,8 @@ export default function Tracking({ initialSection = 'orders' }) {
                   <button
                     onClick={() => setActiveSection('account')}
                     className={`block w-full text-left border-l-4 pl-2 py-2 ${
-                      activeSection === 'account'
-                        ? 'border-yellow-300 bg-gray-100 font-bold'
+                      activeSection === 'account' 
+                        ? 'border-yellow-300 bg-gray-100 font-bold' 
                         : 'border-transparent hover:bg-gray-100'
                     }`}
                   >

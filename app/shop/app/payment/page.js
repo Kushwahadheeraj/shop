@@ -108,7 +108,7 @@ export default function PaymentPage() {
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-14 sm:h-16">
             <div className="flex items-center">
               <button 
                 onClick={() => router.back()}
@@ -118,13 +118,15 @@ export default function PaymentPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
-              <h1 className="text-xl font-semibold text-gray-900">Complete Payment</h1>
+              <h1 className="text-lg sm:text-xl font-semibold text-gray-900">
+                Complete Payment
+              </h1>
             </div>
             <div className="flex items-center gap-2 text-green-600">
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/>
               </svg>
-              <span className="text-sm font-medium">100% Secure</span>
+              <span className="text-xs sm:text-sm font-medium">100% Secure</span>
             </div>
           </div>
         </div>
@@ -140,7 +142,7 @@ export default function PaymentPage() {
                 <div
                   key={method.id}
                   onClick={() => setSelectedPaymentMethod(method.id)}
-                  className={`p-4 rounded-lg border cursor-pointer transition-all ${
+                  className={`p-3 sm:p-4 rounded-lg border cursor-pointer transition-all ${
                     selectedPaymentMethod === method.id
                       ? 'bg-gray-50 border-gray-300'
                       : 'bg-white border-gray-200 hover:border-gray-300'
@@ -149,12 +151,18 @@ export default function PaymentPage() {
                   <div className="flex items-start gap-3">
                     {method.iconComponent}
                     <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900">{method.title}</h3>
+                      <h3 className="font-semibold text-gray-900 text-sm sm:text-base">
+                        {method.title}
+                      </h3>
                       {method.subtitle && (
-                        <p className="text-sm text-gray-600 mt-1">{method.subtitle}</p>
+                        <p className="text-xs sm:text-sm text-gray-600 mt-1">
+                          {method.subtitle}
+                        </p>
                       )}
                       {method.offers && (
-                        <p className="text-sm text-green-600 mt-1 font-medium">{method.offers}</p>
+                        <p className="text-xs sm:text-sm text-green-600 mt-1 font-medium">
+                          {method.offers}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -165,33 +173,35 @@ export default function PaymentPage() {
 
           {/* Middle Panel - Payment Details */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg border p-6">
+            <div className="bg-white rounded-lg border p-4 sm:p-6">
               {selectedPaymentMethod === 'upi' && (
                 <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold">Add new UPI ID</h3>
-                    <button className="text-blue-600 text-sm hover:underline">
+                  <div className="flex items-center justify-between mb-4 gap-2">
+                    <h3 className="text-base sm:text-lg font-semibold">
+                      Add new UPI ID
+                    </h3>
+                    <button className="text-blue-600 text-xs sm:text-sm hover:underline whitespace-nowrap">
                       How to find?
                     </button>
                   </div>
                   
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                         UPI ID
                       </label>
-                      <div className="flex gap-2">
+                      <div className="flex flex-col sm:flex-row gap-2">
                         <input
                           type="text"
                           value={upiId}
                           onChange={(e) => setUpiId(e.target.value)}
                           placeholder="Enter your UPI ID"
-                          className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         <button
                           onClick={handleVerify}
                           disabled={isVerifying}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+                          className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 disabled:opacity-50 w-full sm:w-auto"
                         >
                           {isVerifying ? 'Verifying...' : 'Verify'}
                         </button>
@@ -203,27 +213,29 @@ export default function PaymentPage() {
 
               {selectedPaymentMethod === 'card' && (
                 <div>
-                  <h3 className="text-lg font-semibold mb-4">Add Card Details</h3>
+                  <h3 className="text-base sm:text-lg font-semibold mb-4">
+                    Add Card Details
+                  </h3>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                         Card Number
                       </label>
                       <input
                         type="text"
                         placeholder="1234 5678 9012 3456"
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                           Expiry Date
                         </label>
                         <input
                           type="text"
                           placeholder="MM/YY"
-                          className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                       <div>
@@ -243,9 +255,11 @@ export default function PaymentPage() {
 
               {selectedPaymentMethod === 'netbanking' && (
                 <div>
-                  <h3 className="text-lg font-semibold mb-4">Select Bank</h3>
+                  <h3 className="text-base sm:text-lg font-semibold mb-4">
+                    Select Bank
+                  </h3>
                   
-                  <div className="space-y-3 max-h-80 overflow-y-auto">
+                  <div className="space-y-3 max-h-80 overflow-y-auto text-sm">
                     {/* State Bank of India */}
                     <div className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50">
                       <div className="flex items-center gap-3">
@@ -385,8 +399,10 @@ export default function PaymentPage() {
 
               {selectedPaymentMethod === 'cod' && (
                 <div>
-                  <h3 className="text-lg font-semibold mb-4">Cash on Delivery</h3>
-                  <p className="text-gray-600">
+                  <h3 className="text-base sm:text-lg font-semibold mb-4">
+                    Cash on Delivery
+                  </h3>
+                  <p className="text-sm text-gray-600">
                     Pay with cash when your order is delivered. Please keep exact change ready.
                   </p>
                 </div>
@@ -395,7 +411,7 @@ export default function PaymentPage() {
               {/* Pay Button */}
               <button
                 onClick={handlePayment}
-                className="w-full mt-8 bg-gray-600 text-white py-3 px-4 rounded-md font-semibold text-lg hover:bg-gray-700"
+                className="w-full mt-8 bg-gray-600 text-white py-3 px-4 rounded-md font-semibold text-base sm:text-lg hover:bg-gray-700"
               >
                 Pay {currency(totalAmount)}
               </button>
@@ -404,10 +420,12 @@ export default function PaymentPage() {
 
           {/* Right Panel - Price Details */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg border-l-4 border-yellow-300 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">PRICE DETAILS</h3>
+            <div className="bg-white rounded-lg border border-yellow-300 lg:border-l-4 p-4 sm:p-6 w-full">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">
+                PRICE DETAILS
+              </h3>
               
-              <div className="space-y-3 text-sm">
+              <div className="space-y-3 text-xs sm:text-sm">
                 <div className="flex justify-between items-center">
                   <span>Price ({items.length} item{items.length !== 1 ? 's' : ''})</span>
                   <span className="font-semibold">{currency(subtotal)}</span>
@@ -428,7 +446,7 @@ export default function PaymentPage() {
                 </div>
 
                 <div className="border-t border-dashed border-gray-300 pt-3">
-                  <div className="flex justify-between items-center font-bold text-lg">
+                  <div className="flex justify-between items-center font-bold text-base sm:text-lg">
                     <span>Total Amount</span>
                     <span className="text-blue-600">{currency(totalAmount)}</span>
                   </div>
@@ -436,11 +454,15 @@ export default function PaymentPage() {
               </div>
 
               {/* Discount Section */}
-              <div className="mt-6 bg-green-50 rounded-lg p-4">
+              <div className="mt-6 bg-green-50 rounded-lg p-3 sm:p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-bold text-green-600">10% instant discount</p>
-                    <p className="text-sm text-green-600">Claim now with payment offers</p>
+                    <p className="font-bold text-green-600 text-sm sm:text-base">
+                      10% instant discount
+                    </p>
+                    <p className="text-xs sm:text-sm text-green-600">
+                      Claim now with payment offers
+                    </p>
                   </div>
                   <div className="flex items-center gap-1">
                     <div className="w-3 h-3 bg-red-500 rounded-full"></div>

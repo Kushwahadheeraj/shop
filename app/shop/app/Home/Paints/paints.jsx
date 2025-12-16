@@ -69,94 +69,153 @@ export default function Paints() {
   return (
     <div className="px-6 py-8">
       <h2 className="text-2xl font-bold mb-6">New arrivals</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-        {products.map((product) => (
-          <div
-            key={product.id}
-            className="group bg-white rounded-lg shadow p-3 relative flex flex-col transition-transform duration-200 hover:-translate-y-1 hover:shadow-lg"
-          >
-            {/* Discount Badge */}
-            {product.discount > 0 && (
-              <span className="absolute left-3 top-3 bg-black text-white text-xs font-bold px-2 py-1 rounded-full z-10">
-                -{product.discount}%
-              </span>
-            )}
-            {/* Product Image */}
-            <div className="h-40 flex items-center justify-center mb-3 relative overflow-hidden">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="object-contain h-full w-full rounded transform transition-transform duration-300 group-hover:scale-105"
-                loading="lazy"
-              />
-              {/* Hover Quick View bar */}
-              <button
-                type="button"
-                onClick={() => { setQuickView(product); setSelectedColor((product.colors && product.colors[0]) || ""); }}
-                className="absolute inset-x-0 bottom-0 translate-y-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 mx-0"
-              >
-                <div className="mx-3 bg-yellow-300 text-white text-sm font-extrabold text-center py-2 rounded">
-                  QUICK VIEW
-                </div>
-              </button>
-            </div>
-            {/* Product Info */}
-            <div className="flex-1 flex flex-col">
-              
-              <span className="text-xs text-gray-500 mb-1">{product.type}</span>
-              <Link href={`/product/${product.id}`} className="font-medium text-sm mb-1 hover:underline">
-                {product.name}
-              </Link>
-              {/* Price */}
-              <div className="mb-1">
-                {product.price != null && product.price > 0 && product.discount > 0 && (
-                  <span className="text-gray-400 line-through text-xs mr-2">
-                    ₹{Number(product.price).toLocaleString('en-IN')}
-                  </span>
-                )}
-                <span className="font-bold text-base">
-                  {product.discountPrice > 0 ? 
-                    `₹${Number(product.discountPrice).toLocaleString('en-IN')}` : 
-                    product.price > 0 ? 
-                      `₹${Number(product.price).toLocaleString('en-IN')}` : 
-                      "Price on request"
-                  }
+      <div className="grid grid-cols-3 lg:grid-cols-6 gap-2 lg:gap-6">
+        {products.map((product) => {
+          // Calculate "Buy at" price - always show (5% discount on current price or 5% off original if no discount)
+          const currentPrice = product.discountPrice > 0 ? Number(product.discountPrice) : (product.price > 0 ? Number(product.price) : 0);
+          const buyAtPrice = currentPrice > 0 ? Math.round(currentPrice * 0.95) : null;
+          
+          return (
+            <Link
+              href={`/product/${product.id}`}
+              key={product.id}
+              className="group bg-white rounded-lg shadow p-1.5 sm:p-2 lg:p-3 relative flex flex-col transition-transform duration-200 hover:-translate-y-1 hover:shadow-lg cursor-pointer"
+            >
+              {/* Discount Badge - Top Left */}
+              {product.discount > 0 && (
+                <span className="absolute left-1.5 sm:left-2 top-1.5 sm:top-2 lg:left-3 lg:top-3 bg-black text-white text-[9px] sm:text-[10px] lg:text-xs font-bold px-1 sm:px-1.5 lg:px-2 py-0.5 rounded-full z-10">
+                  -{product.discount}%
                 </span>
-              </div>
-              {/* Rating */}
-              {product.rating > 0 && (
-                <div className="flex items-center mb-1">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <svg
-                      key={i}
-                      className={`w-4 h-4 ${i < product.rating ? "text-yellow-300" : "text-gray-300"}`}
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
+              )}
+              
+              {/* Product Image - Reduced height for responsive */}
+              <div className="h-24 sm:h-28 lg:h-40 flex items-center justify-center mb-1 sm:mb-1.5 lg:mb-3 relative overflow-hidden">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="object-contain h-full w-full rounded transform transition-transform duration-300 group-hover:scale-105"
+                  loading="lazy"
+                />
+                
+                {/* Rating Badge - Bottom Left Overlay (Responsive only) */}
+                {product.rating > 0 && (
+                  <div className="absolute bottom-0.5 sm:bottom-1 left-0.5 sm:left-1 lg:hidden bg-white/90 backdrop-blur-sm rounded px-1 sm:px-1.5 py-0.5 flex items-center gap-0.5 z-10">
+                    <span className="text-[9px] sm:text-[10px] font-semibold text-gray-800">{product.rating.toFixed(1)}</span>
+                    <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.388 2.46a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.388-2.46a1 1 0 00-1.175 0l-3.388 2.46c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.045 9.394c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 00.95-.69l1.286-3.967z" />
                     </svg>
-                  ))}
+                  </div>
+                )}
+                
+                {/* Hover Quick View bar - Desktop only */}
+                <button
+                  type="button"
+                  onClick={(e) => { 
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setQuickView(product); 
+                    setSelectedColor((product.colors && product.colors[0]) || ""); 
+                  }}
+                  className="hidden lg:block absolute inset-x-0 bottom-0 translate-y-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 mx-0"
+                >
+                  <div className="mx-3 bg-yellow-300 text-white text-sm font-extrabold text-center py-2 rounded">
+                    QUICK VIEW
+                  </div>
+                </button>
+              </div>
+              
+              {/* Product Info */}
+              <div className="flex-1 flex flex-col">
+                {/* Category - Hidden on mobile, shown on desktop */}
+                <span className="hidden lg:block text-xs text-gray-500 mb-1">{product.type}</span>
+                
+                {/* Product Name - Single line with ellipsis */}
+                <div className="font-medium text-[10px] sm:text-[11px] lg:text-sm mb-0.5 sm:mb-1 truncate">
+                  {product.name}
                 </div>
-              )}
-              {/* Button */}
-              <button 
-                onClick={() => {
-                  // Add to cart directly
-                  addItem({
-                    id: product.id,
-                    name: product.name,
-                    price: product.discountPrice || product.price || 0,
-                    image: product.image,
-                    thumbnail: product.image
-                  });
-                }}
-                className="mt-auto cursor-pointer bg-yellow-300 hover:bg-yellow-300 text-white font-semibold py-2 rounded transition w-full"
-              >
-                ADD TO CART
-              </button>
-            </div>
-          </div>
-        ))}
+                
+                {/* Price Section - All prices on same line */}
+                <div className="mb-0.5 sm:mb-1 lg:mb-1.5 lg:space-y-0.5">
+                  {/* Original, Discounted, and Buy at Price - All on same line for responsive */}
+                  <div className="lg:hidden flex items-center flex-wrap gap-1 text-[9px] sm:text-[10px]">
+                    {product.price != null && product.price > 0 && product.discount > 0 && (
+                      <span className="text-gray-400 line-through">
+                        ₹{Number(product.price).toLocaleString('en-IN')}
+                      </span>
+                    )}
+                    <span className="font-bold">
+                      {product.discountPrice > 0 ? 
+                        `₹${Number(product.discountPrice).toLocaleString('en-IN')}` : 
+                        product.price > 0 ? 
+                          `₹${Number(product.price).toLocaleString('en-IN')}` : 
+                          "Price on request"
+                      }
+                    </span>
+                    {buyAtPrice && (
+                      <span className="text-blue-600 font-medium">
+                        Buy at ₹{buyAtPrice.toLocaleString('en-IN')}
+                      </span>
+                    )}
+                  </div>
+                  
+                  {/* Desktop Price Section */}
+                  <div className="hidden lg:block">
+                    <div className="flex items-center flex-wrap gap-1 sm:gap-2">
+                      {product.price != null && product.price > 0 && product.discount > 0 && (
+                        <span className="text-gray-400 line-through text-sm">
+                          ₹{Number(product.price).toLocaleString('en-IN')}
+                        </span>
+                      )}
+                      <span className="font-bold text-base">
+                        {product.discountPrice > 0 ? 
+                          `₹${Number(product.discountPrice).toLocaleString('en-IN')}` : 
+                          product.price > 0 ? 
+                            `₹${Number(product.price).toLocaleString('en-IN')}` : 
+                            "Price on request"
+                        }
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Rating - Desktop only */}
+                {product.rating > 0 && (
+                  <div className="hidden lg:flex items-center mb-1">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <svg
+                        key={i}
+                        className={`w-4 h-4 ${i < product.rating ? "text-yellow-300" : "text-gray-300"}`}
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.388 2.46a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.388-2.46a1 1 0 00-1.175 0l-3.388 2.46c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.045 9.394c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 00.95-.69l1.286-3.967z" />
+                      </svg>
+                    ))}
+                  </div>
+                )}
+                
+                {/* Button - Hidden on responsive, shown on desktop */}
+                <button 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    // Add to cart directly
+                    addItem({
+                      id: product.id,
+                      name: product.name,
+                      price: product.discountPrice || product.price || 0,
+                      image: product.image,
+                      thumbnail: product.image
+                    });
+                  }}
+                  className="hidden lg:block mt-auto cursor-pointer bg-yellow-300 hover:bg-yellow-300 text-white font-semibold py-2 rounded transition w-full text-sm"
+                >
+                  ADD TO CART
+                </button>
+              </div>
+            </Link>
+          );
+        })}
       </div>
 
       {/* Quick View Modal */}

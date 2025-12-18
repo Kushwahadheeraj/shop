@@ -4826,6 +4826,7 @@ export const sidebarSections = [
       },
     ],
   },
+  { name: 'Gallery', path: '/Gallery', section: 'section1' },
   { name: 'Order List', path: '/Orders', section: 'section1' }, // Section 1: Core Management
   { name: 'User List', path: '/EUserList', section: 'section1' }, // Section 1: Core Management
   { name: 'Category List', path: '/CategoryList', section: 'section1' }, // Section 1: Core Management

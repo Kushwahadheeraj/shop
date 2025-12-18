@@ -179,7 +179,7 @@ export default function Shop() {
 
       {/* Mobile Filter Drawer */}
       {mobileOpen && (
-        <div className="fixed inset-0 md:hidden z-50">
+        <div className="fixed inset-0 md:hidden z-[3500]">
           <div
             className="absolute inset-0 bg-black/30 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}

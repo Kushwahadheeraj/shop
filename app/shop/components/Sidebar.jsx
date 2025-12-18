@@ -7,7 +7,7 @@ import { IoClose } from "react-icons/io5";
 
 const getNavItems = (isLoggedIn) => {
   const baseItems = [
-    // { label: "HOME", href: "/" },
+    { label: "HOME", href: "/" },
     { label: "SHOP", href: "/Shop" },
     { label: "PAINTS", href: "#", hasDropdown: true },
     { label: "ELECTRICALS", href: "#", hasDropdown: true },
@@ -181,12 +181,12 @@ export default function Sidebar({ open, onClose }) {
     <>
     {/* Backdrop overlay - mobile only */}
     <div
-      className={`fixed inset-0 bg-black/40 z-40 lg:hidden transition-opacity ${open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+      className={`fixed inset-0 bg-black/40 z-[3500] lg:hidden transition-opacity ${open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
       onClick={onClose}
     />
     <aside
       ref={asideRef}
-      className={`fixed top-0 left-0 h-full w-72 bg-white border-r border-gray-200 z-50 lg:hidden transition-transform duration-300 ${
+      className={`fixed top-0 left-0 h-full w-72 bg-white border-r border-gray-200 z-[4000] lg:hidden transition-transform duration-300 ${
         open ? "translate-x-0" : "-translate-x-full"
       }`}
       style={{ minWidth: "16rem", maxWidth: "20rem" }}
@@ -210,8 +210,30 @@ export default function Sidebar({ open, onClose }) {
                 <path d='M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.586l3.71-3.356a.75.75 0 1 1 1.02 1.1l-4.25 3.85a.75.75 0 0 1-1.02 0l-4.25-3.85a.75.75 0 0 1 .02-1.06z' />
               </svg>
             </button>
-            {/* dropdown */}
-            <div className={`absolute top-full left-0 mt-1 w-56 bg-white border border-gray-200 rounded-lg shadow-xl z-50 ${allOpen ? 'block' : 'hidden'}`}>
+            {/* Dropdown Menu */}
+            <div className={`absolute top-full left-0 w-48 bg-white border border-gray-200 shadow-xl z-[2000] ${allOpen ? 'block' : 'hidden'}`}>
+                  <div className=''>
+                    {/* <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer flex items-center border-b border-gray-100'>
+                      
+                      <span className='text-sm font-medium text-gray-600 hover:text-white'>All</span>
+                    </div> */}
+                    <Link href='/ShopPage/Adhesives' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Adhesives</Link>
+                    <Link href='/ShopPage/Cements' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Cements & POP</Link>
+                    <Link href='/ShopPage/Cleaning' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Cleaning</Link>
+                    <Link href='/ShopPage/Dry' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Dry Wall Gypsum Screws</Link>
+                    <Link href='/ShopPage/Electrical/Adaptors' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Electrical Items</Link>
+                    <Link href='/ShopPage/Hardware' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>House Hold Ladder</Link>
+                    <Link href='/ShopPage/Locks/FoldingBrackets/BlindCornerHinge' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Locks & accessories</Link>
+                    <Link href='/ShopPage/Cleaning' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Mask & Sanitizers</Link>
+                    <Link href='/ShopPage/Paint/AcrylicEmulsionPaint' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Paints</Link>
+                    <Link href='/ShopPage/Pipe/AshirvadPipes' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Pipes & Fittings</Link>
+                    <Link href='/ShopPage/Sanitary/AcrylicProducts' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Sanitary Ware & faucets</Link>
+                    <Link href='/ShopPage/Tools/HandTools' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Tools</Link>
+                    <Link href='/ShopPage/Uncategorized' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Uncategorized</Link>
+                    <Link href='/ShopPage/WaterProofing/Interiors' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>WaterProofing</Link>
+                  </div>
+                </div>
+            {/* <div className={`absolute top-full left-0 mt-1 w-56 bg-white border border-gray-200 rounded-lg shadow-xl z-50 ${allOpen ? 'block' : 'hidden'}`}>
               <div className="py-1">
                 {[
                   "Adhesives",
@@ -245,8 +267,8 @@ export default function Sidebar({ open, onClose }) {
                   );
                 })}
               </div>
-            </div>
-          </div>
+            </div> */}
+          </div> 
           <div className="w-2"></div>
           {/* Search pill */}
           <div className="relative flex-1 h-8 rounded-full w-36 bg-gray-50 border border-gray-300 shadow-sm flex items-center">

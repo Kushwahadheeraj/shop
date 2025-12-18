@@ -215,16 +215,24 @@ export default function UniversalShopPage() {
             'Content-Type': 'application/json',
           }
         });
-        
-        if (!res.ok) {
-          throw new Error(`API request failed: ${res.status} ${res.statusText}`);
-        }
-        
-        const json = await res.json();
-        const apiData = json?.data || json || [];
-        
-        if (isMounted) {
-          setData(Array.isArray(apiData) ? apiData : []);
+
+        // If endpoint is missing (404), treat as empty data instead of hard error
+        if (res.status === 404) {
+          if (isMounted) {
+            setData([]);
+            setError(null);
+          }
+        } else {
+          if (!res.ok) {
+            throw new Error(`API request failed: ${res.status} ${res.statusText}`);
+          }
+
+          const json = await res.json();
+          const apiData = json?.data || json || [];
+
+          if (isMounted) {
+            setData(Array.isArray(apiData) ? apiData : []);
+          }
         }
       } catch (err) {
         if (isMounted) setError(err?.message || 'Failed to load');
@@ -607,7 +615,7 @@ export default function UniversalShopPage() {
       />
 
       {mobileOpen && (
-        <div className="fixed inset-0 md:hidden z-50">
+        <div className="fixed inset-0 md:hidden z-[3500]">
           <div
             className="absolute inset-0 bg-black/30 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}

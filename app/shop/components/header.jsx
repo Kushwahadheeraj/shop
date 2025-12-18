@@ -617,16 +617,16 @@ export default function Header() {
                     <Link href='/ShopPage/Cements' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Cements & POP</Link>
                     <Link href='/ShopPage/Cleaning' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Cleaning</Link>
                     <Link href='/ShopPage/Dry' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Dry Wall Gypsum Screws</Link>
-                    <Link href='/ShopPage/Electrical' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Electrical Items</Link>
+                    <Link href='/ShopPage/Electrical/Adaptors' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Electrical Items</Link>
                     <Link href='/ShopPage/Hardware' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>House Hold Ladder</Link>
-                    <Link href='/ShopPage/Locks' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Locks & accessories</Link>
+                    <Link href='/ShopPage/Locks/FoldingBrackets/BlindCornerHinge' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Locks & accessories</Link>
                     <Link href='/ShopPage/Cleaning' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Mask & Sanitizers</Link>
-                    <Link href='/ShopPage/Paint' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Paints</Link>
-                    <Link href='/ShopPage/Pipe' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Pipes & Fittings</Link>
-                    <Link href='/ShopPage/Sanitary' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Sanitary Ware & faucets</Link>
-                    <Link href='/ShopPage/Tools' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Tools</Link>
+                    <Link href='/ShopPage/Paint/AcrylicEmulsionPaint' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Paints</Link>
+                    <Link href='/ShopPage/Pipe/AshirvadPipes' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Pipes & Fittings</Link>
+                    <Link href='/ShopPage/Sanitary/AcrylicProducts' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Sanitary Ware & faucets</Link>
+                    <Link href='/ShopPage/Tools/HandTools' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Tools</Link>
                     <Link href='/ShopPage/Uncategorized' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Uncategorized</Link>
-                    <Link href='/ShopPage/WaterProofing' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>WaterProofing</Link>
+                    <Link href='/ShopPage/WaterProofing/Interiors' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>WaterProofing</Link>
                   </div>
                 </div>
               </div>

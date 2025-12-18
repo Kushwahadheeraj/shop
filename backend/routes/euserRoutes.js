@@ -8,6 +8,11 @@ router.post('/login', euser.login);
 router.get('/me', euserAuth, euser.me);
 router.put('/profile', euserAuth, euser.updateProfile);
 router.put('/change-password', euserAuth, euser.changePassword);
+// Address management
+router.get('/addresses', euserAuth, euser.getAddresses);
+router.post('/addresses', euserAuth, euser.addAddress);
+router.put('/addresses', euserAuth, euser.updateAddress);
+router.delete('/addresses', euserAuth, euser.deleteAddress);
 router.post('/forgot-password', euser.requestPasswordReset);
 router.post('/reset-password', euser.resetPasswordWithToken);
 // Admin/seller-side listing & stats (no auth middleware applied here; add if needed)

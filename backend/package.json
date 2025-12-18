@@ -19,6 +19,7 @@
     "multer": "^2.0.2",
     "nodemailer": "^6.9.14",
     "nodemon": "^3.1.10",
+    "shop-monorepo": "file:..",
     "streamifier": "^0.1.1"
   }
 }

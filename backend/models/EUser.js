@@ -13,6 +13,23 @@ const eUserSchema = new mongoose.Schema({
   resetPasswordExpires: { type: Date, default: null },
   resetCodeHash: { type: String, default: null },
   resetCodeExpires: { type: Date, default: null },
+  // Saved delivery addresses for the user (max 6 enforced in controller)
+  addresses: [
+    {
+      firstName: String,
+      lastName: String,
+      country: { type: String, default: 'India' },
+      street: String,
+      city: String,
+      state: String,
+      pin: String,
+      phone: String,
+      email: String,
+      type: { type: String, default: 'HOME' }, // HOME, WORK, OTHER
+      landmark: String,
+      isDefault: { type: Boolean, default: false },
+    }
+  ],
 }, { timestamps: true });
 
 // Either username or email must be provided

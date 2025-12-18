@@ -77,7 +77,7 @@ export default function Items() {
                 {banner.subtitle && <p className="text-lg text-white">{banner.subtitle}</p>}
                 {banner.description && <p className="text-sm mb-4 text-white/90">{banner.description}</p>}
                 {banner.buttonText && (
-                  <Link href={banner.link} passHref>
+                  <Link href="/Shop" passHref>
                     <button className="bg-black text-white px-4 py-2 rounded-full font-semibold hover:bg-gray-800 transition self-start">
                       {banner.buttonText}
                     </button>
@@ -96,7 +96,7 @@ export default function Items() {
                     {banner.subtitle && <p className="text-base mb-1">{banner.subtitle}</p>}
                     {banner.description && <p className="text-sm text-gray-700 mb-3">{banner.description}</p>}
                     {banner.buttonText && (
-                      <Link href={banner.link} passHref>
+                      <Link href="/Shop" className="inline-block">
                         <button className="bg-yellow-300 text-black font-bold py-2 px-6 rounded-full shadow-lg hover:bg-yellow-300 transition">
                           {banner.buttonText}
                         </button>

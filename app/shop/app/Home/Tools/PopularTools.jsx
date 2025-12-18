@@ -52,6 +52,11 @@ export default function PopularTools() {
             originalPrice: hasRange ? '' : originalStr,
             discount: discount ? `-${discount}%` : '',
             buttonText: hasRange ? 'Select Options' : 'Add to Cart',
+            basePrice: base != null ? Number(base) : null,
+            currentPrice: current != null ? Number(current) : null,
+            minPrice: hasRange ? Number(p.minPrice) : null,
+            maxPrice: hasRange ? Number(p.maxPrice) : null,
+            discountValue: Number(discount) || 0,
           };
         });
         setTools(mapped);
@@ -106,6 +111,26 @@ export default function PopularTools() {
             <Link
               href={`/product/${tool.id}`}
               key={tool.id || index}
+              onClick={() => {
+                try {
+                  if (typeof window !== 'undefined' && tool.id) {
+                    const raw = {
+                      _id: tool.id,
+                      name: tool.name,
+                      image: tool.image,
+                      images: [tool.image],
+                      category: tool.category,
+                      price: tool.basePrice,
+                      fixPrice: tool.basePrice,
+                      discountPrice: tool.currentPrice,
+                      minPrice: tool.minPrice,
+                      maxPrice: tool.maxPrice,
+                      discount: tool.discountValue,
+                    };
+                    window.sessionStorage.setItem('selectedProduct', JSON.stringify(raw));
+                  }
+                } catch {}
+              }}
               className="w-[calc((100%-0.5rem)/3)] lg:w-[calc((100%-5.25rem)/8)] flex-shrink-0"
             >
               {/* White rounded card */}

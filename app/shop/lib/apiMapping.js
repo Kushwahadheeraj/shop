@@ -672,11 +672,12 @@ export const API_MAPPINGS = {
   'tools/measuringtape': 'tools/measuring-tape/get',
   'tools/multimeter': 'tools/multimeter/get',
 
-  // Waterproofing subcategories
-  'waterproofing': 'waterproofing/get',
-  'waterproofing/bathroom': 'waterproofing/bathroom/get',
-  'waterproofing/creacksjoints': 'waterproofing/creacks-joints/get',
-  'waterproofing/interiors': 'waterproofing/interiors/get',
+  // Waterproofing subcategories (backend uses "water-proofing" and "cracks-joints")
+  'waterproofing': 'water-proofing/get',
+  'waterproofing/bathrooms': 'water-proofing/bathrooms/get',
+  // URL segment comes in as "CracksJoints" -> "cracksjoints"
+  'waterproofing/cracksjoints': 'water-proofing/cracks-joints/get',
+  'waterproofing/interiors': 'water-proofing/interiors/get',
 };
 
 // Known segment slug exceptions to match backend route slugs

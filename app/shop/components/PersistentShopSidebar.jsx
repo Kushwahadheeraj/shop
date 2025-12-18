@@ -521,7 +521,7 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
 
   return (
     <aside
-      className={forceMobile ? "block md:hidden w-72 bg-white px-3 py-1 h-[100vh] overflow-y-auto overscroll-contain text-[12px] leading-tight" : "w-64 bg-white px-6 py-1 mt-36 sticky top-24 h-fit md:block hidden"}
+      className={forceMobile ? "fixed top-0 left-0 z-[4000] block md:hidden w-72 bg-white px-3 py-1 h-[100vh] overflow-y-auto overscroll-contain text-[12px] leading-tight" : "w-64 bg-white px-6 py-1 mt-36 sticky top-24 h-fit md:block hidden"}
       style={forceMobile ? { WebkitOverflowScrolling: 'touch' } : undefined}
     >
       <div className={forceMobile ? "mb-4" : "mb-8"}>

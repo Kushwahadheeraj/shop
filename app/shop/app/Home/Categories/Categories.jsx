@@ -73,7 +73,7 @@ export default function Categories() {
                         <li key={item}>{item}</li>
                       ))}
                     </ul>
-                    <Link href={category.link} passHref>
+                    <Link href="/Shop" className="block">
                       <Button className="w-full bg-black text-white rounded-full mt-4 hover:bg-gray-800">
                         SHOP NOW <span className="ml-2 font-bold">&gt;</span>
                       </Button>

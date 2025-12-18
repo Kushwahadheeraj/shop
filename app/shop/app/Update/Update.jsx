@@ -1,6 +1,7 @@
 "use client";
 import { Star } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import API_BASE_URL from "@/lib/apiConfig";
 
 const staticColumns = [];
@@ -19,6 +20,7 @@ function StarRating({ rating }) {
 }
 
 export default function Update() {
+  const router = useRouter();
   const [latestProducts, setLatestProducts] = useState([]);
   const [bestSellingProducts, setBestSellingProducts] = useState([]);
   const [topRatedProducts, setTopRatedProducts] = useState([]);
@@ -104,12 +106,30 @@ export default function Update() {
             ? `₹${Number(product.fixPrice + (product.fixPrice * product.discount / 100)).toLocaleString()}`
             : '';
 
+          // Numeric price details for product page
+          const basePrice = hasBoth ? null : (product?.fixPrice ?? product?.price ?? product?.mrp ?? null);
+          const discountVal = product?.discount ?? null;
+          const discountPriceNum = hasBoth
+            ? null
+            : (product?.discountPrice ?? (
+                discountVal != null && basePrice != null
+                  ? Number(basePrice) - (Number(basePrice) * Number(discountVal) / 100)
+                  : null
+              ));
+
           return {
             image: toAbs(product.image || product.images?.[0] || product.photos?.[0]),
             name: product.name || product.title || `Product ${index + 1}`,
             price: priceStr,
             originalPrice: original,
             rating: product.rating || 0,
+            id: product._id || product.id,
+            category: product.category || product.Category || product?.type,
+            basePrice: basePrice != null ? Number(basePrice) : null,
+            discountPriceNum: discountPriceNum != null ? Number(discountPriceNum) : null,
+            minPrice: hasBoth ? Number(min) : null,
+            maxPrice: hasBoth ? Number(max) : null,
+            discountValue: Number(discountVal) || 0,
           };
         });
 
@@ -219,12 +239,29 @@ export default function Update() {
             ? `₹${Number(product.fixPrice + (product.fixPrice * product.discount / 100)).toLocaleString()}`
             : '';
 
+          const basePrice = hasBoth ? null : (product?.fixPrice ?? product?.price ?? product?.mrp ?? null);
+          const discountVal = product?.discount ?? null;
+          const discountPriceNum = hasBoth
+            ? null
+            : (product?.discountPrice ?? (
+                discountVal != null && basePrice != null
+                  ? Number(basePrice) - (Number(basePrice) * Number(discountVal) / 100)
+                  : null
+              ));
+
           return {
             image: toAbs(product.image || product.images?.[0] || product.photos?.[0]),
             name: product.name || product.title || `Product ${index + 1}`,
             price: priceStr,
             originalPrice: original,
             rating: product.rating || 0,
+            id: product._id || product.id,
+            category: product.category || product.Category || product?.type,
+            basePrice: basePrice != null ? Number(basePrice) : null,
+            discountPriceNum: discountPriceNum != null ? Number(discountPriceNum) : null,
+            minPrice: hasBoth ? Number(min) : null,
+            maxPrice: hasBoth ? Number(max) : null,
+            discountValue: Number(discountVal) || 0,
           };
         });
 
@@ -328,6 +365,16 @@ export default function Update() {
             ? `₹${Number(product.fixPrice + (product.fixPrice * product.discount / 100)).toLocaleString()}`
             : '';
 
+          const basePrice = hasBoth ? null : (product?.fixPrice ?? product?.price ?? product?.mrp ?? null);
+          const discountVal = product?.discount ?? null;
+          const discountPriceNum = hasBoth
+            ? null
+            : (product?.discountPrice ?? (
+                discountVal != null && basePrice != null
+                  ? Number(basePrice) - (Number(basePrice) * Number(discountVal) / 100)
+                  : null
+              ));
+
           return {
             image: toAbs(product.image || product.images?.[0] || product.photos?.[0]),
             name: product.name || product.title || `Product ${index + 1}`,
@@ -335,6 +382,13 @@ export default function Update() {
             originalPrice: original,
             rating: product.rating || 0,
             showRating: true, // Always show rating for top rated section
+            id: product._id || product.id,
+            category: product.category || product.Category || product?.type,
+            basePrice: basePrice != null ? Number(basePrice) : null,
+            discountPriceNum: discountPriceNum != null ? Number(discountPriceNum) : null,
+            minPrice: hasBoth ? Number(min) : null,
+            maxPrice: hasBoth ? Number(max) : null,
+            discountValue: Number(discountVal) || 0,
           };
         });
 
@@ -399,7 +453,39 @@ export default function Update() {
                 <div className="text-gray-500 text-sm">No products available</div>
               ) : (
                 col.products.map((product, i) => (
-                  <div key={i} className="flex items-start gap-3">
+                  <div
+                    key={i}
+                    className="flex items-start gap-3 cursor-pointer"
+                    onClick={() => {
+                      if (!product.id) return;
+
+                      // Cache product details so ProductDetailPage can render without category-specific getOne API
+                      try {
+                        if (typeof window !== 'undefined') {
+                          const hasRange = product.minPrice != null && product.maxPrice != null;
+                          const raw = {
+                            _id: product.id,
+                            name: product.name,
+                            image: product.image,
+                            images: [product.image],
+                            category: product.category,
+                            // For range products, use min/max; for single price use base/discount
+                            price: hasRange ? null : product.basePrice,
+                            fixPrice: hasRange ? null : product.basePrice,
+                            discountPrice: hasRange ? null : (product.discountPriceNum ?? product.basePrice),
+                            minPrice: hasRange ? product.minPrice : null,
+                            maxPrice: hasRange ? product.maxPrice : null,
+                            discount: product.discountValue,
+                          };
+                          window.sessionStorage.setItem('selectedProduct', JSON.stringify(raw));
+                        }
+                      } catch {}
+
+                      const cat = product.category;
+                      const query = cat ? `?cat=${encodeURIComponent(String(cat))}` : "";
+                      router.push(`/product/${product.id}${query}`);
+                    }}
+                  >
                     <img
                       src={product.image}
                       alt={product.name}

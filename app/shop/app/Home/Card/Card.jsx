@@ -1,5 +1,6 @@
 "use client";
 import Image from 'next/image'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import API_BASE_URL from '@/lib/apiConfig'
 
@@ -51,9 +52,11 @@ export default function Card() {
                                 <h1 className="font-dmserif uppercase text-4xl mb-4 font-bold text-black">
                                     {slider.mainText}
                                 </h1>
-                                <button className="rounded-full cursor-pointer bg-white py-2 px-2 font-com text-base uppercase text-gray-900 hover:bg-black hover:text-white shadow shadow-black/60">
-                                    {slider.text || 'Shop Now'}
-                                </button>
+                                <Link href="/Shop" className="inline-block">
+                                    <button className="rounded-full cursor-pointer bg-white py-2 px-2 font-com text-base uppercase text-gray-900 hover:bg-black hover:text-white shadow shadow-black/60">
+                                        {slider.text || 'Shop Now'}
+                                    </button>
+                                </Link>
                             </div>
                         </div>
                     ))}

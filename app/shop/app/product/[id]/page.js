@@ -754,22 +754,91 @@ export default function ProductDetailPage() {
                 .slice(0, 4)
                 .map((r, idx) => (
                 <div key={`${r.id}-${idx}`} className="flex gap-3 border-b pb-3">
-                  <Link href={`/product/${r.id}`} className="w-16 h-16 flex-shrink-0 border rounded overflow-hidden flex items-center justify-center bg-white">
+                  <Link
+                    href={`/product/${r.id}`}
+                    className="w-16 h-16 flex-shrink-0 border rounded overflow-hidden flex items-center justify-center bg-white"
+                    onClick={() => {
+                      // Cache minimal product so detail page can render even if backend getOne fails
+                      try {
+                        if (typeof window !== 'undefined' && r.id) {
+                          const hasRange = r.minPrice != null && r.maxPrice != null && Number(r.minPrice) !== Number(r.maxPrice);
+                          const raw = {
+                            _id: r.id,
+                            name: r.name,
+                            image: r.image,
+                            images: [r.image],
+                            category: r.type,
+                            price: hasRange ? null : r.price,
+                            fixPrice: hasRange ? null : r.price,
+                            discountPrice: hasRange ? null : (r.discountPrice ?? r.price),
+                            minPrice: hasRange ? r.minPrice : null,
+                            maxPrice: hasRange ? r.maxPrice : null,
+                            discount: r.discount,
+                          };
+                          window.sessionStorage.setItem('selectedProduct', JSON.stringify(raw));
+                        }
+                      } catch {}
+                    }}
+                  >
                     <Image src={r.image} alt={r.name} width={64} height={64} className="object-contain w-full h-full" />
                   </Link>
                   <div className="text-sm">
-                    <Link href={`/product/${r.id}`} className="line-clamp-2 hover:underline">{r.name}</Link>
+                    <Link
+                      href={`/product/${r.id}`}
+                      className="line-clamp-2 hover:underline"
+                      onClick={() => {
+                        try {
+                          if (typeof window !== 'undefined' && r.id) {
+                            const hasRange = r.minPrice != null && r.maxPrice != null && Number(r.minPrice) !== Number(r.maxPrice);
+                            const raw = {
+                              _id: r.id,
+                              name: r.name,
+                              image: r.image,
+                              images: [r.image],
+                              category: r.type,
+                              price: hasRange ? null : r.price,
+                              fixPrice: hasRange ? null : r.price,
+                              discountPrice: hasRange ? null : (r.discountPrice ?? r.price),
+                              minPrice: hasRange ? r.minPrice : null,
+                              maxPrice: hasRange ? r.maxPrice : null,
+                              discount: r.discount,
+                            };
+                            window.sessionStorage.setItem('selectedProduct', JSON.stringify(raw));
+                          }
+                        } catch {}
+                      }}
+                    >
+                      {r.name}
+                    </Link>
                     <div className="text-xs text-gray-500">{r.type}</div>
                     <div>
                       {r.minPrice != null && r.maxPrice != null && Number(r.minPrice) !== Number(r.maxPrice) ? (
-                        <span className="font-semibold text-xs">₹{Number(r.minPrice).toLocaleString('en-IN')} – ₹{Number(r.maxPrice).toLocaleString('en-IN')}</span>
+                        <span className="font-semibold text-xs">
+                          ₹{Number(r.minPrice).toLocaleString('en-IN')} – ₹{Number(r.maxPrice).toLocaleString('en-IN')}
+                        </span>
                       ) : (
-                        <>
-                          {r.price != null && r.discount > 0 && (
-                            <span className="text-gray-400 line-through text-xs mr-1">₹{Number(r.price).toLocaleString('en-IN')}</span>
-                          )}
-                          <span className="font-semibold text-xs">₹{Number((r.discountPrice ?? r.price) || 0).toLocaleString('en-IN')}</span>
-                        </>
+                        (() => {
+                          const hasOriginal = r.price != null && r.price !== '';
+                          const hasSale = r.discountPrice != null && r.discountPrice !== '';
+                          const original = hasOriginal ? Number(r.price) : null;
+                          const sale = hasSale ? Number(r.discountPrice) : null;
+                          const effective = sale != null ? sale : original;
+
+                          if (!effective) return null; // hide price instead of showing 0 or text
+
+                          return (
+                            <>
+                              {original != null && sale != null && sale < original && (
+                                <span className="text-gray-400 line-through text-xs mr-1">
+                                  ₹{original.toLocaleString('en-IN')}
+                                </span>
+                              )}
+                              <span className="font-semibold text-xs">
+                                ₹{(sale != null ? sale : original).toLocaleString('en-IN')}
+                              </span>
+                            </>
+                          );
+                        })()
                       )}
                     </div>
                   </div>

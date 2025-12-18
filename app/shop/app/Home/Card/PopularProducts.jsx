@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useCart } from "@/components/CartContext";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -15,6 +16,7 @@ import API_BASE_URL from "@/lib/apiConfig";
 
 export default function PopularProducts() {
   const { addItem } = useCart();
+  const router = useRouter();
   const [items, setItems] = useState([]);
 
   useEffect(() => {
@@ -60,6 +62,9 @@ export default function PopularProducts() {
       originalPrice,
       discount: badge,
       buttonText: p.buttonText || 'Add to Cart',
+      basePrice: base != null ? Number(base) : null,
+      discountPriceNum: discountPrice != null ? Number(discountPrice) : null,
+      discountValue: Number(discount) || 0,
     };
   });
 
@@ -78,7 +83,30 @@ export default function PopularProducts() {
             <CarouselItem key={product._id} className="md:basis-1/3 lg:basis-1/6">
               <div className="p-1">
                 <Card>
-                  <CardContent className="flex flex-col items-center justify-center p-1 relative">
+                  <CardContent
+                    className="flex flex-col items-center justify-center p-1 relative cursor-pointer"
+                    onClick={() => {
+                      try {
+                        if (typeof window !== 'undefined' && product._id) {
+                          const raw = {
+                            _id: product._id,
+                            name: product.name,
+                            image: product.image,
+                            images: [product.image],
+                            category: product.category,
+                            price: product.basePrice,
+                            fixPrice: product.basePrice,
+                            discountPrice: product.discountPriceNum,
+                            minPrice: null,
+                            maxPrice: null,
+                            discount: product.discountValue,
+                          };
+                          window.sessionStorage.setItem('selectedProduct', JSON.stringify(raw));
+                        }
+                      } catch {}
+                      router.push(`/product/${product._id}`);
+                    }}
+                  >
                     {product.discount && (
                       <div className="absolute top-2 left-2 bg-black text-white text-xs font-bold rounded-full w-12 h-10 flex items-center justify-center">
                         {product.discount}
@@ -105,7 +133,8 @@ export default function PopularProducts() {
                         {product.price}
                       </p>
                       <Button
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           // product.price is a formatted string like "₹314.94"
                           // Convert it to a number before adding to cart
                           const numericPrice = typeof product.price === "string"

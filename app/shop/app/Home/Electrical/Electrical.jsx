@@ -119,6 +119,26 @@ export default function Electricals() {
             <Link
               href={`/product/${product.id}`}
               key={product.id || index}
+              onClick={() => {
+                try {
+                  if (typeof window !== 'undefined' && product.id) {
+                    const raw = {
+                      _id: product.id,
+                      name: product.name,
+                      image: product.image,
+                      images: product.images,
+                      category: product.type,
+                      price: product.price,
+                      fixPrice: product.currentPrice ?? product.price,
+                      discountPrice: product.currentPrice ?? product.price,
+                      minPrice: null,
+                      maxPrice: null,
+                      discount: product.discount,
+                    };
+                    window.sessionStorage.setItem('selectedProduct', JSON.stringify(raw));
+                  }
+                } catch {}
+              }}
               className="bg-white rounded-lg shadow p-1.5 sm:p-2 lg:p-3 relative flex flex-col cursor-pointer transition-transform duration-200 hover:-translate-y-1 hover:shadow-lg"
             >
               {/* Discount Badge - Top Left */}

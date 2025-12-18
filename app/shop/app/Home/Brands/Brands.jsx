@@ -79,8 +79,16 @@ export default function Brands() {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious data-carousel-prev className="absolute left-0 top-1/2 -translate-y-1/2" />
-          <CarouselNext data-carousel-next className="absolute right-0 top-1/2 -translate-y-1/2" />
+          <CarouselPrevious 
+            // variant="ghost"
+            data-carousel-prev
+            className="opacity-0 group-hover:opacity-100 transition-opacity absolute left-0 top-1/2 -translate-y-1/2 !bg-transparent !border-0 !shadow-none hover:!bg-transparent" 
+          />
+          <CarouselNext 
+            // variant="ghost"
+            data-carousel-next
+            className="opacity-0 group-hover:opacity-100 transition-opacity absolute right-0 top-1/2 -translate-y-1/2 !bg-transparent !border-0 !shadow-none hover:!bg-transparent" 
+          />
         </Carousel>
       </div>
     </div>

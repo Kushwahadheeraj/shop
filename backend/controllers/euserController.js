@@ -286,3 +286,101 @@ exports.stats = async (req, res) => {
     res.status(500).json({ message: 'Failed to load stats' });
   }
 };
+
+// ---- Address management for e-users ----
+
+// Get all saved addresses for current euser
+exports.getAddresses = async (req, res) => {
+  try {
+    const userId = req.user?.id || req.euserId || req.sellerId;
+    const user = await EUser.findById(userId).select('addresses');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json({ success: true, addresses: user.addresses || [] });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to load addresses' });
+  }
+};
+
+// Add new address (max 6)
+exports.addAddress = async (req, res) => {
+  try {
+    const userId = req.user?.id || req.euserId || req.sellerId;
+    const user = await EUser.findById(userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    user.addresses = user.addresses || [];
+    if (user.addresses.length >= 6) {
+      return res.status(400).json({ message: 'Maximum 6 addresses allowed' });
+    }
+
+    const incoming = req.body || {};
+    // If this is default, clear other defaults
+    if (incoming.isDefault) {
+      user.addresses = user.addresses.map(a => ({ ...a.toObject(), isDefault: false }));
+    }
+
+    user.addresses.push(incoming);
+    await user.save();
+    res.json({ success: true, addresses: user.addresses });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to add address' });
+  }
+};
+
+// Update existing address by index
+exports.updateAddress = async (req, res) => {
+  try {
+    const userId = req.user?.id || req.euserId || req.sellerId;
+    const { index, address } = req.body || {};
+    if (typeof index !== 'number') {
+      return res.status(400).json({ message: 'index is required' });
+    }
+
+    const user = await EUser.findById(userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    user.addresses = user.addresses || [];
+    if (index < 0 || index >= user.addresses.length) {
+      return res.status(400).json({ message: 'Invalid address index' });
+    }
+
+    // If setting default, clear others
+    const incoming = address || {};
+    if (incoming.isDefault) {
+      user.addresses = user.addresses.map((a, i) =>
+        i === index ? a : { ...a.toObject(), isDefault: false }
+      );
+    }
+
+    user.addresses[index] = { ...user.addresses[index].toObject(), ...incoming };
+    await user.save();
+    res.json({ success: true, addresses: user.addresses });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to update address' });
+  }
+};
+
+// Delete address by index
+exports.deleteAddress = async (req, res) => {
+  try {
+    const userId = req.user?.id || req.euserId || req.sellerId;
+    const { index } = req.body || {};
+    if (typeof index !== 'number') {
+      return res.status(400).json({ message: 'index is required' });
+    }
+
+    const user = await EUser.findById(userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    user.addresses = user.addresses || [];
+    if (index < 0 || index >= user.addresses.length) {
+      return res.status(400).json({ message: 'Invalid address index' });
+    }
+
+    user.addresses.splice(index, 1);
+    await user.save();
+    res.json({ success: true, addresses: user.addresses });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to delete address' });
+  }
+};

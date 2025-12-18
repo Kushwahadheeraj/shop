@@ -71,7 +71,7 @@ export default function PopularProducts() {
           align: "start",
           loop: true,
         }}
-        className="w-full"
+        className="w-full group"
       >
         <CarouselContent>
           {products.map((product) => (
@@ -91,9 +91,11 @@ export default function PopularProducts() {
                       height={120}
                       className="object-contain h-24 w-full"
                     />
-                    <div className="text-center mt-4">
+                    <div className="text-center mt-4 w-full">
                       <p className="text-xs text-gray-500">{product.category}</p>
-                      <h3 className="font-semibold text-sm h-14">{product.name}</h3>
+                      <h3 className="font-semibold text-sm truncate whitespace-nowrap overflow-hidden w-full" title={product.name}>
+                        {product.name}
+                      </h3>
                       <p className="text-sm font-bold mt-2">
                         {product.originalPrice && (
                           <span className="line-through text-gray-400 mr-2">
@@ -104,16 +106,22 @@ export default function PopularProducts() {
                       </p>
                       <Button
                         onClick={() => {
+                          // product.price is a formatted string like "₹314.94"
+                          // Convert it to a number before adding to cart
+                          const numericPrice = typeof product.price === "string"
+                            ? parseFloat(product.price.replace(/[₹,\s]/g, "")) || 0
+                            : Number(product.price) || 0;
+
                           addItem({
                             id: product._id,
                             name: product.name,
-                            price: product.price,
+                            price: numericPrice,
                             image: product.image,
                             thumbnail: product.image
                           });
                         }}
-                        variant="outline"
-                        className="mt-4 border-yellow-300 text-yellow-300 hover:bg-yellow-300 hover:text-white"
+                        variant="default"
+                        className="w-full bg-yellow-300 hover:bg-yellow-300 text-white font-semibold py-2 rounded transition text-sm"
                       >
                         {product.buttonText}
                       </Button>
@@ -124,8 +132,14 @@ export default function PopularProducts() {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2" />
-        <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2" />
+        <CarouselPrevious 
+          variant="ghost"
+          className="opacity-0 group-hover:opacity-100 transition-opacity absolute left-0 top-1/2 -translate-y-1/2 !bg-transparent !border-0 !shadow-none hover:!bg-transparent" 
+        />
+        <CarouselNext 
+          variant="ghost"
+          className="opacity-0 group-hover:opacity-100 transition-opacity absolute right-0 top-1/2 -translate-y-1/2 !bg-transparent !border-0 !shadow-none hover:!bg-transparent" 
+        />
       </Carousel>
     </div>
   );

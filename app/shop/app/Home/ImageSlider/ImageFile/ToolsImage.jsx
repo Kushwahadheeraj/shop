@@ -58,13 +58,19 @@ const ToolsImage = () => {
             loading='lazy'
           />
           <div
-            className='absolute bg-white bg-opacity-70 z-40 flex w-[200px] h-[420px] lg:w-[700px] lg:h-[280px] md:w-[600px] md:h-[280px] -translate-x-1/2 left-1/2 lg:mt-40 md:mt-36 mt-24 lg:space-x-2 inset-0 flex-col lg:justify-center lg:items-center md:justify-center md:items-center text-center'
+            className='absolute z-40 flex flex-col items-center justify-center
+                       bg-[#333333] bg-opacity-95 text-white
+                       w-[220px] sm:w-[260px] h-[240px]
+                       md:bg-white md:bg-opacity-70 md:text-black md:w-[600px] md:h-[280px]
+                       lg:w-[700px] lg:h-[280px] lg:bg-opacity-70
+                       top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+                       lg:space-x-2 rounded-xl text-center'
           >
-            <h2 className='lg:text-4xl md:text-4xl text-[30px] px-8 leading-6 pt-4 font-bold'>
+            <h2 className='lg:text-4xl md:text-4xl text-xl sm:text-2xl px-4 leading-6 pt-4 font-bold'>
               {slide.mainText}
             </h2>
             {slide.subText && (
-              <p className='mt-6 px-10 lg:text-xl md:text-xl text-[14px] leading-2 font-bold'>
+              <p className='mt-4 px-4 lg:text-xl md:text-xl text-sm leading-5 font-bold'>
                 {slide.subText}
               </p>
             )}
@@ -83,7 +89,7 @@ const ToolsImage = () => {
                 {slide.desText}
               </p>
             )}
-            <ul className='lg:flex md:flex items-center space-x-4'>
+            <ul className='flex md:flex lg:flex items-center justify-center gap-2'>
               {slide.buttonText && (
                 <li>
                   <Link href={slide.link} passHref>
@@ -96,7 +102,7 @@ const ToolsImage = () => {
               {slide.buttonTextTwo && (
                 <li>
                   <Link href={slide.linkTwo || slide.link || '#'} passHref>
-                    <button className='mt-4 border-2 border-black text-black lg:text-xl md:text-xl text-sm lg:w-48 md:w-48 w-24 antialiased font-bold lg:px-6 hover:bg-white hover:text-black'>
+                    <button className='mt-4 border-2 border-white text-white md:border-black md:text-black lg:text-xl md:text-xl text-sm lg:w-48 md:w-48 w-24 antialiased font-bold lg:px-6 hover:bg-white hover:text-black'>
                       {slide.buttonTextTwo}
                     </button>
                   </Link>

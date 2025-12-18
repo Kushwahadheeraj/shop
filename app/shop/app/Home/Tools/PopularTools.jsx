@@ -1,23 +1,14 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useCart } from "@/components/CartContext";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import { Button } from "@/components/ui/button";
 import API_BASE_URL from "@/lib/apiConfig";
-import { Star } from "lucide-react";
+import Link from "next/link";
 
 export default function PopularTools() {
   const { addItem } = useCart();
   const [tools, setTools] = useState([]);
-  const [expanded, setExpanded] = useState({});
+  const scrollRef = useRef(null);
 
   useEffect(() => {
     let mounted = true;
@@ -73,109 +64,103 @@ export default function PopularTools() {
     return () => { mounted = false };
   }, []);
 
+  const scroll = (direction) => {
+    if (scrollRef.current) {
+      const { scrollLeft, clientWidth } = scrollRef.current;
+      // Scroll by container width to show next set of cards (3 on mobile, 8 on desktop)
+      const scrollAmount = clientWidth * 0.95; // Scroll 95% of container width
+      const scrollTo = direction === 'left'
+        ? scrollLeft - scrollAmount
+        : scrollLeft + scrollAmount;
+      scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+    }
+  };
+
   if (tools.length === 0) return null;
 
   return (
-    <div className="w-full mx-auto py-10 px-2">
-      <h2 className="text-3xl font-bold mb-6">Popular Tools</h2>
-      <Carousel
-        opts={{
-          align: "start",
-          loop: true,
-        }}
-        className="w-full"
-      >
-        <CarouselContent>
+    <div className="w-full mx-auto py-6 lg:py-10 px-2 lg:px-4">
+      
+      {/* Light blue background container with rounded corners */}
+      <div className="bg-[#E8F4FD] rounded-2xl lg:rounded-3xl p-4 lg:p-6 relative">
+      <h2 className="text-2xl lg:text-3xl font-bold mb-4 lg:mb-6 px-2 lg:px-0">Popular Tools</h2>
+
+        {/* Left Arrow */}
+        <button
+          onClick={() => scroll('left')}
+          className="hidden lg:block absolute left-2 lg:left-4 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-gray-100 rounded-full shadow-lg p-2 lg:p-3 transition-all"
+          aria-label="Scroll Left"
+        >
+          <svg className="w-5 h-5 lg:w-6 lg:h-6 text-gray-700" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+
+        {/* Cards Container */}
+        <div
+          ref={scrollRef}
+          className="flex overflow-x-auto gap-2 lg:gap-3 lg:px-14 scrollbar-hide"
+          style={{ scrollBehavior: 'smooth' }}
+        >
           {tools.map((tool, index) => (
-            <CarouselItem key={tool.id || index} className="basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 xl:basis-1/6">
-              <div className="p-1">
-                <Card>
-                  <CardContent className="flex flex-col items-center justify-center p-2 relative">
-                    {tool.discount && (
-                    <div className="absolute top-2 left-2 bg-black text-white text-xs font-bold rounded-full w-12 h-10 flex items-center justify-center">
-                      {tool.discount}
-                    </div>
+            <Link
+              href={`/product/${tool.id}`}
+              key={tool.id || index}
+              className="w-[calc((100%-0.5rem)/3)] lg:w-[calc((100%-5.25rem)/8)] flex-shrink-0"
+            >
+              {/* White rounded card */}
+              <div className="bg-white rounded-xl lg:rounded-2xl p-3 lg:p-4 shadow-sm hover:shadow-md transition-shadow h-full flex flex-col relative">
+                {/* Discount Badge */}
+                {/* {tool.discount && (
+                  <div className="absolute top-2 left-2 lg:top-3 lg:left-3 bg-black text-white text-[10px] lg:text-xs font-bold rounded-full w-10 h-8 lg:w-12 lg:h-10 flex items-center justify-center z-10">
+                    {tool.discount}
+                  </div>
+                )} */}
+                
+                {/* Product Image */}
+                <div className="w-full flex items-center justify-center mb-2 lg:mb-3 h-24 lg:h-40">
+                  <Image
+                    src={tool.image || '/placeholder-image.jpg'}
+                    alt={tool.name}
+                    width={150}
+                    height={150}
+                    className="object-contain h-full w-full"
+                  />
+                </div>
+                
+                {/* Product Info */}
+                <div className="text-center flex-1 flex flex-col">
+                  {/* Product Name - Single line with proper truncation */}
+                  <h3 className="font-semibold text-xs lg:text-sm mb-1 lg:mb-2 w-full overflow-hidden text-ellipsis whitespace-nowrap block" title={tool.name}>
+                    {tool.name}
+                  </h3>
+                  
+                  {/* Price - Single line */}
+                  {/* <div className="text-xs lg:text-sm font-bold whitespace-nowrap overflow-hidden flex items-center justify-center gap-1 mt-auto">
+                    {tool.originalPrice && (
+                      <span className="line-through text-gray-400 flex-shrink-0">
+                        {tool.originalPrice}
+                      </span>
                     )}
-                    <Image
-                      src={tool.image || '/placeholder-image.jpg'}
-                      alt={tool.name}
-                      width={150}
-                      height={150}
-                      className="object-contain h-36 w-full"
-                    />
-                    <div className="text-center mt-4">
-                      <p className="text-xs text-gray-500">{tool.category}</p>
-                      <h3
-                        className="font-semibold text-sm"
-                        style={expanded[tool.id] ? {} : {
-                          overflow: 'hidden',
-                          display: '-webkit-box',
-                          WebkitLineClamp: 3,
-                          WebkitBoxOrient: 'vertical'
-                        }}
-                      >
-                        {tool.name}
-                      </h3>
-                      {tool.name && tool.name.length > 60 && (
-                        <button
-                          className="mt-1 text-xs text-blue-600 underline"
-                          onClick={() => setExpanded(prev => ({ ...prev, [tool.id]: !prev[tool.id] }))}
-                        >
-                          {expanded[tool.id] ? 'Read less' : 'Read more'}
-                        </button>
-                      )}
-                      <div className="flex justify-center my-2">
-                        <StarRating rating={tool.rating} />
-                      </div>
-                      <p className="text-sm font-bold">
-                        {tool.originalPrice && (
-                          <span className="line-through text-gray-400 mr-2">
-                            {tool.originalPrice}
-                          </span>
-                        )}
-                        {tool.price}
-                      </p>
-                      <Button 
-                        onClick={() => {
-                          addItem({
-                            id: tool.id,
-                            name: tool.name,
-                            price: tool.price,
-                            image: tool.image,
-                            thumbnail: tool.image
-                          });
-                        }}
-                        variant="outline" 
-                        className="mt-4 border-yellow-300 text-yellow-300 hover:bg-yellow-300 hover:text-white"
-                      >
-                        {tool.buttonText}
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                    <span className="flex-shrink-0">{tool.price}</span>
+                  </div> */}
+                </div>
               </div>
-            </CarouselItem>
+            </Link>
           ))}
-        </CarouselContent>
-        <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2" />
-        <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2" />
-      </Carousel>
+        </div>
+
+        {/* Right Arrow */}
+        <button
+          onClick={() => scroll('right')}
+          className="hidden lg:block absolute right-2 lg:right-4 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-gray-100 rounded-full shadow-lg p-2 lg:p-3 transition-all"
+          aria-label="Scroll Right"
+        >
+          <svg className="w-5 h-5 lg:w-6 lg:h-6 text-gray-700" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
     </div>
   );
-} 
-
-const StarRating = ({ rating }) => {
-  const stars = [];
-  for (let i = 1; i <= 5; i++) {
-    if (i <= rating) {
-      stars.push(<Star key={i} className="w-4 h-4 text-yellow-300 fill-yellow-300" />);
-    } else if (i - 0.5 === rating) {
-      stars.push(<Star key={i} className="w-4 h-4 text-yellow-300" />);
-    } else {
-      stars.push(<Star key={i} className="w-4 h-4 text-gray-300" />);
-    }
-  }
-  return <div className="flex">{stars}</div>;
-};
-
-// (component exported above)
+}

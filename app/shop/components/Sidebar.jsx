@@ -7,12 +7,12 @@ import { IoClose } from "react-icons/io5";
 
 const getNavItems = (isLoggedIn) => {
   const baseItems = [
-    { label: "HOME", href: "/" },
+    // { label: "HOME", href: "/" },
     { label: "SHOP", href: "/Shop" },
     { label: "PAINTS", href: "#", hasDropdown: true },
     { label: "ELECTRICALS", href: "#", hasDropdown: true },
     { label: "SANITARY WARE & FAUCETS", href: "#", hasDropdown: true },
-    { label: "CEMENTS & POP", href: "#" },
+    { label: "CEMENTS & POP", href: "/ShopPage/Cements" },
     { label: "ADHESIVE", href: "#" },
     { label: "CLEANING", href: "#" },
     { label: "TOOLS", href: "#", hasDropdown: true },
@@ -70,9 +70,33 @@ const submenus = {
     ] },
   ],
   TOOLS: [
-    {  items: [
-      "hand tools","abrasives","Allen Keys","Brush","Carpenter Pincer","Chisels","Clamps","Cutters","files","Garden Tools","glue gun","Grease Gun","Hammer","level","Lubrications","Piler","Polishing Accessories","power tools","Screw Driver","Socket Set","Spare Mallets","spanner","wrench"
-    ] },
+    {
+      items: [
+        "Hand Tools",
+        "Abrasives",
+        "Allen Keys",
+        "Brush",
+        "Carpenter Pincer",
+        "Chisels",
+        "Clamps",
+        "Cutters",
+        "Files",
+        "Garden Tools",
+        "Glue Gun",
+        "Grease Gun",
+        "Hammer",
+        "Level",
+        "Lubrications",
+        "Piler",
+        "Polishing Accessories",
+        "Power Tools",
+        "Screw Driver",
+        "Socket Set",
+        "Spare Mallets",
+        "Spanner",
+        "Wrench",
+      ],
+    },
   ],
 };
 
@@ -97,26 +121,36 @@ export default function Sidebar({ open, onClose }) {
 
   const navItems = getNavItems(isLoggedIn);
 
+  // Map category labels (from dropdown + navbar/Sidebar items) to
+  // the base folder segment used in /ShopPage routes.
+  // Keys are normalized (lowercase, no spaces/special chars).
   const folderMap = {
-    "Uncategorized": "Uncategorized",
-    "Adhesives": "Adhesives",
-    "Cements & POP": "Cements",
-    "Cleaning": "Cleaning",
-    "Dry Wall Gypsum Screws": "Dry",
-    "Electrical Items": "Electrical",
-    "House Hold Ladder": "Hardware",
-    "Locks & accessories": "Locks",
-    "Mask & Sanitizers": "Cleaning",
-    "Paints": "Paint",
-    "Pipes & Fittings": "Pipe",
-    "Sanitary Ware & faucets": "Sanitary",
-    "Sanitary Ware & Faucets": "Sanitary",
-    "Tools": "Tools",
-    "WaterProofing": "WaterProofing",
-    "Waterproofing": "WaterProofing",
+    uncategorized: "Uncategorized",
+    adhesives: "Adhesives",
+    adhesive: "Adhesives",
+    // CEMENTS & POP (Navbar + Sidebar labels "CEMENTS & POP" / "Cements & POP")
+    cementsampop: "Cements",
+    cementsandpop: "Cements",
+    cements: "Cements",
+    cleaning: "Cleaning",
+    drywallgypsumscrews: "Dry",
+    electricalitems: "Electrical",
+    electricals: "Electrical",
+    householdladder: "Hardware",
+    locksaccessories: "Locks",
+    masksanitizers: "Cleaning",
+    paints: "Paint",
+    paint: "Paint",
+    pipesfittings: "Pipe",
+    sanitarywarefaucets: "Sanitary",
+    tools: "Tools",
+    waterproofing: "WaterProofing",
   };
 
-  const getFolderName = (label) => folderMap[label] || label;
+  const getFolderName = (label) => {
+    const key = String(label).toLowerCase().replace(/[^a-z0-9]/g, "");
+    return folderMap[key] || label;
+  };
   const toSegment = (s) => String(s).replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
 
   useEffect(() => {
@@ -180,12 +214,33 @@ export default function Sidebar({ open, onClose }) {
             <div className={`absolute top-full left-0 mt-1 w-56 bg-white border border-gray-200 rounded-lg shadow-xl z-50 ${allOpen ? 'block' : 'hidden'}`}>
               <div className="py-1">
                 {[
-                  'Adhesives','Cements & POP','Cleaning','Dry Wall Gypsum Screws','Electrical Items','House Hold Ladder','Locks & accessories','Mask & Sanitizers','Paints','Pipes & Fittings','Sanitary Ware & faucets','Tools','Uncategorized','WaterProofing'
+                  "Adhesives",
+                  "Cements & POP",
+                  "Cleaning",
+                  "Dry Wall Gypsum Screws",
+                  "Electrical Items",
+                  "House Hold Ladder",
+                  "Locks & accessories",
+                  "Mask & Sanitizers",
+                  "Paints",
+                  "Pipes & Fittings",
+                  "Sanitary Ware & faucets",
+                  "Tools",
+                  "Uncategorized",
+                  "WaterProofing",
                 ].map((opt) => {
                   const folder = getFolderName(opt);
+                  const href = folder ? `/ShopPage/${folder}` : "/";
                   return (
-                    <Link key={opt} href={`/ShopPage/${folder}`} onClick={onClose} className="block px-4 py-2 hover:bg-blue-600">
-                      <span className="text-sm text-gray-700 hover:text-white">{opt}</span>
+                    <Link
+                      key={opt}
+                      href={href}
+                      onClick={onClose}
+                      className="block px-4 py-2 hover:bg-blue-600"
+                    >
+                      <span className="text-sm text-gray-700 hover:text-white">
+                        {opt}
+                      </span>
                     </Link>
                   );
                 })}
@@ -226,7 +281,11 @@ export default function Sidebar({ open, onClose }) {
               </a>
             ) : (
               <Link
-                href={`/ShopPage/${getFolderName(item.label)}`}
+                href={
+                  item.href && item.href !== "#"
+                    ? item.href
+                    : `/ShopPage/${getFolderName(item.label)}`
+                }
                 onClick={onClose}
                 className="flex items-center w-full px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
@@ -243,15 +302,19 @@ export default function Sidebar({ open, onClose }) {
                       {group.items.map((sub) => (
                         <li key={sub}>
                           <Link
-                            href={`/ShopPage/${getFolderName(item.label)}${group.title ? `/${toSegment(group.title)}` : ''}/${toSegment(sub)}`}
+                            href={`/ShopPage/${getFolderName(
+                              item.label
+                            )}${
+                              group.title ? `/${toSegment(group.title)}` : ""
+                            }/${toSegment(sub)}`}
                             className="block rounded px-3 py-1.5 text-sm text-gray-700 hover:bg-blue-600 hover:text-white"
                             onClick={onClose}
                           >
                             {sub}
                           </Link>
-                  </li>
-                ))}
-              </ul>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 ))}
               </div>

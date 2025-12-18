@@ -52,42 +52,46 @@ export default function Categories() {
           align: "start",
           loop: true,
         }}
-        className="w-full"
+        className="w-full group"
       >
-        <CarouselContent>
+        <CarouselContent className="!-ml-0 gap-4">
           {categories.map((category, index) => (
-            <CarouselItem key={category._id || index} className="md:basis-1/2 lg:basis-1/4">
-              <div className="p-1">
-                <Card className="overflow-hidden">
-                  <CardContent className="p-0">
-                    <Image
-                      src={category.image}
-                      alt={category.title}
-                      width={400}
-                      height={250}
-                      className="object-cover w-full h-48"
-                    />
-                    <div className="p-4">
-                      <h3 className="text-lg font-bold">{category.title}</h3>
-                      <ul className="mt-2 list-disc list-inside text-sm text-gray-600 h-24">
-                        {category.items.map((item) => (
-                          <li key={item}>{item}</li>
-                        ))}
-                      </ul>
-                      <Link href={category.link} passHref>
-                        <Button className="w-full bg-black text-white rounded-full mt-4 hover:bg-gray-800">
-                          SHOP NOW <span className="ml-2 font-bold">&gt;</span>
-                        </Button>
-                      </Link>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+            <CarouselItem key={category._id || index} className="md:basis-1/2 lg:basis-1/4 !pl-0">
+              <Card className="overflow-hidden w-full m-0 border-0 shadow-none">
+                <CardContent className="!p-0">
+                  <Image
+                    src={category.image}
+                    alt={category.title}
+                    width={450}
+                    height={250}
+                    className="object-cover w-full h-48"
+                  />
+                  <div className="p-4">
+                    <h3 className="text-lg font-bold">{category.title}</h3>
+                    <ul className="mt-2 list-disc list-inside text-sm text-gray-600 h-24">
+                      {category.items.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                    <Link href={category.link} passHref>
+                      <Button className="w-full bg-black text-white rounded-full mt-4 hover:bg-gray-800">
+                        SHOP NOW <span className="ml-2 font-bold">&gt;</span>
+                      </Button>
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2" />
-        <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2" />
+        <CarouselPrevious 
+          variant="ghost"
+          className="opacity-0 group-hover:opacity-100 transition-opacity absolute left-0 top-1/2 -translate-y-1/2 !bg-transparent !border-0 !shadow-none hover:!bg-transparent" 
+        />
+        <CarouselNext 
+          variant="ghost"
+          className="opacity-0 group-hover:opacity-100 transition-opacity absolute right-0 top-1/2 -translate-y-1/2 !bg-transparent !border-0 !shadow-none hover:!bg-transparent" 
+        />
       </Carousel>
     </div>
   );

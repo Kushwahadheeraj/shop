@@ -129,7 +129,7 @@ export default function Electricals() {
               )}
               
               {/* Product Image - Reduced height for responsive */}
-              <div className="h-24 sm:h-28 lg:h-40 flex items-center justify-center mb-1 sm:mb-1.5 lg:mb-3 relative group">
+              <div className="h-20 sm:h-24 lg:h-40 flex items-center justify-center mb-1 sm:mb-1.5 lg:mb-3 relative group">
                 <img
                   src={product.image}
                   alt={product.name}
@@ -139,8 +139,8 @@ export default function Electricals() {
                 
                 {/* Rating Badge - Bottom Left Overlay (Responsive only) */}
                 <div className="absolute bottom-0.5 sm:bottom-1 left-0.5 sm:left-1 lg:hidden bg-white/90 backdrop-blur-sm rounded px-1 sm:px-1.5 py-0.5 flex items-center gap-0.5 z-10">
-                  <span className="text-[9px] sm:text-[10px] font-semibold text-gray-800">{displayRating.toFixed(1)}</span>
-                  <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                  <span className="text-[8px] sm:text-[9px] font-semibold text-gray-800">{displayRating.toFixed(1)}</span>
+                  <svg className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.388 2.46a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.388-2.46a1 1 0 00-1.175 0l-3.388 2.46c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.045 9.394c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 00.95-.69l1.286-3.967z" />
                   </svg>
                 </div>
@@ -158,7 +158,7 @@ export default function Electricals() {
                 <span className="hidden lg:block text-[10px] tracking-wide text-gray-500 mb-1 uppercase">{product.type}</span>
                 
                 {/* Product Name - Single line with ellipsis */}
-                <div className="font-semibold text-[10px] sm:text-[11px] lg:text-sm mb-0.5 sm:mb-1 truncate">
+                <div className="font-semibold text-[10px] sm:text-[11px] lg:text-sm mb-0.5 sm:mb-1 truncate whitespace-nowrap overflow-hidden">
                   {product.name}
                 </div>
                 
@@ -166,33 +166,33 @@ export default function Electricals() {
                 <div className="mb-0.5 sm:mb-1 lg:mb-1.5 lg:space-y-0.5">
                   {/* Original, Discounted, and Buy at Price - All on same line for responsive */}
                   {product.priceRange ? (
-                    <div className="lg:hidden">
-                      <span className="font-bold text-[9px] sm:text-[10px]">{product.priceRange}</span>
+                    <div className="lg:hidden flex items-center gap-1 whitespace-nowrap overflow-hidden">
+                      <span className="font-bold text-[9px] sm:text-[10px] flex-shrink-0">{product.priceRange}</span>
                       {buyAtPrice && (
-                        <span className="text-blue-600 font-medium text-[9px] sm:text-[10px] ml-1">
+                        <span className="text-blue-600 font-medium text-[9px] sm:text-[10px] flex-shrink-0">
                           Buy at ₹{buyAtPrice.toLocaleString('en-IN')}
                         </span>
                       )}
                     </div>
                   ) : (
-                    <div className="lg:hidden flex items-center flex-wrap gap-1 text-[9px] sm:text-[10px]">
+                    <div className="lg:hidden flex items-center gap-1 text-[9px] sm:text-[10px] whitespace-nowrap overflow-hidden">
                       {product.price != null && Number(product.discount) > 0 && (
-                        <span className="text-gray-400 line-through">
+                        <span className="text-gray-400 line-through flex-shrink-0">
                           {product.priceFormatted}
                         </span>
                       )}
                       {product.currentPriceFormatted && (
-                        <span className="font-bold">
+                        <span className="font-bold flex-shrink-0">
                           {product.currentPriceFormatted}
                         </span>
                       )}
                       {!product.currentPriceFormatted && product.priceFormatted && (
-                        <span className="font-bold">
+                        <span className="font-bold flex-shrink-0">
                           {product.priceFormatted}
                         </span>
                       )}
                       {buyAtPrice && (
-                        <span className="text-blue-600 font-medium">
+                        <span className="text-blue-600 font-medium flex-shrink-0">
                           Buy at ₹{buyAtPrice.toLocaleString('en-IN')}
                         </span>
                       )}
@@ -245,7 +245,7 @@ export default function Electricals() {
                         });
                       }
                     }}
-                    className="hidden lg:block mt-auto bg-[#f5c242] hover:bg-[#f2b51b] text-black font-semibold py-2 rounded transition w-full text-sm"
+                    className="w-full bg-yellow-300 hover:bg-yellow-300 text-white font-semibold py-2 rounded transition text-sm"
                   >
                     {product.hasOptions ? 'SELECT OPTIONS' : 'ADD TO CART'}
                   </button>

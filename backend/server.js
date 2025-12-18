@@ -45,6 +45,7 @@ const balanceEntryRoutes = require('./routes/balanceEntryRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const productsRoutes = require('./routes/productsRoutes');
 const shopManagementRoutes = require('./routes/shopManagementRoutes');
+const galleryRoutes = require('./routes/GalleryRoutes');
 
 const app = express();
 
@@ -102,6 +103,7 @@ app.use('/api/uncategorized', uncategorizedRoutes);
 app.use('/api/waterproofing', waterProofingRoutes);
 app.use('/api/products', productsRoutes);
 app.use('/api/shop-management', shopManagementRoutes);
+app.use('/api/gallery',galleryRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

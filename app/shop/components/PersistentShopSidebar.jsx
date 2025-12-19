@@ -212,11 +212,13 @@ const paintsSubcategories = [
 
 const pipesSubcategories = [
   "Ashirvad Pipes",
-  "Astral Pipes", 
+  "Apollo Pipes", 
   "Birla Pipe",
   "Finolex Pipes",
   "Nepul Pipes",
+  "Other Pipe & Fittings",
   "Prakash Pipe",
+  "Prinzia Pipes",
   "Prince Pipe",
   "Supreme Pipe",
   "TSA Pipe",

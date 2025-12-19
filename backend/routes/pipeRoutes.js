@@ -8,7 +8,7 @@ const upload = multer({ storage });
 
 const finolexPipes = require('../controllers/pipe/finolexPipesController');
 const ashirvadPipes = require('../controllers/pipe/ashirvadPipesController');
-const astralPipes = require('../controllers/pipe/astralPipesController');
+const apolloPipes = require('../controllers/pipe/apolloPipesController');
 const nepulPipes = require('../controllers/pipe/nepulPipesController');
 const birlaPipes = require('../controllers/pipe/birlaPipesControllers');
 const princePipes = require('../controllers/pipe/princePipesControllers');
@@ -16,6 +16,8 @@ const prakashPipes = require('../controllers/pipe/prakashPipesControllers');
 const supremePipes = require('../controllers/pipe/supremePipesControllers');
 const tataPipes = require('../controllers/pipe/tataPipesControllers');
 const tsaPipes = require('../controllers/pipe/tsaPipesControllers');
+const prinziaPipes = require('../controllers/pipe/prinziaPipesController');
+const otherPipes = require('../controllers/pipe/otherPipesControllers');
 
 // Helper to register CRUD routes for a controller
 function registerCrudRoutes(basePath, controller, name) {
@@ -28,7 +30,7 @@ function registerCrudRoutes(basePath, controller, name) {
 
 registerCrudRoutes('finolex-pipes', finolexPipes, 'FinolexPipes');
 registerCrudRoutes('ashirvad-pipes', ashirvadPipes, 'AshirvadPipes');
-registerCrudRoutes('astral-pipes', astralPipes, 'AstralPipes');
+registerCrudRoutes('apollo-pipes', apolloPipes, 'ApolloPipes');
 registerCrudRoutes('nepul-pipes', nepulPipes, 'NepulPipes');
 registerCrudRoutes('birla-pipes', birlaPipes, 'BirlaPipes');
 registerCrudRoutes('prince-pipes', princePipes, 'PrincePipes');
@@ -36,6 +38,8 @@ registerCrudRoutes('prakash-pipes', prakashPipes, 'PrakashPipes');
 registerCrudRoutes('supreme-pipes', supremePipes, 'SupremePipes');
 registerCrudRoutes('tata-pipes', tataPipes, 'TataPipes');
 registerCrudRoutes('tsa-pipes', tsaPipes, 'TsaPipes');
+registerCrudRoutes('prinzia-pipes', prinziaPipes, 'PrinziaPipes');
+registerCrudRoutes('other-pipes', otherPipes, 'OtherPipes');
 
 
 

@@ -1266,15 +1266,17 @@ export const sidebarSections = [
         ],
       },
       {
-        name: 'Pipe',
+        name: 'Pipe & Fittings',
         subItemsName: [
           {
             name: 'Ashirvad Pipes',
             path: '/ProductAdd/Pipe/AshirvadPipes',
           },
+          
+          
           {
-            name: 'Astral Pipes',
-            path: '/ProductAdd/Pipe/AstralPipes',
+            name: 'Apollo Pipes',
+            path: '/ProductAdd/Pipe/ApolloPipes',
           },
           { name: 'Birla Pipe', path: '/ProductAdd/Pipe/BirlaPipe' },
           {
@@ -1286,8 +1288,16 @@ export const sidebarSections = [
             path: '/ProductAdd/Pipe/NepulPipes',
           },
           {
+            name: 'Other Pipe & Fittings',
+            path: '/ProductAdd/Pipe/OtherPipes',
+          },
+          {
             name: 'Prakash Pipe',
             path: '/ProductAdd/Pipe/PrakashPipe',
+          },
+          {
+            name: 'Prinzia Pipes',
+            path: '/ProductAdd/Pipe/PrinziaPipes',
           },
           {
             name: 'Prince Pipe',
@@ -3676,15 +3686,15 @@ export const sidebarSections = [
         ],
       },
       {
-        name: 'Pipe',
+        name: 'Pipe & Fittings',
         subItemsName: [
           {
             name: 'Ashirvad Pipes',
             path: '/ProductList/Pipe/AshirvadPipes',
           },
           {
-            name: 'Astral Pipes',
-            path: '/ProductList/Pipe/AstralPipes',
+            name: 'Apollo Pipes',
+            path: '/ProductList/Pipe/ApolloPipes',
           },
           { name: 'Birla Pipe', path: '/ProductList/Pipe/BirlaPipe' },
           {
@@ -3696,8 +3706,16 @@ export const sidebarSections = [
             path: '/ProductList/Pipe/NepulPipes',
           },
           {
+            name: 'Other Pipe & Fittings',
+            path: '/ProductList/Pipe/OtherPipes',
+          },
+          {
             name: 'Prakash Pipe',
             path: '/ProductList/Pipe/PrakashPipe',
+          },
+          {
+            name: 'Prinzia Pipes',
+            path: '/ProductList/Pipe/PrinziaPipes',
           },
           {
             name: 'Prince Pipe',

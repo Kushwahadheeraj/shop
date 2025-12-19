@@ -36,7 +36,7 @@ const getAllProducts = async (req, res) => {
       'TileGuard', 'UniversalStainers', 'Varnish', 'WallPutty', 'WallTexture',
       'WaterproofBasecoat', 'WoodFinishes', 'WoodPrimer', 'WoodPutty', 'WoodStainers',
       // Pipe models
-      'AshirvadPipes', 'AstralPipes', 'BirlaPipes', 'FinolexPipes', 'NepulPipes',
+      'AshirvadPipes', 'ApolloPipes', 'BirlaPipes', 'FinolexPipes', 'NepulPipes',
       'PrakashPipes', 'PrincePipes', 'SupremePipes', 'TataPipes', 'TSAPipes',
       // Roofer models
       'AluminiumSheet', 'AsbestosSheet', 'CementSheet', 'CorrugatedSheet',

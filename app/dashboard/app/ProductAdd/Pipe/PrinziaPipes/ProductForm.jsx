@@ -22,7 +22,7 @@ export default function ProductForm({ onSave }) {
     discount: '',
     discountPrice: '',
     totalProduct: '',
-    category: 'AstralPipes',
+    category: 'ApolloPipes',
     description: '',
     tags: [],
     variants: [], // { variantName: '', fixPrice: '', minPrice: '', maxPrice: '', discountPrice: '' }
@@ -265,7 +265,7 @@ export default function ProductForm({ onSave }) {
     });
     
     try {
-      const res = await fetch(`${API_BASE_URL}/pipe/astral-pipes/create`, { 
+      const res = await fetch(`${API_BASE_URL}/pipe/prinzia-pipes/create`, { 
         method: 'POST', 
         body: data 
       });
@@ -290,7 +290,7 @@ export default function ProductForm({ onSave }) {
       <div className="mb-4 sm:mb-6 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-lg p-4 sm:p-6 text-white shadow-lg">
         <div className="flex items-center gap-2 sm:gap-3 mb-2">
           <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">Add AstralPipes Product</h1>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">Add PrinziaPipes Product</h1>
         </div>
         <p className="text-xs sm:text-sm text-amber-50">Fill in the product details below</p>
       </div>

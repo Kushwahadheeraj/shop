@@ -19,9 +19,9 @@ function uploadToCloudinary(buffer) {
 }
 
 /**
- * Create a new AstralPipes product.
+ * Create a new ApolloPipes product.
  */
-exports.createAstralPipes = async (req, res) => {
+exports.createApolloPipes = async (req, res) => {
   try {
     // Debug: log received data
     console.log('Received request body:', req.body);
@@ -34,7 +34,7 @@ exports.createAstralPipes = async (req, res) => {
     }
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
     // Parse JSON fields if they exist
-    let productData = { ...req.body, photos: photoUrls, category: 'AstralPipes' };
+    let productData = { ...req.body, photos: photoUrls, category: 'ApolloPipes' };
     
     // Parse type field if it's a string
     if (req.body.type && typeof req.body.type === 'string') {
@@ -96,9 +96,9 @@ exports.createAstralPipes = async (req, res) => {
 };
 
 /**
- * Update a AstralPipes product by ID.
+ * Update a ApolloPipes product by ID.
  */
-exports.updateAstralPipes = async (req, res) => {
+exports.updateApolloPipes = async (req, res) => {
   try {
     let update = { ...req.body };
     
@@ -148,7 +148,7 @@ exports.updateAstralPipes = async (req, res) => {
     }
     
           const product = await Pipe.findOneAndUpdate(
-        { _id: req.params.id, category: 'AstralPipes' },
+        { _id: req.params.id, category: 'ApolloPipes' },
         update,
         { new: true }
       );
@@ -159,18 +159,18 @@ exports.updateAstralPipes = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-exports.getAllAstralPipes = async (req, res) => {
+exports.getAllApolloPipes = async (req, res) => {
   try {
-    const items = await Pipe.find({ category: 'AstralPipes' });
+    const items = await Pipe.find({ category: 'ApolloPipes' });
     res.json(items);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-exports.getOneAstralPipes = async (req, res) => {
+exports.getOneApolloPipes = async (req, res) => {
   try {
-    const item = await Pipe.findOne({ _id: req.params.id, category: 'AstralPipes' });
+    const item = await Pipe.findOne({ _id: req.params.id, category: 'ApolloPipes' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json(item);
   } catch (err) {
@@ -178,9 +178,9 @@ exports.getOneAstralPipes = async (req, res) => {
   }
 };
 
-exports.deleteAstralPipes = async (req, res) => {
+exports.deleteApolloPipes = async (req, res) => {
   try {
-    const item = await Pipe.findOneAndDelete({ _id: req.params.id, category: 'AstralPipes' });
+    const item = await Pipe.findOneAndDelete({ _id: req.params.id, category: 'ApolloPipes' });
     if (!item) return res.status(404).json({ error: 'Not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {

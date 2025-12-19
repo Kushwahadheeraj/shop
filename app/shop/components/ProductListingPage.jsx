@@ -95,28 +95,28 @@ export default function ProductListingPage() {
     },
     {
       _id: '6',
-      name: "Astral Adhesive Amrow",
+      name: "Apollo Adhesive Amrow",
       price: 100.00,
       mrp: 120.00,
-      photos: [{ url: "https://via.placeholder.com/300x300?text=Astral+Amrow" }],
+      photos: [{ url: "https://via.placeholder.com/300x300?text=Apollo+Amrow" }],
       rating: 5,
       stock: 12
     },
     {
       _id: '7',
-      name: "Astral Adhesive Bearing Retainer 944",
+      name: "Apollo Adhesive Bearing Retainer 944",
       price: 190.00,
       mrp: 200.00,
-      photos: [{ url: "https://via.placeholder.com/300x300?text=Astral+Retainer" }],
+      photos: [{ url: "https://via.placeholder.com/300x300?text=Apollo+Retainer" }],
       rating: 5,
       stock: 0
     },
     {
       _id: '8',
-      name: "Astral Adhesive Bearing Retainer TL 944",
+      name: "Apollo Adhesive Bearing Retainer TL 944",
       price: 170.00,
       mrp: 200.00,
-      photos: [{ url: "https://via.placeholder.com/300x300?text=Astral+TL" }],
+      photos: [{ url: "https://via.placeholder.com/300x300?text=Apollo+TL" }],
       rating: 5,
       stock: 0
     }

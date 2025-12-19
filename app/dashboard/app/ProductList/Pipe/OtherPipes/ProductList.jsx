@@ -13,7 +13,7 @@ export default function ProductList() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const API_URL = `${API_BASE_URL}/pipe/astral-pipes`;
+  const API_URL = `${API_BASE_URL}/pipe/other-pipes`;
 
   useEffect(() => {
     fetchProducts();
@@ -45,7 +45,7 @@ export default function ProductList() {
       
 
   const handleEdit = (product) => {
-    router.push("/ProductAdd/Pipe/AstralPipes?id=" + product._id);
+    router.push("/ProductAdd/Pipe/OtherPipes?id=" + product._id);
   };
 
   const handleDelete = async (id) => {
@@ -66,11 +66,11 @@ export default function ProductList() {
   };
 
   const handleView = (product) => {
-    router.push(`/ProductView/pipe/astralpipes/${product._id}`);
+    router.push(`/ProductView/pipe/OtherPipes/${product._id}`);
   };
 
   const handleAddNew = () => {
-    router.push("/ProductAdd/Pipe/AstralPipes");
+    router.push("/ProductAdd/Pipe/OtherPipes");
   };
 
   
@@ -95,7 +95,7 @@ export default function ProductList() {
       <div className="mb-4 sm:mb-6 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-lg p-4 sm:p-6 text-white shadow-lg">
         <div className="flex items-center gap-2 sm:gap-3 mb-2">
           <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">Pipe - AstralPipes Products</h1>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">Pipe - ApolloPipes Product</h1>
         </div>
         <p className="text-xs sm:text-sm text-amber-50">View and manage all products</p>
       </div>
@@ -114,7 +114,7 @@ export default function ProductList() {
                 <ArrowLeft className="w-4 h-4" />
                 Back to Pipe
               </Button>
-              <CardTitle className="text-lg sm:text-xl">Pipe - AstralPipes Products</CardTitle>
+              <CardTitle className="text-lg sm:text-xl">Pipe - OtherPipes Products</CardTitle>
             </div>
             <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <Button variant="outline" onClick={fetchProducts} className="border-amber-300 text-amber-700 hover:bg-amber-50 w-full sm:w-auto"
@@ -150,7 +150,7 @@ export default function ProductList() {
             onEdit={handleEdit}
             onDelete={handleDelete}
             onView={handleView}
-            category="Pipe - AstralPipes Products"
+            category="Pipe - ApolloPipes Products"
           />
         </CardContent>
       </Card>

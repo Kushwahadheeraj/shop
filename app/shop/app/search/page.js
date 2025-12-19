@@ -295,7 +295,7 @@ export default function SearchPage() {
           
           // Pipes & Fittings - ALL Subcategories
           { name: 'Ashirvad Pipes', path: '/ShopPage/Pipe/AshirvadPipes', description: 'Ashirvad Pipes', type: 'sub', parent: 'Pipe' },
-          { name: 'Astral Pipes', path: '/ShopPage/Pipe/AstralPipes', description: 'Astral Pipes', type: 'sub', parent: 'Pipe' },
+          { name: 'Apollo Pipes', path: '/ShopPage/Pipe/ApolloPipes', description: 'Apollo Pipes', type: 'sub', parent: 'Pipe' },
           { name: 'Birla Pipe', path: '/ShopPage/Pipe/BirlaPipe', description: 'Birla Pipe', type: 'sub', parent: 'Pipe' },
           { name: 'Finolex Pipes', path: '/ShopPage/Pipe/FinolexPipes', description: 'Finolex Pipes', type: 'sub', parent: 'Pipe' },
           { name: 'Nepul Pipes', path: '/ShopPage/Pipe/NepulPipes', description: 'Nepul Pipes', type: 'sub', parent: 'Pipe' },

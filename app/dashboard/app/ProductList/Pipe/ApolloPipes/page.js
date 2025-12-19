@@ -1,6 +1,6 @@
 import ProductList from './ProductList';
 
-export default function AstralPipesPage() {
+export default function ApolloPipesPage() {
   return (
     <div>
       <ProductList />

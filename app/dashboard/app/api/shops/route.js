@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-
-const API_BASE_URL = process.env.BACKEND_URL || 'https://shop-backend-qf50.onrender.com/api';
+import API_BASE_URL from '@/lib/apiConfig';
 
 export async function GET(request) {
   try {

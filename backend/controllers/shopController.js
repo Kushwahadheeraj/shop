@@ -81,7 +81,13 @@ const getShops = async (req, res) => {
       });
     }
 
-    const filter = { createdBy: req.sellerId };
+    let filter = {};
+    
+    // Check if user is admin - RESTRICTION REMOVED per user request
+    // const seller = await Seller.findById(req.sellerId);
+    // if (!seller || seller.role !== 'admin') {
+    //   filter.createdBy = req.sellerId;
+    // }
 
     if (status) filter.status = status;
     if (city) filter['location.city'] = { $regex: city, $options: 'i' };

@@ -48,6 +48,7 @@ const createSimpleBill = async (req, res) => {
     const calculatedPricing = {
       subtotal: pricing.subtotal || items.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0),
       discount: pricing.discount || 0,
+      extraCharge: pricing.extraCharge || 0,
       totalAmount: 0
     };
 

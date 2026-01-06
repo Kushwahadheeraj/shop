@@ -11,7 +11,8 @@ const EditBillForm = ({ bill, onClose, onSave, shops }) => {
       gstRate: 18,
       gstAmount: 0,
       totalAmount: 0,
-      discount: ''
+      discount: '',
+      extraCharge: 0
     },
     payment: {
       method: 'cash',
@@ -43,7 +44,8 @@ const EditBillForm = ({ bill, onClose, onSave, shops }) => {
           gstRate: bill.pricing?.gstRate || 18,
           gstAmount: bill.pricing?.gstAmount || 0,
           totalAmount: bill.pricing?.totalAmount || 0,
-          discount: bill.pricing?.discount || 0
+          discount: bill.pricing?.discount || 0,
+          extraCharge: bill.pricing?.extraCharge ?? 0
         },
         payment: {
           method: bill.payment?.method || 'cash',
@@ -66,12 +68,12 @@ const EditBillForm = ({ bill, onClose, onSave, shops }) => {
   // Calculate totals whenever items or pricing change
   useEffect(() => {
     calculateTotals();
-  }, [formData.items, formData.pricing.gstRate, formData.pricing.discount]);
+  }, [formData.items, formData.pricing.gstRate, formData.pricing.discount, formData.pricing.extraCharge]);
 
   const calculateTotals = () => {
     const subtotal = formData.items.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
     const gstAmount = (subtotal * formData.pricing.gstRate) / 100;
-    const totalAmount = subtotal + gstAmount - formData.pricing.discount;
+    const totalAmount = subtotal + gstAmount - formData.pricing.discount + (formData.pricing.extraCharge || 0);
 
     setFormData(prev => ({
       ...prev,
@@ -435,6 +437,18 @@ const EditBillForm = ({ bill, onClose, onSave, shops }) => {
                     step="0.01"
                     value={formData.pricing.discount}
                     onChange={(e) => handleInputChange('pricing.discount', parseFloat(e.target.value) || 0)}
+                    className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">Extra Charge</label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={formData.pricing.extraCharge}
+                    onChange={(e) => handleInputChange('pricing.extraCharge', parseFloat(e.target.value) || 0)}
                     className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>

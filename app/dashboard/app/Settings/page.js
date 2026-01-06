@@ -44,7 +44,7 @@ const DEFAULT_SIDEBAR_VISIBILITY = {
 
 export default function SettingsPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [loading, setLoading] = useState(false);
   const [saveStatus, setSaveStatus] = useState(null);
   const [lastSaved, setLastSaved] = useState(null);
@@ -268,14 +268,16 @@ export default function SettingsPage() {
             <ExternalLink className="w-4 h-4" />
             Manage Profile & Avatar
           </Button>
-          <Button
-            variant="outline"
-            className="justify-start gap-2"
-            onClick={() => handleQuickNavigate('/SellerList')}
-          >
-            <ExternalLink className="w-4 h-4" />
-            Seller Access Control
-          </Button>
+          {isAdmin() && (
+            <Button
+              variant="outline"
+              className="justify-start gap-2"
+              onClick={() => handleQuickNavigate('/SellerList')}
+            >
+              <ExternalLink className="w-4 h-4" />
+              Seller Access Control
+            </Button>
+          )}
           <Button
             variant="outline"
             className="justify-start gap-2"
@@ -605,7 +607,7 @@ export default function SettingsPage() {
             <RefreshCw className="w-4 h-4" />
             Reset Defaults
           </Button>
-          <Button onClick={handleSaveSettings} disabled={loading} className="w-full sm:w-auto">
+          <Button onClick={handleSaveSettings} disabled={loading} className="w-full bg-linner-to-r from-amber-500 to-orange-500 text-white sm:w-auto">
             {loading ? (
               <>
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />

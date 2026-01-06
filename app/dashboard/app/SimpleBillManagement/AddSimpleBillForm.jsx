@@ -10,6 +10,7 @@ const AddSimpleBillForm = ({ onClose, onSave, shops = [] }) => {
     pricing: {
       subtotal: 0,
       discount: '',
+      extraCharge: '',
       totalAmount: 0
     },
     payment: {
@@ -299,14 +300,6 @@ const AddSimpleBillForm = ({ onClose, onSave, shops = [] }) => {
                 <label className="block text-sm font-medium text-gray-700">
                   Items *
                 </label>
-                <button
-                  type="button"
-                  onClick={addItem}
-                  className="flex items-center gap-2 text-blue-600 hover:text-blue-700"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add Item
-                </button>
               </div>
               
               {formData.items.map((item, index) => (
@@ -363,47 +356,63 @@ const AddSimpleBillForm = ({ onClose, onSave, shops = [] }) => {
                 </div>
               ))}
               {errors.items && <p className="text-red-500 text-sm mt-1">{errors.items}</p>}
+
+              <div className="flex justify-end mt-2">
+                <button
+                  type="button"
+                  onClick={addItem}
+                  className="flex items-center gap-2 text-blue-600 hover:text-blue-700"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Item
+                </button>
+              </div>
             </div>
 
-            {/* Pricing Details - NO GST */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Pricing Section */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-lg">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Extra Charge (Total)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={formData.pricing.extraCharge}
+                  onChange={(e) => handleNestedInputChange('pricing', 'extraCharge', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="0.00"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Adds {(parseFloat(formData.pricing.extraCharge || 0) / (formData.items.reduce((sum, item) => sum + (parseFloat(item.quantity) || 0), 0) || 1)).toFixed(2)} per unit
+                </p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Discount
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={formData.pricing.discount}
+                  onChange={(e) => handleNestedInputChange('pricing', 'discount', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="0.00"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Subtotal
                 </label>
                 <input
                   type="number"
                   value={isNaN(formData.pricing.subtotal) ? 0 : formData.pricing.subtotal.toFixed(2)}
                   readOnly
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-700 font-medium"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Discount
-                </label>
-                <input
-                  type="number"
-                  value={isNaN(formData.pricing.discount) ? 0 : formData.pricing.discount}
-                  onChange={(e) => handleNestedInputChange('pricing', 'discount', parseFloat(e.target.value) || 0)}
-                  min="0"
-                  step="0.01"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-            </div>
-
-            {/* Total Amount */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Total Amount (Subtotal - Discount)
-              </label>
-              <input
-                type="number"
-                value={isNaN(formData.pricing.totalAmount) ? 0 : formData.pricing.totalAmount.toFixed(2)}
-                readOnly
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-lg font-semibold"
-              />
             </div>
 
             {/* Paid Amount */}
@@ -413,11 +422,12 @@ const AddSimpleBillForm = ({ onClose, onSave, shops = [] }) => {
               </label>
               <input
                 type="number"
-                value={isNaN(formData.payment.paidAmount) ? 0 : formData.payment.paidAmount}
-                onChange={(e) => handleNestedInputChange('payment', 'paidAmount', parseFloat(e.target.value) || 0)}
                 min="0"
                 step="0.01"
+                value={formData.payment.paidAmount}
+                onChange={(e) => handleNestedInputChange('payment', 'paidAmount', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="0.00"
               />
             </div>
 

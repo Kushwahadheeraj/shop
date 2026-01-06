@@ -364,7 +364,7 @@ const AddShopForm = ({ onClose, onSave }) => {
             </div>
 
             {/* Financial Information */}
-            <div className="space-y-4">
+            {/* <div className="space-y-4">
               <h3 className="text-lg font-medium text-gray-900 flex items-center gap-2">
                 <User className="w-5 h-5" />
                 Financial Information
@@ -404,7 +404,7 @@ const AddShopForm = ({ onClose, onSave }) => {
                   </select>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Notes */}
             <div>
@@ -432,7 +432,7 @@ const AddShopForm = ({ onClose, onSave }) => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-6 py-2 bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white rounded-lg hover:bg-gradient-to-brdisabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isSubmitting ? 'Creating...' : 'Create Shop'}
               </button>

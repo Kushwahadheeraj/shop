@@ -12,7 +12,8 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
       gstRate: 18,
       gstAmount: 0,
       totalAmount: 0,
-      discount: ''
+      discount: '',
+      extraCharge: ''
     },
     payment: {
       method: 'cash',
@@ -35,10 +36,20 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
 
   // Calculate totals whenever items or pricing changes
   useEffect(() => {
+    // 1. Calculate total quantity
+    const totalQuantity = formData.items.reduce((sum, item) => sum + (parseFloat(item.quantity) || 0), 0);
+    
+    // 2. Calculate extra charge per unit
+    const extraCharge = parseFloat(formData.pricing.extraCharge) || 0;
+    const chargePerUnit = totalQuantity > 0 ? extraCharge / totalQuantity : 0;
+
+    // 3. Calculate subtotal with extra charge distributed
     const subtotal = formData.items.reduce((sum, item) => {
       const quantity = parseFloat(item.quantity) || 0;
       const unitPrice = parseFloat(item.unitPrice) || 0;
-      return sum + (quantity * unitPrice);
+      // Add charge per unit to item price for calculation
+      const adjustedPrice = unitPrice + chargePerUnit;
+      return sum + (quantity * adjustedPrice);
     }, 0);
 
     const gstRate = parseFloat(formData.pricing.gstRate) || 0;
@@ -61,7 +72,7 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
         remainingAmount: isNaN(totalAmount - paidAmount) ? 0 : totalAmount - paidAmount
       }
     }));
-  }, [formData.items, formData.pricing.gstRate, formData.pricing.discount, formData.payment.paidAmount]);
+  }, [formData.items, formData.pricing.gstRate, formData.pricing.discount, formData.pricing.extraCharge, formData.payment.paidAmount]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -309,14 +320,14 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
                 <label className="block text-xs sm:text-sm font-medium text-gray-700">
                   Items *
                 </label>
-                <button
+                {/* <button
                   type="button"
                   onClick={addItem}
                   className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-blue-600 hover:text-blue-700"
                 >
                   <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
                   Add Item
-                </button>
+                </button> */}
               </div>
               
               {formData.items.map((item, index) => (
@@ -373,10 +384,38 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
                 </div>
               ))}
               {errors.items && <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.items}</p>}
+            <div className="flex justify-end mt-2">
+                            <button
+                              type="button"
+                              onClick={addItem}
+                              className="flex items-center gap-2 text-blue-600 hover:text-blue-700"
+                            >
+                              <Plus className="w-4 h-4" />
+                              Add Item
+                            </button>
+                          </div>
             </div>
 
             {/* Pricing Details */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            {/* Pricing Details */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              <div>
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+                  Extra Charge
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={formData.pricing.extraCharge}
+                  onChange={(e) => handleNestedInputChange('pricing', 'extraCharge', e.target.value)}
+                  className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="0.00"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Adds {(parseFloat(formData.pricing.extraCharge || 0) / (formData.items.reduce((sum, item) => sum + (parseFloat(item.quantity) || 0), 0) || 1)).toFixed(2)} per unit
+                </p>
+              </div>
               <div>
                 <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                   Subtotal

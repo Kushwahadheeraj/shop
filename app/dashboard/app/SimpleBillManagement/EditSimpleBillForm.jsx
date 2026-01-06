@@ -9,6 +9,7 @@ const EditSimpleBillForm = ({ bill, onClose, onSave, shops }) => {
     pricing: {
       subtotal: 0,
       discount: 0,
+      extraCharge: 0,
       totalAmount: 0
     },
     payment: {
@@ -38,6 +39,7 @@ const EditSimpleBillForm = ({ bill, onClose, onSave, shops }) => {
         pricing: {
           subtotal: bill.pricing?.subtotal || 0,
           discount: bill.pricing?.discount || 0,
+          extraCharge: bill.pricing?.extraCharge ?? 0,
           totalAmount: bill.pricing?.totalAmount || 0
         },
         payment: {
@@ -60,11 +62,11 @@ const EditSimpleBillForm = ({ bill, onClose, onSave, shops }) => {
 
   useEffect(() => {
     calculateTotals();
-  }, [formData.items, formData.pricing.discount]);
+  }, [formData.items, formData.pricing.discount, formData.pricing.extraCharge]);
 
   const calculateTotals = () => {
     const subtotal = formData.items.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
-    const totalAmount = subtotal - formData.pricing.discount; // NO GST
+    const totalAmount = subtotal - formData.pricing.discount + (formData.pricing.extraCharge || 0); // NO GST
 
     setFormData(prev => ({
       ...prev,
@@ -421,6 +423,18 @@ const EditSimpleBillForm = ({ bill, onClose, onSave, shops }) => {
                     step="0.01"
                     value={formData.pricing.discount}
                     onChange={(e) => handleInputChange('pricing.discount', parseFloat(e.target.value) || 0)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Extra Charge</label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={formData.pricing.extraCharge}
+                    onChange={(e) => handleInputChange('pricing.extraCharge', parseFloat(e.target.value) || 0)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>

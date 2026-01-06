@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Logo from '@/public/logo.png';
+// import BrandLogo from './BrandLogo';
 import Sidebar from './Sidebar';
 import { FiMenu } from 'react-icons/fi';
 import { IoClose } from 'react-icons/io5';
@@ -12,6 +13,7 @@ import { useCart } from '@/components/CartContext';
 import CartPreview from '@/components/CartPreview';
 import API_BASE_URL from '@/lib/apiConfig';
 import { performLogout } from '@/lib/logout';
+import BrandLogo from './BrandLogo';
 
 
 export default function Header() {
@@ -574,11 +576,14 @@ export default function Header() {
             >
               {sidebarOpen ? <IoClose size={24} /> : <FiMenu size={24} />}
             </button>
-            <Image
+            {/* <Image
               src={Logo}
               alt='Hardware Shack Logo'
               className='rounded w-[9.5rem] h-10 md:w-[14rem] md:h-[3rem] lg:w-[18.563rem] lg:h-[4.25rem] object-contain'
-            />
+            /> */}
+            <div className='px-3 py-4 border-b border-gray-100 flex items-center justify-center'>
+                    <BrandLogo size={64} showText={true} />
+                  </div>
           </div>
           {/* Right: Mobile cart */}
           <div className='md:hidden flex items-center gap-2'>

@@ -13,6 +13,7 @@ const orderSchema = new mongoose.Schema({
     }
   ],
   paymentMethod: { type: String, enum: ['prepaid', 'cod'], default: 'prepaid' },
+  couponCode: { type: String }, // Store the coupon code used
   totals: {
     subtotal: Number,
     shipping: Number,

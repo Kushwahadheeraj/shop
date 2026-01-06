@@ -5,6 +5,7 @@ import { Plus, RefreshCw, Trash2, FileText, Wand2, Sparkles, Loader2, Clock, His
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/components/AuthContext";
 import InvoiceTemplates from "./components/InvoiceTemplates";
+import AddBusinessProfileModal from "./components/AddBusinessProfileModal";
 import API_BASE_URL from "@/lib/apiConfig";
 
 const UNIT_OPTIONS = [
@@ -36,16 +37,9 @@ const clampCurrency = (value, min = 0, max = Number.MAX_SAFE_INTEGER) => {
   return Math.min(Math.max(parsed, min), max);
 };
 
-const formatShopAddress = (shop) => {
-  if (!shop) return "";
-  const { street, address, city, stateName, state, pincode, location } = shop;
-  const parts = [
-    street || address,
-    city || location?.city,
-    stateName || state || location?.state,
-    pincode || location?.pincode
-  ];
-  return parts.filter(Boolean).join(", ");
+const formatProfileAddress = (profile) => {
+  if (!profile) return "";
+  return profile.address || "";
 };
 
 const formatDisplayDate = (value) => {
@@ -64,11 +58,12 @@ const InvoiceGeneratorPage = () => {
   const searchParams = useSearchParams();
   const { isAuthenticated, isSeller, loading: authLoading } = useAuth();
 
-  const [shops, setShops] = useState([]);
-  const [shopsLoading, setShopsLoading] = useState(false);
+  const [businessProfiles, setBusinessProfiles] = useState([]);
+  const [profilesLoading, setProfilesLoading] = useState(false);
+  const [isAddProfileModalOpen, setIsAddProfileModalOpen] = useState(false);
   const [currentBillId, setCurrentBillId] = useState(null);
   const [issuerType, setIssuerType] = useState("shop"); // 'shop' | 'custom'
-  const [selectedShopId, setSelectedShopId] = useState("");
+  const [selectedProfileId, setSelectedProfileId] = useState("");
   const [issuerDetails, setIssuerDetails] = useState({
     name: "",
     address: "",
@@ -103,15 +98,20 @@ const InvoiceGeneratorPage = () => {
   // const [deletingIds, setDeletingIds] = useState([]);
   const invoiceIdParam = searchParams?.get("id");
 
-  const currentShop = useMemo(
-    () => shops.find((shop) => shop?._id === selectedShopId),
-    [selectedShopId, shops]
+  const currentProfile = useMemo(
+    () => businessProfiles.find((profile) => profile?._id === selectedProfileId),
+    [selectedProfileId, businessProfiles]
   );
+
+  const handleProfileAdded = (newProfile) => {
+    setBusinessProfiles((prev) => [newProfile, ...prev]);
+    setSelectedProfileId(newProfile._id);
+  };
 
   const resetForm = useCallback(() => {
     setCurrentBillId(null);
     setIssuerType("shop");
-    setSelectedShopId(shops[0]?._id || "");
+    setSelectedProfileId(businessProfiles[0]?._id || "");
     setIssuerDetails({ name: "", address: "", phone: "", email: "" });
     setCustomerDetails({ name: "", address: "", phone: "", email: "" });
     setInvoiceMeta({
@@ -123,7 +123,7 @@ const InvoiceGeneratorPage = () => {
     setPricingAdjustments({ discountValue: 0, discountType: "amount", paidAmount: 0 });
     setItems([createEmptyItem()]);
     setSelectedTemplate(null);
-  }, [shops]);
+  }, [businessProfiles]);
 
   const subtotal = useMemo(
     () =>
@@ -175,22 +175,22 @@ const InvoiceGeneratorPage = () => {
       amount: Math.round((item.quantity * item.unitPrice + Number.EPSILON) * 100) / 100
     }));
 
-    const issuer = issuerType === "shop" ? currentShop : issuerDetails;
+    const issuer = issuerType === "shop" ? currentProfile : issuerDetails;
     const issuerName =
       issuerType === "shop"
-        ? issuer?.name || "Shop"
+        ? issuer?.name || "Business Profile"
         : issuerDetails.name || "Business / Owner Name";
     const issuerAddress =
       issuerType === "shop"
-        ? formatShopAddress(issuer)
+        ? issuer?.address || ""
         : issuerDetails.address || "";
     const issuerPhone =
       issuerType === "shop"
-        ? issuer?.contact?.phone || issuer?.phone || ""
+        ? issuer?.phone || ""
         : issuerDetails.phone || "";
     const issuerEmail =
       issuerType === "shop"
-        ? issuer?.contact?.email || issuer?.email || ""
+        ? issuer?.email || ""
         : issuerDetails.email || "";
 
     const customerName =
@@ -230,7 +230,7 @@ const InvoiceGeneratorPage = () => {
   }, [
     items,
     issuerType,
-    currentShop,
+    currentProfile,
     issuerDetails,
     customerDetails,
     invoiceMeta,
@@ -241,31 +241,31 @@ const InvoiceGeneratorPage = () => {
     balanceAmount
   ]);
 
-  const fetchShops = useCallback(async () => {
+  const fetchProfiles = useCallback(async () => {
     try {
-      setShopsLoading(true);
+      setProfilesLoading(true);
       const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-      const response = await fetch(`${API_BASE_URL}/shops`, {
+      const response = await fetch(`${API_BASE_URL}/invoice-business-profiles`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
       const data = await response.json().catch(() => ({}));
-      const list = data?.data?.shops || data?.data || [];
+      const list = data?.data || [];
       if (Array.isArray(list)) {
-        setShops(list);
-        if (issuerType === "shop" && list.length && !selectedShopId) {
-          setSelectedShopId(list[0]._id);
+        setBusinessProfiles(list);
+        if (issuerType === "shop" && list.length && !selectedProfileId) {
+          setSelectedProfileId(list[0]._id);
         }
       }
     } catch (error) {
-      // console.error("Failed to load shops", error);
+      // console.error("Failed to load profiles", error);
     } finally {
-      setShopsLoading(false);
+      setProfilesLoading(false);
     }
-  }, [issuerType, selectedShopId]);
+  }, [issuerType, selectedProfileId]);
 
   useEffect(() => {
-    fetchShops();
-  }, [fetchShops]);
+    fetchProfiles();
+  }, [fetchProfiles]);
 
   useEffect(() => {
     if (!authLoading) {
@@ -318,11 +318,11 @@ const InvoiceGeneratorPage = () => {
       shopEmail: preparedBill.shopEmail,
       templateId: preparedBill.templateId
     };
-    if (issuerType === "shop" && selectedShopId) {
-      payload.shopId = selectedShopId;
+    if (issuerType === "shop" && selectedProfileId) {
+      payload.businessProfileId = selectedProfileId;
     }
     return payload;
-  }, [preparedBill, invoiceMeta.notes, issuerType, selectedShopId]);
+  }, [preparedBill, invoiceMeta.notes, issuerType, selectedProfileId]);
 
   const fetchBillHistory = useCallback(async () => {
     try {
@@ -445,7 +445,7 @@ const InvoiceGeneratorPage = () => {
         alert(error.message || "Failed to load invoice");
       }
     },
-    [shops]
+    [businessProfiles]
   );
 
   const handleSaveAndPreview = useCallback(async () => {
@@ -592,7 +592,7 @@ useEffect(() => {
                 <div className="bg-white/20 p-2 rounded-xl">
                   <Sparkles className="w-6 h-6 sm:w-7 sm:h-7" />
                 </div>
-                Professional Invoice Generator
+                Simple Invoice
               </h1>
               <p className="text-sm sm:text-base text-amber-50/90 mt-2 max-w-2xl">
                 तुरंत बिल बनाइये — दुकान के नाम से या सीधे ग्राहक के नाम से, आइटम जोड़ें और QR से पेमेंट दिखाएँ।
@@ -721,7 +721,7 @@ useEffect(() => {
                 onClick={() => setIssuerType("shop")}
                 type="button"
               >
-                दुकान से बिल काटें
+                Business Profile
               </button>
               <button
                     className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
@@ -738,47 +738,57 @@ useEffect(() => {
 
             {issuerType === "shop" ? (
               <div className="space-y-3 w-full">
-                <label className="block text-sm font-medium text-gray-600">
-                  Select Shop
-                </label>
+                <div className="flex justify-between items-center">
+                    <label className="block text-sm font-medium text-gray-600">
+                    Select Business Profile
+                    </label>
+                    <button
+                        type="button"
+                        onClick={() => setIsAddProfileModalOpen(true)}
+                        className="text-sm font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1"
+                    >
+                        <Plus className="w-4 h-4" />
+                        Add New
+                    </button>
+                </div>
                 <select
-                  value={selectedShopId}
-                  onChange={(e) => setSelectedShopId(e.target.value)}
+                  value={selectedProfileId}
+                  onChange={(e) => setSelectedProfileId(e.target.value)}
                   className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-200 bg-gray-50/50 hover:bg-white font-medium text-gray-900"
                 >
                   <option value="">
-                    {shopsLoading
-                      ? "Loading shops..."
-                      : shops.length
-                      ? "Select shop"
-                      : "No shops found"}
+                    {profilesLoading
+                      ? "Loading profiles..."
+                      : businessProfiles.length
+                      ? "Select profile"
+                      : "No profiles found"}
                   </option>
-                  {shops.map((shop) => (
-                    <option key={shop._id} value={shop._id}>
-                      {shop.name}
+                  {businessProfiles.map((profile) => (
+                    <option key={profile._id} value={profile._id}>
+                      {profile.name}
                     </option>
                   ))}
                 </select>
-                {currentShop && (
+                {currentProfile && (
                   <div className="text-sm text-gray-600 bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 border-2 border-amber-200 rounded-xl p-4 shadow-sm break-words">
                     <div className="font-bold text-gray-900 mb-1 text-base leading-snug break-words">
-                      {currentShop.name}
+                      {currentProfile.name}
                     </div>
                     <div className="text-gray-700 mb-2 leading-6 break-words">
-                      {formatShopAddress(currentShop)}
+                      {formatProfileAddress(currentProfile)}
                     </div>
-                    {(currentShop.contact?.phone || currentShop.contact?.email) && (
+                    {(currentProfile.phone || currentProfile.email) && (
                       <div className="mt-2 space-y-1 pt-2 border-t border-amber-200">
-                        {currentShop.contact?.phone && (
+                        {currentProfile.phone && (
                           <div className="flex items-start gap-2 text-sm break-words">
                             <span>📞</span>
-                            <span className="font-medium break-all">{currentShop.contact.phone}</span>
+                            <span className="font-medium break-all">{currentProfile.phone}</span>
                           </div>
                         )}
-                        {currentShop.contact?.email && (
+                        {currentProfile.email && (
                           <div className="flex items-start gap-2 text-sm break-words">
                             <span>✉️</span>
-                            <span className="font-medium break-all">{currentShop.contact.email}</span>
+                            <span className="font-medium break-all">{currentProfile.email}</span>
                           </div>
                         )}
                       </div>
@@ -922,14 +932,6 @@ useEffect(() => {
                   <div className="w-1 h-6 bg-gradient-to-b from-amber-500 to-orange-500 rounded-full"></div>
                   <h2 className="text-lg sm:text-xl font-bold text-gray-900">Items</h2>
                 </div>
-                <button
-                  onClick={addNewItem}
-                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-bold bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white rounded-xl hover:from-amber-600 hover:to-orange-600 transition-all duration-200 shadow-lg shadow-amber-400/30 hover:shadow-xl hover:scale-105 w-full sm:w-auto"
-                  type="button"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add Item
-                </button>
               </div>
 
               <div className="space-y-3">
@@ -1006,6 +1008,16 @@ useEffect(() => {
                     </div>
                   );
                 })}
+              </div>
+              <div className="flex justify-end mt-4">
+                <button
+                  onClick={addNewItem}
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-bold bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white rounded-xl hover:from-amber-600 hover:to-orange-600 transition-all duration-200 shadow-lg shadow-amber-400/30 hover:shadow-xl hover:scale-105 w-full sm:w-auto"
+                  type="button"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Item
+                </button>
               </div>
             </section>
 
@@ -1259,6 +1271,12 @@ useEffect(() => {
           selectedTemplate={selectedTemplate}
         />
       )}
+
+      <AddBusinessProfileModal
+        isOpen={isAddProfileModalOpen}
+        onClose={() => setIsAddProfileModalOpen(false)}
+        onProfileAdded={handleProfileAdded}
+      />
     </div>
   );
 };

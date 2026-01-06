@@ -597,7 +597,7 @@ const GSTBillManagementPage = () => {
                 <Sparkles className="w-6 h-6 sm:w-7 sm:h-7" />
               </div>
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold leading-tight">
-                GST Bill Management
+                GST Invoice
               </h1>
             </div>
             <p className="text-sm sm:text-base text-amber-50/90 max-w-2xl">

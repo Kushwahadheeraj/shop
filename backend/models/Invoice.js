@@ -11,6 +11,10 @@ const invoiceSchema = new mongoose.Schema(
       type: String,
       default: 'default',
     },
+    businessProfileId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'InvoiceBusinessProfile',
+    },
     shopName: {
       type: String,
       required: true,

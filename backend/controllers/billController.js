@@ -90,7 +90,8 @@ const createBill = async (req, res) => {
       gstRate: pricing.gstRate || 18,
       gstAmount: 0,
       totalAmount: 0,
-      discount: pricing.discount || 0
+      discount: pricing.discount || 0,
+      extraCharge: pricing.extraCharge || 0
     };
 
     calculatedPricing.gstAmount = (calculatedPricing.subtotal * calculatedPricing.gstRate) / 100;

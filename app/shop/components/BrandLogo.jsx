@@ -3,21 +3,12 @@
 import React from "react";
 import Image from "next/image";
 
-export default function BrandLogo({ className = "", size = 64, showText = true, inheritColor = false }) {
+export default function BrandLogo({ className = "", size = 64, showText = true }) {
   const diamondSize = size;
   const bgSize = size * 0.9; // Yellow diamond background size
-  const titleClass = inheritColor
-    ? "text-2xl font-bold tracking-tight"
-    : "text-2xl font-bold text-zinc-900 dark:text-white tracking-tight";
-  const subClass = inheritColor
-    ? "text-lg font-semibold tracking-wide opacity-70"
-    : "text-lg font-semibold text-zinc-600 dark:text-zinc-200 tracking-wide";
-  const wrapperBase = inheritColor
-    ? "flex items-center gap-2 w-full"
-    : "flex items-center gap-2 text-zinc-900 dark:text-white w-full";
   
   return (
-    <div className={`${wrapperBase} ${className}`}>
+    <div className={`flex items-center gap-2 text-zinc-900 dark:text-white w-full ${className}`}>
       <div
         className="relative flex items-center justify-center flex-shrink-0"
         style={{ width: diamondSize, height: diamondSize }}
@@ -26,7 +17,7 @@ export default function BrandLogo({ className = "", size = 64, showText = true, 
         <div
           className="absolute rounded-lg"
           style={{
-            background: 'linear-gradient(135deg, #fcd34d 0%, #f59e0b 50%, #fbbf24 100%)',
+            background: 'linear-gradient(135deg, #fde047 0%, #fde047 50%, #fde047 100%)',
             transform: 'rotate(45deg)',
             borderRadius: '10px',
             boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
@@ -42,15 +33,15 @@ export default function BrandLogo({ className = "", size = 64, showText = true, 
         <div
           className="relative z-10 flex items-center justify-center"
           style={{ 
-            width: size * 1.6, 
-            height: size * 1.6
+            width: size * 1.8, 
+            height: size * 1.8
           }}
         >
           <Image
             src="/logo.png"
             alt="Kushwaha Hardware Logo"
-            width={size * 1.6}
-            height={size * 1.6}
+            width={size * 1.8}
+            height={size * 1.8}
             className="object-contain"
             priority
           />
@@ -58,8 +49,8 @@ export default function BrandLogo({ className = "", size = 64, showText = true, 
       </div>
       {showText && (
         <div className="text-left leading-tight flex-1 min-w-0">
-          <p className={titleClass}>Kushwaha</p>
-          <p className={subClass}>Hardware</p>
+          <p className="text-2xl font-bold text-zinc-900 dark:text-white tracking-tight">Kushwaha</p>
+          <p className="text-lg font-semibold text-zinc-600 dark:text-zinc-200 tracking-wide">Hardware</p>
         </div>
       )}
     </div>

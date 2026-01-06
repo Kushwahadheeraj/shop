@@ -222,6 +222,9 @@ const updateInvoice = async (req, res) => {
     const payment = normalizePayment(req.body.payment, totals.totalAmount);
 
     invoice.templateId = req.body.templateId || invoice.templateId;
+    if (req.body.businessProfileId) {
+      invoice.businessProfileId = req.body.businessProfileId;
+    }
     invoice.shopName = req.body.shopName || invoice.shopName;
     invoice.shopAddress = req.body.shopAddress || invoice.shopAddress;
     invoice.shopPhone = req.body.shopPhone || invoice.shopPhone;

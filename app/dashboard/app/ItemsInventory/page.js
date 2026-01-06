@@ -81,8 +81,18 @@ const BillItemsInventoryPage = () => {
       // Extract all items from bills
       const items = [];
       bills.forEach((bill, billIndex) => {
+        // Calculate extra charge per unit for this bill
+        const billTotalQty = Array.isArray(bill.items) 
+          ? bill.items.reduce((sum, i) => sum + (parseFloat(i.quantity || i.qty) || 0), 0)
+          : 0;
+        const billExtraCharge = parseFloat(bill.pricing?.extraCharge) || 0;
+        const extraChargePerUnit = billTotalQty > 0 ? billExtraCharge / billTotalQty : 0;
+
         if (Array.isArray(bill.items)) {
           bill.items.forEach((item, itemIndex) => {
+            const quantity = parseFloat(item.quantity || item.qty) || 0;
+            const itemExtraCharge = extraChargePerUnit * quantity;
+
             items.push({
               ...item,
               billNumber: bill.billNumber || bill.billNo || `BILL-${billIndex + 1}`,
@@ -91,10 +101,12 @@ const BillItemsInventoryPage = () => {
               shopName: bill.shopName || bill.shop || 'N/A',
               // For Simple Bill: unitPrice is per piece, totalPrice is quantity * unitPrice
               unitPrice: item.unitPrice || item.price || 0,
-              totalPrice: item.totalPrice || item.total || (item.quantity * (item.unitPrice || item.price || 0)) || 0,
-              quantity: item.quantity || item.qty || 0,
+              totalPrice: item.totalPrice || item.total || (quantity * (item.unitPrice || item.price || 0)) || 0,
+              quantity: quantity,
               category: item.category || item.type || 'Uncategorized',
-              name: item.name || item.itemName || item.productName || 'Unknown Item'
+              name: item.name || item.itemName || item.productName || 'Unknown Item',
+              extraChargePerUnit: extraChargePerUnit,
+              itemExtraCharge: itemExtraCharge
             });
           });
         } else {
@@ -166,8 +178,18 @@ const BillItemsInventoryPage = () => {
       // Extract all items from bills (these are GST bills from BillManagement)
       const items = [];
       bills.forEach((bill, billIndex) => {
+        // Calculate extra charge per unit for this bill
+        const billTotalQty = Array.isArray(bill.items) 
+          ? bill.items.reduce((sum, i) => sum + (parseFloat(i.quantity || i.qty) || 0), 0)
+          : 0;
+        const billExtraCharge = parseFloat(bill.pricing?.extraCharge) || 0;
+        const extraChargePerUnit = billTotalQty > 0 ? billExtraCharge / billTotalQty : 0;
+
         if (Array.isArray(bill.items)) {
           bill.items.forEach((item, itemIndex) => {
+            const quantity = parseFloat(item.quantity || item.qty) || 0;
+            const itemExtraCharge = extraChargePerUnit * quantity;
+
             items.push({
               ...item,
               billNumber: bill.billNumber || bill.billNo || `BILL-${billIndex + 1}`,
@@ -176,10 +198,12 @@ const BillItemsInventoryPage = () => {
               shopName: bill.shopName || bill.shop || 'N/A',
               // For BillManagement bills: unitPrice is per piece, totalPrice is quantity * unitPrice
               unitPrice: item.unitPrice || item.price || 0,
-              totalPrice: item.totalPrice || item.total || (item.quantity * (item.unitPrice || item.price || 0)) || 0,
-              quantity: item.quantity || item.qty || 0,
+              totalPrice: item.totalPrice || item.total || (quantity * (item.unitPrice || item.price || 0)) || 0,
+              quantity: quantity,
               category: item.category || item.type || 'Uncategorized',
-              name: item.name || item.itemName || item.productName || 'Unknown Item'
+              name: item.name || item.itemName || item.productName || 'Unknown Item',
+              extraChargePerUnit: extraChargePerUnit,
+              itemExtraCharge: itemExtraCharge
             });
           });
         } else {
@@ -293,7 +317,7 @@ const BillItemsInventoryPage = () => {
                 <Sparkles className="w-6 h-6 sm:w-7 sm:h-7" />
               </div>
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold leading-tight">
-                Bill Items Inventory
+                Items Inventory
               </h1>
             </div>
             <p className="text-sm sm:text-base text-amber-50/90 max-w-2xl">
@@ -466,28 +490,31 @@ const BillItemsInventoryPage = () => {
           </div>
         ) : (
           <div className="overflow-x-auto -mx-4 sm:mx-0">
-            <table className="w-full min-w-[800px]">
+            <table className="w-full min-w-[300px] sm:min-w-[800px]">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Item Name
                   </th>
-                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
                     Category
                   </th>
-                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
                     Quantity
                   </th>
-                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
-                    Per Piece Price
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Price
                   </th>
                   <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Extra Charge (Unit)
+                  </th>
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
                     Total Price
                   </th>
                   <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
                     Bill Number
                   </th>
-                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                  <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Shop Name
                   </th>
                   <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
@@ -499,27 +526,30 @@ const BillItemsInventoryPage = () => {
                 {filteredItems.map((item, index) => (
                   <tr key={index} className="hover:bg-gray-50">
                     <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium text-gray-900">
-                      <div className="truncate max-w-[120px] sm:max-w-none">{item.name || 'N/A'}</div>
+                      <div className="truncate max-w-[100px] sm:max-w-none">{item.name || 'N/A'}</div>
                     </td>
-                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-900">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-900 hidden sm:table-cell">
                       <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 text-xs font-medium bg-amber-100 text-amber-800 rounded-full whitespace-nowrap">
                         {item.category || 'Uncategorized'}
                       </span>
                     </td>
-                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-900 whitespace-nowrap">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-900 whitespace-nowrap hidden sm:table-cell">
                       {item.quantity || 0}
                     </td>
-                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-900 whitespace-nowrap hidden sm:table-cell">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-900 whitespace-nowrap">
                       {formatCurrency(item.unitPrice || 0)}
                     </td>
-                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-semibold text-gray-900 whitespace-nowrap">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-red-600 whitespace-nowrap">
+                      {formatCurrency(item.extraChargePerUnit || 0)}
+                    </td>
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-semibold text-gray-900 whitespace-nowrap hidden sm:table-cell">
                       {formatCurrency(item.totalPrice || 0)}
                     </td>
                     <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-900 whitespace-nowrap hidden md:table-cell">
                       <div className="truncate max-w-[100px]">{item.billNumber || 'N/A'}</div>
                     </td>
-                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-900 hidden lg:table-cell">
-                      <div className="truncate max-w-[150px]">{item.shopName || 'N/A'}</div>
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-900">
+                      <div className="truncate max-w-[100px] sm:max-w-[150px]">{item.shopName || 'N/A'}</div>
                     </td>
                     <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-900 whitespace-nowrap hidden md:table-cell">
                       {formatDate(item.billDate)}

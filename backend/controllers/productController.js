@@ -1,83 +1,80 @@
 const mongoose = require('mongoose');
+const path = require('path');
+
+// Map of Mongoose Model Name -> File Name (without .js)
+// This ensures we can load models if they aren't registered yet
+const productModelsMap = {
+  'AdhesivesModels': 'AdhesivesModels',
+  'BrushModels': 'BrushModels',
+  'CementsModels': 'CementsModels',
+  'CleaningModels': 'CleaningModels',
+  'DryModels': 'DryModels',
+  'ElectricalModels': 'ElectricalModels',
+  'FiberModels': 'FiberModels',
+  'FittingModels': 'FittingModels',
+  'HardwareModels': 'HardwareModels',
+  'HomeDecorModels': 'HomeDecorModels',
+  'LightingModels': 'LightingModels',
+  'LocksModels': 'LocksModels',
+  'PaintModels': 'PaintModels',
+  'PipeModels': 'PipeModels',
+  'RooferModels': 'RooferModels',
+  'SanitaryModels': 'SanitaryModels',
+  'SheetModels': 'SheetModels',
+  'ToolsModels': 'ToolsModels',
+  'UncategorizedModels': 'UncategorizedModels',
+  'WaterProofingModels': 'WaterProofingModels',
+  'HomeElectrical': 'HomeElectricalModel',
+  'HomePaints': 'HomePaintsModel',
+  'ProductTools': 'ProductToolsModel',
+  'PvcMatsModels': 'PvcMatsModels'
+};
+
+// Helper to get all product models
+const getModels = () => {
+  const models = [];
+  for (const [modelName, fileName] of Object.entries(productModelsMap)) {
+    try {
+      // Try to get existing model
+      if (mongoose.models[modelName]) {
+        models.push(mongoose.model(modelName));
+      } else {
+        // Try to load from file
+        try {
+          // Check if file exists in ../models/
+          // Note: using relative path from this controller file
+          const model = require(`../models/${fileName}`);
+          if (model) models.push(model);
+        } catch (requireErr) {
+          console.error(`Failed to load model ${modelName} from ${fileName}:`, requireErr.message);
+        }
+      }
+    } catch (err) {
+      console.error(`Error loading model ${modelName}:`, err);
+    }
+  }
+  return models;
+};
 
 // Get all products from all categories
 const getAllProducts = async (req, res) => {
   try {
     const products = [];
+    const models = getModels();
     
-    // List of all model names to search
-    const modelNames = [
-      'Adhesives', 'Brush', 'Cements', 'Cleaning', 'Dry', 'Fiber', 'Fitting', 
-      'Hardware', 'HomeDecor', 'Uncategorized', 'WaterProofing',
-      // Electrical models
-      'Adaptors', 'CeilingRoses', 'Dimmer', 'DistributionBoards', 'DPswitch',
-      'EarthingAccessories', 'ELCBsRCCBs', 'ElectricalFittings', 'Fan',
-      'FlexibleConduit', 'FlexibleWires', 'FuseCarriers', 'Holders',
-      'Indicator', 'InsulationTapes', 'Isolators', 'Jacks', 'KITKATFuses',
-      'Lights', 'MainSwitch', 'MCB', 'ModularSurfaceBox', 'Motors',
-      'MotorStarters', 'Others', 'PinTop', 'Plug', 'PowerStrips', 'PVCClips',
-      'Regulators', 'RotarySwitch', 'Sockets', 'SwitchAndSocket', 'Switches',
-      'SwitchPlates', 'TravelAdaptor', 'TVOutlets', 'UniSwitch', 'WaterHeater',
-      'WiresAndCables',
-      // Locks models
-      'MorticeLocks', 'MortiseLockBody', 'PatchFittings',
-      // Paint models
-      'AcrylicDistemper', 'AcrylicEmulsionPaint', 'AcrylicPrimer', 'AcrylicWallPutty',
-      'Adhesive', 'AspaPaints', 'AsianPaints', 'AgsarPaints', 'AutomotivePaints',
-      'BlackBoardPaint', 'BrushesRollers', 'CementPrimer', 'CrackFillers',
-      'DeskLight', 'Distemper', 'DoorAccessories', 'DoorHandles', 'DoorLocks',
-      'DryWallGypsumScrews', 'ElectricalFittings', 'Enamel', 'ExteriorEmulsion',
-      'ExteriorPrimer', 'FocusLight', 'GemPaints', 'GlassCoatings', 'GlossEnamel',
-      'InteriorEmulsion', 'InteriorPrimer', 'JkWallPutty', 'KPFWallPutty',
-      'Melamyne', 'MetalPrimer', 'NC', 'PaintingAccessories', 'PaintingTools',
-      'Polish', 'PowderWallPutty', 'Primer', 'PU', 'Reflectors', 'RotatorySwitch',
-      'SatinEnamel', 'Sealer', 'SolventPrimer', 'SpareMallets', 'SprayPaints',
-      'Stainers', 'Stencils', 'SyntheticDistemper', 'SyntheticEnamel', 'Thinner',
-      'TileGuard', 'UniversalStainers', 'Varnish', 'WallPutty', 'WallTexture',
-      'WaterproofBasecoat', 'WoodFinishes', 'WoodPrimer', 'WoodPutty', 'WoodStainers',
-      // Pipe models
-      'AshirvadPipes', 'ApolloPipes', 'BirlaPipes', 'FinolexPipes', 'NepulPipes',
-      'PrakashPipes', 'PrincePipes', 'SupremePipes', 'TataPipes', 'TSAPipes',
-      // Roofer models
-      'AluminiumSheet', 'AsbestosSheet', 'CementSheet', 'CorrugatedSheet',
-      'GalvanizedSheet', 'GI', 'Roofer', 'SteelSheet',
-      // Sanitary models (sample of main ones)
-      'AcrylicProducts', 'Bathsense', 'CoralBathFixtures', 'Corsa', 'Essess',
-      'Hindware', 'LeoBathFittings', 'Parryware', 'WaterTec',
-      // Tools models (sample of main ones)
-      'Abrasives', 'AllenKeys', 'CarpenterPincer', 'Chisels', 'Clamps', 'Cutters',
-      'Files', 'GardenTools', 'GlueGun', 'GreaseGun', 'Hammer', 'Level',
-      'Lubrications', 'Piler', 'PolishingAccessories', 'PowerTools', 'ScrewDriver',
-      'SocketSet', 'Spanner', 'Wrench'
-    ];
-
-    // Get all models from mongoose
-    const models = {};
-    for (const modelName of modelNames) {
-      try {
-        // Try to get the model from mongoose
-        const model = mongoose.model(modelName);
-        if (model) {
-          models[modelName] = model;
-        }
-      } catch (err) {
-        // Model doesn't exist, skip
-        continue;
-      }
-    }
-
     // Fetch products from all available models
-    for (const [modelName, model] of Object.entries(models)) {
+    for (const model of models) {
       try {
-        const modelProducts = await model.find({}).limit(50); // Limit to 50 per category
+        const modelProducts = await model.find({}).limit(20); // Limit per model to avoid massive response
         const productsWithCategory = modelProducts.map(product => ({
           ...product.toObject(),
-          category: modelName,
+          // Use existing category or fallback to model name if missing
+          category: product.category || model.modelName,
           _id: product._id.toString()
         }));
         products.push(...productsWithCategory);
       } catch (err) {
-        console.error(`Error fetching from ${modelName}:`, err.message);
+        console.error(`Error fetching from ${model.modelName}:`, err.message);
         continue;
       }
     }
@@ -97,7 +94,7 @@ const getAllProducts = async (req, res) => {
   }
 };
 
-// Get products by category
+// Get products by category (This might need adjustment if 'category' param matches model name or internal category field)
 const getProductsByCategory = async (req, res) => {
   try {
     const { category } = req.params;
@@ -109,25 +106,30 @@ const getProductsByCategory = async (req, res) => {
       });
     }
 
-    // Try to get the model
-    let model;
-    try {
-      model = mongoose.model(category);
-    } catch (err) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Category not found' 
-      });
+    // Strategy: Search in ALL models for products with this category field
+    // OR check if 'category' matches a Model Name
+    
+    const models = getModels();
+    const products = [];
+
+    // 1. Check if category matches a Model Name directly
+    const directModel = models.find(m => m.modelName === category || m.modelName === category + 'Models');
+    if (directModel) {
+       const modelProducts = await directModel.find({}).limit(50);
+       return res.status(200).json(modelProducts);
     }
 
-    const products = await model.find({}).limit(50);
-    const productsWithCategory = products.map(product => ({
-      ...product.toObject(),
-      category: category,
-      _id: product._id.toString()
-    }));
+    // 2. Search all models for `category` field match
+    for (const model of models) {
+      try {
+        const found = await model.find({ category: category }).limit(50);
+        products.push(...found);
+      } catch (err) {
+        continue;
+      }
+    }
 
-    res.status(200).json(productsWithCategory);
+    res.status(200).json(products);
   } catch (error) {
     console.error('Error fetching products by category:', error);
     res.status(500).json({ 
@@ -152,31 +154,23 @@ const searchProducts = async (req, res) => {
 
     const products = [];
     const searchRegex = new RegExp(q, 'i');
+    const models = getModels();
 
-    // List of main model names to search
-    const mainModels = [
-      'Adhesives', 'Brush', 'Cements', 'Cleaning', 'Dry', 'Fiber', 'Fitting', 
-      'Hardware', 'HomeDecor', 'Uncategorized', 'WaterProofing',
-      'Adaptors', 'Lights', 'Fan', 'Switches', 'Sockets', 'MCB',
-      'MorticeLocks', 'AcrylicEmulsionPaint', 'AshirvadPipes', 'AluminiumSheet',
-      'AcrylicProducts', 'Abrasives'
-    ];
-
-    // Search in main models
-    for (const modelName of mainModels) {
+    // Search in all models
+    for (const model of models) {
       try {
-        const model = mongoose.model(modelName);
         const modelProducts = await model.find({
           $or: [
             { name: searchRegex },
             { description: searchRegex },
-            { brand: searchRegex }
+            { brand: searchRegex },
+            { category: searchRegex }
           ]
-        }).limit(10);
+        }).limit(20); // Limit per model to keep response fast but diverse
         
         const productsWithCategory = modelProducts.map(product => ({
           ...product.toObject(),
-          category: modelName,
+          category: product.category || model.modelName,
           _id: product._id.toString()
         }));
         products.push(...productsWithCategory);
@@ -196,8 +190,56 @@ const searchProducts = async (req, res) => {
   }
 };
 
+// Get specific products by IDs (searching across all models)
+const getProductsByIds = async (req, res) => {
+  try {
+    const { ids } = req.body;
+    
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return res.status(200).json([]);
+    }
+
+    const foundProducts = [];
+    let idsToFind = [...new Set(ids)]; // Deduplicate
+    const models = getModels();
+
+    for (const model of models) {
+      if (idsToFind.length === 0) break;
+
+      try {
+        const products = await model.find({ _id: { $in: idsToFind } });
+        
+        if (products.length > 0) {
+          const productsWithCategory = products.map(product => ({
+            ...product.toObject(),
+            category: product.category || model.modelName,
+            _id: product._id.toString()
+          }));
+          foundProducts.push(...productsWithCategory);
+          
+          // Remove found IDs
+          const foundIds = products.map(p => p._id.toString());
+          idsToFind = idsToFind.filter(id => !foundIds.includes(id));
+        }
+      } catch (err) {
+        continue;
+      }
+    }
+
+    res.status(200).json(foundProducts);
+  } catch (error) {
+    console.error('Error fetching products by IDs:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error fetching products details',
+      error: error.message 
+    });
+  }
+};
+
 module.exports = {
   getAllProducts,
   getProductsByCategory,
-  searchProducts
+  searchProducts,
+  getProductsByIds
 };

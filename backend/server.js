@@ -36,6 +36,7 @@ const categoryCountRoutes = require('./routes/categoryCountRoutes');
 const billRoutes = require('./routes/billRoutes');
 const simpleBillRoutes = require('./routes/simpleBillRoutes');
 const invoiceRoutes = require('./routes/invoiceRoutes');
+const invoiceBusinessRoutes = require('./routes/invoiceBusinessRoutes');
 const shopRoutes = require('./routes/shopRoutes');
 const gstBillsRoutes = require('./routes/gstBillsRoutes');
 const bankAccountsRoutes = require('./routes/bankAccountsRoutes');
@@ -46,6 +47,7 @@ const dashboardRoutes = require('./routes/dashboardRoutes');
 const productsRoutes = require('./routes/productsRoutes');
 const shopManagementRoutes = require('./routes/shopManagementRoutes');
 const galleryRoutes = require('./routes/GalleryRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 
 const app = express();
 
@@ -73,6 +75,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/bills', billRoutes);
 app.use('/api/simple-bills', simpleBillRoutes);
 app.use('/api/invoices', invoiceRoutes);
+app.use('/api/invoice-business-profiles', invoiceBusinessRoutes);
 app.use('/api/shops', shopRoutes);
 app.use('/api/gst-shops', gstShopsRoutes);
 app.use('/api/gst-bills', gstBillsRoutes);
@@ -104,6 +107,7 @@ app.use('/api/waterproofing', waterProofingRoutes);
 app.use('/api/products', productsRoutes);
 app.use('/api/shop-management', shopManagementRoutes);
 app.use('/api/gallery',galleryRoutes);
+app.use('/api/payments', paymentRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

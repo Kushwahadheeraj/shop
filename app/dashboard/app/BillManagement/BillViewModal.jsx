@@ -204,6 +204,12 @@ const BillViewModal = ({ bill, isOpen, onClose, onEdit, onDelete }) => {
                     <span>-{formatCurrency(bill.pricing.discount)}</span>
                   </div>
                 )}
+                {(bill.pricing?.extraCharge || 0) > 0 && (
+                  <div className="flex justify-between text-sm sm:text-base text-blue-600">
+                    <span>Extra Charge:</span>
+                    <span>+{formatCurrency(bill.pricing.extraCharge)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-sm sm:text-base">
                   <span className="text-gray-600">GST ({bill.pricing?.gstRate || 0}%):</span>
                   <span className="font-medium">{formatCurrency(bill.pricing?.gstAmount || 0)}</span>

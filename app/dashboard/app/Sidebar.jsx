@@ -4849,15 +4849,15 @@ export const sidebarSections = [
   { name: 'User List', path: '/EUserList', section: 'section1' }, // Section 1: Core Management
   { name: 'Category List', path: '/CategoryList', section: 'section1' }, // Section 1: Core Management
   { name: 'Coupon List', path: '/Coupons', section: 'section1' }, // Section 1: Core Management
-  { name: 'Seller List', path: '/SellerList', section: 'section2' }, // Section 2: Other
-  { name: 'Bill Management', path: '/BillManagement', section: 'section2' }, // Section 2: Other
+  { name: 'GST Bill Management', path: '/BillManagement', section: 'section2' }, // Section 2: Other
   { name: 'Simple Bill Management', path: '/SimpleBillManagement', section: 'section2' }, // Section 2: Other
-  { name: 'Quick Invoice Creator', path: '/InvoiceGenerator', section: 'section2' }, // Section 2: Other
-  { name: 'GST Bill Management', path: '/GSTBillManagement', section: 'section2' }, // Section 2: Other
-  { name: 'Bill Items Inventory', path: '/BillItemsInventory', section: 'section2' }, // Section 2: Other
+  { name: 'Simple Invoice', path: '/InvoiceGenerator', section: 'section2' }, // Section 2: Other
+  { name: 'GST Invoice ', path: '/GSTBillManagement', section: 'section2' }, // Section 2: Other
+  { name: 'Items Inventory', path: '/ItemsInventory', section: 'section2' }, // Section 2: Other
   { name: 'Bill File Management', path: '/BillFileManagement', section: 'section2' }, // Section 2: Other
   { name: 'Balance Management', path: '/BalanceManagement', section: 'section2' }, // Section 2: Other
   { name: 'Shop Management', path: '/ShopManagement', section: 'section2' }, // Section 2: Other
+  { name: 'Shop Details', path: '/ShopDetails', section: 'section2' }, // Section 2: Other
 ];
 
 // Add this helper function at the top (after imports):
@@ -5076,10 +5076,6 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
 
   const organizedSections = useMemo(() => {
     const filteredSections = sidebarSections.filter(section => {
-      // Only show SellerList to admin users
-      if (section.name === 'Seller List') {
-        return isAdminUser;
-      }
       const hiddenSection = visibilityConfig.hiddenSections?.[section.section];
       if (hiddenSection) return false;
       if (visibilityConfig.hiddenItems?.includes(section.name)) return false;
@@ -5239,9 +5235,6 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
                             : 'text-zinc-700 hover:bg-gradient-to-r hover:from-amber-500 hover:to-orange-500 hover:text-white'
                         }`}
                         onClick={() => {
-                          if (section.name === 'Seller List') {
-                            markSellerLoginRead();
-                          }
                           if (section.name === 'Order List') {
                             markOrderRead();
                           }
@@ -5250,11 +5243,6 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
                       >
                         <span className="inline-flex items-center gap-2 flex-1">
                           {section.name}
-                          {section.name === 'Seller List' && sellerLoginUnread ? (
-                            <span className="inline-flex items-center justify-center min-w-[18px] h-4 px-1 rounded-full bg-amber-500 text-white text-[10px] leading-none shadow-sm">
-                              {sellerLoginUnread > 99 ? '99+' : sellerLoginUnread}
-                            </span>
-                          ) : null}
                           {section.name === 'Order List' && orderUnread ? (
                             <span className="inline-flex items-center justify-center min-w-[18px] h-4 px-1 rounded-full bg-amber-500 text-white text-[10px] leading-none shadow-sm">
                               {orderUnread > 99 ? '99+' : orderUnread}
@@ -5281,19 +5269,11 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
                             : 'text-zinc-700 hover:bg-gradient-to-r hover:from-amber-500 hover:to-orange-500 hover:text-white'
                         }`}
                         onClick={() => {
-                          if (section.name === 'Seller List') {
-                            markSellerLoginRead();
-                          }
                           handleToggle(section.name);
                         }}
                       >
                         <span className="inline-flex items-center gap-2 flex-1">
                           {section.name}
-                          {section.name === 'Seller List' && sellerLoginUnread ? (
-                            <span className="inline-flex items-center justify-center min-w-[18px] h-4 px-1 rounded-full bg-amber-500 text-white text-[10px] leading-none shadow-sm">
-                              {sellerLoginUnread > 99 ? '99+' : sellerLoginUnread}
-                            </span>
-                          ) : null}
                         </span>
                         {hasSubItems && (
                           <span className={`ml-2 flex-shrink-0 transition-transform duration-200 ${

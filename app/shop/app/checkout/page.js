@@ -421,6 +421,7 @@ export default function CheckoutPage() {
           id: selectedAddress?.id || null, // Store address ID for tracking
           addressType: selectedAddress?.type || 'home'
         },
+        coupon: appliedCoupon ? { code: appliedCoupon.code, discount: appliedCoupon.discount } : undefined,
       };
 
       const res = await fetch(`${API_BASE_URL}/orders`, {
@@ -1009,14 +1010,31 @@ export default function CheckoutPage() {
                     onClick={async () => {
                       if (!couponCode.trim()) return;
                       try {
+                        const raw = typeof window !== 'undefined' ? localStorage.getItem('euser') : null;
+                        const user = raw ? JSON.parse(raw) : null;
+                        const userId = user?._id || user?.id;
+
                         const res = await fetch(`${API_BASE_URL}/coupons/validate`, {
                           method: 'POST',
                           headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ code: couponCode, orderAmount: subtotal })
+                          body: JSON.stringify({ 
+                            code: couponCode, 
+                            orderAmount: subtotal,
+                            userId,
+                            items: items.map(it => ({
+                              productId: it._id || it.id,
+                              price: Number(it.price || it.salePrice || 0),
+                              quantity: it.quantity || 1
+                            }))
+                          })
                         });
                         const data = await res.json();
                         if (!res.ok || !data.success) throw new Error(data.message || 'Invalid coupon');
-                        setAppliedCoupon({ code: data.data.code, discount: data.data.discount });
+                        setAppliedCoupon({ 
+                          code: data.data.code, 
+                          discount: data.data.discount,
+                          caption: data.data.caption
+                        });
                         setCouponError("");
                       } catch (e) {
                         setAppliedCoupon(null);
@@ -1027,8 +1045,15 @@ export default function CheckoutPage() {
                   >Apply</button>
                 </div>
                 {appliedCoupon && (
-                  <div className="text-green-600 text-xs sm:text-sm mt-2">
-                    Applied {appliedCoupon.code}: -{currency(appliedCoupon.discount)}
+                  <div className="mt-2">
+                    <div className="text-green-600 text-xs sm:text-sm">
+                      Applied {appliedCoupon.code}: -{currency(appliedCoupon.discount)}
+                    </div>
+                    {appliedCoupon.caption && (
+                      <div className="text-xs text-amber-600 italic mt-1">
+                        {appliedCoupon.caption}
+                      </div>
+                    )}
                   </div>
                 )}
                 {couponError && (

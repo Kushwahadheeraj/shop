@@ -74,6 +74,11 @@ const billSchema = new mongoose.Schema({
       type: Number, 
       default: 0,
       min: 0 
+    },
+    extraCharge: {
+      type: Number,
+      default: 0,
+      min: 0
     }
   },
   payment: {

@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import API_BASE_URL from "@/lib/apiConfig";
 import { useAuth } from "@/components/AuthContext";
+import BrandLogo from "@/components/BrandLogo";
 
 const SECRET_PARAM = "access";
 const ACCESS_STORAGE_KEY = "seller_portal_access";
@@ -194,12 +195,13 @@ function SellerLoginPageContent() {
           </div>
 
           <div className="relative z-10">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-yellow-300 shadow-lg shadow-yellow-300/50" />
+            <div className="flex items-center mb-6">
+              <BrandLogo inheritColor />
+              {/* <div className="w-12 h-12 rounded-2xl bg-yellow-300 shadow-lg shadow-yellow-300/50" /> */}
               <div>
-                <p className="text-xs uppercase tracking-widest text-gray-400 font-medium">
-                  Hadware Sink
-                </p>
+                {/* <p className="text-xs uppercase tracking-widest text-gray-400 font-medium"> */}
+                  {/* Hadware Sink */}
+                {/* </p> */}
                 <h1 className="text-2xl font-bold">Seller Portal</h1>
               </div>
             </div>

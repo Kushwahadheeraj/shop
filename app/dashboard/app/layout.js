@@ -20,15 +20,20 @@ export const metadata = {
   title: "Dashboard - Hardware Shop",
   description: "Seller/Admin Dashboard",
   icons: {
-    icon: '/logo.png',
-    shortcut: '/logo.png',
-    apple: '/logo.png',
+    icon: [{ url: '/logo1.png', sizes: 'any' }],
+    shortcut: [{ url: '/logo1.png', sizes: 'any' }],
+    apple: [{ url: '/logo1.png' }],
   },
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/logo1.png" sizes="any" />
+        <link rel="apple-touch-icon" href="/logo1.png" />
+        <link rel="shortcut icon" href="/logo1.png" />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ClientProviders>
             {children}
@@ -37,4 +42,3 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
-

@@ -6,7 +6,7 @@ import PersistentShopSidebar from "@/components/PersistentShopSidebar";
 import Update from "../Update/Update";
 import { useEffect, useState } from "react";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://shop-backend-qf50.onrender.com';
 
 
 

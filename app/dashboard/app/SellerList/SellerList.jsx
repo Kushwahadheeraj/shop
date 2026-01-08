@@ -6,8 +6,7 @@ import API_BASE_URL from "@/lib/apiConfig";
 // Helper function to get correct image URL
 const getImageUrl = (avatar) => {
   if (!avatar) return null;
-  if (avatar.startsWith('/uploads/')) {
-    // Remove /api from API_BASE_URL for image URLs
+  if (avatar.startsWith('/')) {
     const baseUrl = API_BASE_URL.replace(/\/api$/, '');
     return `${baseUrl}${avatar}`;
   }

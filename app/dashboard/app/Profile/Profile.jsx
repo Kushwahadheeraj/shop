@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/components/AuthContext";
+import API_BASE_URL from "@/lib/apiConfig";
 
 const REQUIRED_FIELDS = [
   { key: "username", label: "Username" },
@@ -324,8 +325,8 @@ export default function ProfilePage() {
     }
       // If relative URL, make it absolute
       if (avatarUrl.startsWith('/')) {
-        const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://shop-backend-qf50.onrender.com/api';
-        return `${API_BASE}${avatarUrl}`;
+        const BASE = API_BASE_URL.replace(/\/api$/, '');
+        return `${BASE}${avatarUrl}`;
       }
       // If it's already a full path, return as is
       return avatarUrl;

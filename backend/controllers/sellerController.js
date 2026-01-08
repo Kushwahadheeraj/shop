@@ -1,11 +1,10 @@
  // AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
-
-const Seller = require('../models/Seller');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const multer = require('multer');
-const fs = require('fs');
-const path = require('path');
+ 
+ const Seller = require('../models/Seller');
+ const bcrypt = require('bcryptjs');
+ const jwt = require('jsonwebtoken');
+ const multer = require('multer');
+ const mongoose = require('mongoose');
 
 // Try to configure Cloudinary if credentials are available
 let cloudinary = null;
@@ -39,11 +38,12 @@ const upload = multer({
 
 /**
  * Uploads a buffer to Cloudinary and returns the secure URL.
- * Falls back to local storage if Cloudinary is not configured.
+ * Falls back to MongoDB GridFS if Cloudinary is not configured.
  * @param {Buffer} buffer
- * @returns {Promise<string>}
+ * @param {{filename?: string, mimetype?: string}} options
+ * @returns {Promise<{secure_url: string}>}
  */
-function uploadToCloudinary(buffer) {
+function uploadToCloudinary(buffer, options = {}) {
   return new Promise((resolve, reject) => {
     if (cloudinary) {
       // Use Cloudinary if configured
@@ -64,20 +64,19 @@ function uploadToCloudinary(buffer) {
       const streamifier = require('streamifier');
       streamifier.createReadStream(buffer).pipe(stream);
     } else {
-      // Fallback to local storage
+      // Fallback to MongoDB GridFS
       try {
-        const uploadsDir = path.join(__dirname, '../uploads');
-        if (!fs.existsSync(uploadsDir)) {
-          fs.mkdirSync(uploadsDir, { recursive: true });
-        }
-        
-        const fileName = `avatar_${Date.now()}.jpg`;
-        const filePath = path.join(uploadsDir, fileName);
-        
-        fs.writeFileSync(filePath, buffer);
-        
-        // Return a relative path that can be served by the server
-        resolve({ secure_url: `/uploads/${fileName}` });
+        const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, { bucketName: 'uploads' });
+        const filename = options.filename || `avatar_${Date.now()}`;
+        const contentType = options.mimetype || 'image/jpeg';
+        const uploadStream = bucket.openUploadStream(filename, { contentType });
+        const { Readable } = require('stream');
+        Readable.from(buffer)
+          .pipe(uploadStream)
+          .on('finish', () => {
+            resolve({ secure_url: `/files/${uploadStream.id.toString()}` });
+          })
+          .on('error', reject);
       } catch (error) {
         reject(error);
       }
@@ -281,8 +280,15 @@ exports.updateCurrentSellerProfile = async (req, res) => {
     // Handle file upload if present
     if (req.file) {
       try {
-        const result = await uploadToCloudinary(req.file.buffer);
+        const result = await uploadToCloudinary(req.file.buffer, {
+          filename: req.file.originalname,
+          mimetype: req.file.mimetype
+        });
         avatarUrl = result.secure_url;
+        if (avatarUrl && avatarUrl.startsWith('/')) {
+          const baseUrl = (process.env.BACKEND_URL || process.env.API_BASE_URL || `${req.protocol}://${req.get('host')}`).replace(/\/api$/, '');
+          avatarUrl = `${baseUrl}${avatarUrl}`;
+        }
       } catch (uploadError) {
         return res.status(500).json({ message: 'Failed to upload image' });
       }

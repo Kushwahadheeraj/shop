@@ -37,9 +37,8 @@ export function AuthProvider({ children }) {
           
           // Handle local file URLs by prepending the correct base URL
           let avatarUrl = data.avatar;
-          if (avatarUrl && avatarUrl.startsWith('/uploads/')) {
-            // Remove /api from the base URL for static file serving
-            const baseUrl = API_BASE_URL.replace('/api', '');
+          if (avatarUrl && avatarUrl.startsWith('/')) {
+            const baseUrl = API_BASE_URL.replace(/\/api$/, '');
             avatarUrl = `${baseUrl}${avatarUrl}`;
           }
           
@@ -92,9 +91,8 @@ export function AuthProvider({ children }) {
         
         // Handle local file URLs by prepending the correct base URL
         let avatarUrl = data.seller.avatar;
-        if (avatarUrl && avatarUrl.startsWith('/uploads/')) {
-          // Remove /api from the base URL for static file serving
-          const baseUrl = API_BASE_URL.replace('/api', '');
+        if (avatarUrl && avatarUrl.startsWith('/')) {
+          const baseUrl = API_BASE_URL.replace(/\/api$/, '');
           avatarUrl = `${baseUrl}${avatarUrl}`;
         }
         
@@ -177,9 +175,8 @@ export function AuthProvider({ children }) {
         
         // Handle local file URLs by prepending the correct base URL
         let avatarUrl = data.seller.avatar;
-        if (avatarUrl && avatarUrl.startsWith('/uploads/')) {
-          // Remove /api from the base URL for static file serving
-          const baseUrl = API_BASE_URL.replace('/api', '');
+        if (avatarUrl && avatarUrl.startsWith('/')) {
+          const baseUrl = API_BASE_URL.replace(/\/api$/, '');
           avatarUrl = `${baseUrl}${avatarUrl}`;
         }
         

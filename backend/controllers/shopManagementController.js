@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+const { Readable } = require('stream');
 const path = require('path');
 const fs = require('fs');
 const ShopManagementShop = require('../models/ShopManagementShop');
@@ -78,14 +80,22 @@ const addFiles = async (req, res) => {
     const shop = await ShopManagementShop.findOne({ _id: id, sellerId });
     if (!shop) return res.status(404).json({ success: false, message: 'Shop not found' });
 
-    const uploads = (req.files || []).map((file) => ({
-      originalName: file.originalname,
-      mimeType: file.mimetype,
-      size: file.size,
-      url: `/uploads/shop-management/${path.basename(file.path)}`,
-    }));
-
-    shop.files = [...shop.files, ...uploads];
+    const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, { bucketName: 'uploads' });
+    const files = req.files || [];
+    const uploaded = [];
+    for (const file of files) {
+      const stream = bucket.openUploadStream(file.originalname, { contentType: file.mimetype });
+      await new Promise((resolve, reject) => {
+        Readable.from(file.buffer).pipe(stream).on('finish', resolve).on('error', reject);
+      });
+      uploaded.push({
+        originalName: file.originalname,
+        mimeType: file.mimetype,
+        size: file.size,
+        url: `/files/${stream.id.toString()}`,
+      });
+    }
+    shop.files = [...shop.files, ...uploaded];
     await shop.save();
     res.json({ success: true, data: shop });
   } catch (err) {
@@ -107,11 +117,16 @@ const deleteFile = async (req, res) => {
     const fileDoc = shop.files.id(fileId);
     if (!fileDoc) return res.status(404).json({ success: false, message: 'File not found' });
 
-    // Remove physical file if present
-    if (fileDoc.url) {
+    if (fileDoc.url && fileDoc.url.startsWith('/files/')) {
+      const idStr = fileDoc.url.split('/files/')[1];
+      try {
+        const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, { bucketName: 'uploads' });
+        await bucket.delete(new mongoose.Types.ObjectId(idStr));
+      } catch (e) {}
+    } else if (fileDoc.url) {
       const filename = path.basename(fileDoc.url);
       const filePath = path.join(__dirname, '..', 'uploads', 'shop-management', filename);
-      fs.unlink(filePath, () => {}); // best-effort delete
+      fs.unlink(filePath, () => {});
     }
 
     fileDoc.deleteOne();

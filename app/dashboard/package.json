@@ -50,14 +50,15 @@
     "shop-monorepo": "file:../..",
     "styled-jsx": "^5.1.6",
     "tailwind-merge": "^3.3.0",
-    "tailwindcss": "^4",
     "tw-animate-css": "^1.3.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "autoprefixer": "^10.4.23",
     "cross-env": "^10.1.0",
     "eslint": "^9",
     "eslint-config-next": "15.3.3",
-    "postcss": "^8.5.6"
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.18"
   }
 }

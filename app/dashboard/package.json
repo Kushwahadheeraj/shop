@@ -47,6 +47,7 @@
     "react-icons": "^5.5.0",
     "react-server-dom-webpack": "^19.2.1",
     "recharts": "^2.15.4",
+    "shop-monorepo": "file:../..",
     "styled-jsx": "^5.1.6",
     "tailwind-merge": "^3.3.0",
     "tailwindcss": "^4",

@@ -24,6 +24,7 @@ export default function ProductList() {
 
   useEffect(() => {
     fetchCards();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchCards = async () => {
@@ -291,7 +292,7 @@ export default function ProductList() {
           <DialogHeader>
             <DialogTitle>Delete Card</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete "{cardToDelete?.mainText}"? This action cannot be undone.
+              Are you sure you want to delete &quot;{cardToDelete?.mainText}&quot;? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

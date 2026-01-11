@@ -429,7 +429,7 @@ export default function ProductForm() {
     <DialogHeader>
       <DialogTitle>Delete Card</DialogTitle>
       <DialogDescription>
-        Are you sure you want to delete "{cardToDelete?.mainTitle}"? This action cannot be undone.
+        Are you sure you want to delete &quot;{cardToDelete?.mainTitle}&quot;? This action cannot be undone.
       </DialogDescription>
     </DialogHeader>
     <DialogFooter>

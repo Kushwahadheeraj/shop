@@ -353,7 +353,7 @@ export default function ProductTable({ products, onEdit, onDelete, onView, categ
            <DialogHeader>
              <DialogTitle>Confirm Delete</DialogTitle>
              <DialogDescription>
-               Are you sure you want to delete "{productToDelete?.name}"? This action cannot be undone.
+               Are you sure you want to delete &quot;{productToDelete?.name}&quot;? This action cannot be undone.
              </DialogDescription>
            </DialogHeader>
            <DialogFooter>

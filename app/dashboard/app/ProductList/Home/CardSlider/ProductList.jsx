@@ -39,6 +39,7 @@ export default function ProductList() {
 
   useEffect(() => {
     fetchCardSliders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchCardSliders = async () => {
@@ -284,7 +285,7 @@ export default function ProductList() {
                                 <AlertDialogHeader>
                                   <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                                   <AlertDialogDescription>
-                                    This action cannot be undone. This will permanently delete the card slider "{cardSlider.name}".
+                                    This action cannot be undone. This will permanently delete the card slider &quot;{cardSlider.name}&quot;.
                                   </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>

@@ -69,6 +69,21 @@ const GSTBillManagementPage = () => {
     return ranges[range] || { startDate: null, endDate: null };
   }, []);
 
+  // Memoized format functions - prevent recreation on every render
+  const formatCurrency = useCallback((amount) => {
+    const rounded = Math.round((parseFloat(amount || 0) + Number.EPSILON) * 100) / 100;
+    return `₹${rounded.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  }, []);
+
+  const formatDate = useCallback((date) => {
+    if (!date) return '';
+    try {
+      return new Date(date).toLocaleDateString('en-IN');
+    } catch {
+      return '';
+    }
+  }, []);
+
   // Fetch shops - Include both GST shops and Clients (client list me jo names hain)
   const fetchShops = useCallback(async () => {
     try {
@@ -571,20 +586,7 @@ const GSTBillManagementPage = () => {
     }
   };
 
-  // Memoized format functions - prevent recreation on every render
-  const formatCurrency = useCallback((amount) => {
-    const rounded = Math.round((parseFloat(amount || 0) + Number.EPSILON) * 100) / 100;
-    return `₹${rounded.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  }, []);
 
-  const formatDate = useCallback((date) => {
-    if (!date) return '';
-    try {
-      return new Date(date).toLocaleDateString('en-IN');
-    } catch {
-      return '';
-    }
-  }, []);
 
   return (
     <div className="space-y-4 sm:space-y-6 p-3 sm:p-4 md:p-6">

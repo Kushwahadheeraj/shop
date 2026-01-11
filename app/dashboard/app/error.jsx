@@ -3,6 +3,8 @@
 // Client component for error handling - doesn't use the layout to prevent build-time errors
 // This file is placed in app/ directory to override the default error page
 // Force dynamic rendering to prevent build-time prerendering errors
+import Link from 'next/link';
+
 export const dynamic = 'force-dynamic';
 
 export default function Error({ error, reset }) {
@@ -30,7 +32,7 @@ export default function Error({ error, reset }) {
           >
             Try again
           </button>
-          <a
+          <Link
             href="/"
             style={{
               display: 'inline-block',
@@ -42,7 +44,7 @@ export default function Error({ error, reset }) {
             }}
           >
             Go to Home
-          </a>
+          </Link>
         </div>
       </div>
     </div>

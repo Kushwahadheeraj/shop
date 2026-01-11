@@ -457,53 +457,7 @@ export function AuthProvider({ children }) {
 }
 
 export function useAuth() {
-  // Safety check: During build/prerender, React might be null or hooks unavailable
-  // This can happen when Next.js prerenders error pages (404, 500)
-  // Return fallback immediately if hooks are not available
-  
-  // Check if React is available first (most important check)
-  // typeof null === 'object', so we need explicit null check
-  // Use optional chaining to safely check React.useContext
-  if (typeof React === 'undefined' || React === null || !React?.useContext || typeof React.useContext !== 'function') {
-    return AUTH_FALLBACK;
-  }
-  
-  // Also check the destructured useContext as fallback
-  // Note: We already checked React.useContext above, so this is just for completeness
-  if (typeof useContext !== 'function' || useContext === null || useContext === undefined) {
-    // We already verified React.useContext exists above, so we can use it
-    // But double-check with optional chaining just to be safe
-    if (!React?.useContext || typeof React.useContext !== 'function') {
-    return AUTH_FALLBACK;
-  }
-  }
-  
-  // Additional safety: Try-catch to handle any edge cases during build
-  try {
-    // Double-check React is available before calling useContext
-    // Use optional chaining to safely check React.useContext
-    if (typeof React === 'undefined' || React === null || !React?.useContext || typeof React.useContext !== 'function') {
-      return AUTH_FALLBACK;
-    }
-    
-    // Get the context lazily (creates it if needed)
-    const context = getAuthContext();
-    if (!context || typeof context !== 'object') {
-      return AUTH_FALLBACK;
-    }
-    
-    // Use React.useContext directly - we've already verified it exists
-    const contextValue = React.useContext(context);
-    // Safety check for SSR/build time when context might not be available
-    // Return stable fallback object to prevent infinite loops in dependency arrays
-    return contextValue || AUTH_FALLBACK;
-  } catch (error) {
-    // If useContext throws (e.g., "Cannot read properties of null (reading 'useContext')"),
-    // it means React is null during build. Return fallback to prevent build failures.
-    // This is expected during static generation of error pages
-    if (process.env.NODE_ENV === 'development') {
-      console.warn('useAuth: React context unavailable during build/prerender:', error.message);
-    }
-    return AUTH_FALLBACK;
-  }
+  const context = getAuthContext();
+  const contextValue = useContext(context);
+  return contextValue || AUTH_FALLBACK;
 } 

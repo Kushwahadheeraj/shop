@@ -186,9 +186,9 @@ function SellerLoginPageContent() {
   }
 
   return (
-    <div className="h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4 overflow-hidden">
-      <div className="max-w-6xl w-full h-[90vh] grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-gradient-to-br from-black via-gray-900 to-black text-white rounded-3xl p-8 flex flex-col justify-between shadow-2xl relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-3 sm:p-4">
+      <div className="max-w-md lg:max-w-6xl w-full lg:h-[90vh] grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+        <div className="hidden lg:flex bg-gradient-to-br from-black via-gray-900 to-black text-white rounded-3xl p-8 flex-col justify-between shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
             <div className="absolute w-48 h-48 bg-yellow-300 rounded-full -top-10 -left-10 blur-3xl"></div>
             <div className="absolute w-48 h-48 bg-yellow-300 rounded-full bottom-10 right-0 blur-3xl"></div>
@@ -237,7 +237,14 @@ function SellerLoginPageContent() {
           </div>
         </div>
 
-        <div className="bg-white rounded-3xl p-8 shadow-2xl border border-gray-200 overflow-y-auto">
+        <div className="bg-white rounded-2xl lg:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-2xl border border-gray-200 overflow-y-auto">
+          <div className="flex items-center gap-3 mb-4 lg:hidden">
+            <BrandLogo />
+            <div>
+              <p className="text-[11px] uppercase tracking-wider text-gray-500 font-medium">Seller Portal</p>
+              <p className="text-xs text-gray-400">Secure login for store management</p>
+            </div>
+          </div>
           <div className="flex justify-between items-center mb-6">
             <div>
               <p className="text-xs text-gray-500 uppercase tracking-widest font-medium mb-1">Welcome back</p>
@@ -247,7 +254,7 @@ function SellerLoginPageContent() {
             </div>
             <div className="flex bg-gray-100 rounded-full p-1 shadow-inner">
               <button
-                className={`text-xs px-4 py-2 rounded-full transition-all font-medium ${
+                className={`text-xs px-3 sm:px-4 py-2 rounded-full transition-all font-medium ${
                   mode === "login" 
                     ? "bg-black text-white shadow-md" 
                     : "text-gray-600 hover:text-gray-900"
@@ -257,7 +264,7 @@ function SellerLoginPageContent() {
                 Login
               </button>
               <button
-                className={`text-xs px-4 py-2 rounded-full transition-all font-medium ${
+                className={`text-xs px-3 sm:px-4 py-2 rounded-full transition-all font-medium ${
                   mode === "register" 
                     ? "bg-black text-white shadow-md" 
                     : "text-gray-600 hover:text-gray-900"

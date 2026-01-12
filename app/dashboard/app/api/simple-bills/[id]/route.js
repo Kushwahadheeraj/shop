@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 const API_BASE_URL = process.env.BACKEND_URL || 'https://shop-backend-qf50.onrender.com/api';
 
 export async function GET(request, { params }) {
+  const { id } = await params;
   try {
     const token = request.headers.get('authorization');
     
@@ -13,7 +14,7 @@ export async function GET(request, { params }) {
       );
     }
     
-    const response = await fetch(`${API_BASE_URL}/simple-bills/${params.id}`, {
+    const response = await fetch(`${API_BASE_URL}/simple-bills/${id}`, {
       method: 'GET',
       headers: {
         'Authorization': token,
@@ -33,6 +34,7 @@ export async function GET(request, { params }) {
 }
 
 export async function PUT(request, { params }) {
+  const { id } = await params;
   try {
     const body = await request.json();
     const token = request.headers.get('authorization');
@@ -43,8 +45,12 @@ export async function PUT(request, { params }) {
         { status: 401 }
       );
     }
+
+    console.log(`[PROXY PUT] Updating bill ${id}. Payload keys:`, Object.keys(body));
+    if (body.pricing) console.log('[PROXY PUT] Pricing:', body.pricing);
+    if (body.shopName) console.log('[PROXY PUT] ShopName:', body.shopName);
     
-    const response = await fetch(`${API_BASE_URL}/simple-bills/${params.id}`, {
+    const response = await fetch(`${API_BASE_URL}/simple-bills/${id}`, {
       method: 'PUT',
       headers: {
         'Authorization': token,
@@ -53,7 +59,13 @@ export async function PUT(request, { params }) {
       body: JSON.stringify(body),
     });
 
-    const data = await response.json();
+    let data;
+    try {
+      const text = await response.text();
+      data = text ? JSON.parse(text) : { success: false, message: 'Empty response from server' };
+    } catch (e) {
+      data = { success: false, message: 'Invalid JSON from server' };
+    }
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
     console.error('Error updating simple bill:', error);
@@ -65,6 +77,7 @@ export async function PUT(request, { params }) {
 }
 
 export async function DELETE(request, { params }) {
+  const { id } = await params;
   try {
     const token = request.headers.get('authorization');
     
@@ -75,7 +88,7 @@ export async function DELETE(request, { params }) {
       );
     }
     
-    const response = await fetch(`${API_BASE_URL}/simple-bills/${params.id}`, {
+    const response = await fetch(`${API_BASE_URL}/simple-bills/${id}`, {
       method: 'DELETE',
       headers: {
         'Authorization': token,
@@ -134,5 +147,4 @@ export async function POST(request, { params }) {
     );
   }
 }
-
 

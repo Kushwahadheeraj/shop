@@ -51,6 +51,8 @@ const SimpleBillManagementPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterDateRange, setFilterDateRange] = useState('');
   const [loading, setLoading] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState(null);
   
   // Debounce search to reduce filter operations (300ms delay)
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
@@ -78,7 +80,7 @@ const SimpleBillManagementPage = () => {
       const token = localStorage.getItem('token');
       const currentSellerId = getSellerId();
       const qs = currentSellerId ? `?sellerId=${encodeURIComponent(currentSellerId)}` : '';
-      const response = await fetch(api(`/shops${qs}`), { headers: token ? { 'Authorization': `Bearer ${token}` } : {} });
+      const response = await fetch(`/api/shops${qs}`, { headers: token ? { 'Authorization': `Bearer ${token}` } : {} });
       
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -132,7 +134,10 @@ const SimpleBillManagementPage = () => {
       if (currentSellerId) params.append('sellerId', currentSellerId);
       
       // Always fetch all bills - filtering is done client-side for better UX
-      const response = await fetch(api(`/simple-bills?${params.toString()}`), { headers: token ? { 'Authorization': `Bearer ${token}` } : {} });
+      const response = await fetch(`/api/simple-bills?${params.toString()}`, { 
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+        cache: 'no-store'
+      });
       const data = await response.json().catch(() => ({}));
       const list = toArray(data);
       setBills(Array.isArray(list) ? list : []);
@@ -338,7 +343,7 @@ const SimpleBillManagementPage = () => {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('Please log in to create a bill');
       
-      const response = await fetch(`${API_BASE_URL}/simple-bills`, {
+      const response = await fetch(`/api/simple-bills`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -357,7 +362,7 @@ const SimpleBillManagementPage = () => {
       if (data.success) {
         fetchBills();
         fetchStats();
-        alert('Simple bill created successfully!');
+        setShowAddBillForm(false);
       } else {
         throw new Error(data.message || 'Failed to create bill');
       }
@@ -403,7 +408,7 @@ const SimpleBillManagementPage = () => {
       const data = await response.json();
       if (data.success) {
         await fetchShops();
-        alert('Shop added successfully!');
+        setShowAddShopForm(false);
       } else {
         throw new Error(data.message || 'Failed to create shop');
       }
@@ -450,7 +455,6 @@ const SimpleBillManagementPage = () => {
       .sort((a, b) => new Date(a.billDate) - new Date(b.billDate));
     
     if (billsWithRemaining.length === 0) {
-      alert('No bills with remaining amount found!');
       return;
     }
     
@@ -489,7 +493,7 @@ const SimpleBillManagementPage = () => {
         return;
       }
       
-      const response = await fetch(api(`/simple-bills/${paymentData.billId}/payment`), {
+      const response = await fetch(`/api/simple-bills/${paymentData.billId}/payment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -508,7 +512,7 @@ const SimpleBillManagementPage = () => {
       if (data.success) {
         fetchBills();
         fetchStats();
-        alert('Payment added successfully!');
+        setShowPaymentModal(false);
       } else {
         throw new Error(data.message || 'Failed to add payment');
       }
@@ -539,14 +543,14 @@ const SimpleBillManagementPage = () => {
             notes: `${paymentData.notes || ''} (Part of combined payment: ₹${paymentAmount})`.trim()
           };
           
-          const response = await fetch(api(`/simple-bills/${bill._id}/payment`), {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(billPaymentData)
-          });
+        const response = await fetch(`/api/simple-bills/${bill._id}/payment`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(billPaymentData)
+        });
           
           const data = await response.json();
           
@@ -571,12 +575,7 @@ const SimpleBillManagementPage = () => {
       
       await fetchBills();
       await fetchStats();
-      
-      const successMessage = `Payment of ₹${paymentAmount} processed successfully!\n\n` +
-        `Processed ${processedBills.length} bills:\n` +
-        processedBills.map(b => `• ${b.billNumber}: ₹${b.amount} (Remaining: ₹${b.remaining})`).join('\n');
-      
-      alert(successMessage);
+      setShowPaymentModal(false);
       
     } catch (error) {
       // console.error('❌ Error processing combined bill payment:', error);
@@ -589,7 +588,7 @@ const SimpleBillManagementPage = () => {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('Please log in to update a bill');
       
-      const response = await fetch(api(`/simple-bills/${selectedBill._id}`), {
+      const response = await fetch(`/api/simple-bills/${selectedBill._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -608,7 +607,8 @@ const SimpleBillManagementPage = () => {
       if (data.success) {
         fetchBills();
         fetchStats();
-        alert('Simple bill updated successfully!');
+        setShowEditBillForm(false);
+        setSelectedBill(null);
       } else {
         throw new Error(data.message || 'Failed to update bill');
       }
@@ -619,27 +619,44 @@ const SimpleBillManagementPage = () => {
   };
 
   const handleDeleteBill = async (billId) => {
-    if (window.confirm('Are you sure you want to delete this bill?')) {
-      try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(api(`/simple-bills/${billId}`), {
-          method: 'DELETE',
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(api(`/simple-bills/${billId}`), {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
 
-        const data = await response.json();
-        if (data.success) {
-          fetchBills();
-          fetchStats();
-          alert('Simple bill deleted successfully!');
-        } else {
-          throw new Error(data.message);
+      const data = await response.json();
+      if (data.success) {
+        fetchBills();
+        fetchStats();
+        if (selectedBill && selectedBill._id === billId) {
+          setSelectedBill(null);
+          setShowBillViewModal(false);
         }
-      } catch (error) {
-        // console.error('Error deleting bill:', error);
-        alert('Error deleting bill');
+      } else {
+        throw new Error(data.message);
       }
+    } catch (error) {
+      // console.error('Error deleting bill:', error);
     }
+  };
+
+  const openConfirmDelete = (billId) => {
+    setDeleteTargetId(billId);
+    setConfirmDeleteOpen(true);
+  };
+
+  const cancelConfirmDelete = () => {
+    setConfirmDeleteOpen(false);
+    setDeleteTargetId(null);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteTargetId) return;
+    await handleDeleteBill(deleteTargetId);
+    setConfirmDeleteOpen(false);
+    setDeleteTargetId(null);
   };
 
   const formatCurrency = (amount) => {
@@ -972,7 +989,21 @@ const SimpleBillManagementPage = () => {
                         {bill.billNumber}
                       </td>
                       <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm text-gray-900">
-                        {bill.shopName}
+                        {(() => {
+                          const id = typeof bill.shopId === 'string'
+                            ? bill.shopId
+                            : (bill.shopId && typeof bill.shopId === 'object'
+                                ? (bill.shopId._id || bill.shopId.id || '')
+                                : (bill.shop?._id || ''));
+                          const name =
+                            bill.shopName ||
+                            (Array.isArray(shops) ? shops : []).find(
+                              s => String(s?._id || s?.id || s?.shopId || '') === String(id)
+                            )?.name ||
+                            bill.shop?.name ||
+                            '';
+                          return name || '-';
+                        })()}
                       </td>
                       <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm text-gray-900">
                         {formatDate(bill.billDate || bill.createdAt)}
@@ -1007,8 +1038,8 @@ const SimpleBillManagementPage = () => {
                             <CreditCard className="w-4 h-4" />
                           </button>
                           <button 
-                            onClick={() => handleDeleteBill(bill._id)}
-                            className="text-red-600 hover:text-red-900"
+                            onClick={() => openConfirmDelete(bill._id)}
+                            className="text-amber-600 hover:text-amber-800"
                             title="Delete Bill"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -1043,13 +1074,14 @@ const SimpleBillManagementPage = () => {
       {showBillViewModal && (
         <SimpleBillViewModal
           bill={selectedBill}
+          shops={shops}
           isOpen={showBillViewModal}
           onClose={() => {
             setShowBillViewModal(false);
             setSelectedBill(null);
           }}
           onEdit={handleEditBill}
-          onDelete={handleDeleteBill}
+          onDelete={openConfirmDelete}
         />
       )}
 
@@ -1094,7 +1126,19 @@ const SimpleBillManagementPage = () => {
             <div className="p-6">
               {(() => {
                 const selectedShopName = shops.find(s => s._id === selectedShop)?.name;
-                const shopBills = bills.filter(bill => bill.shopName === selectedShopName);
+                const shopBills = bills.filter(bill => {
+                  let billShopId = '';
+                  if (typeof bill.shopId === 'string') {
+                    billShopId = bill.shopId;
+                  } else if (bill.shopId && typeof bill.shopId === 'object') {
+                    billShopId = bill.shopId._id || bill.shopId.id || '';
+                  } else if (bill.shop?._id) {
+                    billShopId = bill.shop._id;
+                  }
+                  if (billShopId) return billShopId === String(selectedShop);
+                  const billShopName = (bill.shopName || bill.shop?.name || '').toString();
+                  return selectedShopName ? billShopName === selectedShopName : true;
+                });
                 const allPayments = shopBills.flatMap(bill => 
                   (bill.paymentHistory || []).map(payment => ({
                     ...payment,
@@ -1165,6 +1209,39 @@ const SimpleBillManagementPage = () => {
                   </div>
                 );
               })()}
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {confirmDeleteOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end md:items-center justify-center md:justify-center z-50 p-0 md:p-4">
+          <div className="bg-white rounded-t-2xl md:rounded-lg shadow-xl w-full max-w-none md:max-w-md">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="text-lg md:text-xl font-semibold text-gray-900">Confirm Delete</h2>
+              <button
+                onClick={cancelConfirmDelete}
+                className="text-gray-400 hover:text-gray-600 p-2 -m-2 rounded md:hover:bg-gray-100"
+              >
+                <X className="w-5 h-5 md:w-6 md:h-6" />
+              </button>
+            </div>
+            <div className="p-4 md:p-6">
+              <p className="text-sm md:text-base text-gray-700">Are you sure you want to delete this bill?</p>
+              <div className="mt-4 md:mt-6 flex flex-col md:flex-row justify-end gap-2 md:gap-3">
+                <button
+                  onClick={cancelConfirmDelete}
+                  className="px-4 py-3 md:py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors w-full md:w-auto"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="px-4 py-3 md:py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors w-full md:w-auto"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           </div>
         </div>

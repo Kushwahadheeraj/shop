@@ -33,13 +33,20 @@ const EditSimpleBillForm = ({ bill, onClose, onSave, shops }) => {
 
   useEffect(() => {
     if (bill) {
+      // Robust extra charge detection
+      let initialExtraCharge = 0;
+      if (typeof bill.pricing?.extraCharge === 'number') initialExtraCharge = bill.pricing.extraCharge;
+      else if (typeof bill.extraCharge === 'number') initialExtraCharge = bill.extraCharge;
+      else if (typeof bill.extraCharges === 'number') initialExtraCharge = bill.extraCharges;
+      else if (typeof bill.pricing?.extraCharges === 'number') initialExtraCharge = bill.pricing.extraCharges;
+
       setFormData({
         shopId: bill.shopId?._id || bill.shopId || '',
         items: bill.items || [],
         pricing: {
           subtotal: bill.pricing?.subtotal || 0,
           discount: bill.pricing?.discount || 0,
-          extraCharge: bill.pricing?.extraCharge ?? 0,
+          extraCharge: initialExtraCharge,
           totalAmount: bill.pricing?.totalAmount || 0
         },
         payment: {
@@ -66,7 +73,9 @@ const EditSimpleBillForm = ({ bill, onClose, onSave, shops }) => {
 
   const calculateTotals = () => {
     const subtotal = formData.items.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
-    const totalAmount = subtotal - formData.pricing.discount + (formData.pricing.extraCharge || 0); // NO GST
+    const discount = parseFloat(formData.pricing.discount) || 0;
+    const extraCharge = parseFloat(formData.pricing.extraCharge) || 0;
+    const totalAmount = subtotal - discount + extraCharge; // NO GST
 
     setFormData(prev => ({
       ...prev,
@@ -181,7 +190,61 @@ const EditSimpleBillForm = ({ bill, onClose, onSave, shops }) => {
 
     setLoading(true);
     try {
-      await onSave(formData);
+      const shopList = Array.isArray(shops) ? shops : [];
+      const selectedShop = shopList.find(s => {
+        const id = s?._id || s?.id || s?.shopId || '';
+        return String(id) === String(formData.shopId);
+      });
+
+      let shopName = selectedShop?.name || selectedShop?.shopName || selectedShop?.title || '';
+      let shopAddress = selectedShop?.address || '';
+
+      // Fallback: If shop not found in list but ID matches original bill, preserve original details
+      const originalShopId = bill.shopId?._id || bill.shopId;
+      if (!shopName && String(formData.shopId) === String(originalShopId)) {
+        shopName = bill.shopName || bill.shop?.name || '';
+        shopAddress = bill.shopAddress || bill.shop?.address || '';
+      }
+      
+      const items = (formData.items || []).map(item => {
+        const quantity = Number(item.quantity ?? 0);
+        const unitPrice = Number(item.unitPrice ?? 0);
+        return {
+          ...item,
+          quantity,
+          unitPrice,
+          totalPrice: quantity * unitPrice
+        };
+      });
+      
+      const discount = Number(formData.pricing?.discount ?? 0);
+      const extraCharge = Number(formData.pricing?.extraCharge ?? 0);
+      const subtotal = items.reduce((sum, i) => sum + (i.quantity * i.unitPrice), 0);
+      const totalAmount = subtotal - discount + extraCharge;
+      const paidAmount = Number(formData.payment?.paidAmount ?? 0);
+      const remainingAmount = Math.max(0, totalAmount - paidAmount);
+
+      const processedData = {
+        ...formData,
+        shopId: formData.shopId,
+        shopName,
+        shopAddress,
+        items,
+        pricing: {
+          subtotal,
+          discount,
+          extraCharge,
+          totalAmount
+        },
+        payment: {
+          method: formData.payment?.method || 'cash',
+          status: formData.payment?.status || 'pending',
+          paidAmount,
+          remainingAmount
+        }
+      };
+
+      await onSave(processedData);
       onClose();
     } catch (error) {
       console.error('Error saving bill:', error);
@@ -418,25 +481,25 @@ const EditSimpleBillForm = ({ bill, onClose, onSave, shops }) => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Discount</label>
                   <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={formData.pricing.discount}
-                    onChange={(e) => handleInputChange('pricing.discount', parseFloat(e.target.value) || 0)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={formData.pricing.discount === 0 ? '' : formData.pricing.discount}
+                  onChange={(e) => handleInputChange('pricing.discount', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Extra Charge</label>
                   <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={formData.pricing.extraCharge}
-                    onChange={(e) => handleInputChange('pricing.extraCharge', parseFloat(e.target.value) || 0)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={formData.pricing.extraCharge === 0 ? '' : formData.pricing.extraCharge}
+                  onChange={(e) => handleInputChange('pricing.extraCharge', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
                 </div>
 
                 <div>
@@ -486,13 +549,13 @@ const EditSimpleBillForm = ({ bill, onClose, onSave, shops }) => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Paid Amount</label>
                   <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={formData.payment.paidAmount}
-                    onChange={(e) => handleInputChange('payment.paidAmount', parseFloat(e.target.value) || 0)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={formData.payment.paidAmount === 0 ? '' : formData.payment.paidAmount}
+                  onChange={(e) => handleInputChange('payment.paidAmount', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
                 </div>
 
                 <div>

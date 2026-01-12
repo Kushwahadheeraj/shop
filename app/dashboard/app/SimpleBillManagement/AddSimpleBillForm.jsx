@@ -53,7 +53,6 @@ const AddSimpleBillForm = ({ onClose, onSave, shops = [] }) => {
       },
       payment: {
         ...prev.payment,
-        paidAmount: isNaN(paidAmount) ? 0 : paidAmount,
         remainingAmount: isNaN(totalAmount - paidAmount) ? 0 : Math.max(0, totalAmount - paidAmount)
       }
     }));
@@ -379,7 +378,7 @@ const AddSimpleBillForm = ({ onClose, onSave, shops = [] }) => {
                   type="number"
                   min="0"
                   step="0.01"
-                  value={formData.pricing.extraCharge}
+                  value={formData.pricing.extraCharge === 0 ? '' : formData.pricing.extraCharge}
                   onChange={(e) => handleNestedInputChange('pricing', 'extraCharge', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="0.00"
@@ -396,7 +395,7 @@ const AddSimpleBillForm = ({ onClose, onSave, shops = [] }) => {
                   type="number"
                   min="0"
                   step="0.01"
-                  value={formData.pricing.discount}
+                  value={formData.pricing.discount === 0 ? '' : formData.pricing.discount}
                   onChange={(e) => handleNestedInputChange('pricing', 'discount', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="0.00"
@@ -421,14 +420,14 @@ const AddSimpleBillForm = ({ onClose, onSave, shops = [] }) => {
                 Paid Amount
               </label>
               <input
-                type="number"
-                min="0"
-                step="0.01"
-                value={formData.payment.paidAmount}
-                onChange={(e) => handleNestedInputChange('payment', 'paidAmount', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="0.00"
-              />
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={formData.payment.paidAmount === 0 ? '' : formData.payment.paidAmount}
+                  onChange={(e) => handleNestedInputChange('payment', 'paidAmount', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="0.00"
+                />
             </div>
 
             {/* Date Fields */}

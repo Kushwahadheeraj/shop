@@ -52,8 +52,8 @@ const createSimpleBill = async (req, res) => {
       totalAmount: 0
     };
 
-    // Total = subtotal - discount (NO GST)
-    calculatedPricing.totalAmount = calculatedPricing.subtotal - calculatedPricing.discount;
+    // Total = subtotal - discount + extraCharge (NO GST)
+    calculatedPricing.totalAmount = calculatedPricing.subtotal - calculatedPricing.discount + calculatedPricing.extraCharge;
 
     // Calculate item totals
     const itemsWithTotals = items.map(item => ({
@@ -229,7 +229,9 @@ const updateSimpleBill = async (req, res) => {
       description,
       notes,
       status,
-      recurring
+      recurring,
+      shopName,
+      shopAddress
     } = req.body;
 
     const bill = await SimpleBill.findById(req.params.id);
@@ -244,12 +246,13 @@ const updateSimpleBill = async (req, res) => {
     if (items || pricing) {
       const calculatedPricing = {
         subtotal: pricing?.subtotal || items?.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0) || bill.pricing.subtotal,
-        discount: pricing?.discount || bill.pricing.discount,
+        discount: pricing?.discount !== undefined ? pricing.discount : bill.pricing.discount,
+        extraCharge: pricing?.extraCharge !== undefined ? pricing.extraCharge : (bill.pricing.extraCharge || 0),
         totalAmount: 0
       };
 
-      // Total = subtotal - discount (NO GST)
-      calculatedPricing.totalAmount = calculatedPricing.subtotal - calculatedPricing.discount;
+      // Total = subtotal - discount + extraCharge (NO GST)
+      calculatedPricing.totalAmount = calculatedPricing.subtotal - calculatedPricing.discount + calculatedPricing.extraCharge;
 
       if (items) {
         const itemsWithTotals = items.map(item => ({
@@ -263,6 +266,8 @@ const updateSimpleBill = async (req, res) => {
     }
 
     // Update other fields
+    if (shopName) bill.shopName = shopName;
+    if (shopAddress) bill.shopAddress = shopAddress;
     if (payment) {
       bill.payment = { ...bill.payment, ...payment };
 

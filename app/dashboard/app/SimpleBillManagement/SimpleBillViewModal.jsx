@@ -2,8 +2,41 @@
 import React from 'react';
 import { X, Eye, Edit, Trash2, Printer, MapPin, Phone, Mail, CreditCard, Clock } from 'lucide-react';
 
-const SimpleBillViewModal = ({ bill, isOpen, onClose, onEdit, onDelete }) => {
+const SimpleBillViewModal = ({ bill, shops, isOpen, onClose, onEdit, onDelete }) => {
   if (!isOpen || !bill) return null;
+
+  // Robust shop details retrieval with fallback
+  const getShopDetails = () => {
+    // 1. Try direct bill properties first (if both exist and are non-empty)
+    if (bill.shopName && bill.shopAddress) {
+      return { name: bill.shopName, address: bill.shopAddress };
+    }
+    
+    // 2. Try finding in shops list using shopId
+    if (shops && shops.length > 0) {
+      const id = typeof bill.shopId === 'string' 
+        ? bill.shopId 
+        : (bill.shopId?._id || bill.shopId?.id);
+        
+      if (id) {
+        const shop = shops.find(s => String(s._id || s.id) === String(id));
+        if (shop) {
+           return { 
+             name: bill.shopName || shop.name, 
+             address: bill.shopAddress || shop.address 
+           };
+        }
+      }
+    }
+    
+    // 3. Fallback to populated shop object or partial bill data
+    return {
+      name: bill.shopName || bill.shop?.name || '',
+      address: bill.shopAddress || bill.shop?.address || ''
+    };
+  };
+
+  const { name: shopName, address: shopAddress } = getShopDetails();
 
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString('en-IN', {
@@ -110,8 +143,8 @@ const SimpleBillViewModal = ({ bill, isOpen, onClose, onEdit, onDelete }) => {
                   <div className="flex items-start space-x-2">
                     <MapPin className="h-4 w-4 text-gray-500 mt-0.5" />
                     <div>
-                      <p className="font-medium text-gray-900">{bill.shopName}</p>
-                      <p className="text-sm text-gray-600">{bill.shopAddress}</p>
+                      <p className="font-medium text-gray-900">{shopName}</p>
+                      <p className="text-sm text-gray-600">{shopAddress}</p>
                     </div>
                   </div>
                   {bill.shopId?.contact?.phone && (

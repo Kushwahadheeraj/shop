@@ -97,6 +97,8 @@ export default function CouponsSection() {
     return () => clearInterval(id);
   }, [coupons]);
 
+  if (!loading && coupons.length === 0) return null;
+
   return (
     <section className="py-10 bg-gray-50">
       <div className="flex items-center justify-between px-6 mb-4">
@@ -112,8 +114,6 @@ export default function CouponsSection() {
       </div>
       {loading ? (
         <div className="px-6 text-center text-sm text-gray-500">Loading...</div>
-      ) : coupons.length === 0 ? (
-        <div className="px-6 text-center text-gray-500">No coupons available</div>
       ) : (
         <div
           ref={sliderRef}

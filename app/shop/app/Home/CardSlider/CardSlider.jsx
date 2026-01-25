@@ -1,4 +1,4 @@
-'use client';
+ 'use client';
 import React, { useRef, useEffect, useState } from 'react';
 import Image from 'next/image';
 import API_BASE_URL from '@/lib/apiConfig';
@@ -17,76 +17,138 @@ export default function CardSlider() {
         if (json && json.success && Array.isArray(json.data)) list = json.data;
         else if (Array.isArray(json)) list = json;
         if (!mounted) return;
-        setCards(list.map(c => ({ _id: c._id, title: c.title || c.name || '', image: c.image })));
+        setCards(
+          list.map((c) => ({
+            _id: c._id,
+            title: c.title || c.name || "",
+            image: c.image,
+            subtitle:
+              c.subtitle ||
+              c.subTitle ||
+              c.priceText ||
+              c.caption ||
+              c.description ||
+              "",
+          }))
+        );
       } catch (e) {
         if (!mounted) return;
         setCards([]);
       }
     };
     load();
-    return () => { mounted = false };
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const scroll = (direction) => {
-    if (scrollRef.current) {
-      const { scrollLeft, clientWidth } = scrollRef.current;
-      const scrollTo = direction === 'left'
-        ? scrollLeft - clientWidth
-        : scrollLeft + clientWidth;
-      scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
-    }
+    const container = scrollRef.current;
+    if (!container) return;
+    const item = container.querySelector("[data-card-item]");
+    if (!item) return;
+    const itemWidth = item.getBoundingClientRect().width;
+    const gap = 16;
+    const step = itemWidth + gap;
+    const delta = direction === "left" ? -step : step;
+    container.scrollBy({ left: delta, behavior: "smooth" });
   };
 
   if (cards.length === 0) return null;
 
   return (
-    <div className="relative w-full max-w-full mx-auto py-8 bg-white">
-      {/* Left Arrow */}
-      <button
-        onClick={() => scroll('left')}
-        className="hidden lg:block absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white rounded-full shadow p-2"
-        aria-label="Scroll Left"
-      >
-        <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-        </svg>
-      </button>
-
-      {/* Cards */}
-      <div
-        ref={scrollRef}
-        className="flex overflow-x-auto gap-12 px-10 scrollbar-hide items-end justify-center"
-        style={{ scrollBehavior: 'smooth' }}
-      >
-        {cards.map((card, idx) => (
-          <div
-            key={card._id || idx}
-            className="min-w-[200px] flex flex-col items-center"
-          >
-            <Image
-              src={card.image}
-              alt={card.title}
-              className="w-[200px] h-[180px] object-contain mb-3"
-              width={200}
-              height={180}
-            />
-            <h3 className="font-bold text-base md:text-lg tracking-wide uppercase text-center mt-2 mb-1">
-              {card.title}
-            </h3>
-          </div>
-        ))}
+    <section className="w-full py-6 bg-white">
+      <div className="flex items-center justify-between px-3 md:px-6 mb-3">
+        <h2 className="text-lg md:text-xl font-semibold text-gray-900">
+          Top Deals
+        </h2>
       </div>
 
-      {/* Right Arrow */}
-      <button
-        onClick={() => scroll('right')}
-        className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white rounded-full shadow p-2"
-        aria-label="Scroll Right"
-      >
-        <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
-    </div>
+      <div className="relative w-full">
+        {/* Left Arrow */}
+        <button
+          onClick={() => scroll("left")}
+          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white rounded-full shadow p-1.5"
+          aria-label="Scroll Left"
+        >
+          <svg
+            className="w-5 h-5 text-gray-700"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+        </button>
+
+        {/* Cards */}
+        <div
+          ref={scrollRef}
+          className="flex overflow-x-auto gap-4 md:gap-6 no-scrollbar items-start justify-start w-full"
+          style={{ scrollBehavior: "smooth" }}
+        >
+          {cards.map((card, idx) => (
+            <div
+              key={card._id || idx}
+              data-card-item
+              className="min-w-[140px] md:min-w-[170px] flex flex-col items-center"
+            >
+              <div className="w-28 h-28 md:w-32 md:h-32 flex items-center justify-center mb-2">
+                <Image
+                  src={card.image}
+                  alt={card.title}
+                  width={120}
+                  height={120}
+                  className="object-contain max-h-full max-w-full"
+                />
+              </div>
+              <p className="text-xs md:text-sm text-gray-800 text-center truncate w-full max-w-[140px]">
+                {card.title}
+              </p>
+              {card.subtitle && (
+                <p className="text-[11px] md:text-xs text-gray-500 text-center mt-0.5">
+                  {card.subtitle}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Right Arrow */}
+        <button
+          onClick={() => scroll("right")}
+          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white rounded-full shadow p-1.5"
+          aria-label="Scroll Right"
+        >
+          <svg
+            className="w-5 h-5 text-gray-700"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        </button>
+      </div>
+      <style jsx>{`
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
+    </section>
   );
 }

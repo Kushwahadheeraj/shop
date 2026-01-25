@@ -1,4 +1,4 @@
-const BACKEND = process.env.BACKEND_URL || 'https://shop-backend-qf50.onrender.com/api';
+const BACKEND = process.env.BACKEND_URL || 'http://localhost:5000/api';
 
 export async function POST(req) {
   try {
@@ -17,7 +17,9 @@ export async function POST(req) {
     const backendFormData = new FormData();
     backendFormData.append('file', file);
 
-    const res = await fetch(`${BACKEND}/api/upload/cloudinary`, {
+    const uploadUrl = BACKEND.endsWith('/api') ? `${BACKEND}/upload/cloudinary` : `${BACKEND}/api/upload/cloudinary`;
+
+    const res = await fetch(uploadUrl, {
       method: 'POST',
       headers: { 
         'Authorization': auth

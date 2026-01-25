@@ -28,8 +28,41 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const allRef = useRef(null);
   const searchRef = useRef(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerWidth >= 768 && window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    const handleResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (mobile) {
+        setIsScrolled(false);
+      } else {
+        setIsScrolled(window.scrollY > 50);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleResize);
+    
+    // Initial check
+    handleResize();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     const load = async () => {
@@ -563,7 +596,7 @@ export default function Header() {
   return (
     <>
 
-      <header className='fixed top-0 left-0 w-full z-[3000] h-16 md:h-24 bg-white border-b shadow'>
+      <header className={`fixed top-0 left-0 w-full z-[3000] bg-white border-b shadow transition-all duration-300 ${isScrolled ? 'h-16' : 'h-16 md:h-24'}`}>
         <div className='w-full max-w-[1280px] mx-auto h-full flex items-center justify-between px-1 md:px-2'>
           {/* Left: Hamburger, Logo, Brand */}
           <div className='flex items-center gap-3'>
@@ -581,9 +614,9 @@ export default function Header() {
               alt='Hardware Shack Logo'
               className='rounded w-[9.5rem] h-10 md:w-[14rem] md:h-[3rem] lg:w-[18.563rem] lg:h-[4.25rem] object-contain'
             /> */}
-            <div className='px-3 py-4 border-b border-gray-100 flex items-center justify-center'>
-                    <BrandLogo size={64} showText={true} />
-                  </div>
+            <Link href="/" className='px-1 py-1 md:px-3 md:py-4 border-b border-gray-100 flex items-center justify-center border-none cursor-pointer'>
+                    <BrandLogo size={isMobile ? 42 : (isScrolled ? 42 : 64)} showText={true} compact={isMobile || isScrolled} />
+                  </Link>
           </div>
           {/* Right: Mobile cart */}
           <div className='md:hidden flex items-center gap-2'>
@@ -605,7 +638,7 @@ export default function Header() {
             <div className='flex items-center w-full'>
               {/* Small All chip with image */}
               <div className='relative' ref={allRef}>
-                <button onClick={() => setAllOpen((v) => !v)} className='h-8 px-2 rounded-full text-gray-400 text-sm  transition-colors shadow-md flex items-center font-medium' aria-haspopup='true' aria-expanded={allOpen}>
+                <button onClick={() => setAllOpen((v) => !v)} className={`px-2 rounded-full text-gray-400 text-sm transition-all duration-300 shadow-md flex items-center font-medium ${isScrolled ? 'h-8' : 'h-10'}`} aria-haspopup='true' aria-expanded={allOpen}>
                   <span>All</span>
                   <svg className='ml-1 w-3 h-6' fill='currentColor' viewBox='0 0 20 20'>
                     <path d='M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.586l3.71-3.356a.75.75 0 1 1 1.02 1.1l-4.25 3.85a.75.75 0 0 1-1.02 0l-4.25-3.85a.75.75 0 0 1 .02-1.06z' />
@@ -638,7 +671,7 @@ export default function Header() {
               <div className='w-2'></div>
               {/* Big search pill */}
               <div className='flex-1 relative' ref={searchRef}>
-                <form onSubmit={handleSearchSubmit} className='h-8 rounded-full bg-gray-50 border border-gray-300 shadow-sm flex items-center'>
+                <form onSubmit={handleSearchSubmit} className={`rounded-full bg-gray-50 border border-gray-300 shadow-sm flex items-center transition-all duration-300 ${isScrolled ? 'h-8' : 'h-10'}`}>
                   <input
                     type='text'
                     placeholder='Search products...'
@@ -718,7 +751,7 @@ export default function Header() {
           <div className='hidden md:flex items-center gap-4 whitespace-nowrap'>
             {username ? (
               <div className='relative' onMouseEnter={() => setUserOpen(true)} onMouseLeave={() => setUserOpen(false)}>
-                <button className='bg-yellow-300 hover:bg-yellow-300 text-white font-bold h-8 px-2 rounded-full transition flex items-center gap-2 uppercase tracking-wide text-sm shadow-md max-w-[360px] overflow-hidden'>
+                <button className={`bg-yellow-300 hover:bg-yellow-300 text-white font-bold px-2 rounded-full transition-all duration-300 flex items-center gap-2 uppercase tracking-wide text-sm shadow-md max-w-[360px] overflow-hidden ${isScrolled ? 'h-8' : 'h-10'}`}>
                   <span className='truncate'>{String(username).toUpperCase()}</span>
                   <span className='inline-block text-white text-base leading-none'>👤</span>
                 </button>
@@ -739,14 +772,14 @@ export default function Header() {
               </div>
             ) : (
               <>
-                <button  onClick={() => setShowLogin(true)} className='bg-yellow-300 hover:bg-yellow-300 text-white font-bold h-8 px-2 rounded-full transition shadow-md uppercase tracking-wide text-sm'>Login / Register</button>
+                <button  onClick={() => setShowLogin(true)} className={`bg-yellow-300 hover:bg-yellow-300 text-white font-bold px-2 rounded-full transition-all duration-300 shadow-md uppercase tracking-wide text-sm ${isScrolled ? 'h-8' : 'h-10'}`}>Login / Register</button>
                 <LoginRegisterModal open={showLogin} onClose={() => setShowLogin(false)} />
               </>
             )}
-            <span className='h-8 border-l border-gray-300'></span>
+            <span className={`border-l border-gray-300 transition-all duration-300 ${isScrolled ? 'h-8' : 'h-10'}`}></span>
             <div className='relative' onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
               <Link href='/cart' className='relative block'>
-                <p className='bg-yellow-300 hover:bg-yellow-300 text-white font-bold h-8 px-2 rounded-full flex items-center justify-center gap-2 transition shadow-md uppercase tracking-wide text-sm'>
+                <p className={`bg-yellow-300 hover:bg-yellow-300 text-white font-bold px-2 rounded-full flex items-center justify-center gap-2 transition-all duration-300 shadow-md uppercase tracking-wide text-sm ${isScrolled ? 'h-8' : 'h-10'}`}>
                   <span>CART</span>
                   <svg width='18' height='18' fill='none' stroke='currentColor' strokeWidth='2' viewBox='0 0 24 24'>
                     <circle cx='9' cy='21' r='1.5' />

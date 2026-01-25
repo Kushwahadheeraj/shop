@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import PersistentShopSidebar from './PersistentShopSidebar';
@@ -43,6 +43,7 @@ export default function ShopLayout({ children }) {
             <span className="text-gray-400">/</span>
             <span className="text-gray-900 font-semibold">{currentLabel}</span>
           </nav>
+
         </div>
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Persistent Sidebar */}

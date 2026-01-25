@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://shop-backend-qf50.onrender.com/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
 export default function ProductAdd() {
   const router = useRouter();
@@ -91,6 +91,10 @@ export default function ProductAdd() {
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Add New Product</h1>
             <p className="text-gray-600">Add a new product with name and image</p>
+          </div>
+
+          <div className="mb-8">
+             <CategoryBannerUpload category="Shop" />
           </div>
 
           {message && (

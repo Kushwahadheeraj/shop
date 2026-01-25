@@ -11,50 +11,73 @@ import Service from "../Service/Service";
 import PopularTools from "../Tools/PopularTools";
 import OfferProduct from "../OfferProduct/OfferProduct";
 import CouponsSection from "../CouponsSection/CouponsSection";
+import BestQuality from "../BestQuality/BestQuality";
+import TopSelection from "../TopSelection/TopSelection";
+import FashionBanner from "../FashionBanner/FashionBanner";
+import DealsSection from "../DealsSection/DealsSection";
+import ShopByCategory from "./ShopByCategory";
 
 export default function Home() {
   return (
-        <div>
-          <div className=" bg-gradient-to-r from-indigo-50 to-purple-50">
-            <ImageSlider />
+    <div className="w-full min-h-screen bg-sky-100">
+      <div className=" bg-sky-100">
+        <ImageSlider />
+      </div>
+      <div className=" bg-sky-100">
+        <CouponsSection />
+      </div>
+      <div className="mt-2 bg-sky-100">
+        <CardSlider />
+      </div>
+      <div className="bg-sky-100">
+        <div className="max-w-8xl mx-auto px-2 py-2 grid grid-cols-1 lg:grid-cols-3 gap-3">
+          <div className="bg-white rounded-md shadow-sm border border-gray-100">
+            <BestQuality />
           </div>
-          <div className=" bg-gradient-to-r from-emerald-50 to-teal-50">
-            <CouponsSection />
+          <div className="bg-white rounded-md shadow-sm border border-gray-100">
+            <TopSelection />
           </div>
-          <div className=" bg-gradient-to-r from-emerald-50 to-teal-50">
-            <CardSlider />
-          </div>
-          <div className=" bg-gradient-to-r from-amber-50 to-yellow-50">
-            <Card />
-          </div>
-          <div className=" bg-gradient-to-r from-rose-50 to-pink-50">
-            <Paints />
-          </div>
-          <div className=" bg-gradient-to-r from-sky-50 to-cyan-50">
-            <Items />
-          </div>
-          <div className=" bg-gradient-to-r from-blue-50 to-indigo-50">
-            <Electricals />
-          </div>
-          <div className=" bg-gradient-to-r from-orange-50 to-red-50">
-            <OfferProduct/>
-          </div>
-          <div className=" bg-gradient-to-r from-lime-50 to-green-50">
-            <PopularTools />
-          </div>
-          <div className=" bg-gradient-to-r from-violet-50 to-fuchsia-50">
-            <Categories />
-          </div>
-          <div className=" bg-gradient-to-r from-teal-50 to-sky-50">
-            <PopularProducts />
-          </div>
-          <div className=" bg-gradient-to-r from-stone-50 to-zinc-50">
-            <Brands />
-          </div>
-          <div className=" bg-gradient-to-r from-yellow-50 to-amber-50">
-            <Service />
+          <div className="bg-white rounded-md shadow-sm border border-gray-100">
+            <FashionBanner />
           </div>
         </div>
-
+      </div>
+      <div className=" bg-sky-100">
+        <DealsSection />
+      </div>
+      <div className=" bg-sky-100">
+        <ShopByCategory />
+      </div>
+      <div className=" bg-sky-100">
+        <Card />
+      </div>
+      <div className=" bg-sky-100">
+        <Paints />
+      </div>
+      <div className=" bg-sky-100">
+        <Items />
+      </div>
+      <div className=" bg-sky-100">
+        <Electricals />
+      </div>
+      <div className=" bg-sky-100">
+        <OfferProduct/>
+      </div>
+      <div className=" bg-sky-100">
+        <PopularTools />
+      </div>
+      <div className=" bg-sky-100">
+        <Categories />
+      </div>
+      <div className=" bg-sky-100">
+        <PopularProducts />
+      </div>
+      <div className=" bg-sky-100">
+        <Brands />
+      </div>
+      <div className=" bg-sky-100">
+        <Service />
+      </div>
+    </div>
   );
 }

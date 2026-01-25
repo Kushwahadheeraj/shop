@@ -77,7 +77,8 @@ export default function Update() {
           if (u.startsWith('http://') || u.startsWith('https://') || u.startsWith('data:')) return u;
           // Backend stores images as /uploads/products/...
           // Static files are served from root, not /api
-          const base = API_BASE_URL.replace('/api', '').replace(/\/$/, '');
+          // Remove /api suffix if present to get the root URL for static files
+          const base = API_BASE_URL.replace(/\/api\/?$/, '').replace(/\/$/, '');
           const path = u.startsWith('/') ? u : `/${u}`;
           return `${base}${path}`;
         };

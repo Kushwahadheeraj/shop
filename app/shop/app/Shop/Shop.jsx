@@ -5,30 +5,31 @@ import { useRouter } from "next/navigation";
 import PersistentShopSidebar from "@/components/PersistentShopSidebar";
 import Update from "../Update/Update";
 import { useEffect, useState } from "react";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://shop-backend-qf50.onrender.com';
-
-
+import API_BASE_URL from "@/lib/apiConfig";
 
 export default function Shop() {
   const router = useRouter();
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    if (typeof document !== "undefined") {
-      document.body.style.overflow = mobileOpen ? "hidden" : "";
-    }
-  }, [mobileOpen]);
+  // Helper to convert relative URLs to absolute
+  const toAbs = (u) => {
+    if (!u || typeof u !== 'string') return '/placeholder-product.png';
+    if (u.startsWith('http://') || u.startsWith('https://') || u.startsWith('data:')) return u;
+    
+    // Remove /api suffix if present to get the root URL for static files
+    const base = API_BASE_URL.replace(/\/api\/?$/, '').replace(/\/$/, '');
+    const path = u.startsWith('/') ? u : `/${u}`;
+    return `${base}${path}`;
+  };
 
   // Fetch products from backend
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${API_BASE_URL}/api/simple-products`);
+        const response = await fetch(`${API_BASE_URL}/simple-products`);
         if (!response.ok) {
           throw new Error('Failed to fetch products');
         }
@@ -66,12 +67,7 @@ export default function Shop() {
               <span className="text-gray-400">/</span>
               <span className="text-gray-900 font-semibold">SHOP</span>
             </nav>
-            <button onClick={() => setMobileOpen(true)} className="md:hidden mt-2 flex items-center justify-center gap-2 text-gray-600 text-xs w-full">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path d="M3 5h18M6 12h12M10 19h4" />
-              </svg>
-              <span>FILTER</span>
-            </button>
+
           </div>
         </div>
         {/* Loading State */}
@@ -147,7 +143,7 @@ export default function Shop() {
                   {/* Image Section */}
                   <div className="w-full h-48 bg-white flex items-center justify-center p-6">
                     <Image
-                      src={`${API_BASE_URL}${product.image}` || '/placeholder-product.png'}
+                      src={toAbs(product.image)}
                       alt={product.name}
                       width={200}
                       height={200}
@@ -157,6 +153,7 @@ export default function Shop() {
                   
                   {/* Label Section */}
                   <div className="bg-white p-4">
+
                     <h3 className="text-center font-bold text-black uppercase text-sm tracking-wide">
                       {product.name}
                     </h3>
@@ -177,27 +174,7 @@ export default function Shop() {
         )}
       </main>
 
-      {/* Mobile Filter Drawer */}
-      {mobileOpen && (
-        <div className="fixed inset-0 md:hidden z-[3500]">
-          <div
-            className="absolute inset-0 bg-black/30 backdrop-blur-sm"
-            onClick={() => setMobileOpen(false)}
-          />
-          <div className="absolute left-0 top-0 h-full w-72 bg-white transform transition-transform duration-300 translate-x-0 relative z-10">
-            <button
-              onClick={() => setMobileOpen(false)}
-              aria-label="Close filter"
-              className="absolute top-2 right-2 w-6 h-6 rounded-full border border-white text-black flex items-center justify-center bg-transparent"
-            >
-              ×
-            </button>
-            <div className="p-0 pt-2">
-              <PersistentShopSidebar forceMobile />
-            </div>
-          </div>
-        </div>
-      )}
+
 </div>
       {/* Update component - Show below sidebar when there are products */}
       {products.length > 0 && <Update />}

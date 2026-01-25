@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 
-export default function BrandLogo({ className = "", size = 64, showText = true }) {
+export default function BrandLogo({ className = "", size = 64, showText = true, compact = false }) {
   const diamondSize = size;
   const bgSize = size * 0.9; // Yellow diamond background size
   
@@ -33,15 +33,15 @@ export default function BrandLogo({ className = "", size = 64, showText = true }
         <div
           className="relative z-10 flex items-center justify-center"
           style={{ 
-            width: size * 1.8, 
-            height: size * 1.8
+            width: size * 1.4, 
+            height: size * 1.4
           }}
         >
           <Image
             src="/logo.png"
             alt="Kushwaha Hardware Logo"
-            width={size * 1.8}
-            height={size * 1.8}
+            width={size * 1.4}
+            height={size * 1.4}
             className="object-contain"
             priority
           />
@@ -49,8 +49,8 @@ export default function BrandLogo({ className = "", size = 64, showText = true }
       </div>
       {showText && (
         <div className="text-left leading-tight flex-1 min-w-0">
-          <p className="text-2xl font-bold text-zinc-900 dark:text-white tracking-tight">Kushwaha</p>
-          <p className="text-lg font-semibold text-zinc-600 dark:text-zinc-200 tracking-wide">Hardware</p>
+          <p className={`${compact ? 'text-lg' : 'text-2xl'} font-bold text-zinc-900 dark:text-white tracking-tight transition-all duration-300`}>Kushwaha</p>
+          <p className={`${compact ? 'text-sm' : 'text-lg'} font-semibold text-zinc-600 dark:text-zinc-200 tracking-wide transition-all duration-300`}>Hardware</p>
         </div>
       )}
     </div>

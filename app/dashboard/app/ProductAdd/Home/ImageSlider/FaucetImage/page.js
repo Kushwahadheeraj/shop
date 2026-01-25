@@ -1,6 +1,12 @@
 import ProductForm from "./ProductForm.jsx";
+import CategoryBannerUpload from '@/components/CategoryBannerUpload';
 export default function HomeProductAddPage() {
-  return <ProductForm />;
+  return (
+    <div className="space-y-6">
+      <CategoryBannerUpload category="FaucetImage" />
+      <ProductForm />
+    </div>
+  );
 }
 
 // Force dynamic rendering to prevent build timeouts

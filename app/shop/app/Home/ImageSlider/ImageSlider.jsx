@@ -39,7 +39,7 @@ const ImageSlider = () => {
 
   return (
     <>
-      <div className="relative w-full h-screen overflow-hidden lg:mt-32 md:mt32 mt-12">
+      <div className="relative w-full h-screen overflow-hidden lg:mt-32 md:mt-32 mt-12">
         {slides[currentIndex]}
 
         {/* Left Arrow */}

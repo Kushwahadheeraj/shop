@@ -27,9 +27,20 @@ const categories = [
 
 export default function ProductListingPage() {
   const pathname = usePathname();
-  const [data, setData] = useState(null);
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Helper to convert relative URLs to absolute
+  const toAbs = (u) => {
+    if (!u || typeof u !== 'string') return '';
+    if (u.startsWith('http://') || u.startsWith('https://') || u.startsWith('data:')) return u;
+    
+    // Remove /api suffix if present to get the root URL for static files
+    const base = API_BASE_URL.replace(/\/api\/?$/, '').replace(/\/$/, '');
+    const path = u.startsWith('/') ? u : `/${u}`;
+    return `${base}${path}`;
+  };
 
   // Get current category from pathname
   const getCurrentCategory = () => {
@@ -46,90 +57,58 @@ export default function ProductListingPage() {
 
   const currentCategory = getCurrentCategory();
 
-  // Mock product data - you can replace this with API calls
-  const mockProducts = [
-    {
-      _id: '1',
-      name: "Apcon Glass Marking White Pencil Pack Of 2",
-      price: 11.00,
-      mrp: 15.00,
-      photos: [{ url: "https://via.placeholder.com/300x300?text=Apcon+Pencil" }],
-      rating: 5,
-      stock: 10
-    },
-    {
-      _id: '2',
-      name: "Araldite Karpenier Synthetic Resin Adhesive Wood Glue",
-      price: 700.00,
-      mrp: 1250.00,
-      photos: [{ url: "https://via.placeholder.com/300x300?text=Araldite+Karpenier" }],
-      rating: 5,
-      stock: 5
-    },
-    {
-      _id: '3',
-      name: "Araldite Klear 1 Plus 1.8kg",
-      price: 1105.00,
-      mrp: 1250.00,
-      photos: [{ url: "https://via.placeholder.com/300x300?text=Araldite+Klear" }],
-      rating: 5,
-      stock: 8
-    },
-    {
-      _id: '4',
-      name: "Araldite Mechanic Epoxy Adhesive 5g",
-      price: 30.00,
-      mrp: 40.00,
-      photos: [{ url: "https://via.placeholder.com/300x300?text=Araldite+Mechanic" }],
-      rating: 5,
-      stock: 15
-    },
-    {
-      _id: '5',
-      name: "Asian Paints apryCRB Tatabar High",
-      price: 110.00,
-      mrp: 120.00,
-      photos: [{ url: "https://via.placeholder.com/300x300?text=Asian+Paints" }],
-      rating: 5,
-      stock: 0
-    },
-    {
-      _id: '6',
-      name: "Apollo Adhesive Amrow",
-      price: 100.00,
-      mrp: 120.00,
-      photos: [{ url: "https://via.placeholder.com/300x300?text=Apollo+Amrow" }],
-      rating: 5,
-      stock: 12
-    },
-    {
-      _id: '7',
-      name: "Apollo Adhesive Bearing Retainer 944",
-      price: 190.00,
-      mrp: 200.00,
-      photos: [{ url: "https://via.placeholder.com/300x300?text=Apollo+Retainer" }],
-      rating: 5,
-      stock: 0
-    },
-    {
-      _id: '8',
-      name: "Apollo Adhesive Bearing Retainer TL 944",
-      price: 170.00,
-      mrp: 200.00,
-      photos: [{ url: "https://via.placeholder.com/300x300?text=Apollo+TL" }],
-      rating: 5,
-      stock: 0
-    }
-  ];
-
   useEffect(() => {
-    // Simulate API call
-    setLoading(true);
-    setTimeout(() => {
-      setData(mockProducts);
-      setLoading(false);
-    }, 1000);
-  }, [pathname]);
+    let mounted = true;
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        // Fetch all products or try to filter by category if API supports it
+        // Using /products/all and filtering client-side for now to be safe
+        const res = await fetch(`${API_BASE_URL}/products/all`);
+        const json = await res.json();
+        
+        if (!mounted) return;
+
+        let list = [];
+        if (json && Array.isArray(json)) {
+          list = json;
+        } else if (json && json.data && Array.isArray(json.data)) {
+          list = json.data;
+        } else if (json && json.products && Array.isArray(json.products)) {
+          list = json.products;
+        }
+
+        // Filter by category if we are in a specific category
+        if (currentCategory.name !== "SHOP") {
+          const categoryName = currentCategory.name.toLowerCase();
+          // Map inconsistent category names if needed
+          const searchTerms = [categoryName];
+          if (categoryName.includes('paint')) searchTerms.push('paint', 'paints');
+          if (categoryName.includes('electrical')) searchTerms.push('electrical', 'electric');
+          if (categoryName.includes('sanitary')) searchTerms.push('sanitary', 'faucets');
+          if (categoryName.includes('tool')) searchTerms.push('tool', 'tools');
+          if (categoryName.includes('cement')) searchTerms.push('cement', 'cements');
+          
+          list = list.filter(item => {
+            const itemCat = (item.category || item.type || '').toLowerCase();
+            return searchTerms.some(term => itemCat.includes(term));
+          });
+        }
+
+        setData(list);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+        setError("Failed to load products");
+        if (mounted) setData([]);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    fetchData();
+    return () => { mounted = false; };
+  }, [pathname, currentCategory.name]);
+
 
   if (loading) {
     return (
@@ -146,94 +125,59 @@ export default function ProductListingPage() {
   const products = Array.isArray(data) ? data : [];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Breadcrumb Navigation */}
-      <div className="bg-white border-b border-gray-200 py-4">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center space-x-2 text-sm">
-            <Link href="/" className="text-gray-500 hover:text-gray-700">HOME</Link>
-            <span className="text-gray-400">/</span>
-            <span className="text-gray-900 font-medium">{currentCategory.name.toUpperCase()}</span>
-          </nav>
+    <div className="w-full">
+      {/* Results Header */}
+      <div className="flex justify-between items-center mb-6">
+        <p className="text-gray-600">Showing 1-{products.length} of {products.length} results</p>
+        <div className="flex items-center gap-4">
+          <select className="border border-gray-300 rounded-md px-3 py-2 text-sm">
+            <option>Default sorting</option>
+            <option>Sort by popularity</option>
+            <option>Sort by average rating</option>
+            <option>Sort by latest</option>
+            <option>Sort by price: low to high</option>
+            <option>Sort by price: high to low</option>
+          </select>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar */}
-          <aside className="w-full lg:w-1/4 bg-white p-6 rounded-lg shadow-sm">
-            <div className="mb-8">
-              <div className="text-gray-800 font-bold text-lg mb-2">FILTER BY PRICE</div>
-              <div className="h-0.5 w-8 bg-gray-300 mb-4" />
-              <div className="space-y-4">
-                <div className="text-sm text-gray-600">
-                  Price: <span className="font-bold">₹0</span> — <span className="font-bold">₹10,290</span>
-                </div>
-                <button className="bg-gray-800 text-white font-bold px-6 py-2 rounded-full text-xs tracking-widest hover:bg-gray-700 transition-colors">
-                  FILTER
-                </button>
-              </div>
-            </div>
-            
-            <div>
-              <div className="text-gray-800 font-bold text-lg mb-2">BROWSE</div>
-              <div className="h-0.5 w-8 bg-gray-300 mb-4" />
-              <div className="space-y-0">
-                {categories.map((cat, index) => (
-                  <div key={cat.href}>
-                    <Link 
-                      href={cat.href}
-                      className={`w-full text-left py-3 text-sm transition-colors font-medium block ${
-                        pathname === cat.href || pathname.startsWith(cat.href + '/')
-                          ? 'text-blue-600 bg-blue-50' 
-                          : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50'
-                      }`}
-                    >
-                      {cat.name}
-                    </Link>
-                    {index < categories.length - 1 && (
-                      <div className="h-px bg-gray-200"></div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </aside>
+      {/* Category Banner */}
+      <div className="relative h-64 bg-gradient-to-r from-yellow-300 to-orange-500 flex items-center justify-center mb-8 rounded-lg overflow-hidden">
+        <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+        <h1 className="relative z-10 text-5xl font-bold text-white text-center px-4">
+          {currentCategory.name.toUpperCase()}
+        </h1>
+      </div>
 
-          {/* Main Content */}
-          <main className="w-full lg:w-3/4">
-            {/* Results Header */}
-            <div className="flex justify-between items-center mb-6">
-              <p className="text-gray-600">Showing 1-{products.length} of {products.length} results</p>
-              <div className="flex items-center gap-4">
-                <select className="border border-gray-300 rounded-md px-3 py-2 text-sm">
-                  <option>Default sorting</option>
-                  <option>Sort by popularity</option>
-                  <option>Sort by average rating</option>
-                  <option>Sort by latest</option>
-                  <option>Sort by price: low to high</option>
-                  <option>Sort by price: high to low</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Category Banner */}
-            <div className="relative h-64 bg-gradient-to-r from-yellow-300 to-orange-500 flex items-center justify-center mb-8 rounded-lg overflow-hidden">
-              <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-              <h1 className="relative z-10 text-5xl font-bold text-white text-center px-4">
-                {currentCategory.name.toUpperCase()}
-              </h1>
-            </div>
-
-            {/* Products - Mobile: Linear/Horizontal layout, Desktop: Grid layout */}
-            <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
+      {/* Products - Mobile: Linear/Horizontal layout, Desktop: Grid layout */}
+      <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
               {products.map((item) => {
                 const key = item?._id || item?.id || `${Math.random()}`;
                 const name = item?.name || item?.title || 'Unnamed Product';
-                const originalPrice = item?.mrp || item?.originalPrice;
-                const salePrice = item?.price || item?.salePrice;
-                const discount = originalPrice && salePrice ? Math.round(((originalPrice - salePrice) / originalPrice) * 100) : 0;
-                const img = item?.photos?.[0]?.url || item?.image || item?.photo || null;
+                
+                // Price logic
+                const originalPrice = item?.mrp || item?.originalPrice || item?.price || 0;
+                const salePrice = item?.discountPrice || item?.salePrice || item?.price || originalPrice;
+                const discount = originalPrice && salePrice && originalPrice > salePrice 
+                  ? Math.round(((originalPrice - salePrice) / originalPrice) * 100) 
+                  : (item?.discount || 0);
+
+                // Image logic
+                const images = Array.isArray(item?.images) ? item.images : (Array.isArray(item?.photos) ? item.photos : []);
+                let imgUrl = null;
+                if (images.length > 0) {
+                  const firstImg = images[0];
+                  imgUrl = typeof firstImg === 'string' ? firstImg : (firstImg?.url || null);
+                } else if (item?.image) {
+                  imgUrl = item.image;
+                } else if (item?.photo) {
+                  imgUrl = item.photo;
+                } else if (item?.imageUrl) {
+                  imgUrl = item.imageUrl;
+                }
+                
+                const img = toAbs(imgUrl);
+                
                 const rating = item?.rating || 5;
                 const isOutOfStock = item?.stock === 0 || item?.quantity === 0;
                 
@@ -335,9 +279,6 @@ export default function ProductListingPage() {
                 <p className="text-gray-500">Try adjusting your search or filter criteria.</p>
               </div>
             )}
-          </main>
-        </div>
-      </div>
     </div>
   );
 }

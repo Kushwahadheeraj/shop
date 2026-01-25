@@ -11,7 +11,9 @@ const ElectricImage = () => {
     const toAbs = (u) => {
       if (!u || typeof u !== 'string') return '';
       if (u.startsWith('http://') || u.startsWith('https://') || u.startsWith('data:')) return u;
-      const base = API_BASE_URL.replace(/\/$/, '');
+      
+      // Remove /api suffix if present to get the root URL for static files
+      const base = API_BASE_URL.replace(/\/api\/?$/, '').replace(/\/$/, '');
       const path = u.startsWith('/') ? u : `/${u}`;
       return `${base}${path}`;
     };

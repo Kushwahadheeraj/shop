@@ -1,7 +1,7 @@
 const BACKEND = process.env.BACKEND_URL || 
   process.env.NEXT_PUBLIC_BACKEND_URL || 
   process.env.NEXT_PUBLIC_API_BASE_URL ||
-  'https://shop-backend-qf50.onrender.com/api';
+  'http://localhost:5000/api';
 
 // Simple in-memory cache with TTL (5 minutes)
 const cache = new Map();

@@ -83,7 +83,7 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center mt-8 pt-6 border-gray-700">
           {/* Copyright */}
           <div className="text-gray-400 text-sm mb-4 md:mb-0">
-            Copyright 2025 © <span className="font-bold text-white">Hardware Shack</span>
+            Copyright {new Date().getFullYear()} © <span className="font-bold text-white">Kushwaha Hardware</span>
           </div>
           
           {/* Payment Methods */}

@@ -15,6 +15,13 @@ const brandsRoutes = require('./home/brandsRoutes');
 const popularProductsRoutes = require('./home/popularProductsRoutes');
 const homeElectricalRoutes = require('./home/homeElectricalRoutes');
 const homePaintsRoutes = require('./home/homePaintsRoutes');
+const bestQualityRoutes = require('./home/bestQualityRoutes');
+const topSelectionRoutes = require('./home/topSelectionRoutes');
+const fashionBannerRoutes = require('./home/fashionBannerRoutes');
+const dealsDiscountRoutes = require('./home/dealsDiscountRoutes');
+const topRatedDealsRoutes = require('./home/topRatedDealsRoutes');
+const furnitureDealsRoutes = require('./home/furnitureDealsRoutes');
+const shopByCategoryRoutes = require('./home/shopByCategoryRoutes');
 
 // Import ImageSlider subfolder routes
 const paintsImageRoutes = require('./home/paintsImageRoutes');
@@ -35,6 +42,13 @@ router.use('/brands', brandsRoutes);
 router.use('/popularproducts', popularProductsRoutes);
 router.use('/electrical', homeElectricalRoutes);
 router.use('/paints', homePaintsRoutes);
+router.use('/bestquality', bestQualityRoutes);
+router.use('/topselection', topSelectionRoutes);
+router.use('/fashionbanner', fashionBannerRoutes);
+router.use('/deals', dealsDiscountRoutes);
+router.use('/toprateddeals', topRatedDealsRoutes);
+router.use('/furnituredeals', furnitureDealsRoutes);
+router.use('/shopbycategory', shopByCategoryRoutes);
 // Use ImageSlider subfolder routes
 router.use('/imageslider/paintsimage', paintsImageRoutes);
 router.use('/imageslider/toolsimage', toolsImageRoutes);

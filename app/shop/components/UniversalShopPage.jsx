@@ -9,6 +9,73 @@ import ProductDetailModal from './ProductDetailModal';
 import PersistentShopSidebar from '@/components/PersistentShopSidebar';
 import { useCart } from '@/components/CartContext';
 
+function ShopBanner({ category, title }) {
+  const [bannerUrl, setBannerUrl] = useState(null);
+  const [imageError, setImageError] = useState(false);
+
+  useEffect(() => {
+    if (!category) {
+      setBannerUrl(null);
+      return;
+    }
+
+    const fetchBanner = async () => {
+      try {
+        setImageError(false); // Reset error state on new category
+        
+        // Only try the root API path which is correct for Next.js App Router
+        const path = `/api/category-banner?category=${encodeURIComponent(category)}`;
+        
+        try {
+            const res = await fetch(path);
+            if (res.ok) {
+                const data = await res.json();
+                if (data && data.imageUrl) {
+                    setBannerUrl(data.imageUrl);
+                    return;
+                }
+            }
+        } catch (e) {
+            console.error('Network error fetching banner:', e);
+        }
+        
+        setBannerUrl(null);
+      } catch (e) {
+        console.error("Error fetching banner:", e);
+        setBannerUrl(null);
+      }
+    };
+
+    fetchBanner();
+  }, [category]);
+
+  if (bannerUrl && !imageError) {
+    return (
+      <div className="relative h-32 md:h-64 mb-4 md:mb-8 overflow-hidden rounded-none md:rounded-lg shadow-none md:shadow-md">
+        <img 
+            src={bannerUrl} 
+            alt={title} 
+            className="w-full h-full object-cover" 
+            onError={(e) => {
+                console.error('Image failed to load:', bannerUrl);
+                setImageError(true);
+            }}
+        />
+        <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+             <h1 className="relative z-10 text-2xl md:text-5xl font-bold text-white text-center px-4 drop-shadow-lg" style={{textShadow: '2px 2px 4px rgba(0,0,0,0.7)'}}>{title}</h1>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+      <div className="relative h-32 md:h-64 bg-gradient-to-r from-yellow-300 to-orange-500 flex items-center justify-center mb-4 md:mb-8 rounded-none md:rounded-lg shadow-none md:shadow-md">
+        <div className="absolute inset-0 bg-black/20"></div>
+        <h1 className="relative z-10 text-2xl md:text-5xl font-bold text-white text-center px-4">{title}</h1>
+      </div>
+  );
+}
+
 function toKebabCase(input) {
   const withSpaces = String(input)
     .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
@@ -172,6 +239,10 @@ export default function UniversalShopPage() {
       .replace(/[^a-zA-Z0-9]+/g, ' ')
       .trim()
       .toUpperCase();
+  }, [shopSegments]);
+
+  const currentCategory = useMemo(() => {
+    return shopSegments[shopSegments.length - 1];
   }, [shopSegments]);
 
   // Compute product lists BEFORE any conditional returns to preserve hooks order
@@ -358,6 +429,7 @@ export default function UniversalShopPage() {
               </svg>
               <span>FILTER</span>
             </button>
+
           </div>
         </div>
       </div>
@@ -375,10 +447,7 @@ export default function UniversalShopPage() {
             </div>
 
       {/* Category Banner - compact on mobile */}
-      <div className="relative h-32 md:h-64 bg-gradient-to-r from-yellow-300 to-orange-500 flex items-center justify-center mb-4 md:mb-8">
-        <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-        <h1 className="relative z-10 text-2xl md:text-5xl font-bold text-white text-center px-4">{displayTitle}</h1>
-      </div>
+      <ShopBanner category={currentCategory} title={displayTitle} />
 
       {/* Main Content */}
             {/* Results Header (mobile only) */}
@@ -613,6 +682,7 @@ export default function UniversalShopPage() {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
       />
+
 
       {mobileOpen && (
         <div className="fixed inset-0 md:hidden z-[3500]">

@@ -4,9 +4,8 @@
       "@/*": ["./*"],
       "@/components": ["./components"],
       "@/components/*": ["./components/*"],
-      "@/lib": ["../../lib"],
-      "@/hooks": ["../../hooks"]
+      "@/lib": ["./lib"],
+      "@/hooks": ["./hooks"]
     }
   }
 }
-

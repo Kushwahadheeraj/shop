@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 const getNavItems = (isLoggedIn) => {
   const rootPath = (folder) => `/ShopPage/${folder}`;
@@ -28,7 +28,39 @@ export default function Navbar() {
   const [openMenu, setOpenMenu] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activePage, setActivePage] = useState('HOME');
+  const [isScrolled, setIsScrolled] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
+
+  // Handle scroll for shrink effect
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerWidth >= 768 && window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setIsScrolled(false);
+      } else {
+        setIsScrolled(window.scrollY > 50);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleResize);
+    
+    // Initial check
+    handleResize();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   const folderMap = {
     'PAINTS': 'Paint',
@@ -74,22 +106,38 @@ export default function Navbar() {
 
   // Set active page based on current route
   useEffect(() => {
-    const path = window.location.pathname;
-    if (path === '/') {
-      setActivePage('HOME');
-    } else if (path === '/Shop' || path.startsWith('/ShopPage')) {
+    // Priority check for specific categories
+    if (pathname.includes('/ShopPage/Paint')) {
+      setActivePage('PAINTS');
+    } else if (pathname.includes('/ShopPage/Electrical')) {
+      setActivePage('ELECTRICALS');
+    } else if (pathname.includes('/ShopPage/Sanitary')) {
+      setActivePage('SANITARY WARE & FAUCETS');
+    } else if (pathname.includes('/ShopPage/Tools')) {
+      setActivePage('TOOLS');
+    } else if (pathname.includes('/ShopPage/Cements')) {
+      setActivePage('CEMENTS & POP');
+    } else if (pathname.includes('/ShopPage/Adhesives')) {
+      setActivePage('ADHESIVE');
+    } else if (pathname.includes('/ShopPage/Cleaning')) {
+      setActivePage('CLEANING');
+    } 
+    // General checks
+    else if (pathname === '/Shop' || pathname.startsWith('/ShopPage')) {
       setActivePage('SHOP');
-    } else if (path.startsWith('/Tracking')) {
+    } else if (pathname.startsWith('/Tracking')) {
       setActivePage('TRACKING');
-    } else {
+    } else if (pathname === '/') {
       setActivePage('HOME');
+    } else {
+      setActivePage(''); // Default or 'HOME'
     }
-  }, []);
+  }, [pathname]);
 
   const navItems = getNavItems(isLoggedIn);
 
   return (
-    <div className="fixed top-24 left-0 w-full z-60 lg:visible lg:!block md:hidden hidden">
+    <div className={`fixed left-0 w-full z-60 lg:visible lg:!block md:hidden hidden transition-all duration-300 ${isScrolled ? 'top-16' : 'top-24'}`}>
       <nav className="bg-black text-white">
         <ul className='flex items-center px-0.5 py-0.5 space-x-1'>
           {navItems.map((item) => (
@@ -119,7 +167,7 @@ export default function Navbar() {
                     router.push(`/ShopPage/${folder}`);
                   }
                 }}
-                className={`text-sm font-medium uppercase transition-all duration-300 flex items-center
+                className={`font-medium uppercase transition-all duration-300 flex items-center ${isScrolled ? 'text-xs' : 'text-sm'}
                   ${
                     activePage === item.label
                       ? 'bg-yellow-300 text-white px-2 py-1 rounded-full hover:bg-yellow-300'

@@ -394,6 +394,35 @@ export const sidebarSections = [
           {
             name: 'Offer',
             path: '/ProductAdd/Home/Offer',
+
+          },
+           {
+            name: 'Best Quality',
+            path: '/ProductAdd/Home/BestQuality',
+          },
+          {
+            name: 'Top Selection',
+            path: '/ProductAdd/Home/TopSelection',
+          },
+          {
+            name: 'Deals Section',
+            path: '/ProductAdd/Home/DealsSection',
+          },
+          {
+            name: 'Shop By Category',
+            path: '/ProductAdd/Home/ShopByCategory',
+          },
+          {
+            name: 'Top Rated Deals',
+            path: '/ProductAdd/Home/TopRatedDeals',
+          },
+          {
+            name: 'Sanitary Deals',
+            path: '/ProductAdd/Home/FurnitureDeals',
+          },
+          {
+            name: 'Fashion Banner',
+            path: '/ProductAdd/Home/FashionBanner',
           },
         ],
       },
@@ -2740,7 +2769,7 @@ export const sidebarSections = [
       { name: 'Electrical Fitting', path: '/ProductList/Fitting' },
       { name: 'Fiber Sheet', path: '/ProductList/Fiber' },
       { name: 'Hardware', path: '/ProductList/Hardware' },
-        {
+      {
         name: 'Home',
         subItemsName: [
           {
@@ -2800,7 +2829,6 @@ export const sidebarSections = [
             name: 'Popular Products',
             path: '/ProductList/Home/PopularProducts',
           },
-         
           {
             name: 'Product Tools',
             path: '/ProductList/Home/ProductTools',
@@ -2812,6 +2840,34 @@ export const sidebarSections = [
           {
             name: 'Offer',
             path: '/ProductList/Home/Offer',
+          },
+          {
+            name: 'Best Quality',
+            path: '/ProductList/Home/BestQuality',
+          },
+          {
+            name: 'Top Selection',
+            path: '/ProductList/Home/TopSelection',
+          },
+          {
+            name: 'Deals Section',
+            path: '/ProductList/Home/DealsSection',
+          },
+          {
+            name: 'Shop By Category',
+            path: '/ProductList/Home/ShopByCategory',
+          },
+          {
+            name: 'Top Rated Deals',
+            path: '/ProductList/Home/TopRatedDeals',
+          },
+          {
+            name: 'Sanitary Deals',
+            path: '/ProductList/Home/FurnitureDeals',
+          },
+          {
+            name: 'Fashion Banner',
+            path: '/ProductList/Home/FashionBanner',
           },
         ],
       },

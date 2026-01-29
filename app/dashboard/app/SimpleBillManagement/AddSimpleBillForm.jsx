@@ -41,7 +41,8 @@ const AddSimpleBillForm = ({ onClose, onSave, shops = [] }) => {
     }, 0);
 
     const discount = parseFloat(formData.pricing.discount) || 0;
-    const totalAmount = subtotal - discount; // NO GST - just subtotal minus discount
+    const extraCharge = parseFloat(formData.pricing.extraCharge) || 0;
+    const totalAmount = subtotal + extraCharge - discount; // Subtotal + Extra Charge - Discount
     const paidAmount = parseFloat(formData.payment.paidAmount) || 0;
 
     setFormData(prev => ({
@@ -56,7 +57,7 @@ const AddSimpleBillForm = ({ onClose, onSave, shops = [] }) => {
         remainingAmount: isNaN(totalAmount - paidAmount) ? 0 : Math.max(0, totalAmount - paidAmount)
       }
     }));
-  }, [formData.items, formData.pricing.discount, formData.payment.paidAmount]);
+  }, [formData.items, formData.pricing.discount, formData.pricing.extraCharge, formData.payment.paidAmount]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -193,7 +194,8 @@ const AddSimpleBillForm = ({ onClose, onSave, shops = [] }) => {
         })),
         pricing: {
           ...formData.pricing,
-          discount: parseFloat(formData.pricing.discount) || 0
+          discount: parseFloat(formData.pricing.discount) || 0,
+          extraCharge: parseFloat(formData.pricing.extraCharge) || 0
         },
         payment: {
           ...formData.payment,

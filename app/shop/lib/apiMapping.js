@@ -15,6 +15,8 @@ export const API_MAPPINGS = {
   'homedecor': 'homedecor/get',
   'uncategorized': 'uncategorized/get',
   'pvcmats': 'pvcmats/get',
+  'pvcmats/doormats': 'pvcmats/door/get',
+  'pvcmats/floormats': 'pvcmats/floor/get',
   'roofer': 'roofer/get',
   'waterproofing': 'waterproofing/get',
 
@@ -497,15 +499,17 @@ export const API_MAPPINGS = {
 
   // Pipe subcategories
   'pipe': 'pipe/get',
-  'pipe/finolexpipes': 'pipe/finolex-pipes/get',
+  'pipe/apollopipes': 'pipe/apollo-pipes/get',
   'pipe/ashirvadpipes': 'pipe/ashirvad-pipes/get',
-  'pipe/Apollopipes': 'pipe/apollo-pipes/get',
+  'pipe/birlapipes': 'pipe/birla-pipes/get',
+  'pipe/deliverypipe': 'pipe/delivery-pipe/get',
+  'pipe/finolexpipes': 'pipe/finolex-pipes/get',
+  'pipe/gardenpipe': 'pipe/garden-pipe/get',
   'pipe/nepulpipes': 'pipe/nepul-pipes/get',
   'pipe/otherpipes': 'pipe/other-pipes/get',
-  'pipe/prinziapipes': 'pipe/prinzia-pipes/get',
-  'pipe/birlapipes': 'pipe/birla-pipes/get',
-  'pipe/princepipes': 'pipe/prince-pipes/get',
   'pipe/prakashpipes': 'pipe/prakash-pipes/get',
+  'pipe/princepipes': 'pipe/prince-pipes/get',
+  'pipe/prinziapipes': 'pipe/prinzia-pipes/get',
   'pipe/supremepipes': 'pipe/supreme-pipes/get',
   'pipe/tatapipes': 'pipe/tata-pipes/get',
   'pipe/tsapipes': 'pipe/tsa-pipes/get',
@@ -524,6 +528,9 @@ export const API_MAPPINGS = {
   'sanitary': 'sanitary/get',
   'sanitary/acrylicproducts': 'sanitary/acrylic-products/get',
   'sanitary/bathroomaccessories': 'sanitary/bathroom-accessories/get',
+  'sanitary/plastictoti': 'sanitary/plastic-toti/get',
+  'sanitary/ptmttoti': 'sanitary/ptmt-toti/get',
+  'sanitary/sstoti': 'sanitary/ss-toti/get',
   
   // Sanitary - Bathsense mappings
   'sanitary/bathsense': 'sanitary/bathsense-pfittings-faucets-bathsense-essentials/get', // Default

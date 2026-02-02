@@ -424,6 +424,14 @@ export const sidebarSections = [
             name: 'Fashion Banner',
             path: '/ProductAdd/Home/FashionBanner',
           },
+          {
+            name: 'Hero Product Cards',
+            path: '/ProductAdd/Home/HeroProductCards',
+          },
+          {
+            name: 'Promo Banner',
+            path: '/ProductAdd/Home/PromoBanner',
+          },
         ],
       },
       { name: 'Home Decor', path: '/ProductAdd/HomeDecor' },
@@ -1366,6 +1374,34 @@ export const sidebarSections = [
       {
         name: 'Sanitary Ware & faucets',
         subItemsName: [
+          {
+            name: 'Plastic Toti',
+            path: '/ProductAdd/Sanitary/PlasticToti',
+          },
+          {
+            name: 'PTMT Toti',
+            path: '/ProductAdd/Sanitary/PTMTToti',
+          },
+          {
+            name: 'SS Toti',
+            path: '/ProductAdd/Sanitary/SSToti',
+          },
+          {
+            name: 'Waste Pipe',
+            path: '/ProductAdd/Sanitary/WastePipe',
+          },
+          {
+            name: 'Sink/Wash Basin Jali',
+            path: '/ProductAdd/Sanitary/SinkWashBasinJali',
+          },
+          {
+            name: 'Kitchen/Bathroom Jali',
+            path: '/ProductAdd/Sanitary/KitchenBathroomJali',
+          },
+          {
+            name: 'Bathroom Shop Stand',
+            path: '/ProductAdd/Sanitary/BathroomShopStand',
+          },
           {
             name: 'Acrylic Products',
             path: '/ProductAdd/Sanitary/AcrylicProducts',
@@ -2869,6 +2905,10 @@ export const sidebarSections = [
             name: 'Fashion Banner',
             path: '/ProductList/Home/FashionBanner',
           },
+          {
+            name: 'Hero Product Cards',
+            path: '/ProductList/Home/HeroProductCards',
+          },
         ],
       },
         
@@ -3812,6 +3852,34 @@ export const sidebarSections = [
       {
         name: 'Sanitary Ware & faucets',
         subItemsName: [
+          {
+            name: 'Plastic Toti',
+            path: '/ProductList/Sanitary/PlasticToti',
+          },
+          {
+            name: 'PTMT Toti',
+            path: '/ProductList/Sanitary/PTMTToti',
+          },
+          {
+            name: 'SS Toti',
+            path: '/ProductList/Sanitary/SSToti',
+          },
+          {
+            name: 'Waste Pipe',
+            path: '/ProductList/Sanitary/WastePipe',
+          },
+          {
+            name: 'Sink/Wash Basin Jali',
+            path: '/ProductList/Sanitary/SinkWashBasinJali',
+          },
+          {
+            name: 'Kitchen/Bathroom Jali',
+            path: '/ProductList/Sanitary/KitchenBathroomJali',
+          },
+          {
+            name: 'Bathroom Shop Stand',
+            path: '/ProductList/Sanitary/BathroomShopStand',
+          },
           {
             name: 'Acrylic Products',
             path: '/ProductList/Sanitary/AcrylicProducts',

@@ -35,7 +35,7 @@ export default function Card() {
 
     return (
         <>
-            <div className="flex min-h-screen items-center justify-center">
+            <div className="flex items-center justify-center py-8">
                 <div className="grid grid-cols-1 shadow-gray-800 shadow-lg md:grid-cols-2 lg:grid-cols-4">
                     {cards.map((slider,a) => (
                         <div key={slider._id || a} className="group relative  cursor-pointer items-center justify-center overflow-hidden transition duration-300 hover:-translate-y-2">

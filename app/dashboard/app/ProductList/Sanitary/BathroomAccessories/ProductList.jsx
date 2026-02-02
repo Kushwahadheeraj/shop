@@ -45,7 +45,7 @@ export default function ProductList() {
       
 
   const handleEdit = (product) => {
-    router.push("/ProductAdd/Sanitary/BathroomAccessories?id=" + product._id);
+    router.push(`/ProductAdd/Sanitary/BathroomAccessories?id=${product._id}`);
   };
 
   const handleDelete = async (id) => {

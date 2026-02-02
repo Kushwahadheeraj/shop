@@ -18,6 +18,8 @@ const tataPipes = require('../controllers/pipe/tataPipesControllers');
 const tsaPipes = require('../controllers/pipe/tsaPipesControllers');
 const prinziaPipes = require('../controllers/pipe/prinziaPipesController');
 const otherPipes = require('../controllers/pipe/otherPipesControllers');
+const gardenPipes = require('../controllers/pipe/gardenPipesController');
+const deliveryPipes = require('../controllers/pipe/deliveryPipesController');
 
 // Helper to register CRUD routes for a controller
 function registerCrudRoutes(basePath, controller, name) {
@@ -40,6 +42,8 @@ registerCrudRoutes('tata-pipes', tataPipes, 'TataPipes');
 registerCrudRoutes('tsa-pipes', tsaPipes, 'TsaPipes');
 registerCrudRoutes('prinzia-pipes', prinziaPipes, 'PrinziaPipes');
 registerCrudRoutes('other-pipes', otherPipes, 'OtherPipes');
+registerCrudRoutes('garden-pipe', gardenPipes, 'GardenPipe');
+registerCrudRoutes('delivery-pipe', deliveryPipes, 'DeliveryPipe');
 
 
 

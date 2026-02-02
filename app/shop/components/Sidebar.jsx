@@ -56,6 +56,13 @@ const submenus = {
   ],
   "SANITARY WARE & FAUCETS": [
     { items: [
+      "Plastic Toti",
+      "PTMT Toti",
+      "SS Toti",
+      "Waste Pipe",
+      "Sink/Wash Basin Jali",
+      "Kitchen/Bathroom Jali",
+      "Bathroom Shop Stand",
       "Acrylic Products",
       "Bathsense",
       "Coral bath fixtures",

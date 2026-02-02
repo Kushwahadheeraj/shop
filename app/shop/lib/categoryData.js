@@ -223,4 +223,22 @@ export const allCategories = [
   { name: 'Cupboard Locks', path: '/ShopPage/Locks/DoorLocks/CupboardLocks', description: 'Cupboard Locks', type: 'sub', parent: 'Locks' },
   { name: 'Cylindrical Locks', path: '/ShopPage/Locks/DoorLocks/CylindricalLocks', description: 'Cylindrical Locks', type: 'sub', parent: 'Locks' },
   { name: 'Dead Locks', path: '/ShopPage/Locks/DoorLocks/DeadLocks', description: 'Dead Locks', type: 'sub', parent: 'Locks' },
+
+  // Pipe - Subcategories
+  { name: 'Ashirvad Pipes', path: '/ShopPage/Pipe/AshirvadPipes', description: 'Ashirvad Pipes', type: 'sub', parent: 'Pipe' },
+  { name: 'Apollo Pipes', path: '/ShopPage/Pipe/ApolloPipes', description: 'Apollo Pipes', type: 'sub', parent: 'Pipe' },
+  { name: 'Birla Pipe', path: '/ShopPage/Pipe/BirlaPipe', description: 'Birla Pipe', type: 'sub', parent: 'Pipe' },
+  { name: 'Finolex Pipes', path: '/ShopPage/Pipe/FinolexPipes', description: 'Finolex Pipes', type: 'sub', parent: 'Pipe' },
+  { name: 'Nepul Pipes', path: '/ShopPage/Pipe/NepulPipes', description: 'Nepul Pipes', type: 'sub', parent: 'Pipe' },
+  { name: 'Other Pipe & Fittings', path: '/ShopPage/Pipe/OtherPipes', description: 'Other Pipe & Fittings', type: 'sub', parent: 'Pipe' },
+  { name: 'Prakash Pipe', path: '/ShopPage/Pipe/PrakashPipe', description: 'Prakash Pipe', type: 'sub', parent: 'Pipe' },
+  { name: 'Prinzia Pipes', path: '/ShopPage/Pipe/PrinziaPipes', description: 'Prinzia Pipes', type: 'sub', parent: 'Pipe' },
+  { name: 'Prince Pipe', path: '/ShopPage/Pipe/PrincePipe', description: 'Prince Pipe', type: 'sub', parent: 'Pipe' },
+  { name: 'Supreme Pipe', path: '/ShopPage/Pipe/SupremePipe', description: 'Supreme Pipe', type: 'sub', parent: 'Pipe' },
+  { name: 'TSA Pipe', path: '/ShopPage/Pipe/TSAPipe', description: 'TSA Pipe', type: 'sub', parent: 'Pipe' },
+  { name: 'Tata Pipe', path: '/ShopPage/Pipe/TataPipe', description: 'Tata Pipe', type: 'sub', parent: 'Pipe' },
+
+  // PVC Mats - Subcategories
+  { name: 'Door Mats', path: '/ShopPage/PvcMats/DoorMats', description: 'Door Mats', type: 'sub', parent: 'PvcMats' },
+  { name: 'Floor Mats', path: '/ShopPage/PvcMats/FloorMats', description: 'Floor Mats', type: 'sub', parent: 'PvcMats' },
 ];

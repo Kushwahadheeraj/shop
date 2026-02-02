@@ -205,6 +205,13 @@ const WaterTecToiletSeatCoversController = require('../controllers/sanitary/Wate
 const WaterTecTSeriesAltController = require('../controllers/sanitary/WaterTec/tSeriesAltController.js');
 const WaterTecTSeriesController = require('../controllers/sanitary/WaterTec/tSeriesController.js');
 const WaterTecValvesController = require('../controllers/sanitary/WaterTec/valvesController.js');
+const PlasticTotiController = require('../controllers/sanitary/PlasticTotiController.js');
+const PTMTTotiController = require('../controllers/sanitary/PTMTTotiController.js');
+const SSTotiController = require('../controllers/sanitary/SSTotiController.js');
+const WastePipeController = require('../controllers/sanitary/WastePipeController.js');
+const SinkWashBasinJaliController = require('../controllers/sanitary/SinkWashBasinJaliController.js');
+const KitchenBathroomJaliController = require('../controllers/sanitary/KitchenBathroomJaliController.js');
+const BathroomShopStandController = require('../controllers/sanitary/BathroomShopStandController.js');
 
 // acrylic-products endpoints
 router.post('/acrylic-products/create', upload.array('photos', 5), acrylicProductsController.createacrylicProducts);
@@ -1605,6 +1612,57 @@ router.get('/water-tec-valves/get', WaterTecValvesController.getAllValves);
 router.get('/water-tec-valves/getOne/:id', WaterTecValvesController.getOneValves);
 router.put('/water-tec-valves/update/:id', upload.array('photos', 5), WaterTecValvesController.updateValves);
 router.delete('/water-tec-valves/delete/:id', WaterTecValvesController.deleteValves);
+
+
+// plastic-toti endpoints
+router.post('/plastic-toti/create', upload.array('photos', 5), PlasticTotiController.createPlasticToti);
+router.get('/plastic-toti/get', PlasticTotiController.getAllPlasticToti);
+router.get('/plastic-toti/getOne/:id', PlasticTotiController.getPlasticTotiById);
+router.put('/plastic-toti/update/:id', upload.array('photos', 5), PlasticTotiController.updatePlasticToti);
+router.delete('/plastic-toti/delete/:id', PlasticTotiController.deletePlasticToti);
+
+// ptmt-toti endpoints
+router.post('/ptmt-toti/create', upload.array('photos', 5), PTMTTotiController.createPTMTToti);
+router.get('/ptmt-toti/get', PTMTTotiController.getAllPTMTToti);
+router.get('/ptmt-toti/getOne/:id', PTMTTotiController.getPTMTTotiById);
+router.put('/ptmt-toti/update/:id', upload.array('photos', 5), PTMTTotiController.updatePTMTToti);
+router.delete('/ptmt-toti/delete/:id', PTMTTotiController.deletePTMTToti);
+
+// ss-toti endpoints
+router.post('/ss-toti/create', upload.array('photos', 5), SSTotiController.createSSToti);
+router.get('/ss-toti/get', SSTotiController.getAllSSToti);
+router.get('/ss-toti/getOne/:id', SSTotiController.getSSTotiById);
+router.put('/ss-toti/update/:id', upload.array('photos', 5), SSTotiController.updateSSToti);
+router.delete('/ss-toti/delete/:id', SSTotiController.deleteSSToti);
+
+
+// waste-pipe endpoints
+router.post('/waste-pipe/create', upload.array('photos', 5), WastePipeController.createWastePipe);
+router.get('/waste-pipe/get', WastePipeController.getAllWastePipe);
+router.get('/waste-pipe/getOne/:id', WastePipeController.getWastePipeById);
+router.put('/waste-pipe/update/:id', upload.array('photos', 5), WastePipeController.updateWastePipe);
+router.delete('/waste-pipe/delete/:id', WastePipeController.deleteWastePipe);
+
+// sink-wash-basin-jali endpoints
+router.post('/sink-wash-basin-jali/create', upload.array('photos', 5), SinkWashBasinJaliController.createSinkWashBasinJali);
+router.get('/sink-wash-basin-jali/get', SinkWashBasinJaliController.getAllSinkWashBasinJali);
+router.get('/sink-wash-basin-jali/getOne/:id', SinkWashBasinJaliController.getSinkWashBasinJaliById);
+router.put('/sink-wash-basin-jali/update/:id', upload.array('photos', 5), SinkWashBasinJaliController.updateSinkWashBasinJali);
+router.delete('/sink-wash-basin-jali/delete/:id', SinkWashBasinJaliController.deleteSinkWashBasinJali);
+
+// kitchen-bathroom-jali endpoints
+router.post('/kitchen-bathroom-jali/create', upload.array('photos', 5), KitchenBathroomJaliController.createKitchenBathroomJali);
+router.get('/kitchen-bathroom-jali/get', KitchenBathroomJaliController.getAllKitchenBathroomJali);
+router.get('/kitchen-bathroom-jali/getOne/:id', KitchenBathroomJaliController.getKitchenBathroomJaliById);
+router.put('/kitchen-bathroom-jali/update/:id', upload.array('photos', 5), KitchenBathroomJaliController.updateKitchenBathroomJali);
+router.delete('/kitchen-bathroom-jali/delete/:id', KitchenBathroomJaliController.deleteKitchenBathroomJali);
+
+// bathroom-shop-stand endpoints
+router.post('/bathroom-shop-stand/create', upload.array('photos', 5), BathroomShopStandController.createBathroomShopStand);
+router.get('/bathroom-shop-stand/get', BathroomShopStandController.getAllBathroomShopStand);
+router.get('/bathroom-shop-stand/getOne/:id', BathroomShopStandController.getBathroomShopStandById);
+router.put('/bathroom-shop-stand/update/:id', upload.array('photos', 5), BathroomShopStandController.updateBathroomShopStand);
+router.delete('/bathroom-shop-stand/delete/:id', BathroomShopStandController.deleteBathroomShopStand);
 
 
 // General route to get all sanitary products

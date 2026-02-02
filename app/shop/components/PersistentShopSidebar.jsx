@@ -25,6 +25,7 @@ const browse = [
   "Mask & Sanitizers",
   "Paints",
   "Pipes & Fittings",
+  "PVC Mats",
   "Roofer",
   "Sanitary Ware & faucets",
   "Tools",
@@ -214,7 +215,9 @@ const pipesSubcategories = [
   "Ashirvad Pipes",
   "Apollo Pipes", 
   "Birla Pipe",
+  "Delivery Pipe",
   "Finolex Pipes",
+  "Garden Pipe",
   "Nepul Pipes",
   "Other Pipe & Fittings",
   "Prakash Pipe",
@@ -226,6 +229,9 @@ const pipesSubcategories = [
 ];
 
 const sanitarySubcategories = [
+  "Plastic Toti",
+  "PTMT Toti",
+  "SS Toti",
   "Acrylic Products",
   "Bathroom Accessories",
   {
@@ -430,8 +436,8 @@ const waterproofingSubcategories = [
 ];
 
 const pvcMatsSubcategories = [
-  "Door",
-  "Floor"
+  "Door Mats",
+  "Floor Mats"
 ];
 
 const rooferSubcategories = [
@@ -466,7 +472,7 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
         return toolsSubcategories;
       case "WaterProofing":
         return waterproofingSubcategories;
-      case "PvcMats":
+      case "PVC Mats":
         return pvcMatsSubcategories;
       default:
         return null;
@@ -492,7 +498,7 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
     "Paints": "Paint",
     "Pipes & Fittings": "Pipe",
     "Roofer": "Roofer",
-    "PvcMats": "PvcMats",
+    "PVC Mats": "PvcMats",
     "Sanitary Ware & faucets": "Sanitary",
     "Tools": "Tools",
     "Uncategorized": "Uncategorized",

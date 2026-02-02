@@ -16,6 +16,7 @@ import TopSelection from "../TopSelection/TopSelection";
 import FashionBanner from "../FashionBanner/FashionBanner";
 import DealsSection from "../DealsSection/DealsSection";
 import ShopByCategory from "./ShopByCategory";
+import PromoBanner from "./PromoBanner";
 
 export default function Home() {
   return (
@@ -50,6 +51,9 @@ export default function Home() {
       </div>
       <div className=" bg-sky-100">
         <Card />
+      </div>
+      <div className=" bg-sky-100">
+        <PromoBanner />
       </div>
       <div className=" bg-sky-100">
         <Paints />

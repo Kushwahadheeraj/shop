@@ -54,7 +54,7 @@ const ElectricImage = () => {
             className='w-full h-screen object-cover'
             loading='lazy'
           />
-          <div
+          {/* <div
             className='flex flex-col text-center gap-2 p-6 md:p-12 inset-0 justify-center items-center text-black absolute z-40 lg:w-[800px] w-[200px] -translate-x-1/2 left-1/2 space-x-2'
           >
             <h2 className='lg:text-5xl text-4xl font-bold uppercase'>{slide.mainText}</h2>
@@ -66,7 +66,7 @@ const ElectricImage = () => {
                 </button>
               </Link>
             )}
-          </div>
+          </div> */}
         </div>
       ))}
     </>

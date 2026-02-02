@@ -59,7 +59,7 @@ const ToolsImage = () => {
             className='w-full h-screen object-cover'
             loading='lazy'
           />
-          <div
+          {/* <div
             className='absolute z-40 flex flex-col items-center justify-center
                        bg-[#333333] bg-opacity-95 text-white
                        w-[220px] sm:w-[260px] h-[240px]
@@ -111,7 +111,7 @@ const ToolsImage = () => {
                 </li>
               )}
             </ul>
-          </div>
+          </div> */}
         </div>
       ))}
     </>

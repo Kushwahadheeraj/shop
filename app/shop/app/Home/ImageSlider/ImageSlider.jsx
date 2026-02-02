@@ -6,6 +6,7 @@ import ElectricImage from "./ImageFile/ElectricImage";
 import FaucetsImage from "./ImageFile/FaucetsImage";
 import SanitaryImage from "./ImageFile/SanitaryImage";
 import ToolsImage from "./ImageFile/ToolsImage";
+import HeroProductCards from "../_components/HeroProductCards";
 
 const slides = [
   <PaintsImage />,
@@ -38,38 +39,46 @@ const ImageSlider = () => {
   }, [currentIndex]);
 
   return (
-    <>
-      <div className="relative w-full h-screen overflow-hidden lg:mt-32 md:mt-32 mt-12">
+    <div className="relative w-full lg:mt-32 md:mt-32 mt-12 bg-gray-100 pb-8">
+      <div className="relative w-full h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden">
         {slides[currentIndex]}
+
+        {/* Gradient Overlay */}
+        <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-gray-100 to-transparent z-10" />
 
         {/* Left Arrow */}
         <button
           onClick={prevSlide}
-          className="absolute  hidden left-4 top-1/2 transform -translate-y-1/2 text-white bg-black/50 p-3 rounded-full"
+          className="absolute z-20 hidden md:block left-4 top-1/3 transform -translate-y-1/2 text-white hover:text-gray-200"
         >
-          <BsChevronCompactLeft size={30} />
+          <BsChevronCompactLeft size={50} className="drop-shadow-lg" />
         </button>
 
         {/* Right Arrow */}
         <button
           onClick={nextSlide}
-          className="absolute hidden right-4 top-1/2 transform -translate-y-1/2 text-white bg-black/50 p-3 rounded-full"
+          className="absolute z-20 hidden md:block right-4 top-1/3 transform -translate-y-1/2 text-white hover:text-gray-200"
         >
-          <BsChevronCompactRight size={30} />
+          <BsChevronCompactRight size={50} className="drop-shadow-lg" />
         </button>
 
-        <div className="absolute z-40 flex -translate-x-1/2 bottom-5 left-1/2 space-x-1 rtl:space-x-reverse">
+        <div className="absolute z-20 flex -translate-x-1/2 bottom-1/3 left-1/2 space-x-2 rtl:space-x-reverse">
           {slides.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}
-              className={`w-3 h-3 rounded-full ${index === currentIndex ? "bg-white" : "bg-gray-500"
-                }`}
+              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                index === currentIndex 
+                  ? "bg-white w-8" 
+                  : "bg-white/50 hover:bg-white/80"
+              }`}
             />
           ))}
         </div>
       </div>
-    </>
+
+      <HeroProductCards />
+    </div>
   );
 };
 

@@ -1316,10 +1316,13 @@ export const sidebarSections = [
             path: '/ProductAdd/Pipe/ApolloPipes',
           },
           { name: 'Birla Pipe', path: '/ProductAdd/Pipe/BirlaPipe' },
+          { name: 'Delivery Pipe', path: '/ProductAdd/Pipe/DeliveryPipe' },
+       
           {
             name: 'Finolex Pipes',
             path: '/ProductAdd/Pipe/FinolexPipes',
           },
+          { name: 'Garden Pipe', path: '/ProductAdd/Pipe/GardenPipe' },
           {
             name: 'Nepul Pipes',
             path: '/ProductAdd/Pipe/NepulPipes',
@@ -3793,10 +3796,13 @@ export const sidebarSections = [
             path: '/ProductList/Pipe/ApolloPipes',
           },
           { name: 'Birla Pipe', path: '/ProductList/Pipe/BirlaPipe' },
+          { name: 'Delivery Pipe', path: '/ProductList/Pipe/DeliveryPipe' },
+
           {
             name: 'Finolex Pipes',
             path: '/ProductList/Pipe/FinolexPipes',
           },
+          { name: 'Garden Pipe', path: '/ProductList/Pipe/GardenPipe' },
           {
             name: 'Nepul Pipes',
             path: '/ProductList/Pipe/NepulPipes',

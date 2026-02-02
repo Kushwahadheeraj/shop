@@ -12,15 +12,14 @@ const PipeProductSchema = new mongoose.Schema({
   discount: { type: Number, default: 0 },
   fixPrice: { type: Number, required: true },
   discountPrice: { type: Number },
-  minPrice: { type: Number, required: true },
-  maxPrice: { type: Number, required: true },
+  minPrice: { type: Number },
+  maxPrice: { type: Number },
   totalProduct: { type: Number, required: true },
   category: { type: String, required: true },
   tags: [String],
   type: {
     type: [OptionSchema],
-    required: true,
-    validate: [arr => arr.length > 0, 'At least one type option is required']
+    default: []
   }
 }, { timestamps: true });
 

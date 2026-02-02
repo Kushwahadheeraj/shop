@@ -234,6 +234,12 @@ const sanitarySubcategories = [
   "SS Toti",
   "Acrylic Products",
   "Bathroom Accessories",
+  "Waste Pipe",
+  "Sink Wash Basin Jali",
+  "Kitchen Bathroom Jali",
+  "Bathroom Shop Stand",
+  "Cistern",
+  "Seat Cover",
   {
     label: "Bathsense",
     sub: [

@@ -56,6 +56,9 @@ exports.createDeliveryPipe = async (req, res) => {
     await product.save();
     res.status(201).json(product);
   } catch (err) {
+    if (err.name === 'ValidationError') {
+      return res.status(400).json({ error: err.message });
+    }
     res.status(500).json({ error: err.message });
   }
 };

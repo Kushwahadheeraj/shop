@@ -1,6 +1,7 @@
 const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
 const ShopByCategoryModel = require('../../models/ShopByCategoryModel');
+const HomeSectionTitle = require('../../models/HomeSectionTitle');
 
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
@@ -134,6 +135,59 @@ exports.deleteItem = async (req, res) => {
       success: false,
       message: 'Error deleting item',
       error: error.message,
+    });
+  }
+};
+
+exports.getTitle = async (req, res) => {
+  try {
+    let titleDoc = await HomeSectionTitle.findOne({ sectionId: 'shop-by-category' });
+    if (!titleDoc) {
+      // Default fallback
+      return res.status(200).json({
+        success: true,
+        data: { title: 'SHOP BY CATEGORY' }
+      });
+    }
+    res.status(200).json({
+      success: true,
+      data: titleDoc
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching title',
+      error: error.message
+    });
+  }
+};
+
+exports.updateTitle = async (req, res) => {
+  try {
+    const { title } = req.body;
+    if (!title) {
+      return res.status(400).json({
+        success: false,
+        message: 'Title is required'
+      });
+    }
+
+    const titleDoc = await HomeSectionTitle.findOneAndUpdate(
+      { sectionId: 'shop-by-category' },
+      { title },
+      { new: true, upsert: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'Title updated successfully',
+      data: titleDoc
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error updating title',
+      error: error.message
     });
   }
 };

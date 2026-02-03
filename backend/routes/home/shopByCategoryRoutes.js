@@ -11,4 +11,8 @@ router.get('/getOne/:id', shopByCategoryController.getOneItem);
 router.put('/update/:id', upload.single('image'), shopByCategoryController.updateItem);
 router.delete('/delete/:id', shopByCategoryController.deleteItem);
 
+// Title routes
+router.get('/title', shopByCategoryController.getTitle);
+router.put('/title', shopByCategoryController.updateTitle);
+
 module.exports = router;

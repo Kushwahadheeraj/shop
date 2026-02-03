@@ -29,13 +29,49 @@ export default function ProductList() {
   const [editPreview, setEditPreview] = useState(null);
   const [savingEdit, setSavingEdit] = useState(false);
   const [editError, setEditError] = useState("");
+  const [sectionTitle, setSectionTitle] = useState("SHOP BY CATEGORY");
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [newTitle, setNewTitle] = useState("");
   const router = useRouter();
 
   const API_URL = `${API_BASE_URL}/home/shopbycategory`;
 
   useEffect(() => {
+    fetchTitle();
     fetchItems();
   }, []);
+
+  const fetchTitle = async () => {
+    try {
+      const res = await fetch(API_URL + "/title");
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.data && data.data.title) {
+          setSectionTitle(data.data.title);
+          setNewTitle(data.data.title);
+        }
+      }
+    } catch (err) {
+      console.error("Error fetching title:", err);
+    }
+  };
+
+  const handleUpdateTitle = async () => {
+    if (!newTitle.trim()) return;
+    try {
+      const res = await fetch(API_URL + "/title", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: newTitle })
+      });
+      if (res.ok) {
+        setSectionTitle(newTitle);
+        setIsEditingTitle(false);
+      }
+    } catch (err) {
+      console.error("Error updating title:", err);
+    }
+  };
 
   const fetchItems = async () => {
     setLoading(true);
@@ -164,25 +200,52 @@ export default function ProductList() {
 
       <div className="space-y-4 sm:space-y-6">
         {/* Controls */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-          <div className="relative w-full sm:w-72">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <Input
-              placeholder="Search categories..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+        <div className="flex flex-col gap-4 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+          
+          {/* Section Title Editor */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 border-b pb-4">
+             <span className="font-semibold text-gray-700 min-w-[100px]">Section Title:</span>
+             {isEditingTitle ? (
+                 <div className="flex gap-2 items-center flex-1 w-full sm:w-auto">
+                     <Input 
+                        value={newTitle} 
+                        onChange={(e) => setNewTitle(e.target.value)} 
+                        className="max-w-md"
+                        placeholder="Enter section title"
+                     />
+                     <Button size="sm" onClick={handleUpdateTitle}>Save</Button>
+                     <Button size="sm" variant="outline" onClick={() => setIsEditingTitle(false)}>Cancel</Button>
+                 </div>
+             ) : (
+                 <div className="flex gap-2 items-center flex-1">
+                     <span className="text-lg font-bold text-orange-600">{sectionTitle}</span>
+                     <Button size="sm" variant="ghost" onClick={() => { setNewTitle(sectionTitle); setIsEditingTitle(true); }}>
+                        <span className="text-xs text-blue-500 underline">Edit</span>
+                     </Button>
+                 </div>
+             )}
           </div>
-          <div className="flex gap-2 w-full sm:w-auto">
-            <Button variant="outline" onClick={fetchItems} disabled={loading} className="flex-1 sm:flex-none">
-              <RefreshCw className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`} />
-              Refresh
-            </Button>
-            <Button onClick={handleAddNew} className="bg-amber-600 hover:bg-amber-700 flex-1 sm:flex-none">
-              <Plus className="w-4 h-4 mr-2" />
-              Add New
-            </Button>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
+            <div className="relative w-full sm:w-72">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input
+                placeholder="Search categories..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <div className="flex gap-2 w-full sm:w-auto">
+              <Button variant="outline" onClick={fetchItems} disabled={loading} className="flex-1 sm:flex-none">
+                <RefreshCw className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`} />
+                Refresh
+              </Button>
+              <Button onClick={handleAddNew} className="bg-amber-600 hover:bg-amber-700 flex-1 sm:flex-none">
+                <Plus className="w-4 h-4 mr-2" />
+                Add New
+              </Button>
+            </div>
           </div>
         </div>
 

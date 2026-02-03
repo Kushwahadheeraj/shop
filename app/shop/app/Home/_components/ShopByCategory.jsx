@@ -7,12 +7,23 @@ import { allCategories } from "../../../lib/categoryData";
 
 export default function ShopByCategory() {
   const [items, setItems] = useState([]);
+  const [title, setTitle] = useState('SHOP BY CATEGORY');
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const fetchItems = async () => {
       try {
+        // Fetch Title
+        const resTitle = await fetch(`${API_BASE_URL}/home/shopbycategory/title`);
+        if (resTitle.ok) {
+          const jsonTitle = await resTitle.json();
+          if (jsonTitle.success && jsonTitle.data && jsonTitle.data.title) {
+            setTitle(jsonTitle.data.title);
+          }
+        }
+
+        // Fetch Items
         const res = await fetch(`${API_BASE_URL}/home/shopbycategory/get`);
         if (res.ok) {
           const json = await res.json();
@@ -23,7 +34,7 @@ export default function ShopByCategory() {
           }
         }
       } catch (error) {
-        console.error("Error fetching shop by category items:", error);
+        console.error("Error fetching shop by category data:", error);
       } finally {
         setLoading(false);
       }
@@ -40,11 +51,11 @@ export default function ShopByCategory() {
     <div className="bg-sky-100 py-4">
       <div className="max-w-8xl mx-auto px-2">
         {/* Header */}
-        <div className="bg-yellow-100 text-center py-2 mb-4 relative overflow-hidden rounded-t-md border-b-4 border-orange-500">
+        <div className="bg-yellow-100 text-center py-8 mb-4 relative overflow-hidden rounded-t-md border-b-4 border-orange-500">
            {/* Decorative corner images - placeholders if needed, or CSS styling */}
            <div className="flex items-center justify-center gap-2">
              <h2 className="text-2xl md:text-4xl font-black text-orange-600 uppercase tracking-wide" style={{ textShadow: '1px 1px 0 #fff' }}>
-               Shop By Category
+               {title}
              </h2>
            </div>
         </div>

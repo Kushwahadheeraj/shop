@@ -10,10 +10,12 @@ import {
 } from "@/components/ui/carousel";
 import { useRef, useEffect, useState } from "react";
 import API_BASE_URL from "@/lib/apiConfig";
+import { useSectionTitle } from "@/hooks/useSectionTitle";
 
 export default function Brands() {
   const carouselRef = useRef(null);
   const [brands, setBrands] = useState([]);
+  const { title } = useSectionTitle('brands', 'Shop the brands');
 
   useEffect(() => {
     let mounted = true;
@@ -50,7 +52,7 @@ export default function Brands() {
 
   return (
     <div className="w-full mx-auto py-10 px-2">
-      <h2 className="text-lg font-bold mb-4">Shop the brands</h2>
+      <h2 className="text-lg font-bold mb-4">{title}</h2>
       <div ref={carouselRef}>
         <Carousel
           opts={{

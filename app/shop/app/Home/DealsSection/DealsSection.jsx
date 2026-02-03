@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import API_BASE_URL from "@/lib/apiConfig";
+import { useSectionTitle } from "@/hooks/useSectionTitle";
 
 const getCategoryPath = (productName) => {
   const name = (productName || "").toLowerCase();
@@ -136,6 +137,10 @@ export default function DealsSection() {
   const [furnitureItems, setFurnitureItems] = useState([]);
   const router = useRouter();
 
+  const { title: discountTitle } = useSectionTitle('deals-discount', 'Discounts for you');
+  const { title: topRatedTitle } = useSectionTitle('deals-top-rated', 'Top rated');
+  const { title: furnitureTitle } = useSectionTitle('deals-furniture', 'Furniture deals');
+
   useEffect(() => {
     let mounted = true;
     const load = async () => {
@@ -194,22 +199,22 @@ export default function DealsSection() {
     <div className="bg-sky-100">
       <div className="max-w-8xl mx-auto px-2 py-2 grid grid-cols-1 lg:grid-cols-3 gap-3">
         <DealsColumn
-          title="Discounts for you"
+          title={discountTitle}
           subtitleKey="subtitle"
           items={discountItems}
           onViewAll={() => router.push("/Home/DiscountsForYou")}
         />
         <DealsColumn
-          title="Top Rated"
-          subtitleKey="subtitle"
+          title={topRatedTitle}
+          subtitleKey="discount"
           items={topRatedItems}
           onViewAll={() => router.push("/Home/TopRatedDeals")}
         />
         <DealsColumn
-          title="Best Deals on Sanitary"
-          subtitleKey="subtitle"
+          title={furnitureTitle}
+          subtitleKey="discount"
           items={furnitureItems}
-          onViewAll={() => router.push("/Home/BestDealsOnSanitary")}
+          onViewAll={() => router.push("/Home/FurnitureDeals")}
         />
       </div>
     </div>

@@ -4,25 +4,17 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import API_BASE_URL from "@/lib/apiConfig";
 import { allCategories } from "../../../lib/categoryData";
+import { useSectionTitle } from "@/hooks/useSectionTitle";
 
 export default function ShopByCategory() {
   const [items, setItems] = useState([]);
-  const [title, setTitle] = useState('SHOP BY CATEGORY');
+  const { title } = useSectionTitle('shop-by-category', 'SHOP BY CATEGORY');
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        // Fetch Title
-        const resTitle = await fetch(`${API_BASE_URL}/home/shopbycategory/title`);
-        if (resTitle.ok) {
-          const jsonTitle = await resTitle.json();
-          if (jsonTitle.success && jsonTitle.data && jsonTitle.data.title) {
-            setTitle(jsonTitle.data.title);
-          }
-        }
-
         // Fetch Items
         const res = await fetch(`${API_BASE_URL}/home/shopbycategory/get`);
         if (res.ok) {

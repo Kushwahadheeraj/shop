@@ -24,6 +24,7 @@ const furnitureDealsRoutes = require('./home/furnitureDealsRoutes');
 const shopByCategoryRoutes = require('./home/shopByCategoryRoutes');
 const heroProductCardRoutes = require('./home/heroProductCardRoutes');
 const promoBannerRoutes = require('./home/promoBannerRoutes');
+const sectionTitleRoutes = require('./home/sectionTitleRoutes');
 
 // Import ImageSlider subfolder routes
 const paintsImageRoutes = require('./home/paintsImageRoutes');
@@ -53,6 +54,7 @@ router.use('/furnituredeals', furnitureDealsRoutes);
 router.use('/shopbycategory', shopByCategoryRoutes);
 router.use('/heroproductcard', heroProductCardRoutes);
 router.use('/promobanner', promoBannerRoutes);
+router.use('/section-titles', sectionTitleRoutes);
 // Use ImageSlider subfolder routes
 router.use('/imageslider/paintsimage', paintsImageRoutes);
 router.use('/imageslider/toolsimage', toolsImageRoutes);

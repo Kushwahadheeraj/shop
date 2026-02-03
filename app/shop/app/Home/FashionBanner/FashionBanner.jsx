@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import API_BASE_URL from "@/lib/apiConfig";
+import { useSectionTitle } from "@/hooks/useSectionTitle";
 
 function formatTwoLines(text) {
   if (!text) return null;
@@ -48,6 +49,7 @@ export default function FashionBanner() {
   if (items.length === 0) return null;
 
   const banner = items[0];
+  const { title } = useSectionTitle('fashion-banner', banner.title);
   const imageOnLeft = banner.contentPosition !== "right";
   const verticalAlign = banner.verticalAlign || "center";
   const justifyClass =
@@ -73,7 +75,7 @@ export default function FashionBanner() {
           >
             <div className="w-full max-w-xs md:max-w-sm lg:max-w-md">
               <h2 className="text-2xl md:text-3xl font-semibold mb-2 text-emerald-900 leading-snug tracking-tight">
-                {formatTwoLines(banner.title)}
+                {formatTwoLines(title)}
               </h2>
               {banner.subtitle && (
                 <p className="text-sm md:text-base mb-4 text-gray-600 leading-snug">

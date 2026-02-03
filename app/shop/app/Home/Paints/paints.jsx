@@ -3,12 +3,14 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useCart } from "@/components/CartContext";
 import API_BASE_URL from "@/lib/apiConfig";
+import { useSectionTitle } from "@/hooks/useSectionTitle";
 
 export default function Paints() {
   const { addItem } = useCart();
   const [products, setProducts] = useState([]);
   const [quickView, setQuickView] = useState(null); // product for modal
   const [selectedColor, setSelectedColor] = useState("");
+  const { title } = useSectionTitle('paints', 'Paints');
 
   useEffect(() => {
     let mounted = true;
@@ -70,7 +72,7 @@ export default function Paints() {
 
   return (
     <div className="px-6 py-8">
-      <h2 className="text-2xl font-bold mb-6">New arrivals</h2>
+      <h2 className="text-2xl font-bold mb-6">{title}</h2>
       <div className="grid grid-cols-3 lg:grid-cols-6 gap-2 lg:gap-6">
         {products.map((product) => {
           // Calculate "Buy at" price - always show (5% discount on current price or 5% off original if no discount)

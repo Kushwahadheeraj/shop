@@ -12,9 +12,11 @@ import {
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import API_BASE_URL from "@/lib/apiConfig";
+import { useSectionTitle } from "@/hooks/useSectionTitle";
 
 export default function Categories() {
   const [categories, setCategories] = useState([]);
+  const { title } = useSectionTitle('categories', 'Categories');
 
   useEffect(() => {
     let mounted = true;
@@ -46,7 +48,7 @@ export default function Categories() {
 
   return (
     <div className="w-full mx-auto py-10 px-4">
-      <h2 className="text-3xl font-bold mb-6">Categories</h2>
+      <h2 className="text-3xl font-bold mb-6">{title}</h2>
       <Carousel
         opts={{
           align: "start",

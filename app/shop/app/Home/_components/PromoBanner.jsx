@@ -3,10 +3,12 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import API_BASE_URL from "@/lib/apiConfig";
+import { useSectionTitle } from "@/hooks/useSectionTitle";
 
 export default function PromoBanner() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { title } = useSectionTitle('promo-banner', data?.title);
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/home/promobanner/get`)
@@ -33,7 +35,7 @@ export default function PromoBanner() {
            {/* Background decorative circles or gradients can be added here via CSS */}
            <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-400 rounded-full blur-2xl opacity-50 -mr-10 -mt-10"></div>
            
-           <h3 className="text-xl md:text-2xl font-medium mb-1 z-10">{data.title}</h3>
+           <h3 className="text-xl md:text-2xl font-medium mb-1 z-10">{title}</h3>
            <h2 className="text-3xl md:text-5xl font-bold mb-4 z-10 text-yellow-100">{data.subtitle}</h2>
            
            {/* <p className="text-sm md:text-base font-medium mb-6 bg-white/20 px-3 py-1 rounded-full z-10">

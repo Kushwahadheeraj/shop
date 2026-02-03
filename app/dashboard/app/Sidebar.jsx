@@ -9,6 +9,7 @@ import BrandLogo from '@/components/BrandLogo';
 
 export const sidebarSections = [
   { name: 'Dashboard', path: '', section: null }, // Neutral - not in any section
+  { name: 'Home Titles', path: '/HomeTitles', section: null },
   {
     name: 'Product Add',
     section: 'section1', // Section 1: Core Management

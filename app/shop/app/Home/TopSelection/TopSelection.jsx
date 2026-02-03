@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import API_BASE_URL from "@/lib/apiConfig";
+import { useSectionTitle } from "@/hooks/useSectionTitle";
 
 const getCategoryPath = (productName) => {
   const name = (productName || "").toLowerCase();
@@ -79,6 +80,7 @@ const getCategoryPath = (productName) => {
 export default function TopSelection() {
   const [items, setItems] = useState([]);
   const router = useRouter();
+  const { title } = useSectionTitle('top-selection', 'Top Selection');
 
   useEffect(() => {
     let mounted = true;
@@ -109,7 +111,7 @@ export default function TopSelection() {
   return (
     <div className="w-full h-full px-4 py-4">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">Top Selection</h2>
+        <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
         <button
           type="button"
           className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 text-lg leading-none hover:bg-gray-100"

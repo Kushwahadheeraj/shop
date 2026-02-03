@@ -2,9 +2,11 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import API_BASE_URL from "@/lib/apiConfig";
+import { useSectionTitle } from "@/hooks/useSectionTitle";
 
 export default function Items() {
   const [items, setItems] = useState([]);
+  const { title } = useSectionTitle('items', 'Featured Items');
 
   useEffect(() => {
     let mounted = true;
@@ -60,6 +62,7 @@ export default function Items() {
 
   return (
     <div className="px-6 py-8">
+      {title && <h2 className="text-2xl font-bold mb-6 text-gray-900">{title}</h2>}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {items.map((banner) => (
           <div key={banner.id} className="relative rounded-lg overflow-hidden shadow-lg">

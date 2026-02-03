@@ -2,10 +2,12 @@
 import React, { useRef, useEffect, useState } from 'react';
 import Image from 'next/image';
 import API_BASE_URL from '@/lib/apiConfig';
+import { useSectionTitle } from "@/hooks/useSectionTitle";
 
 export default function CardSlider() {
   const scrollRef = useRef(null);
   const [cards, setCards] = useState([]);
+  const { title } = useSectionTitle('card-slider', 'Top Deals');
 
   useEffect(() => {
     let mounted = true;
@@ -60,7 +62,7 @@ export default function CardSlider() {
     <section className="w-full py-6 bg-white">
       <div className="flex items-center justify-between px-3 md:px-6 mb-3">
         <h2 className="text-lg md:text-xl font-semibold text-gray-900">
-          Top Deals
+          {title}
         </h2>
       </div>
 

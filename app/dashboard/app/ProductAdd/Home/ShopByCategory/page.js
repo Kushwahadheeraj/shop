@@ -1,10 +1,8 @@
 import ProductForm from './ProductForm';
-import CategoryBannerUpload from '@/components/CategoryBannerUpload';
 
 export default function ShopByCategoryAddPage() {
   return (
     <div>
-      <CategoryBannerUpload category="ShopByCategory" />
       <ProductForm />
     </div>
   );

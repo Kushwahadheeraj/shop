@@ -13,11 +13,13 @@ import {
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import API_BASE_URL from "@/lib/apiConfig";
+import { useSectionTitle } from "@/hooks/useSectionTitle";
 
 export default function PopularProducts() {
   const { addItem } = useCart();
   const router = useRouter();
   const [items, setItems] = useState([]);
+  const { title } = useSectionTitle('popular-products', 'Popular products');
 
   useEffect(() => {
     let mounted = true;
@@ -70,7 +72,7 @@ export default function PopularProducts() {
 
   return (
     <div className="w-full mx-auto py-10 px-2">
-      <h2 className="text-2xl font-bold mb-6">Popular products</h2>
+      <h2 className="text-2xl font-bold mb-6">{title}</h2>
       <Carousel
         opts={{
           align: "start",

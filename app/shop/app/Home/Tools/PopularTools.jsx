@@ -4,11 +4,13 @@ import { useEffect, useState, useRef } from "react";
 import { useCart } from "@/components/CartContext";
 import API_BASE_URL from "@/lib/apiConfig";
 import Link from "next/link";
+import { useSectionTitle } from "@/hooks/useSectionTitle";
 
 export default function PopularTools() {
   const { addItem } = useCart();
   const [tools, setTools] = useState([]);
   const scrollRef = useRef(null);
+  const { title } = useSectionTitle('popular-tools', 'Popular Tools');
 
   useEffect(() => {
     let mounted = true;
@@ -90,7 +92,7 @@ export default function PopularTools() {
       
       {/* Light blue background container with rounded corners */}
       <div className="bg-[#E8F4FD] rounded-2xl lg:rounded-3xl p-4 lg:p-6 relative">
-      <h2 className="text-2xl lg:text-3xl font-bold mb-4 lg:mb-6 px-2 lg:px-0">Popular Tools</h2>
+      <h2 className="text-2xl lg:text-3xl font-bold mb-4 lg:mb-6 px-2 lg:px-0">{title}</h2>
 
         {/* Left Arrow */}
         <button

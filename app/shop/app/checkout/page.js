@@ -226,8 +226,8 @@ export default function CheckoutPage() {
 
   // Address management functions
   const addAddress = async () => {
-    if (addresses.length >= 6) {
-      alert('Maximum 6 addresses allowed');
+    if (addresses.length >= 5) {
+      alert('Maximum 5 addresses allowed');
       return;
     }
     
@@ -505,7 +505,7 @@ export default function CheckoutPage() {
   // Show loading state while checking authentication
   if (isLoading) {
     return (
-      <div className="min-h-screen mt-36 bg-white py-6 flex items-center justify-center">
+      <div className="min-h-screen mt-4 bg-white py-6 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>
@@ -520,7 +520,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen mt-36 bg-white py-6">
+    <div className="min-h-screen mt-4 bg-white py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <nav className="uppercase tracking-widest text-gray-500 mb-3 text-sm md:text-2xl flex items-center justify-center text-center">
           <Link href="/cart" className="hover:underline">Shopping Cart</Link>

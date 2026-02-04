@@ -308,9 +308,10 @@ export default function ProductDetailPage() {
     }
 
     if (optionCurrent != null || optionOriginal != null) {
+      const totalCurrent = (optionCurrent ?? 0) * qty;
       return (
         <div className="flex items-center gap-2 sm:gap-3">
-          <span className="font-bold text-lg sm:text-xl md:text-2xl">₹{Number(optionCurrent ?? 0).toLocaleString('en-IN')}</span>
+          <span className="font-bold text-lg sm:text-xl md:text-2xl">₹{Number(totalCurrent).toLocaleString('en-IN')}</span>
         </div>
       );
     }
@@ -319,17 +320,19 @@ export default function ProductDetailPage() {
     if (hasRange) {
       return (
         <div className="flex items-center gap-2 sm:gap-3">
-          <span className="font-bold text-lg sm:text-xl md:text-2xl">₹{Number(product.minPrice).toLocaleString('en-IN')} – ₹{Number(product.maxPrice).toLocaleString('en-IN')}</span>
+          <span className="font-bold text-lg sm:text-xl md:text-2xl">
+            ₹{(Number(product.minPrice) * qty).toLocaleString('en-IN')} – ₹{(Number(product.maxPrice) * qty).toLocaleString('en-IN')}
+          </span>
         </div>
       );
     }
     const current = product.discountPrice ?? product.minPrice ?? product.maxPrice ?? product.price ?? 0;
     return (
       <div className="flex items-center gap-2 sm:gap-3">
-        <span className="font-bold text-lg sm:text-xl md:text-2xl">₹{Number(current || 0).toLocaleString('en-IN')}</span>
+        <span className="font-bold text-lg sm:text-xl md:text-2xl">₹{(Number(current || 0) * qty).toLocaleString('en-IN')}</span>
       </div>
     );
-  }, [product, variant, typeOption, weight, amp, colour, color]);
+  }, [product, variant, typeOption, weight, amp, colour, color, qty]);
 
   // Ensure Additional Information has at least 2 same-category items by querying backend category endpoint
   useEffect(() => {

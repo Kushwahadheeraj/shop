@@ -8,6 +8,8 @@ import Link from "next/link";
 import Image from "next/image";
 import API_BASE_URL from "@/lib/apiConfig";
 import { performLogout } from "@/lib/logout";
+import TrackingStepper from "./TrackingStepper";
+import OrderCard from "./OrderCard";
 
 export default function Tracking({ initialSection = 'orders' }) {
   const [orderId, setOrderId] = useState("");
@@ -137,35 +139,6 @@ export default function Tracking({ initialSection = 'orders' }) {
     }
   };
 
-  // Get status badge color
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'created':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'confirmed':
-        return 'bg-blue-100 text-blue-800';
-      case 'shipped':
-        return 'bg-purple-100 text-purple-800';
-      case 'delivered':
-        return 'bg-green-100 text-green-800';
-      case 'cancelled':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  // Format date
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-IN', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
   // Handle logout
   const handleLogout = () => {
     // Reset all states first
@@ -185,65 +158,102 @@ export default function Tracking({ initialSection = 'orders' }) {
     performLogout();
   };
 
-  // Load addresses from localStorage
-  const loadAddresses = () => {
+  // Load addresses from API
+  const loadAddresses = async () => {
     try {
-      const savedAddresses = localStorage.getItem('euser_addresses');
-      if (savedAddresses) {
-        setAddresses(JSON.parse(savedAddresses));
+      const token = localStorage.getItem('euser_token');
+      if (!token) return;
+      
+      const response = await fetch(`${API_BASE_URL}/euser/addresses`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setAddresses(data.addresses || []);
       }
     } catch (error) {
       console.error('Error loading addresses:', error);
     }
   };
 
-  // Save addresses to localStorage
-  const saveAddresses = (addressList) => {
-    try {
-      localStorage.setItem('euser_addresses', JSON.stringify(addressList));
-      setAddresses(addressList);
-    } catch (error) {
-      console.error('Error saving addresses:', error);
-    }
-  };
-
   // Add new address
-  const addAddress = () => {
-    if (addresses.length >= 6) {
-      alert('Maximum 6 addresses allowed');
+  const addAddress = async () => {
+    if (addresses.length >= 5) {
+      alert('Maximum 5 addresses allowed');
       return;
     }
 
-    const address = {
-      ...newAddress,
-      id: Date.now().toString()
-    };
+    try {
+      const token = localStorage.getItem('euser_token');
+      const response = await fetch(`${API_BASE_URL}/euser/addresses`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newAddress)
+      });
 
-    const updatedAddresses = [...addresses, address];
-    saveAddresses(updatedAddresses);
-    setNewAddress({
-      firstName: '',
-      lastName: '',
-      country: 'India',
-      street: '',
-      city: '',
-      state: '',
-      pin: '',
-      phone: '',
-      type: 'home',
-      landmark: '',
-      isDefault: false
-    });
-    setShowAddAddress(false);
-    alert('Address added successfully');
+      if (response.ok) {
+        const data = await response.json();
+        setAddresses(data.addresses);
+        setNewAddress({
+          firstName: '',
+          lastName: '',
+          country: 'India',
+          street: '',
+          city: '',
+          state: '',
+          pin: '',
+          phone: '',
+          type: 'home',
+          landmark: '',
+          isDefault: false
+        });
+        setShowAddAddress(false);
+        alert('Address added successfully');
+      } else {
+        const error = await response.json();
+        alert(error.message || 'Failed to add address');
+      }
+    } catch (error) {
+      console.error('Error adding address:', error);
+      alert('Failed to add address');
+    }
   };
 
   // Delete address
-  const deleteAddress = (addressId) => {
-    if (window.confirm('Are you sure you want to delete this address?')) {
-      const updatedAddresses = addresses.filter(addr => addr.id !== addressId);
-      saveAddresses(updatedAddresses);
-      alert('Address deleted successfully');
+  const deleteAddress = async (addressId) => {
+    if (!window.confirm('Are you sure you want to delete this address?')) return;
+
+    const index = addresses.findIndex(a => (a._id || a.id) === addressId);
+    if (index === -1) return;
+
+    try {
+      const token = localStorage.getItem('euser_token');
+      const response = await fetch(`${API_BASE_URL}/euser/addresses`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ index })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setAddresses(data.addresses);
+        alert('Address deleted successfully');
+      } else {
+        const error = await response.json();
+        alert(error.message || 'Failed to delete address');
+      }
+    } catch (error) {
+      console.error('Error deleting address:', error);
+      alert('Failed to delete address');
     }
   };
 
@@ -253,7 +263,9 @@ export default function Tracking({ initialSection = 'orders' }) {
     const recentOrders = orders.filter(order => {
       const orderTime = new Date(order.createdAt);
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000); // 1 hour ago
-      return orderTime > oneHourAgo && order.address && order.address.id === addressId;
+      // Check both _id and id to be safe
+      const orderAddrId = order.address?._id || order.address?.id;
+      return orderTime > oneHourAgo && orderAddrId === addressId;
     });
     
     return recentOrders.length === 0; // Can edit if not used in recent orders
@@ -261,39 +273,60 @@ export default function Tracking({ initialSection = 'orders' }) {
 
   // Start editing address
   const startEditAddress = (address) => {
-    if (!canEditAddress(address.id)) {
+    const addrId = address._id || address.id;
+    if (!canEditAddress(addrId)) {
       alert('This address cannot be edited as it was used in a recent order (within 1 hour). The delivery will be made to the address used at the time of order.');
       return;
     }
     
-    setEditingAddressId(address.id);
+    setEditingAddressId(addrId);
     setEditAddress({ ...address });
   };
 
   // Update address
-  const updateAddress = () => {
+  const updateAddress = async () => {
     if (!editingAddressId) return;
 
-    const updatedAddresses = addresses.map(addr => 
-      addr.id === editingAddressId ? { ...editAddress, id: editingAddressId } : addr
-    );
-    
-    saveAddresses(updatedAddresses);
-    setEditingAddressId(null);
-    setEditAddress({
-      firstName: '',
-      lastName: '',
-      country: 'India',
-      street: '',
-      city: '',
-      state: '',
-      pin: '',
-      phone: '',
-      type: 'home',
-      landmark: '',
-      isDefault: false
-    });
-    alert('Address updated successfully');
+    const index = addresses.findIndex(a => (a._id || a.id) === editingAddressId);
+    if (index === -1) return;
+
+    try {
+      const token = localStorage.getItem('euser_token');
+      const response = await fetch(`${API_BASE_URL}/euser/addresses`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ index, address: editAddress })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setAddresses(data.addresses);
+        setEditingAddressId(null);
+        setEditAddress({
+          firstName: '',
+          lastName: '',
+          country: 'India',
+          street: '',
+          city: '',
+          state: '',
+          pin: '',
+          phone: '',
+          type: 'home',
+          landmark: '',
+          isDefault: false
+        });
+        alert('Address updated successfully');
+      } else {
+        const error = await response.json();
+        alert(error.message || 'Failed to update address');
+      }
+    } catch (error) {
+      console.error('Error updating address:', error);
+      alert('Failed to update address');
+    }
   };
 
   // Cancel editing address
@@ -695,96 +728,11 @@ export default function Tracking({ initialSection = 'orders' }) {
                   ) : (
                     <div className="space-y-4">
                       {orders.map((order) => (
-                        <div key={order._id} className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
-                          {/* Order Header */}
-                          <div className="flex justify-between items-start mb-4">
-                            <div>
-                              <h3 className="text-lg font-semibold text-gray-800">
-                                Order #{order._id.slice(-8).toUpperCase()}
-                              </h3>
-                              <p className="text-sm text-gray-500">
-                                Placed on {formatDate(order.createdAt)}
-                              </p>
-                            </div>
-                            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(order.status)}`}>
-                              {order.status.toUpperCase()}
-                            </span>
-                          </div>
-
-                          {/* Order Items */}
-                          <div className="mb-4">
-                            <h4 className="font-semibold text-gray-700 mb-2">Items ({order.items.length})</h4>
-                            <div className="space-y-2">
-                              {order.items.map((item, index) => (
-                                <div key={index} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
-                                  <div className="flex items-center space-x-3">
-                                    {item.thumbnail && (
-                                      <img
-                                        src={item.thumbnail}
-                                        alt={item.name}
-                                        className="w-12 h-12 object-cover rounded"
-                                      />
-                                    )}
-                                    <div>
-                                      <p className="font-medium text-gray-800">{item.name}</p>
-                                      <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
-                                    </div>
-                                  </div>
-                                  <p className="font-semibold text-gray-800">₹{item.price}</p>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Order Totals */}
-                          <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                            <div className="flex justify-between items-center mb-2">
-                              <span className="text-gray-600">Subtotal:</span>
-                              <span className="font-semibold">₹{order.totals?.subtotal || 0}</span>
-                            </div>
-                            <div className="flex justify-between items-center mb-2">
-                              <span className="text-gray-600">Shipping:</span>
-                              <span className="font-semibold">₹{order.totals?.shipping || 0}</span>
-                            </div>
-                            <div className="flex justify-between items-center text-lg font-bold border-t border-gray-300 pt-2">
-                              <span>Total:</span>
-                              <span>₹{order.totals?.grandTotal || 0}</span>
-                            </div>
-                          </div>
-
-                          {/* Delivery Address */}
-                          {order.address && (
-                            <div className="mb-4">
-                              <h4 className="font-semibold text-gray-700 mb-2">Delivery Address</h4>
-                              <div className="text-sm text-gray-600">
-                                <p>{order.address.firstName} {order.address.lastName}</p>
-                                <p>{order.address.street}</p>
-                                <p>{order.address.city}, {order.address.state} - {order.address.pin}</p>
-                                <p>Phone: {order.address.phone}</p>
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Order Actions */}
-                          <div className="flex justify-end space-x-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => setSelectedOrder(order)}
-                            >
-                              View Details
-                            </Button>
-                            {order.status === 'created' && (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="text-red-600 border-red-300 hover:bg-red-50"
-                              >
-                                Cancel Order
-                              </Button>
-                            )}
-                          </div>
-                        </div>
+                        <OrderCard 
+                          key={order._id} 
+                          order={order} 
+                          onSelectOrder={setSelectedOrder} 
+                        />
                       ))}
                     </div>
                   )}
@@ -914,9 +862,9 @@ export default function Tracking({ initialSection = 'orders' }) {
                 )}
 
                 <div className="space-y-4">
-                  {addresses.map((address) => (
-                    <div key={address.id} className="bg-white p-6 rounded-lg shadow-sm border">
-                      {editingAddressId === address.id ? (
+                  {addresses.map((address, index) => (
+                    <div key={address._id || address.id || index} className="bg-white p-6 rounded-lg shadow-sm border">
+                      {editingAddressId === (address._id || address.id) ? (
                         // Edit Address Form
                         <div className="space-y-4">
                           <h4 className="text-lg font-semibold text-gray-800 mb-4">Edit Address</h4>
@@ -1032,7 +980,7 @@ export default function Tracking({ initialSection = 'orders' }) {
                               <span className="inline-block px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">
                                 {address.type.toUpperCase()}
                               </span>
-                              {!canEditAddress(address.id) && (
+                              {!canEditAddress(address._id || address.id) && (
                                 <span className="inline-block px-2 py-1 bg-orange-100 text-orange-600 text-xs rounded">
                                   LOCKED (Recent Order)
                                 </span>
@@ -1045,16 +993,16 @@ export default function Tracking({ initialSection = 'orders' }) {
                               variant="outline"
                               size="sm"
                               className={`${
-                                canEditAddress(address.id) 
+                                canEditAddress(address._id || address.id) 
                                   ? 'text-yellow-300 border-yellow-300 hover:bg-yellow-50' 
                                   : 'text-gray-400 border-gray-300 cursor-not-allowed'
                               }`}
-                              disabled={!canEditAddress(address.id)}
+                              disabled={!canEditAddress(address._id || address.id)}
                             >
                               Edit
                             </Button>
                             <Button
-                              onClick={() => deleteAddress(address.id)}
+                              onClick={() => deleteAddress(address._id || address.id)}
                               variant="outline"
                               size="sm"
                               className="text-red-600 border-red-300 hover:bg-red-50"

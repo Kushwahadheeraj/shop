@@ -112,8 +112,7 @@ router.get('/user/:userId', async (req, res) => {
 
     const orders = await Order.find({ userId })
       .sort({ 
-        status: 1, // Pending orders first (status: 'created' comes before 'delivered')
-        createdAt: -1 // Then by newest first
+        createdAt: -1 // Newest first
       })
       .populate('userId', 'username email name');
 
@@ -220,15 +219,19 @@ router.post('/:orderId/tracking', async (req, res) => {
     if (!orderId) return res.status(400).json({ error: 'orderId required' });
     if (!status) return res.status(400).json({ error: 'status required' });
 
-    const order = await Order.findById(orderId);
+    // Use findByIdAndUpdate to avoid overwriting other fields or triggering validation on unchanged fields
+    const order = await Order.findByIdAndUpdate(
+      orderId,
+      {
+        $set: { status },
+        $push: { tracking: { status, note, at: new Date() } }
+      },
+      { new: true }
+    ).populate('userId', 'username email name');
+
     if (!order) return res.status(404).json({ error: 'Order not found' });
 
-    order.status = status;
-    order.tracking.push({ status, note, at: new Date() });
-    await order.save();
-
-    const populated = await Order.findById(orderId).populate('userId', 'username email name');
-    res.json({ success: true, message: 'Tracking updated', data: populated });
+    res.json({ success: true, message: 'Tracking updated', data: order });
   } catch (err) {
     res.status(500).json({ error: err.message || 'Failed to update tracking' });
   }

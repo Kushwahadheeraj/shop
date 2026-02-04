@@ -309,8 +309,8 @@ exports.addAddress = async (req, res) => {
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     user.addresses = user.addresses || [];
-    if (user.addresses.length >= 6) {
-      return res.status(400).json({ message: 'Maximum 6 addresses allowed' });
+    if (user.addresses.length >= 5) {
+      return res.status(400).json({ message: 'Maximum 5 addresses allowed' });
     }
 
     const incoming = req.body || {};

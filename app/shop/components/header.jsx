@@ -668,7 +668,7 @@ export default function Header() {
                     <Link href='/ShopPage/Electrical/Adaptors' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Electrical Items</Link>
                     <Link href='/ShopPage/Hardware' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>House Hold Ladder</Link>
                     <Link href='/ShopPage/Locks/FoldingBrackets/BlindCornerHinge' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Locks & accessories</Link>
-                    <Link href='/ShopPage/Cleaning' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Mask & Sanitizers</Link>
+                    {/* <Link href='/ShopPage/Cleaning' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Mask & Sanitizers</Link> */}
                     <Link href='/ShopPage/Paint/AcrylicEmulsionPaint' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Paints</Link>
                     <Link href='/ShopPage/Pipe/AshirvadPipes' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Pipes & Fittings</Link>
                     <Link href='/ShopPage/Sanitary/AcrylicProducts' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Sanitary Ware & faucets</Link>

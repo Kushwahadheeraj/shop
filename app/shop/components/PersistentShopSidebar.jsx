@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Slider } from "@/components/ui/slider";
@@ -22,7 +22,7 @@ const browse = [
   // "House Hold Ladder",
   // "LED Luminaires",
   "Locks & accessories",
-  "Mask & Sanitizers",
+  // "Mask & Sanitizers",
   "Paints",
   "Pipes & Fittings",
   "PVC Mats",
@@ -459,6 +459,59 @@ const rooferSubcategories = [
 export default function PersistentShopSidebar({ forceMobile = false }) {
   const [price, setPrice] = useState([0, 148670]);
   const pathname = usePathname();
+  const [openItems, setOpenItems] = useState([]);
+
+  // Sync open state with active category on path change
+  useEffect(() => {
+    if (!pathname) return;
+    
+    const newOpenItems = [];
+    
+    // Find the active category based on current path
+    const activeCategory = browse.find(cat => isActive(cat));
+    
+    if (activeCategory) {
+      newOpenItems.push(activeCategory);
+      
+      // Check for active nested subcategories (groups)
+      const subcategories = getSubcategories(activeCategory);
+      if (subcategories) {
+        subcategories.forEach(sub => {
+          if (typeof sub === 'object' && sub.label && sub.sub) {
+             // Check if any child of this group is active
+             const isGroupActive = sub.sub.some(childName => 
+               isNestedSubcategoryActive(activeCategory, sub.label, childName)
+             );
+             if (isGroupActive) {
+               newOpenItems.push(sub.label);
+             }
+          }
+        });
+      }
+    }
+    
+    setOpenItems(prev => {
+       const uniqueNew = Array.from(new Set(newOpenItems));
+       // Compare with current to avoid loops - primitive check since strings
+       if (prev.length === uniqueNew.length && prev.every(i => uniqueNew.includes(i))) return prev;
+       return uniqueNew;
+    });
+  }, [pathname]);
+
+  const handleOpenChange = (item, isOpen) => {
+    setOpenItems(prev => {
+      if (isOpen) {
+        // If opening a top-level category, close other top-level categories (Accordion)
+        if (browse.includes(item)) {
+             const others = prev.filter(p => !browse.includes(p)); 
+             return [...others, item];
+        }
+        return [...prev, item];
+      } else {
+        return prev.filter(c => c !== item);
+      }
+    });
+  };
 
   const getSubcategories = (category) => {
     switch (category) {
@@ -500,7 +553,7 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
     // "House Hold Ladder": "Hardware",
     // "LED Luminaires": "Electrical",
     "Locks & accessories": "Locks",
-    "Mask & Sanitizers": "Cleaning",
+    // "Mask & Sanitizers": "Cleaning",
     "Paints": "Paint",
     "Pipes & Fittings": "Pipe",
     "Roofer": "Roofer",
@@ -525,12 +578,44 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
     const subPath = subcategory.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
     return pathname?.includes(`/ShopPage/${folderName}/${subPath}`);
   };
+ 
+  const isCategoryHeaderActive = (category) => {
+    const folderName = (categoryMap[category] || category || '').toLowerCase();
+    if (!pathname) return false;
+    const parts = pathname.split('/').filter(Boolean);
+    const shopIndex = parts.findIndex((p) => p.toLowerCase() === 'shoppage');
+    if (shopIndex === -1) return false;
+    const seg1 = (parts[shopIndex + 1] || '').toLowerCase();
+    const seg2 = parts[shopIndex + 2];
+    return seg1 === folderName && !seg2;
+  };
+ 
+  const isGroupHeaderActive = (category, groupLabel) => {
+    const folderName = categoryMap[category] || category;
+    const groupPath = groupLabel.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
+    if (!pathname) return false;
+    const parts = pathname.split('/').filter(Boolean);
+    const shopIndex = parts.findIndex((p) => p.toLowerCase() === 'shoppage');
+    if (shopIndex === -1) return false;
+    const seg1 = (parts[shopIndex + 1] || '').toLowerCase();
+    const seg2 = (parts[shopIndex + 2] || '').toLowerCase();
+    const seg3 = parts[shopIndex + 3];
+    return seg1 === (folderName || '').toLowerCase() && seg2 === (groupPath || '').toLowerCase() && !seg3;
+  };
 
   const isNestedSubcategoryActive = (category, subcategory, nestedSubcategory) => {
     const folderName = categoryMap[category] || category;
     const subPath = subcategory.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
     const nestedPath = nestedSubcategory.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
     return pathname?.includes(`/ShopPage/${folderName}/${subPath}/${nestedPath}`);
+  };
+ 
+  const isTripleNestedActive = (category, subcategory, nestedSubcategory, thirdLevel) => {
+    const folderName = categoryMap[category] || category;
+    const subPath = subcategory.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
+    const nestedPath = nestedSubcategory.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
+    const thirdPath = thirdLevel.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
+    return pathname?.includes(`/ShopPage/${folderName}/${subPath}/${nestedPath}/${thirdPath}`);
   };
 
   return (
@@ -579,8 +664,11 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
             return (
               <div key={cat}>
                 {subcategories ? (
-                  <Collapsible>
-                    <CollapsibleTrigger className={`flex items-center w-full justify-start py-3 text-[16px] px-2 transition-colors group text-left ${isActive(cat) ? 'text-white bg-yellow-300' : 'text-gray-600 hover:text-gray-900'}`}>
+                  <Collapsible
+                    open={openItems.includes(cat)}
+                    onOpenChange={(isOpen) => handleOpenChange(cat, isOpen)}
+                  >
+                    <CollapsibleTrigger className={`flex items-center w-full justify-start py-3 text-[16px] px-2 transition-colors group text-left ${isCategoryHeaderActive(cat) ? 'text-white bg-yellow-300' : 'text-gray-600 hover:text-gray-900'}`}>
                       <span className="flex-1 min-w-0 truncate pr-2 text-left">{cat}</span>
                       <ChevronDown className="min-w-[12px] w-3 h-3 text-gray-700 group-hover:text-gray-800 transition-colors ml-auto flex-shrink-0" />
                     </CollapsibleTrigger>
@@ -602,9 +690,13 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
                           );
                         } else if (sub && typeof sub === "object" && sub.label && sub.sub) {
                           return (
-                            <Collapsible key={sub.label}>
+                            <Collapsible 
+                              key={sub.label}
+                              open={openItems.includes(sub.label)}
+                              onOpenChange={(isOpen) => handleOpenChange(sub.label, isOpen)}
+                            >
                               <CollapsibleTrigger className={`flex items-center w-full justify-start py-1 text-[14px] transition-colors px-2 group text-left ${
-                                isSubcategoryActive(cat, sub.label)
+                                isGroupHeaderActive(cat, sub.label)
                                   ? 'text-white bg-yellow-300'
                                   : 'text-gray-600 hover:text-white hover:bg-yellow-300'
                               }`}>
@@ -619,7 +711,7 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
                                         key={item}
                                         href={`/ShopPage/${folderName}/${sub.label.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '')}/${item.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '')}`}
                                         className={`block w-full py-1 text-[14px] transition-all duration-200 px-2 whitespace-nowrap overflow-hidden text-ellipsis text-left ${
-                                          isSubcategoryActive(cat, `${sub.label}/${item}`)
+                                          isNestedSubcategoryActive(cat, sub.label, item)
                                             ? 'text-white bg-yellow-300 font-semibold'
                                             : 'text-gray-600 hover:text-white hover:bg-yellow-300 hover:underline'
                                         }`}
@@ -631,7 +723,7 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
                                     return (
                                       <Collapsible key={item.label}>
                                         <CollapsibleTrigger className={`flex items-center w-full justify-start py-1 text-[14px] transition-colors px-2 group text-left ${
-                                          isSubcategoryActive(cat, `${sub.label}/${item.label}`)
+                                          isNestedSubcategoryActive(cat, sub.label, item.label)
                                             ? 'text-white bg-yellow-300'
                                             : 'text-gray-600 hover:text-white hover:bg-yellow-300'
                                         }`}>
@@ -644,7 +736,7 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
                                               key={subItem}
                                               href={`/ShopPage/${folderName}/${sub.label.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '')}/${item.label.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '')}/${subItem.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '')}`}
                                               className={`block w-full py-1 text-[14px] transition-all duration-200 px-2 whitespace-nowrap overflow-hidden text-ellipsis text-left ${
-                                                isNestedSubcategoryActive(cat, `${sub.label}/${item.label}`, subItem)
+                                                isTripleNestedActive(cat, sub.label, item.label, subItem)
                                                   ? 'text-white bg-yellow-300 font-semibold'
                                                   : 'text-gray-500 hover:text-white hover:bg-yellow-300 hover:underline'
                                               }`}

@@ -8,7 +8,7 @@ import { useSectionTitle } from "@/hooks/useSectionTitle";
 export default function PromoBanner() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { title } = useSectionTitle('promo-banner', data?.title);
+  const { title } = useSectionTitle('promo-banner', data?.title || 'Promo Banner');
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/home/promobanner/get`)

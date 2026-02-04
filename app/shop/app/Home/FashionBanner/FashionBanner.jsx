@@ -23,6 +23,8 @@ function formatTwoLines(text) {
 
 export default function FashionBanner() {
   const [items, setItems] = useState([]);
+  const banner = items.length > 0 ? items[0] : {};
+  const { title } = useSectionTitle('fashion-banner', banner.title || 'Fashion Banner');
 
   useEffect(() => {
     let mounted = true;
@@ -48,8 +50,6 @@ export default function FashionBanner() {
 
   if (items.length === 0) return null;
 
-  const banner = items[0];
-  const { title } = useSectionTitle('fashion-banner', banner.title);
   const imageOnLeft = banner.contentPosition !== "right";
   const verticalAlign = banner.verticalAlign || "center";
   const justifyClass =

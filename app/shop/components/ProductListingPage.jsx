@@ -16,7 +16,7 @@ const categories = [
   { name: "House Hold Ladder", href: "/ShopPage/Hardware" },
   { name: "LED Luminaires", href: "/ShopPage/Electrical" },
   { name: "Locks & accessories", href: "/ShopPage/Locks" },
-  { name: "Mask & Sanitizers", href: "/ShopPage/Cleaning" },
+  // { name: "Mask & Sanitizers", href: "/ShopPage/Cleaning" },
   { name: "Paints", href: "/ShopPage/Paint" },
   { name: "Pipes & Fittings", href: "/ShopPage/Pipe" },
   { name: "Sanitary Ware & faucets", href: "/ShopPage/Sanitary" },

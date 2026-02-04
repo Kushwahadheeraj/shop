@@ -11,16 +11,36 @@ function sign(user) {
 exports.register = async (req, res) => {
   try {
     const { username, email, password, name, phone } = req.body || {};
-    if ((!email || !email.trim()) && (!username || !username.trim())) {
-      return res.status(400).json({ message: 'Username or email is required' });
+    
+    // Require at least one identifier: email, username, or phone
+    if ((!email || !email.trim()) && (!username || !username.trim()) && (!phone || !phone.trim())) {
+      return res.status(400).json({ message: 'Username, email, or phone is required' });
     }
 
-    const existing = await EUser.findOne({ $or: [ { email }, { username } ] });
+    // Build query to check if user exists
+    const orConditions = [];
+    if (email && email.trim()) orConditions.push({ email: email.toLowerCase() });
+    if (username && username.trim()) orConditions.push({ username });
+    if (phone && phone.trim()) orConditions.push({ phone });
+
+    const existing = await EUser.findOne({ $or: orConditions });
+    
     if (existing) {
-      return res.status(409).json({ message: 'User already exists' });
+      let msg = 'User already exists';
+      if (existing.email === email?.toLowerCase()) msg = 'Email already registered';
+      if (existing.username === username) msg = 'Username already taken';
+      if (existing.phone === phone) msg = 'Phone number already registered';
+      return res.status(409).json({ message: msg });
     }
 
-    const user = await EUser.create({ username, email, password, name, phone });
+    const user = await EUser.create({ 
+      username, 
+      email: email ? email.toLowerCase() : undefined, 
+      password, 
+      name, 
+      phone 
+    });
+    
     const token = sign(user);
     res.json({ token, user: { id: user._id, username: user.username, email: user.email, name: user.name, phone: user.phone } });
   } catch (err) {
@@ -32,10 +52,20 @@ exports.login = async (req, res) => {
   try {
     const { usernameOrEmail, password } = req.body || {};
     if (!usernameOrEmail || !password) {
-      return res.status(400).json({ message: 'usernameOrEmail and password are required' });
+      return res.status(400).json({ message: 'Identifier and password are required' });
     }
 
-    const user = await EUser.findOne({ $or: [ { email: usernameOrEmail.toLowerCase() }, { username: usernameOrEmail } ] });
+    const identifier = usernameOrEmail.trim();
+
+    // Check against email, username, and phone
+    const user = await EUser.findOne({ 
+      $or: [ 
+        { email: identifier.toLowerCase() }, 
+        { username: identifier },
+        { phone: identifier }
+      ] 
+    });
+    
     if (!user) return res.status(401).json({ message: 'Invalid credentials' });
 
     const ok = await user.comparePassword(password);
@@ -136,8 +166,18 @@ function createTransporter() {
 exports.requestPasswordReset = async (req, res) => {
   try {
     const { emailOrUsername } = req.body || {};
-    if (!emailOrUsername) return res.status(400).json({ message: 'Email or username is required' });
-    const user = await EUser.findOne({ $or: [ { email: emailOrUsername.toLowerCase() }, { username: emailOrUsername } ] });
+    if (!emailOrUsername) return res.status(400).json({ message: 'Email, username or phone is required' });
+    
+    const identifier = emailOrUsername.trim();
+    
+    const user = await EUser.findOne({ 
+      $or: [ 
+        { email: identifier.toLowerCase() }, 
+        { username: identifier },
+        { phone: identifier }
+      ] 
+    });
+    
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     const code = String(Math.floor(100000 + Math.random() * 900000));
@@ -158,12 +198,48 @@ exports.requestPasswordReset = async (req, res) => {
           html: `<p>Your password reset code is <b>${code}</b>. It expires in 15 minutes.</p>`,
         });
       }
+      
+      if (user.phone) {
+        console.log(`[SMS] Attempting to send OTP ${code} to phone ${user.phone}`);
+        // Fast2SMS Implementation Example
+        if (process.env.FAST2SMS_API_KEY) {
+           const axios = require('axios'); 
+           try {
+             // Try using 'dlt_manual' or 'q' route for better success rates on free plans
+             // Using GET request to avoid JSON body issues
+             const apiKey = process.env.FAST2SMS_API_KEY;
+             const message = `Your OTP is ${code}`;
+             const url = `https://www.fast2sms.com/dev/bulkV2?authorization=${apiKey}&route=q&message=${encodeURIComponent(message)}&language=english&flash=0&numbers=${user.phone}`;
+             
+             await axios.get(url);
+             console.log('[SMS] Fast2SMS sent successfully');
+           } catch (smsErr) {
+             console.error('[SMS] Fast2SMS failed:', smsErr.message);
+             if (smsErr.response) {
+               console.error('[SMS] Response data:', smsErr.response.data);
+             }
+           }
+        } else {
+           console.log('[SMS] No FAST2SMS_API_KEY found in .env');
+        }
+      }
+
     } catch (mailErr) {
       // Mailing failure shouldn't leak code; still allow fallback display in dev
+      console.error('Notification error:', mailErr);
     }
 
+    const sentTo = [];
+    if (user.email) sentTo.push(`email (${user.email})`);
+    if (user.phone) sentTo.push(`phone (${user.phone})`);
+
     // In dev, do not expose the code in response unless explicitly allowed
-    res.json({ success: true, message: 'Reset code sent to email if available', expires });
+    res.json({ 
+      success: true, 
+      message: `Reset code sent to ${sentTo.join(' and ')}`, 
+      expires,
+      sentTo: user.email ? 'email' : 'phone' // simplified hint for frontend
+    });
   } catch (err) {
     res.status(500).json({ message: 'Failed to request password reset' });
   }
@@ -174,11 +250,18 @@ exports.resetPasswordWithToken = async (req, res) => {
   try {
     const { token, code, emailOrUsername, newPassword } = req.body || {};
     if ((!token && !code) || !newPassword) return res.status(400).json({ message: 'Code and newPassword are required' });
+    
+    const identifier = emailOrUsername ? emailOrUsername.trim() : '';
+
     const user = await EUser.findOne({
       $or: [
         { resetPasswordToken: token, resetPasswordExpires: { $gt: new Date() } },
         { $and: [
-          { $or: [ { email: emailOrUsername?.toLowerCase() }, { username: emailOrUsername } ] },
+          { $or: [ 
+            { email: identifier.toLowerCase() }, 
+            { username: identifier },
+            { phone: identifier }
+          ] },
           { resetCodeExpires: { $gt: new Date() } }
         ]}
       ]

@@ -8,7 +8,7 @@ import API_BASE_URL from "@/lib/apiConfig";
 
 export default function LoginRegisterModal({ open, onClose }) {
   const [login, setLogin] = useState({ username: "", password: "", remember: false });
-  const [register, setRegister] = useState({ username: "", email: "", password: "" });
+  const [register, setRegister] = useState({ username: "", email: "", phone: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
@@ -82,12 +82,12 @@ export default function LoginRegisterModal({ open, onClose }) {
           <h2 className="text-2xl font-extrabold mb-6">LOGIN</h2>
           <form className="space-y-4" onSubmit={handleLogin}>
             <div>
-              <label className="block font-bold mb-1">Username or email address *</label>
+              <label className="block font-bold mb-1">Username, email or mobile number *</label>
               <Input
                 value={login.username}
                 onChange={e => setLogin({ ...login, username: e.target.value })}
                 className="bg-blue-50"
-                placeholder=""
+                placeholder="Enter username, email or mobile"
               />
             </div>
             <div>
@@ -134,11 +134,20 @@ export default function LoginRegisterModal({ open, onClose }) {
               />
             </div>
             <div>
-              <label className="block font-bold mb-1">Email address *</label>
+              <label className="block font-bold mb-1">Email address <span className="font-normal text-gray-500 text-sm">(Optional)</span></label>
               <Input
                 type="email"
                 value={register.email}
                 onChange={e => setRegister({ ...register, email: e.target.value })}
+                placeholder=""
+              />
+            </div>
+            <div>
+              <label className="block font-bold mb-1">Phone Number *</label>
+              <Input
+                type="tel"
+                value={register.phone}
+                onChange={e => setRegister({ ...register, phone: e.target.value })}
                 placeholder=""
               />
             </div>

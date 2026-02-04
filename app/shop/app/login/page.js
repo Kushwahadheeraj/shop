@@ -26,8 +26,7 @@ export default function LoginPage() {
     phone: '',
     password: '',
     confirmPassword: '',
-    forgotEmail: '',
-    forgotUsername: ''
+    forgotIdentifier: ''
   });
 
   // Check if user is already logged in
@@ -126,6 +125,12 @@ export default function LoginPage() {
       return;
     }
 
+    if (!formData.phone) {
+      setError('Phone number is required');
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch(`${API_BASE_URL}/euser/register`, {
         method: 'POST',
@@ -160,8 +165,7 @@ export default function LoginPage() {
           phone: '',
           password: '',
           confirmPassword: '',
-          forgotEmail: '',
-          forgotUsername: ''
+          forgotIdentifier: ''
         });
         setTimeout(() => { router.push('/'); }, 800);
       } else {
@@ -188,7 +192,7 @@ export default function LoginPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          emailOrUsername: formData.forgotEmail || formData.forgotUsername,
+          emailOrUsername: formData.forgotIdentifier,
         }),
       });
 
@@ -233,7 +237,7 @@ export default function LoginPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          emailOrUsername: formData.forgotEmail || formData.forgotUsername,
+          emailOrUsername: formData.forgotIdentifier,
           code: resetCode,
           newPassword: formData.password,
         }),
@@ -284,8 +288,7 @@ export default function LoginPage() {
     setResetCode('');
     setFormData(prev => ({
       ...prev,
-      forgotEmail: '',
-      forgotUsername: '',
+      forgotIdentifier: '',
       password: '',
       confirmPassword: ''
     }));
@@ -351,37 +354,19 @@ export default function LoginPage() {
                 // Request Reset Code
                 <>
                   <div>
-                    <label htmlFor="forgotEmail" className="block text-sm font-medium text-gray-700">
-                      Email Address
+                    <label htmlFor="forgotIdentifier" className="block text-sm font-medium text-gray-700">
+                      Email, Username or Mobile Number
                     </label>
                     <div className="mt-1 relative">
                       <input
-                        id="forgotEmail"
-                        name="forgotEmail"
-                        type="email"
-                        value={formData.forgotEmail}
-                        onChange={handleInputChange}
-                        className="appearance-none block w-full px-3 py-2 pl-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-yellow-300 focus:border-yellow-300"
-                        placeholder="Enter your email"
-                        required
-                      />
-                      <Mail className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label htmlFor="forgotUsername" className="block text-sm font-medium text-gray-700">
-                      Username (Optional)
-                    </label>
-                    <div className="mt-1 relative">
-                      <input
-                        id="forgotUsername"
-                        name="forgotUsername"
+                        id="forgotIdentifier"
+                        name="forgotIdentifier"
                         type="text"
-                        value={formData.forgotUsername}
+                        value={formData.forgotIdentifier}
                         onChange={handleInputChange}
                         className="appearance-none block w-full px-3 py-2 pl-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-yellow-300 focus:border-yellow-300"
-                        placeholder="Enter your username"
+                        placeholder="Enter email, username or mobile"
+                        required
                       />
                       <User className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                     </div>
@@ -525,51 +510,50 @@ export default function LoginPage() {
                   </div>
 
                   {/* Phone */}
-                  <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                      Phone Number
-                    </label>
-                    <div className="mt-1 relative">
-                      <input
-                        id="phone"
-                        name="phone"
-                        type="tel"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        className="appearance-none block w-full px-3 py-2 pl-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-yellow-300 focus:border-yellow-300"
-                        placeholder="Phone number"
-                        required={!isLogin}
-                      />
-                      <Phone className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-                    </div>
-                  </div>
+              <div>
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                  Phone Number <span className="text-red-500">*</span>
+                </label>
+                <div className="mt-1 relative">
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    className="appearance-none block w-full px-3 py-2 pl-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-yellow-300 focus:border-yellow-300"
+                    placeholder="Phone number"
+                    required={!isLogin}
+                  />
+                  <Phone className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                </div>
+              </div>
 
-                  {/* Email */}
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                      Email Address
-                    </label>
-                    <div className="mt-1 relative">
-                      <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        className="appearance-none block w-full px-3 py-2 pl-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-yellow-300 focus:border-yellow-300"
-                        placeholder="Email address"
-                        required={!isLogin}
-                      />
-                      <Mail className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-                    </div>
-                  </div>
+              {/* Email */}
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                  Email Address <span className="text-gray-400 font-normal">(Optional)</span>
+                </label>
+                <div className="mt-1 relative">
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="appearance-none block w-full px-3 py-2 pl-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-yellow-300 focus:border-yellow-300"
+                    placeholder="Email address"
+                  />
+                  <Mail className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                </div>
+              </div>
                 </>
               )}
 
-              {/* Username */}
+              {/* Username / Identifier */}
               <div>
                 <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                  Username
+                  {isLogin ? 'Email, Username or Mobile Number' : 'Username'}
                 </label>
                 <div className="mt-1 relative">
                   <input
@@ -579,7 +563,7 @@ export default function LoginPage() {
                     value={formData.username}
                     onChange={handleInputChange}
                     className="appearance-none block w-full px-3 py-2 pl-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Username"
+                    placeholder={isLogin ? "Email, username or mobile" : "Username"}
                     required
                   />
                   <User className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />

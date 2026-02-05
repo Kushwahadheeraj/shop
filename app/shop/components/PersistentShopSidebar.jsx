@@ -480,7 +480,7 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
           if (typeof sub === 'object' && sub.label && sub.sub) {
              // Check if any child of this group is active
              const isGroupActive = sub.sub.some(childName => 
-               isNestedSubcategoryActive(activeCategory, sub.label, childName)
+               isNestedSubcategoryActive(activeCategory, sub.label, typeof childName === 'object' ? childName.label : childName)
              );
              if (isGroupActive) {
                newOpenItems.push(sub.label);
@@ -574,8 +574,9 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
   };
 
   const isSubcategoryActive = (category, subcategory) => {
+    if (!subcategory) return false;
     const folderName = categoryMap[category] || category;
-    const subPath = subcategory.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
+    const subPath = String(subcategory).replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
     return pathname?.includes(`/ShopPage/${folderName}/${subPath}`);
   };
  
@@ -591,8 +592,9 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
   };
  
   const isGroupHeaderActive = (category, groupLabel) => {
+    if (!groupLabel) return false;
     const folderName = categoryMap[category] || category;
-    const groupPath = groupLabel.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
+    const groupPath = String(groupLabel).replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
     if (!pathname) return false;
     const parts = pathname.split('/').filter(Boolean);
     const shopIndex = parts.findIndex((p) => p.toLowerCase() === 'shoppage');
@@ -604,17 +606,19 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
   };
 
   const isNestedSubcategoryActive = (category, subcategory, nestedSubcategory) => {
+    if (!subcategory || !nestedSubcategory) return false;
     const folderName = categoryMap[category] || category;
-    const subPath = subcategory.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
-    const nestedPath = nestedSubcategory.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
+    const subPath = String(subcategory).replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
+    const nestedPath = String(nestedSubcategory).replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
     return pathname?.includes(`/ShopPage/${folderName}/${subPath}/${nestedPath}`);
   };
  
   const isTripleNestedActive = (category, subcategory, nestedSubcategory, thirdLevel) => {
+    if (!subcategory || !nestedSubcategory || !thirdLevel) return false;
     const folderName = categoryMap[category] || category;
-    const subPath = subcategory.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
-    const nestedPath = nestedSubcategory.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
-    const thirdPath = thirdLevel.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
+    const subPath = String(subcategory).replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
+    const nestedPath = String(nestedSubcategory).replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
+    const thirdPath = String(thirdLevel).replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
     return pathname?.includes(`/ShopPage/${folderName}/${subPath}/${nestedPath}/${thirdPath}`);
   };
 

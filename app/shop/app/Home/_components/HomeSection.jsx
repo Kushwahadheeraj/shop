@@ -1,22 +1,27 @@
-import Brands from "../Brands/Brands";
-import Card from "../Card/Card";
-import PopularProducts from "../Card/PopularProducts";
-import CardSlider from "../CardSlider/CardSlider";
-import Categories from "../Categories/Categories";
-import Electricals from "../Electrical/Electrical";
+"use client";
+
+import dynamic from 'next/dynamic';
 import ImageSlider from "../ImageSlider/ImageSlider";
-import Items from "../Items/items";
-import Paints from "../Paints/paints";
-import Service from "../Service/Service";
-import PopularTools from "../Tools/PopularTools";
-import OfferProduct from "../OfferProduct/OfferProduct";
 import CouponsSection from "../CouponsSection/CouponsSection";
-import BestQuality from "../BestQuality/BestQuality";
-import TopSelection from "../TopSelection/TopSelection";
-import FashionBanner from "../FashionBanner/FashionBanner";
-import DealsSection from "../DealsSection/DealsSection";
-import ShopByCategory from "./ShopByCategory";
-import PromoBanner from "./PromoBanner";
+import CardSlider from "../CardSlider/CardSlider";
+
+// Lazy load components below the fold
+const Brands = dynamic(() => import("../Brands/Brands"), { ssr: false });
+const Card = dynamic(() => import("../Card/Card"));
+const PopularProducts = dynamic(() => import("../Card/PopularProducts"));
+const Categories = dynamic(() => import("../Categories/Categories"));
+const Electricals = dynamic(() => import("../Electrical/Electrical"));
+const Items = dynamic(() => import("../Items/items"));
+const Paints = dynamic(() => import("../Paints/paints"));
+const Service = dynamic(() => import("../Service/Service"));
+const PopularTools = dynamic(() => import("../Tools/PopularTools"));
+const OfferProduct = dynamic(() => import("../OfferProduct/OfferProduct"));
+const BestQuality = dynamic(() => import("../BestQuality/BestQuality"));
+const TopSelection = dynamic(() => import("../TopSelection/TopSelection"));
+const FashionBanner = dynamic(() => import("../FashionBanner/FashionBanner"));
+const DealsSection = dynamic(() => import("../DealsSection/DealsSection"));
+const ShopByCategory = dynamic(() => import("./ShopByCategory"));
+const PromoBanner = dynamic(() => import("./PromoBanner"));
 
 export default function Home() {
   return (

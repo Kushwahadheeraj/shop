@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "next/navigation";
+import { useSearchParams, useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import API_BASE_URL from "@/lib/apiConfig";
@@ -19,7 +19,9 @@ const toAbs = (u) => {
 
 export default function ProductDetailPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const id = Array.isArray(params?.id) ? params.id[0] : params?.id;
+  const categoryHint = searchParams.get('cat');
   const { addItem } = useCart();
   const { user } = useAuth();
   const [hasToken, setHasToken] = useState(false);
@@ -89,29 +91,71 @@ export default function ProductDetailPage() {
           }
         } catch {}
 
-        // 2) Try hitting backend category getOne endpoints to retrieve full record
+        // 2) Use the unified API endpoint for fast lookup
         let list = [];
         if (!raw) {
-          const base = API_BASE_URL.replace(/\/$/, '');
-          const segments = ['adhesives','paint','cements','dry','electrical','fiber','fitting','hardware','home','homedecor','locks','pipe','pvcmats','roofer','sanitary','tools','uncategorized','waterproofing'];
-          for (const seg of segments) {
-            try {
-              const r = await fetch(`${base}/${seg}/getOne/${id}`, { cache: 'no-store' });
-              if (r.ok) {
-                raw = await r.json();
-                break;
+          try {
+            // Build the URL with category hint if available
+            let endpoint = `/api/products/${id}`;
+            if (categoryHint) {
+              endpoint += `?cat=${encodeURIComponent(categoryHint)}`;
+            }
+            
+            // Fetch from the unified endpoint
+            const res = await fetch(endpoint, { cache: 'no-store' });
+            
+            if (res.ok) {
+              const contentType = res.headers.get("content-type");
+              if (contentType && contentType.includes("application/json")) {
+                 const json = await res.json();
+                 if (json) {
+                   raw = json;
+                 }
               }
-            } catch {}
+            } else {
+              // If unified endpoint fails (e.g. 404), maybe try legacy method as backup?
+              // But strictly, the unified endpoint SHOULD find it if it exists.
+              console.warn('Product not found via unified API, status:', res.status);
+            }
+          } catch (err) {
+            console.error('Error fetching product from unified API:', err);
           }
+        }
+
+        // 3) Fallback: If still not found, try the old brute-force loop only if no category hint was provided
+        // (If category hint WAS provided, the unified API would have checked that category first anyway)
+        if (!raw && !categoryHint) {
+           const base = API_BASE_URL.replace(/\/$/, '');
+           const segments = ['adhesives','paint','cements','dry','electrical','fiber','fitting','hardware','home','homedecor','locks','pipe','pvcmats','roofer','sanitary','tools','uncategorized','waterproofing'];
+           
+           // We'll try concurrently in batches of 6 to speed it up
+           const batchSize = 6;
+           for (let i = 0; i < segments.length; i += batchSize) {
+             const batch = segments.slice(i, i + batchSize);
+             const promises = batch.map(seg => 
+               fetch(`${base}/${seg}/getOne/${id}`, { cache: 'no-store' })
+                 .then(r => (r.ok && r.headers.get('content-type')?.includes('application/json')) ? r.json() : null)
+                 .catch(() => null)
+             );
+             
+             const results = await Promise.all(promises);
+             const found = results.find(r => r);
+             if (found) {
+               raw = found;
+               break;
+             }
+           }
         }
 
         // 3) Final fallback to legacy paints list endpoint
         if (!raw) {
           try {
             const resLegacy = await fetch(`${API_BASE_URL}/home/paints/get`, { cache: 'no-store' });
-            const json = await resLegacy.json();
-            if (json && json.success && Array.isArray(json.data)) list = json.data; else if (Array.isArray(json)) list = json;
-            raw = list.find(p => String(p._id) === String(id));
+            if (resLegacy.ok && resLegacy.headers.get('content-type')?.includes('application/json')) {
+              const json = await resLegacy.json();
+              if (json && json.success && Array.isArray(json.data)) list = json.data; else if (Array.isArray(json)) list = json;
+              raw = list.find(p => String(p._id) === String(id));
+            }
           } catch {}
         }
 

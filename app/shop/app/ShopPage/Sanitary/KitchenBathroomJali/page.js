@@ -6,5 +6,3 @@ export default function Page() {
   return <UniversalShopPage />;
 }
 
-export const dynamic = "force-dynamic";
-export const runtime = "nodejs";

@@ -2,29 +2,29 @@ import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 
 // Import all your product models
-import ElectricalProduct from 'backend/models/ElectricalModels';
-import PaintProduct from 'backend/models/PaintModels';
-import SanitaryProduct from 'backend/models/SanitaryModels';
-import PipeProduct from 'backend/models/PipeModels';
-import CementProduct from 'backend/models/CementsModels';
-import RooferProduct from 'backend/models/RooferModels';
-import ToolProduct from 'backend/models/ToolsModels';
-import AdhesiveProduct from 'backend/models/AdhesivesModels';
-import CleaningProduct from 'backend/models/CleaningModels';
-import LockProduct from 'backend/models/LocksModels';
-import LightProduct from 'backend/models/LightingModels';
-import WaterproofingProduct from 'backend/models/WaterProofingModels';
-import HardwareProduct from 'backend/models/HardwareModels';
-import HomeDecorProduct from 'backend/models/HomeDecorModels';
-import HomeElectricalProduct from 'backend/models/HomeElectricalModel';
-import HomePaintsProduct from 'backend/models/HomePaintsModel';
-import PvcMatsProduct from 'backend/models/PvcMatsModels';
-import SheetProduct from 'backend/models/SheetModels';
-import DryProduct from 'backend/models/DryModels';
-import FiberProduct from 'backend/models/FiberModels';
-import FittingProduct from 'backend/models/FittingModels';
-import BrushProduct from 'backend/models/BrushModels';
-import UncategorizedProduct from 'backend/models/UncategorizedModels';
+import ElectricalProduct from '../../../../../../backend/models/ElectricalModels';
+import PaintProduct from '../../../../../../backend/models/PaintModels';
+import SanitaryProduct from '../../../../../../backend/models/SanitaryModels';
+import PipeProduct from '../../../../../../backend/models/PipeModels';
+import CementProduct from '../../../../../../backend/models/CementsModels';
+import RooferProduct from '../../../../../../backend/models/RooferModels';
+import ToolProduct from '../../../../../../backend/models/ToolsModels';
+import AdhesiveProduct from '../../../../../../backend/models/AdhesivesModels';
+import CleaningProduct from '../../../../../../backend/models/CleaningModels';
+import LockProduct from '../../../../../../backend/models/LocksModels';
+import LightProduct from '../../../../../../backend/models/LightingModels';
+import WaterproofingProduct from '../../../../../../backend/models/WaterProofingModels';
+import HardwareProduct from '../../../../../../backend/models/HardwareModels';
+import HomeDecorProduct from '../../../../../../backend/models/HomeDecorModels';
+import HomeElectricalProduct from '../../../../../../backend/models/HomeElectricalModel';
+import HomePaintsProduct from '../../../../../../backend/models/HomePaintsModel';
+import PvcMatsProduct from '../../../../../../backend/models/PvcMatsModels';
+import SheetProduct from '../../../../../../backend/models/SheetModels';
+import DryProduct from '../../../../../../backend/models/DryModels';
+import FiberProduct from '../../../../../../backend/models/FiberModels';
+import FittingProduct from '../../../../../../backend/models/FittingModels';
+import BrushProduct from '../../../../../../backend/models/BrushModels';
+import UncategorizedProduct from '../../../../../../backend/models/UncategorizedModels';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -86,48 +86,54 @@ export async function GET(request, { params }) {
         ]
       : productModels;
 
-    // Search for the product in all models
-    for (const { model, category } of orderedModels) {
+    // Search for the product in all models concurrently
+    console.log(`Starting parallel search for ID: ${id} in ${orderedModels.length} collections`);
+    
+    const searchPromises = orderedModels.map(async ({ model, category }) => {
       try {
-        console.log(`Searching in ${category} model...`);
-        
-        // Try findById first if valid ObjectId
         let product = null;
+        
+        // 1. Try findById if valid ObjectId
         if (mongoose.Types.ObjectId.isValid(id)) {
-          try {
-            product = await model.findById(id).lean();
-          } catch (innerErr) {
-            console.error(`findById failed for ${category}:`, innerErr?.message);
-          }
+          product = await model.findById(id).lean();
         }
         
-        // If not found, try searching by name or other fields
+        // 2. If not found, search by name regex (fallback)
         if (!product) {
-          console.log(`Trying alternative search in ${category}...`);
-          // Try to find by name if ID doesn't work
+          // If it's a valid ObjectId but findById failed, it's unlikely to be found by name regex of the ID, 
+          // unless the ID passed is actually a name that looks like an ObjectId (rare).
+          // But if the ID is NOT an ObjectId, we MUST search by name.
+          
           const orConditions = [{ name: { $regex: id, $options: 'i' } }];
-          // Only add _id match if valid
           if (mongoose.Types.ObjectId.isValid(id)) {
-            orConditions.push({ _id: new mongoose.Types.ObjectId(id) });
+             orConditions.push({ _id: id });
           }
           product = await model.findOne({ $or: orConditions }).lean();
         }
-        
+
         if (product) {
-          console.log(`Found product in ${category}:`, product.name);
-          const productWithCategory = {
+          // console.log(`Found product in ${category}`);
+          return {
             ...product,
             category,
             _id: product._id.toString()
           };
-          return NextResponse.json(productWithCategory);
-        } else {
-          console.log(`No product found in ${category} with ID: ${id}`);
         }
-      } catch (error) {
-        console.error(`Error searching in ${category}:`, error);
-        // Continue with other models
+        return null;
+      } catch (err) {
+        console.error(`Error searching in ${category}:`, err.message);
+        return null;
       }
+    });
+
+    const results = await Promise.all(searchPromises);
+    const foundProduct = results.find(p => p !== null);
+
+    if (foundProduct) {
+      console.log('Product found:', foundProduct.name);
+      return NextResponse.json(foundProduct);
+    } else {
+      console.log(`No product found in any collection for ID: ${id}`);
     }
 
     // Product not found in any model

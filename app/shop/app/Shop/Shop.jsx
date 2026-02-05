@@ -7,6 +7,82 @@ import Update from "../Update/Update";
 import { useEffect, useState } from "react";
 import API_BASE_URL from "@/lib/apiConfig";
 
+// Product Card Component
+function ProductCard({ product, router, toAbs }) {
+  const [imgSrc, setImgSrc] = useState(toAbs(product.image));
+
+  const getCategoryPath = (productName) => {
+    const name = productName.toLowerCase();
+    
+    // Map product names to category paths with first available subpage
+    if (name.includes('adhesive') || name.includes('fevicol') || name.includes('glue')) {
+      return '/ShopPage/Adhesives';
+    } else if (name.includes('cement') || name.includes('pop') || name.includes('birla')) {
+      return '/ShopPage/Cements';
+    } else if (name.includes('cleaning') || name.includes('brush') || name.includes('mop')) {
+      return '/ShopPage/Cleaning';
+    } else if (name.includes('electrical') || name.includes('wire') || name.includes('switch') || name.includes('bulb') || name.includes('fan')) {
+      return '/ShopPage/Electrical/Adaptors'; // First subpage in Electrical
+    } else if (name.includes('paint') || name.includes('emulsion') || name.includes('primer')) {
+      return '/ShopPage/Paint/AcrylicEmulsionPaint'; // First subpage in Paint
+    } else if (name.includes('tool') || name.includes('hammer') || name.includes('screwdriver') || name.includes('wrench')) {
+      return '/ShopPage/Tools/abrasives'; // First subpage in Tools
+    } else if (name.includes('sanitary') || name.includes('faucet') || name.includes('bathroom')) {
+      return '/ShopPage/Sanitary/AcrylicProducts'; // First subpage in Sanitary
+    } else if (name.includes('lock') || name.includes('key') || name.includes('door')) {
+      return '/ShopPage/Locks/DoorAccessories'; // First subpage in Locks
+    } else if (name.includes('pipe') || name.includes('fitting') || name.includes('plumbing')) {
+      return '/ShopPage/Pipe/AshirvadPipes'; // First subpage in Pipe
+    } else if (name.includes('roof') || name.includes('sheet') || name.includes('aluminium')) {
+      return '/ShopPage/Roofer/AluminiumSheet'; // First subpage in Roofer
+    } else if (name.includes('waterproof') || name.includes('water proof')) {
+      return '/ShopPage/WaterProofing/Bathrooms'; // First subpage in WaterProofing
+    } else if (name.includes('hardware') || name.includes('screw') || name.includes('bolt') || name.includes('nut')) {
+      return '/ShopPage/Hardware';
+    } else if (name.includes('fiber') || name.includes('fiberglass')) {
+      return '/ShopPage/Fiber';
+    } else if (name.includes('fitting') || name.includes('joint')) {
+      return '/ShopPage/Fitting';
+    } else if (name.includes('home') || name.includes('decor') || name.includes('decoration')) {
+      return '/ShopPage/HomeDecor';
+    } else if (name.includes('pvc') || name.includes('mat')) {
+      return '/ShopPage/PvcMats';
+    } else {
+      // Default to Uncategorized
+      return '/ShopPage/Uncategorized';
+    }
+  };
+
+  const categoryPath = getCategoryPath(product.name);
+
+  return (
+    <div
+      onClick={() => router.push(categoryPath)}
+      className="group bg-white hover:shadow-lg transition-all duration-300 cursor-pointer"
+    >
+      {/* Image Section */}
+      <div className="w-full h-48 bg-white flex items-center justify-center p-6">
+        <Image
+          src={imgSrc}
+          alt={product.name}
+          width={200}
+          height={200}
+          unoptimized={true}
+          onError={() => setImgSrc('/placeholder-product.png')}
+          className="object-contain max-h-full max-w-full group-hover:scale-105 transition-transform duration-300"
+        />
+      </div>
+      
+      {/* Label Section */}
+      <div className="bg-white p-4">
+        <h3 className="text-center font-bold text-black uppercase text-sm tracking-wide">
+          {product.name}
+        </h3>
+      </div>
+    </div>
+  );
+}
+
 export default function Shop() {
   const router = useRouter();
   const [products, setProducts] = useState([]);
@@ -88,79 +164,14 @@ export default function Shop() {
         {/* Products Grid */}
         {!loading && !error && (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8">
-            {products.map((product) => {
-              // Function to determine category path based on product name
-              const getCategoryPath = (productName) => {
-                const name = productName.toLowerCase();
-                
-                // Map product names to category paths with first available subpage
-                if (name.includes('adhesive') || name.includes('fevicol') || name.includes('glue')) {
-                  return '/ShopPage/Adhesives';
-                } else if (name.includes('cement') || name.includes('pop') || name.includes('birla')) {
-                  return '/ShopPage/Cements';
-                } else if (name.includes('cleaning') || name.includes('brush') || name.includes('mop')) {
-                  return '/ShopPage/Cleaning';
-                } else if (name.includes('electrical') || name.includes('wire') || name.includes('switch') || name.includes('bulb') || name.includes('fan')) {
-                  return '/ShopPage/Electrical/Adaptors'; // First subpage in Electrical
-                } else if (name.includes('paint') || name.includes('emulsion') || name.includes('primer')) {
-                  return '/ShopPage/Paint/AcrylicEmulsionPaint'; // First subpage in Paint
-                } else if (name.includes('tool') || name.includes('hammer') || name.includes('screwdriver') || name.includes('wrench')) {
-                  return '/ShopPage/Tools/abrasives'; // First subpage in Tools
-                } else if (name.includes('sanitary') || name.includes('faucet') || name.includes('bathroom')) {
-                  return '/ShopPage/Sanitary/AcrylicProducts'; // First subpage in Sanitary
-                } else if (name.includes('lock') || name.includes('key') || name.includes('door')) {
-                  return '/ShopPage/Locks/DoorAccessories'; // First subpage in Locks
-                } else if (name.includes('pipe') || name.includes('fitting') || name.includes('plumbing')) {
-                  return '/ShopPage/Pipe/AshirvadPipes'; // First subpage in Pipe
-                } else if (name.includes('roof') || name.includes('sheet') || name.includes('aluminium')) {
-                  return '/ShopPage/Roofer/AluminiumSheet'; // First subpage in Roofer
-                } else if (name.includes('waterproof') || name.includes('water proof')) {
-                  return '/ShopPage/WaterProofing/Bathrooms'; // First subpage in WaterProofing
-                } else if (name.includes('hardware') || name.includes('screw') || name.includes('bolt') || name.includes('nut')) {
-                  return '/ShopPage/Hardware';
-                } else if (name.includes('fiber') || name.includes('fiberglass')) {
-                  return '/ShopPage/Fiber';
-                } else if (name.includes('fitting') || name.includes('joint')) {
-                  return '/ShopPage/Fitting';
-                } else if (name.includes('home') || name.includes('decor') || name.includes('decoration')) {
-                  return '/ShopPage/HomeDecor';
-                } else if (name.includes('pvc') || name.includes('mat')) {
-                  return '/ShopPage/PvcMats';
-                } else {
-                  // Default to Uncategorized
-                  return '/ShopPage/Uncategorized';
-                }
-              };
-
-              const categoryPath = getCategoryPath(product.name);
-
-              return (
-                <div
-                  key={product._id}
-                  onClick={() => router.push(categoryPath)}
-                  className="group bg-white hover:shadow-lg transition-all duration-300 cursor-pointer"
-                >
-                  {/* Image Section */}
-                  <div className="w-full h-48 bg-white flex items-center justify-center p-6">
-                    <Image
-                      src={toAbs(product.image)}
-                      alt={product.name}
-                      width={200}
-                      height={200}
-                      className="object-contain max-h-full max-w-full group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-                  
-                  {/* Label Section */}
-                  <div className="bg-white p-4">
-
-                    <h3 className="text-center font-bold text-black uppercase text-sm tracking-wide">
-                      {product.name}
-                    </h3>
-                  </div>
-                </div>
-              );
-            })}
+            {products.map((product) => (
+              <ProductCard
+                key={product._id}
+                product={product}
+                router={router}
+                toAbs={toAbs}
+              />
+            ))}
           </div>
         )}
 

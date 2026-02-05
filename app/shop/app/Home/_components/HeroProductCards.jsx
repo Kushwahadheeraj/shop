@@ -4,90 +4,52 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import API_BASE_URL from "@/lib/apiConfig";
+import { allCategories } from "@/lib/categoryData";
 
 const getCategoryPath = (productName) => {
-  const name = (productName || "").toLowerCase();
+  const name = (productName || "").toLowerCase().trim();
+  if (!name) return "/ShopPage/Uncategorized";
 
-  // Explicit Pipe Brands
-  if (name.includes("prinzia")) return "/ShopPage/Pipe/PrinziaPipes";
-  if (name.includes("apollo")) return "/ShopPage/Pipe/ApolloPipes";
-  if (name.includes("ashirvad")) return "/ShopPage/Pipe/AshirvadPipes";
-  if (name.includes("birla")) return "/ShopPage/Pipe/BirlaPipe";
-  if (name.includes("finolex")) return "/ShopPage/Pipe/FinolexPipes";
-  if (name.includes("nepul")) return "/ShopPage/Pipe/NepulPipes";
-  if (name.includes("prakash")) return "/ShopPage/Pipe/PrakashPipe";
-  if (name.includes("prince")) return "/ShopPage/Pipe/PrincePipe";
-  if (name.includes("supreme")) return "/ShopPage/Pipe/SupremePipe";
-  if (name.includes("tsa")) return "/ShopPage/Pipe/TSAPipe";
-  if (name.includes("tata")) return "/ShopPage/Pipe/TataPipe";
+  // 1. Direct Match: Product Name contains Category Name (Longer categories first)
+  // Sort categories by length descending to match specific subcategories first
+  const sortedCategories = [...allCategories].sort((a, b) => b.name.length - a.name.length);
+  
+  const nameMatch = sortedCategories.find(cat => 
+    name.includes(cat.name.toLowerCase())
+  );
+  if (nameMatch) return nameMatch.path;
 
-  if (name.includes("adhesive") || name.includes("fevicol") || name.includes("glue")) {
-    return "/ShopPage/Adhesives";
-  } else if (name.includes("cement") || name.includes("pop") || name.includes("birla")) {
-    return "/ShopPage/Cements";
-  } else if (name.includes("cleaning") || name.includes("brush") || name.includes("mop")) {
-    return "/ShopPage/Cleaning";
-  } else if (
-    name.includes("electrical") ||
-    name.includes("wire") ||
-    name.includes("switch") ||
-    name.includes("bulb") ||
-    name.includes("fan")
-  ) {
-    return "/ShopPage/Electrical/Adaptors";
-  } else if (name.includes("paint") || name.includes("emulsion") || name.includes("primer")) {
-    return "/ShopPage/Paint/AcrylicEmulsionPaint";
-  } else if (
-    name.includes("tool") ||
-    name.includes("hammer") ||
-    name.includes("screwdriver") ||
-    name.includes("wrench")
-  ) {
-    return "/ShopPage/Tools/abrasives";
-  } else if (
-    name.includes("sanitary") ||
-    name.includes("faucet") ||
-    name.includes("bathroom")
-  ) {
-    return "/ShopPage/Sanitary/AcrylicProducts";
-  } else if (name.includes("lock") || name.includes("key") || name.includes("door")) {
-    return "/ShopPage/Locks/DoorAccessories";
-  } else if (
-    name.includes("pipe") ||
-    name.includes("fitting") ||
-    name.includes("plumbing")
-  ) {
-    return "/ShopPage/Pipe/AshirvadPipes";
-  } else if (
-    name.includes("roof") ||
-    name.includes("sheet") ||
-    name.includes("aluminium")
-  ) {
-    return "/ShopPage/Roofer/AluminiumSheet";
-  } else if (name.includes("waterproof") || name.includes("water proof")) {
-    return "/ShopPage/WaterProofing/Bathrooms";
-  } else if (
-    name.includes("hardware") ||
-    name.includes("screw") ||
-    name.includes("bolt") ||
-    name.includes("nut")
-  ) {
-    return "/ShopPage/Hardware";
-  } else if (name.includes("fiber") || name.includes("fiberglass")) {
-    return "/ShopPage/Fiber";
-  } else if (name.includes("fitting") || name.includes("joint")) {
-    return "/ShopPage/Fitting";
-  } else if (
-    name.includes("home") ||
-    name.includes("decor") ||
-    name.includes("decoration")
-  ) {
-    return "/ShopPage/HomeDecor";
-  } else if (name.includes("pvc") || name.includes("mat")) {
-    return "/ShopPage/PvcMats";
-  } else {
-    return "/ShopPage/Uncategorized";
+  // 2. Reverse Match: Category Name contains Product Name (e.g. Product "Switch" matches Category "Switches")
+  // Only if product name is substantial (> 3 chars) to avoid matching "it", "at", etc.
+  if (name.length > 3) {
+    const reverseMatch = sortedCategories.find(cat => 
+      cat.name.toLowerCase().includes(name)
+    );
+    if (reverseMatch) return reverseMatch.path;
   }
+
+  // 3. Fallback: Specific Keyword Mappings
+  if (name.includes("fevicol") || name.includes("glue") || name.includes("adhesive")) return "/ShopPage/Adhesives";
+  
+  // Electrical Specifics
+  if (name.includes("fan")) return "/ShopPage/Electrical/Fans";
+  if (name.includes("wire") || name.includes("cable")) return "/ShopPage/Electrical/WiresAndCables";
+  if (name.includes("bulb")) return "/ShopPage/Electrical/Lights/LEDBulbs";
+  if (name.includes("led") || name.includes("light") || name.includes("lamp")) return "/ShopPage/Electrical/Lights";
+  if (name.includes("switch")) return "/ShopPage/Electrical/Switches";
+  if (name.includes("socket")) return "/ShopPage/Electrical/Sockets";
+  if (name.includes("mcb") || name.includes("breaker")) return "/ShopPage/Electrical/MCB";
+  
+  // General Electrical
+  if (name.includes("havells") || name.includes("crompton") || name.includes("anchor")) return "/ShopPage/Electrical"; 
+  
+  if (name.includes("paint") || name.includes("primer") || name.includes("distemper")) return "/ShopPage/Paint";
+  if (name.includes("pipe") || name.includes("elbow") || name.includes("tee")) return "/ShopPage/Pipe";
+  if (name.includes("cement") || name.includes("putty")) return "/ShopPage/Cements";
+  if (name.includes("lock") || name.includes("padlock") || name.includes("handle")) return "/ShopPage/Locks";
+  if (name.includes("tap") || name.includes("faucet") || name.includes("shower")) return "/ShopPage/Sanitary";
+  
+  return "/ShopPage/Uncategorized";
 };
 
 const SECTIONS = [
@@ -135,7 +97,9 @@ export default function HeroProductCards() {
             <div className="grid grid-cols-2 gap-3 mb-4 flex-grow">
               {items.length > 0 ? (
                 items.slice(0, 4).map((item, i) => {
-                  const href = item.link || getCategoryPath(item.name);
+                  // Force dynamic matching by ignoring item.link unless we are sure it's correct. 
+                  // Given user feedback, we prioritize the matching logic.
+                  const href = getCategoryPath(item.name);
                   return (
                     <Link 
                       href={href} 

@@ -9,6 +9,9 @@ import ProductDetailModal from './ProductDetailModal';
 import PersistentShopSidebar from '@/components/PersistentShopSidebar';
 import { useCart } from '@/components/CartContext';
 
+// Simple in-memory cache to store API responses
+const requestCache = new Map();
+
 function ShopBanner({ category, title }) {
   const [bannerUrl, setBannerUrl] = useState(null);
   const [imageError, setImageError] = useState(false);
@@ -271,17 +274,33 @@ export default function UniversalShopPage() {
     let isMounted = true;
     async function run() {
       try {
-        setLoading(true);
-        setError(null);
         if (!endpoint) {
-          setData([]);
-          setLoading(false);
+          if (isMounted) {
+            setData([]);
+            setLoading(false);
+          }
           return;
+        }
+
+        // Check cache first
+        if (requestCache.has(endpoint)) {
+            if (isMounted) {
+                setData(requestCache.get(endpoint));
+                setLoading(false);
+            }
+            // Optional: Background revalidation could go here if needed
+            return; 
+        }
+
+        if (isMounted) {
+            setLoading(true);
+            setError(null);
         }
         
         // Fetch data from API
+        // Remove 'no-store' to allow browser caching where appropriate, 
+        // though our memory cache handles the immediate "back/forward" speed.
         const res = await fetch(endpoint, { 
-          cache: 'no-store',
           headers: {
             'Content-Type': 'application/json',
           }
@@ -291,6 +310,7 @@ export default function UniversalShopPage() {
         if (res.status === 404) {
           if (isMounted) {
             setData([]);
+            requestCache.set(endpoint, []);
             setError(null);
           }
         } else {
@@ -300,9 +320,13 @@ export default function UniversalShopPage() {
 
           const json = await res.json();
           const apiData = json?.data || json || [];
+          const validData = Array.isArray(apiData) ? apiData : [];
+
+          // Cache the successful result
+          requestCache.set(endpoint, validData);
 
           if (isMounted) {
-            setData(Array.isArray(apiData) ? apiData : []);
+            setData(validData);
           }
         }
       } catch (err) {
@@ -316,18 +340,6 @@ export default function UniversalShopPage() {
       isMounted = false;
     };
   }, [endpoint]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-center items-center h-64">
-            <div className="text-lg">Loading...</div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   if (error) {
     return (
@@ -464,7 +476,18 @@ export default function UniversalShopPage() {
 
             {/* Products - Mobile: Linear/Horizontal layout, Desktop: Grid layout */}
             <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
-              {filteredProducts.map((item) => {
+              {loading ? (
+                Array.from({ length: 8 }).map((_, i) => (
+                  <div key={i} className="bg-white rounded-lg shadow-sm overflow-hidden h-96 animate-pulse">
+                    <div className="h-48 bg-gray-200"></div>
+                    <div className="p-4 space-y-3">
+                      <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                      <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                      <div className="h-8 bg-gray-200 rounded w-full mt-4"></div>
+                    </div>
+                  </div>
+                ))
+              ) : filteredProducts.map((item) => {
                 const key = item?._id || item?.id || `${Math.random()}`;
                 const name = item?.name || item?.title || 'Unnamed Product';
                 // Robust price resolution across models
@@ -669,7 +692,7 @@ export default function UniversalShopPage() {
             </div>
 
       {/* No Products Message */}
-      {filteredProducts.length === 0 && (
+      {!loading && filteredProducts.length === 0 && (
         <div className="text-center py-12">
           <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
           <p className="text-gray-500">Try adjusting your search or filter criteria.</p>
@@ -707,5 +730,3 @@ export default function UniversalShopPage() {
     </>
   );
 }
-
-

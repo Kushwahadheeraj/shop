@@ -92,6 +92,20 @@ export default function Navbar() {
     router.push(path);
   };
 
+  const handleMenuHover = (e, menuLabel) => {
+    const li = e.target.closest('li');
+    if (!li) return;
+    const group = li.closest('ul')?.dataset?.group;
+    const item = li.textContent?.trim();
+    if (!item) return;
+    const folder = folderMap[menuLabel];
+    if (!folder) return;
+    const groupSlug = group ? slugify(group) : null;
+    const itemSlug = slugify(item);
+    const path = groupSlug ? `/ShopPage/${folder}/${groupSlug}/${itemSlug}` : `/ShopPage/${folder}/${itemSlug}`;
+    router.prefetch(path);
+  };
+
   // Check if user is logged in
   useEffect(() => {
     const checkLoginStatus = () => {
@@ -144,7 +158,13 @@ export default function Navbar() {
             <li
               key={item.label}
               className='relative'
-              onMouseEnter={() => item.hasDropdown && setOpenMenu(item.label)}
+              onMouseEnter={() => {
+                if (item.hasDropdown) {
+                  setOpenMenu(item.label);
+                } else {
+                  router.prefetch(item.href);
+                }
+              }}
               onMouseLeave={() => item.hasDropdown && setOpenMenu(null)}
             >
               <a
@@ -188,7 +208,7 @@ export default function Navbar() {
 
             {/* Mega Menu for PAINTS */}
             {item.label === 'PAINTS' && (
-              <div onClick={(e)=>handleMenuClick(e,'PAINTS')} className={`absolute top-full left-0 mt-0 w-[70rem] bg-white/95 text-black border border-gray-200 rounded-xl shadow-2xl p-6 ${openMenu === 'PAINTS' ? 'grid' : 'hidden'} grid-cols-5 gap-6 z-60 backdrop-blur-sm`}>
+              <div onClick={(e)=>handleMenuClick(e,'PAINTS')} onMouseOver={(e)=>handleMenuHover(e,'PAINTS')} className={`absolute top-full left-0 mt-0 w-[70rem] bg-white/95 text-black border border-gray-200 rounded-xl shadow-2xl p-6 ${openMenu === 'PAINTS' ? 'grid' : 'hidden'} grid-cols-5 gap-6 z-60 backdrop-blur-sm`}>
                 {/* Column 1 */}
                 <div>
                   <h4 className='text-xs font-bold tracking-wider text-gray-500 uppercase pb-2 mb-3 border-b'>EMULSION</h4>
@@ -303,7 +323,7 @@ export default function Navbar() {
             )}
             {/* Mega Menu for PAINTS */}
             {item.label === 'ELECTRICALS' && (
-              <div onClick={(e)=>handleMenuClick(e,'ELECTRICALS')} className={`absolute top-full left-0 mt-0 w-[70rem] bg-white/95 text-black border border-gray-200 rounded-xl shadow-2xl p-6 ${openMenu === 'ELECTRICALS' ? 'grid' : 'hidden'} grid-cols-6 gap-6 z-60 backdrop-blur-sm`}>
+              <div onClick={(e)=>handleMenuClick(e,'ELECTRICALS')} onMouseOver={(e)=>handleMenuHover(e,'ELECTRICALS')} className={`absolute top-full left-0 mt-0 w-[70rem] bg-white/95 text-black border border-gray-200 rounded-xl shadow-2xl p-6 ${openMenu === 'ELECTRICALS' ? 'grid' : 'hidden'} grid-cols-6 gap-6 z-60 backdrop-blur-sm`}>
                 {/* Column 1 */}
                 <div>
                   <h4 className='text-xs font-bold tracking-wider text-gray-500 uppercase pb-2 mb-3 border-b'>LIGHTING</h4>
@@ -411,7 +431,7 @@ export default function Navbar() {
               </div>
             )}
             {item.label === 'SANITARY WARE & FAUCETS' && (
-              <div onClick={(e)=>handleMenuClick(e,'SANITARY WARE & FAUCETS')} className={`absolute top-full left-0 mt-0 w-[32rem] bg-white/95 text-black border border-gray-200 rounded-xl shadow-2xl p-6 ${openMenu === 'SANITARY WARE & FAUCETS' ? 'block' : 'hidden'} z-60 backdrop-blur-sm`}>
+              <div onClick={(e)=>handleMenuClick(e,'SANITARY WARE & FAUCETS')} onMouseOver={(e)=>handleMenuHover(e,'SANITARY WARE & FAUCETS')} className={`absolute top-full left-0 mt-0 w-[32rem] bg-white/95 text-black border border-gray-200 rounded-xl shadow-2xl p-6 ${openMenu === 'SANITARY WARE & FAUCETS' ? 'block' : 'hidden'} z-60 backdrop-blur-sm`}>
                 {/* Column 1 */}
                 <ul className='grid grid-cols-2 gap-4 text-sm text-gray-700'>
                   <li className='cursor-pointer'>Acrylic Products</li>
@@ -429,7 +449,7 @@ export default function Navbar() {
               </div>
             )}
             {item.label === 'TOOLS' && (
-              <div onClick={(e)=>handleMenuClick(e,'TOOLS')} className={`absolute top-full left-0 mt-0 w-[28rem] bg-white/95 text-black border border-gray-200 rounded-xl shadow-2xl p-6 ${openMenu === 'TOOLS' ? 'block' : 'hidden'} z-60 backdrop-blur-sm`}>
+              <div onClick={(e)=>handleMenuClick(e,'TOOLS')} onMouseOver={(e)=>handleMenuHover(e,'TOOLS')} className={`absolute top-full left-0 mt-0 w-[28rem] bg-white/95 text-black border border-gray-200 rounded-xl shadow-2xl p-6 ${openMenu === 'TOOLS' ? 'block' : 'hidden'} z-60 backdrop-blur-sm`}>
                 {/* Column 1 */}
                 <ul className='grid grid-cols-2 gap-3 text-sm text-gray-700'>
                   <li className='cursor-pointer'>Hand Tools</li>

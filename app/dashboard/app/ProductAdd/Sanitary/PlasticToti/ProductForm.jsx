@@ -82,7 +82,6 @@ export default function ProductForm({ onSave }) {
       }
 
     } catch (error) {
-      console.error("Error loading product:", error);
       alert("Error loading product details");
     }
   };
@@ -313,7 +312,6 @@ export default function ProductForm({ onSave }) {
         alert('Error: ' + (errData.error || 'Failed to save product'));
       }
     } catch (error) {
-      console.error('Error saving product:', error);
       alert('Something went wrong!');
     }
   };

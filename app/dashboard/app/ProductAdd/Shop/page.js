@@ -78,7 +78,6 @@ export default function ProductAdd() {
       }
     } catch (err) {
       setError('Network error. Please try again.');
-      console.error('Error adding product:', err);
     } finally {
       setLoading(false);
     }

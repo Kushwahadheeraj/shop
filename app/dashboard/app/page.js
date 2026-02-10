@@ -66,41 +66,35 @@ const DashboardPage = React.memo(function DashboardPage() {
   useEffect(() => {
     // Don't fetch if still loading auth
     if (loading) {
-      console.log('Auth still loading, waiting...');
-      return;
+            return;
     }
     
     // Check authentication
     const token = localStorage.getItem('token');
     if (!token) {
-      console.log('No token found, redirecting to login');
-      router.replace('/login/seller');
+            router.replace('/login/seller');
       return;
     }
     
     // Check if user is valid seller
     if (!user) {
-      console.log('No user found, waiting for user to load...');
-      return;
+            return;
     }
     
     if (user.role !== 'seller' && user.role !== 'admin') {
-      console.log('User is not a seller, redirecting...');
-      router.replace('/login/seller');
+            router.replace('/login/seller');
       return;
     }
 
     // Prevent duplicate fetches
     if (fetchInProgressRef.current) {
-      console.log('Fetch already in progress, skipping...');
-      return;
+            return;
     }
 
     const fetchDashboardData = async () => {
       // Mark as in progress
       fetchInProgressRef.current = true;
-      console.log('Starting dashboard data fetch...', { selectedPeriod, userId: user.id });
-      
+            
       try {
         setLoadingData(true);
         
@@ -110,48 +104,36 @@ const DashboardPage = React.memo(function DashboardPage() {
         
         // Use cached data if less than 30 seconds old
         if (cachedData && cacheTime && Date.now() - parseInt(cacheTime) < 30000) {
-          console.log('Using cached data');
-          setDashboardData(JSON.parse(cachedData));
+                    setDashboardData(JSON.parse(cachedData));
           setLoadingData(false);
           fetchInProgressRef.current = false;
           return;
         }
         
-        console.log('Fetching fresh data from API...');
-        const response = await fetch(`/api/dashboard/stats?period=${selectedPeriod}`, {
+                const response = await fetch(`/api/dashboard/stats?period=${selectedPeriod}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
         });
         
-        console.log('API Response Status:', response.status, response.ok);
-        
+                
         if (response.ok) {
           const result = await response.json();
-          console.log('Dashboard API Response:', result);
-          if (result.success && result.data) {
-            console.log('Setting dashboard data:', {
-              totalUsers: result.data.totalUsers,
-              totalOrders: result.data.totalOrders,
-              latestProducts: result.data.latestProducts?.length || 0
-            });
-            setDashboardData(result.data);
+                    if (result.success && result.data) {
+                        setDashboardData(result.data);
             sessionStorage.setItem(cacheKey, JSON.stringify(result.data));
             sessionStorage.setItem(`${cacheKey}_time`, Date.now().toString());
           } else {
-            console.error('API returned success=false or no data:', result);
-            // Set empty data structure if API fails
+                        // Set empty data structure if API fails
             setDashboardData(null);
           }
         } else {
           const errorText = await response.text();
-          console.error('API Error Response:', response.status, errorText);
-          setDashboardData(null);
+                    setDashboardData(null);
         }
       } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-        setDashboardData(null);
+                setDashboardData(null);
       } finally {
         setLoadingData(false);
         fetchInProgressRef.current = false;
@@ -186,15 +168,13 @@ const DashboardPage = React.memo(function DashboardPage() {
         
         // Use cached data if less than 30 seconds old
         if (cachedData && cacheTime && Date.now() - parseInt(cacheTime) < 30000) {
-          console.log('Using cached bill analytics data');
-          setBillData(JSON.parse(cachedData));
+                    setBillData(JSON.parse(cachedData));
           setLoadingBillData(false);
           billFetchInProgressRef.current = false;
           return;
         }
         
-        console.log('Fetching bill analytics from API...');
-        const response = await fetch(`/api/dashboard/bill-analytics?period=${selectedPeriod}`, {
+                const response = await fetch(`/api/dashboard/bill-analytics?period=${selectedPeriod}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -203,23 +183,19 @@ const DashboardPage = React.memo(function DashboardPage() {
         
         if (response.ok) {
           const result = await response.json();
-          console.log('Bill Analytics API Response:', result);
-          if (result.success) {
+                    if (result.success) {
             setBillData(result);
             sessionStorage.setItem(cacheKey, JSON.stringify(result));
             sessionStorage.setItem(`${cacheKey}_time`, Date.now().toString());
           } else {
-            console.error('Bill Analytics API returned success=false:', result);
-            setBillData(null);
+                        setBillData(null);
           }
         } else {
           const errorText = await response.text();
-          console.error('Bill Analytics API Error:', response.status, errorText);
-          setBillData(null);
+                    setBillData(null);
         }
       } catch (error) {
-        console.error('Error fetching bill analytics:', error);
-        setBillData(null);
+                setBillData(null);
       } finally {
         setLoadingBillData(false);
         billFetchInProgressRef.current = false;

@@ -11,8 +11,7 @@ export async function GET(request) {
     try {
       await connectDB();
     } catch (dbError) {
-      console.error('Database connection error:', dbError);
-      return NextResponse.json(
+            return NextResponse.json(
         { success: false, message: 'Database connection failed. Please check MONGO_URI environment variable.', error: dbError.message },
         { status: 500 }
       );
@@ -41,8 +40,7 @@ export async function GET(request) {
         invoiceDate: { $gte: monthlyStartDate, $lte: endDate }
       });
     } catch (invError) {
-      console.error('Error fetching invoices:', invError);
-      invoices = [];
+            invoices = [];
     }
 
     try {
@@ -51,8 +49,7 @@ export async function GET(request) {
         billDate: { $gte: monthlyStartDate, $lte: endDate }
       });
     } catch (billError) {
-      console.error('Error fetching bills:', billError);
-      bills = [];
+            bills = [];
     }
     
     // Filter to period for daily data calculations
@@ -156,8 +153,7 @@ export async function GET(request) {
         });
       }
     } catch (monthlyError) {
-      console.error('Error generating monthly data:', monthlyError);
-      // Continue with empty monthly data rather than failing completely
+            // Continue with empty monthly data rather than failing completely
     }
 
     // Get top selling products - use period data
@@ -270,11 +266,7 @@ export async function GET(request) {
     }
 
   } catch (error) {
-    console.error('Dashboard analytics error:', error);
-    console.error('Error name:', error.name);
-    console.error('Error message:', error.message);
-    console.error('Error stack:', error.stack);
-    
+                    
     const errorMessage = error.message || error.toString() || 'Unknown error';
     
     if (errorMessage.includes('Authentication') || errorMessage.includes('token') || errorMessage.includes('JWT') || errorMessage.includes('JWT_SECRET')) {

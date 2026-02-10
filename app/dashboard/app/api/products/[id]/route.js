@@ -16,8 +16,7 @@ export async function GET(request, { params }) {
   try {
     const { id } = params;
     
-    console.log('Searching for product with ID:', id);
-
+    
     if (!id) {
       return NextResponse.json(
         { error: 'Product ID is required' },
@@ -33,8 +32,7 @@ export async function GET(request, { params }) {
       backendUrl.searchParams.set('category', hintCategory);
     }
 
-    console.log('Proxying product lookup to backend:', backendUrl.toString());
-
+    
     const response = await fetch(backendUrl.toString(), {
       headers: {
         'Content-Type': 'application/json'
@@ -52,8 +50,7 @@ export async function GET(request, { params }) {
         }
         
     if (!response.ok) {
-      console.error('Backend responded with error:', data);
-      return NextResponse.json(
+            return NextResponse.json(
         { error: data?.message || 'Failed to fetch product' },
         { status: response.status || 500 }
       );
@@ -62,8 +59,7 @@ export async function GET(request, { params }) {
     return NextResponse.json(data);
 
   } catch (error) {
-    console.error('Error fetching product:', error);
-    return NextResponse.json(
+        return NextResponse.json(
       { error: 'Failed to fetch product' },
       { status: 500 }
     );

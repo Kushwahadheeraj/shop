@@ -20,7 +20,6 @@ walkDir(rootDir, function(filePath) {
       .replace(/export const runtime = "nodejs";\s*/g, '');
       
     if (content !== newContent) {
-      console.log('Updated:', filePath);
       fs.writeFileSync(filePath, newContent, 'utf8');
     }
   }

@@ -60,8 +60,7 @@ export async function POST(req) {
       warnings: hf?.success ? undefined : hf?.message
     }, finalSuccess ? 200 : 206);
   } catch (e) {
-    console.error('Scan receipt error:', e);
-    return error(e?.message || 'Scan error occurred', 500, 'SCAN_ERROR', process.env.NODE_ENV === 'development' ? { stack: e?.stack } : undefined);
+        return error(e?.message || 'Scan error occurred', 500, 'SCAN_ERROR', process.env.NODE_ENV === 'development' ? { stack: e?.stack } : undefined);
   }
 }
 

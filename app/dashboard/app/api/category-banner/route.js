@@ -19,8 +19,7 @@ export async function GET(request) {
     const banners = await CategoryBanner.find({});
     return NextResponse.json(banners);
   } catch (error) {
-    console.error('Error fetching category banners:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 
@@ -43,7 +42,6 @@ export async function POST(request) {
 
     return NextResponse.json(banner);
   } catch (error) {
-    console.error('Error saving category banner:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

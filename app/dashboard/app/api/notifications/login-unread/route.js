@@ -21,8 +21,7 @@ export async function GET(request) {
       { status: 200 }
     );
   } catch (error) {
-    console.error('Error fetching login unread count:', error);
-    // Return 0 on error to prevent breaking the UI
+        // Return 0 on error to prevent breaking the UI
     return NextResponse.json(
       { unread: 0 },
       { status: 200 }

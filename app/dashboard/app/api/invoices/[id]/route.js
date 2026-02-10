@@ -27,8 +27,7 @@ export async function GET(request, { params }) {
       data: invoice,
     });
   } catch (error) {
-    console.error('Error fetching invoice:', error);
-    
+        
     if (error.message.includes('Authentication') || error.message.includes('token')) {
       return NextResponse.json(
         { success: false, message: error.message },
@@ -98,8 +97,7 @@ export async function PUT(request, { params }) {
       data: invoice,
     });
   } catch (error) {
-    console.error('Error updating invoice:', error);
-    
+        
     if (error.message.includes('Authentication') || error.message.includes('token')) {
       return NextResponse.json(
         { success: false, message: error.message },

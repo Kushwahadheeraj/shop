@@ -30,8 +30,7 @@ export async function GET(request) {
 
     return NextResponse.json({ success: true, data: { clients } });
   } catch (error) {
-    console.error('Error listing clients:', error);
-    
+        
     if (error.message.includes('Authentication') || error.message.includes('token')) {
       return NextResponse.json(
         { success: false, message: error.message },
@@ -57,8 +56,7 @@ export async function POST(request) {
 
     return NextResponse.json({ success: true, data: { client } }, { status: 201 });
   } catch (error) {
-    console.error('Error creating client:', error);
-    
+        
     if (error.message.includes('Authentication') || error.message.includes('token')) {
       return NextResponse.json(
         { success: false, message: error.message },

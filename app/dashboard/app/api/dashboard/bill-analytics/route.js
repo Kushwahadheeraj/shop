@@ -28,27 +28,22 @@ function setCached(key, data) {
 function getSellerIdFromToken(token) {
   try {
     if (!token) {
-      console.log('❌ No token provided to getSellerIdFromToken');
-      return null;
+            return null;
     }
     const tokenStr = token.startsWith('Bearer ') ? token.split(' ')[1] : token;
     if (!tokenStr || !tokenStr.includes('.')) {
-      console.log('❌ Invalid token format');
-      return null;
+            return null;
     }
     const parts = tokenStr.split('.');
     if (parts.length < 2) {
-      console.log('❌ Token does not have enough parts');
-      return null;
+            return null;
     }
     // Use Buffer.from() for Node.js (not atob which is browser-only)
     const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
     const sellerId = payload.id || payload._id || payload.userId;
-    console.log('✅ Extracted sellerId from token:', sellerId, 'from payload:', { id: payload.id, _id: payload._id, userId: payload.userId });
-    return sellerId || null;
+        return sellerId || null;
   } catch (error) {
-    console.error('❌ Error extracting sellerId from token:', error.message);
-    return null;
+        return null;
   }
 }
 
@@ -86,29 +81,14 @@ export async function GET(request) {
     const sellerId = getSellerIdFromToken(auth);
     const params = sellerId ? `?sellerId=${sellerId}` : '';
 
-    console.log('📊 Bill Analytics Request:', {
-      period,
-      sellerId: sellerId || 'NOT FOUND',
-      hasAuth: !!auth,
-      authPrefix: auth ? auth.substring(0, 20) + '...' : 'none',
-      params
-    });
-
+    
     // Calculate date range - if period is 'all', don't filter by date (match Bill Management page)
     const now = new Date();
     const isAllPeriod = period === 'all' || period === 'All';
     const startDate = isAllPeriod ? new Date(0) : new Date(now.getTime() - (parseInt(period) * 24 * 60 * 60 * 1000));
     const prevStartDate = isAllPeriod ? new Date(0) : new Date(startDate.getTime() - (parseInt(period) * 24 * 60 * 60 * 1000));
 
-    console.log('📊 Fetching Bill Analytics from all sources...', {
-      sellerId: sellerId || 'MISSING - API calls may not be filtered by seller',
-      backendUrls: {
-        bills: `${BACKEND}/bills${params}`,
-        gstBills: `${BACKEND}/gst-bills${params}`,
-        simpleBills: `${BACKEND}/simple-bills${params}`
-      }
-    });
-
+    
     // Fetch data from all 6 sources in parallel
     const [
       billsResponse,
@@ -157,87 +137,43 @@ export async function GET(request) {
     if (billsResponse.status === 'fulfilled' && billsResponse.value.ok) {
       try {
         const billsData = await billsResponse.value.json();
-        console.log('📊 Bill Management Raw Response:', {
-          isArray: Array.isArray(billsData),
-          hasData: !!billsData?.data,
-          hasDataBills: !!billsData?.data?.bills,
-          dataType: typeof billsData,
-          keys: billsData ? Object.keys(billsData) : [],
-          sellerId: sellerId || 'NOT EXTRACTED',
-          responseStatus: billsResponse.value.status
-        });
-        // Backend returns: { success: true, data: { bills: [...] } }
+                // Backend returns: { success: true, data: { bills: [...] } }
         bills = Array.isArray(billsData) ? billsData : 
                 Array.isArray(billsData?.data?.bills) ? billsData.data.bills :
                 Array.isArray(billsData?.data) ? billsData.data : 
                 Array.isArray(billsData?.bills) ? billsData.bills : [];
-        console.log(`📊 Bill Management: Parsed ${bills.length} bills for sellerId: ${sellerId || 'UNKNOWN'}`);
-        if (bills.length > 0) {
-          console.log('📊 Sample Bill:', {
-            _id: bills[0]._id,
-            billNumber: bills[0].billNumber,
-            hasPricing: !!bills[0].pricing,
-            pricingTotalAmount: bills[0].pricing?.totalAmount,
-            totalAmount: bills[0].totalAmount,
-            hasPayment: !!bills[0].payment,
-            paymentPaidAmount: bills[0].payment?.paidAmount
-          });
-        }
+                if (bills.length > 0) {
+                  }
       } catch (e) {
-        console.error('❌ Error parsing bills:', e);
-      }
+              }
     } else if (billsResponse.status === 'fulfilled') {
-      console.error('❌ Bill Management API error:', billsResponse.value.status, billsResponse.value.statusText);
-      try {
+            try {
         const errorData = await billsResponse.value.text();
-        console.error('❌ Error response:', errorData);
-      } catch (e) {
-        console.error('❌ Could not read error response');
-      }
+              } catch (e) {
+              }
     } else {
-      console.error('❌ Bill Management API request failed:', billsResponse.reason);
-    }
+          }
 
     // 2. Process GST Bill Management
     if (gstBillsResponse.status === 'fulfilled' && gstBillsResponse.value.ok) {
       try {
         const gstData = await gstBillsResponse.value.json();
-        console.log('📊 GST Bill Management Raw Response:', {
-          isArray: Array.isArray(gstData),
-          hasData: !!gstData?.data,
-          hasDataGstBills: !!gstData?.data?.gstBills,
-          dataType: typeof gstData,
-          keys: gstData ? Object.keys(gstData) : []
-        });
-        // Backend returns: { success: true, data: { gstBills: [...] } }
+                // Backend returns: { success: true, data: { gstBills: [...] } }
         gstBills = Array.isArray(gstData) ? gstData : 
                    Array.isArray(gstData?.data?.gstBills) ? gstData.data.gstBills :
                    Array.isArray(gstData?.data) ? gstData.data : 
                    Array.isArray(gstData?.bills) ? gstData.bills : [];
-        console.log(`📊 GST Bill Management: Parsed ${gstBills.length} bills for sellerId: ${sellerId || 'UNKNOWN'}`);
-        if (gstBills.length > 0) {
-          console.log('📊 Sample GST Bill:', {
-            _id: gstBills[0]._id,
-            invoiceNumber: gstBills[0].invoiceNumber,
-            grandTotal: gstBills[0].grandTotal,
-            netAmount: gstBills[0].netAmount,
-            sellerId: gstBills[0].sellerId
-          });
-        }
+                if (gstBills.length > 0) {
+                  }
       } catch (e) {
-        console.error('❌ Error parsing GST bills:', e);
-      }
+              }
     } else if (gstBillsResponse.status === 'fulfilled') {
-      console.error('❌ GST Bill Management API error:', gstBillsResponse.value.status, gstBillsResponse.value.statusText);
-      try {
+            try {
         const errorData = await gstBillsResponse.value.text();
-        console.error('❌ Error response:', errorData);
-      } catch (e) {
-        console.error('❌ Could not read error response');
-      }
+              } catch (e) {
+              }
     } else {
-      console.error('❌ GST Bill Management API request failed:', gstBillsResponse.reason);
-    }
+          }
 
     // 3. Process Simple Bill Management
     if (simpleBillsResponse.status === 'fulfilled' && simpleBillsResponse.value.ok) {
@@ -247,21 +183,12 @@ export async function GET(request) {
         simpleBills = Array.isArray(simpleData) ? simpleData : 
                       Array.isArray(simpleData?.data) ? simpleData.data : 
                       Array.isArray(simpleData?.bills) ? simpleData.bills : [];
-        console.log(`📊 Simple Bill Management: Fetched ${simpleBills.length} bills from backend for sellerId: ${sellerId || 'UNKNOWN'}`);
-        if (simpleBills.length > 0) {
-          console.log('📊 Sample Simple Bill:', {
-            _id: simpleBills[0]._id,
-            billNumber: simpleBills[0].billNumber,
-            totalAmount: simpleBills[0].totalAmount,
-            createdBy: simpleBills[0].createdBy
-          });
-        }
+                if (simpleBills.length > 0) {
+                  }
       } catch (e) {
-        console.error('Error parsing simple bills:', e);
-      }
+              }
     } else if (simpleBillsResponse.status === 'fulfilled') {
-      console.error('❌ Simple Bill Management API error:', simpleBillsResponse.value.status, simpleBillsResponse.value.statusText);
-    }
+          }
 
     // 4. Process Quick Invoice Creator
     if (invoicesResponse.status === 'fulfilled' && invoicesResponse.value.ok) {
@@ -271,60 +198,32 @@ export async function GET(request) {
                    Array.isArray(invoicesData?.data) ? invoicesData.data : 
                    Array.isArray(invoicesData?.invoices) ? invoicesData.invoices : [];
       } catch (e) {
-        console.error('Error parsing invoices:', e);
-      }
+              }
     }
 
     // 5. Process Seller List (Sellers from /seller/list endpoint)
     if (shopsResponse.status === 'fulfilled' && shopsResponse.value.ok) {
       try {
         const sellersData = await shopsResponse.value.json();
-        console.log('📊 Seller List Raw Response:', {
-          isArray: Array.isArray(sellersData),
-          hasSellers: !!sellersData?.sellers,
-          hasData: !!sellersData?.data,
-          dataType: typeof sellersData,
-          keys: sellersData ? Object.keys(sellersData) : [],
-          sellerId: sellerId || 'NOT EXTRACTED',
-          responseStatus: shopsResponse.value.status
-        });
-        // Backend returns: { success: true, sellers: [...] }
+                // Backend returns: { success: true, sellers: [...] }
         sellers = Array.isArray(sellersData) ? sellersData : 
                   Array.isArray(sellersData?.sellers) ? sellersData.sellers :
                   Array.isArray(sellersData?.data) ? sellersData.data : 
                   Array.isArray(sellersData?.users) ? sellersData.users : [];
         // Filter out admin users (same as User Management page)
         sellers = sellers.filter(seller => seller.role !== 'admin');
-        console.log(`📊 Seller List: Parsed ${sellers.length} sellers (excluding admin) for sellerId: ${sellerId || 'UNKNOWN'}`);
-        if (sellers.length > 0) {
+                if (sellers.length > 0) {
           const activeSellers = sellers.filter(s => s.status === 'active').length;
-          console.log('📊 Seller List Stats:', {
-            totalSellers: sellers.length,
-            activeSellers: activeSellers,
-            inactiveSellers: sellers.length - activeSellers,
-            sampleSeller: {
-              _id: sellers[0].id || sellers[0]._id,
-              username: sellers[0].username,
-              email: sellers[0].email,
-              role: sellers[0].role,
-              status: sellers[0].status
-            }
-          });
-        }
+                  }
       } catch (e) {
-        console.error('❌ Error parsing sellers:', e);
-      }
+              }
     } else if (shopsResponse.status === 'fulfilled') {
-      console.error('❌ Seller List API error:', shopsResponse.value.status, shopsResponse.value.statusText);
-      try {
+            try {
         const errorData = await shopsResponse.value.text();
-        console.error('❌ Error response:', errorData);
-      } catch (e) {
-        console.error('❌ Could not read error response');
-      }
+              } catch (e) {
+              }
     } else {
-      console.error('❌ Seller List API request failed:', shopsResponse.reason);
-    }
+          }
 
     // 6. Process Bill Items Inventory
     if (billItemsResponse.status === 'fulfilled') {
@@ -352,8 +251,7 @@ export async function GET(request) {
           }
         });
       } catch (e) {
-        console.error('Error parsing bill items:', e);
-      }
+              }
     }
 
     // Filter bills by date range - if period is 'all', don't filter
@@ -465,35 +363,7 @@ export async function GET(request) {
     
     // Debug logging
     const gstBillManagementTotal = calculateTotal(filteredGstBills, 'grandTotal');
-    console.log('📊 Bill Analytics Calculation:', {
-      period,
-      isAllPeriod,
-      billManagement: {
-        count: filteredBills.length,
-        total: billManagementTotal,
-        paid: billManagementPaid,
-        remaining: billManagementRemaining
-      },
-      gstBillManagement: {
-        count: filteredGstBills.length,
-        total: gstBillManagementTotal,
-        rawBillsCount: gstBills.length,
-        filteredBillsCount: filteredGstBills.length
-      },
-      simpleBillManagement: {
-        count: filteredSimpleBills.length,
-        total: simpleBillManagementTotal,
-        paid: simpleBillManagementPaid,
-        remaining: simpleBillManagementRemaining
-      },
-      summary: {
-        totalBills,
-        totalAmount,
-        paidAmount,
-        remainingAmount
-      }
-    });
-
+    
     // Previous period totals - Only Bill Management + Simple Bill Management for comparison
     const prevTotalBills = prevFilteredBills.length + prevFilteredSimpleBills.length;
     const prevTotalAmount = calculateTotal(prevFilteredBills, 'totalAmount') + 
@@ -663,30 +533,10 @@ export async function GET(request) {
     // Cache the result
     setCached(cacheKey, analyticsData);
 
-    console.log('✅ Bill Analytics calculated:', {
-      totalBills,
-      totalAmount,
-      paidAmount,
-      remainingAmount,
-      billManagement: {
-        count: filteredBills.length,
-        amount: billManagementTotal,
-        paid: calculatePaidAmount(filteredBills),
-        remaining: calculateRemainingAmount(filteredBills)
-      },
-      simpleBillManagement: {
-        count: filteredSimpleBills.length,
-        amount: simpleBillManagementTotal,
-        paid: calculatePaidAmount(filteredSimpleBills),
-        remaining: calculateRemainingAmount(filteredSimpleBills)
-      },
-      sources: Object.keys(analyticsData.sources)
-    });
-
+    
     return Response.json(analyticsData);
   } catch (error) {
-    console.error('❌ Error fetching bill analytics:', error);
-    return Response.json(
+        return Response.json(
       { 
         success: false, 
         message: 'Error fetching bill analytics', 

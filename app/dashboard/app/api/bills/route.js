@@ -28,8 +28,7 @@ export async function GET(request) {
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
-    console.error('Error fetching bills:', error);
-    return NextResponse.json(
+        return NextResponse.json(
       { success: false, message: 'Error fetching bills', error: error.message },
       { status: 500 }
     );
@@ -60,8 +59,7 @@ export async function POST(request) {
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
-    console.error('Error creating bill:', error);
-    return NextResponse.json(
+        return NextResponse.json(
       { success: false, message: 'Error creating bill', error: error.message },
       { status: 500 }
     );

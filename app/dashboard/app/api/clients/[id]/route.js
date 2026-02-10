@@ -23,8 +23,7 @@ export async function GET(request, { params }) {
 
     return NextResponse.json({ success: true, data: { client } });
   } catch (error) {
-    console.error('Error getting client:', error);
-    
+        
     if (error.message.includes('Authentication') || error.message.includes('token')) {
       return NextResponse.json(
         { success: false, message: error.message },
@@ -64,8 +63,7 @@ export async function PUT(request, { params }) {
 
     return NextResponse.json({ success: true, data: { client } });
   } catch (error) {
-    console.error('Error updating client:', error);
-    
+        
     if (error.message.includes('Authentication') || error.message.includes('token')) {
       return NextResponse.json(
         { success: false, message: error.message },
@@ -96,8 +94,7 @@ export async function DELETE(request, { params }) {
 
     return NextResponse.json({ success: true, message: 'Client deleted successfully' });
   } catch (error) {
-    console.error('Error deleting client:', error);
-    
+        
     if (error.message.includes('Authentication') || error.message.includes('token')) {
       return NextResponse.json(
         { success: false, message: error.message },

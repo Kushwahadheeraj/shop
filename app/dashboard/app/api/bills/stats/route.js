@@ -21,8 +21,7 @@ export async function GET(request) {
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
-    console.error('Error fetching bill stats:', error);
-    return NextResponse.json(
+        return NextResponse.json(
       { success: false, message: 'Error fetching bill statistics' },
       { status: 500 }
     );

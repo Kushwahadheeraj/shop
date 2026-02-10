@@ -11,8 +11,7 @@ export async function GET(request) {
     try {
       await connectDB();
     } catch (dbError) {
-      console.error('Database connection error:', dbError);
-      return NextResponse.json(
+            return NextResponse.json(
         { success: false, message: 'Database connection failed. Please check MONGO_URI environment variable.', error: dbError.message },
         { status: 500 }
       );
@@ -31,9 +30,7 @@ export async function GET(request) {
       data: invoices,
     });
   } catch (error) {
-    console.error('Error fetching invoices:', error);
-    console.error('Error stack:', error.stack);
-    
+            
     if (error.message.includes('Authentication') || error.message.includes('token') || error.message.includes('JWT')) {
       return NextResponse.json(
         { success: false, message: error.message },
@@ -115,8 +112,7 @@ export async function POST(request) {
       data: invoice,
     }, { status: 201 });
   } catch (error) {
-    console.error('Error creating invoice:', error);
-    
+        
     if (error.message.includes('Authentication') || error.message.includes('token')) {
       return NextResponse.json(
         { success: false, message: error.message },

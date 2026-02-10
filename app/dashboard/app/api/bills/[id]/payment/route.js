@@ -27,8 +27,7 @@ export async function POST(request, { params }) {
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
-    console.error('Error adding payment:', error);
-    return NextResponse.json(
+        return NextResponse.json(
       { success: false, message: 'Error adding payment', error: error.message },
       { status: 500 }
     );

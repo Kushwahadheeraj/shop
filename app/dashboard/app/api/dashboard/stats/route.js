@@ -92,8 +92,7 @@ export async function GET(req) {
         cache: 'no-store',
         next: { revalidate: 60 }
       }).catch((err) => {
-        console.error('Error fetching products from backend:', err);
-        return { ok: false, json: async () => [] };
+                return { ok: false, json: async () => [] };
       }),
       // Try to get products count from category-count endpoint if available
       fetch(`${BACKEND}/category-count`, { 
@@ -121,11 +120,9 @@ export async function GET(req) {
       ordersRes.ok ? ordersRes.json().catch(() => ({ success: false, data: [] })) : { success: false, data: [] },
       couponsRes.ok ? couponsRes.json().catch(() => ({ success: false, data: [] })) : { success: false, data: [] },
       productsRes.ok ? productsRes.json().catch((err) => {
-        console.error('Error parsing products JSON:', err);
-        return [];
+                return [];
       }) : (() => {
-        console.warn('Products API response not OK. Status:', productsRes.status || 'unknown', 'URL:', `${BACKEND}/products`);
-        return [];
+                return [];
       })(),
       productsCountRes.ok ? productsCountRes.json().catch(() => ({})) : {},
       usersRes.ok ? usersRes.json().catch(() => ({ users: [] })) : { users: [] },
@@ -160,54 +157,34 @@ export async function GET(req) {
     let products = [];
     
     // Log for debugging
-    console.log('=== PRODUCTS API DEBUG ===');
-    console.log('Products API Response Status:', productsRes.ok);
-    console.log('Products API Status Code:', productsRes.status);
-    console.log('Products Data Type:', typeof productsData);
-    console.log('Products Data Is Array:', Array.isArray(productsData));
-    console.log('Products Data:', productsData ? (Array.isArray(productsData) ? `Array with ${productsData.length} items` : JSON.stringify(productsData).substring(0, 200)) : 'null/undefined');
-    
+                            
     // Backend returns direct array: res.status(200).json(limitedProducts)
     if (Array.isArray(productsData)) {
       products = productsData;
-      console.log('✅ Products parsed from direct array. Count:', products.length);
-    } else if (productsData && typeof productsData === 'object') {
+          } else if (productsData && typeof productsData === 'object') {
       // Try nested formats
       if (Array.isArray(productsData.products)) {
         products = productsData.products;
-        console.log('✅ Products parsed from productsData.products. Count:', products.length);
-      } else if (Array.isArray(productsData.data)) {
+              } else if (Array.isArray(productsData.data)) {
         products = productsData.data;
-        console.log('✅ Products parsed from productsData.data. Count:', products.length);
-      } else {
+              } else {
         // Try to find any array in the object
         const possibleArrays = Object.values(productsData).filter(v => Array.isArray(v));
         if (possibleArrays.length > 0) {
           products = possibleArrays[0];
-          console.log('✅ Products parsed from object values. Count:', products.length);
-        } else {
-          console.warn('⚠️ No array found in productsData object');
-        }
+                  } else {
+                  }
       }
     }
     
     // Ensure we have a valid products array for counting
     if (!Array.isArray(products)) {
-      console.error('❌ Products is not an array! Setting to empty array.');
-      console.error('productsData:', productsData);
-      products = [];
+                  products = [];
     }
     
-    console.log('📊 Final Products Count:', products.length);
-    if (products.length > 0) {
-      console.log('Sample product:', {
-        name: products[0].name || 'No name',
-        category: products[0].category || 'No category',
-        _id: products[0]._id || 'No ID'
-      });
-    }
-    console.log('========================');
-    
+        if (products.length > 0) {
+          }
+        
     // Users: { users: [...] } or { data: [...] }
     let users = [];
     if (Array.isArray(usersData.users)) {
@@ -339,8 +316,7 @@ export async function GET(req) {
     // Show all products, sorted by createdAt if available, otherwise show all
     let latestProducts = [];
     if (Array.isArray(products) && products.length > 0) {
-      console.log('📦 Processing latest products. Total products:', products.length);
-      
+            
       // Map products with proper date handling
       const productsWithDates = products.map((p, index) => {
         // Try multiple date field names
@@ -395,18 +371,10 @@ export async function GET(req) {
         category: p.category || 'Uncategorized'
       }));
       
-      console.log('✅ Latest products processed:', latestProducts.length);
-      if (latestProducts.length > 0) {
-        console.log('Sample latest product:', {
-          name: latestProducts[0].name,
-          category: latestProducts[0].category,
-          createdAt: latestProducts[0].createdAt
-        });
-      }
+            if (latestProducts.length > 0) {
+              }
     } else {
-      console.log('⚠️ No products found or products is not an array');
-      console.log('Products type:', typeof products, 'Is array:', Array.isArray(products), 'Length:', products?.length);
-    }
+                }
     
     // 8. Total Products Added and Sold
     // Count ALL products from Product Add (not filtered by period)
@@ -423,32 +391,20 @@ export async function GET(req) {
           const numCount = typeof count === 'number' ? count : (typeof count === 'string' ? parseInt(count) || 0 : 0);
           return sum + numCount;
         }, 0);
-        console.log('✅ Total products count from category-count:', totalProductsAdded);
-        console.log('Category breakdown:', categoryCounts);
-      }
+                      }
     }
     
     // Fallback to products array length if category-count didn't work
     if (totalProductsAdded === 0 && Array.isArray(products) && products.length > 0) {
       totalProductsAdded = products.length;
-      console.log('⚠️ Using products array length (may be limited to 100):', totalProductsAdded);
-    }
+          }
     
     const totalProductsSold = productSalesMap.size; // Unique products sold
     
     // Debug logging
-    console.log('=== PRODUCTS COUNT DEBUG ===');
-    console.log('Products array length:', products.length);
-    console.log('Category count data:', categoryCountData);
-    console.log('Total Products Added:', totalProductsAdded);
-    if (products.length > 0) {
-      console.log('Sample products:', products.slice(0, 3).map(p => ({ 
-        name: p.name || p.title || 'No name', 
-        category: p.category || 'No category' 
-      })));
-    }
-    console.log('===========================');
-    
+                    if (products.length > 0) {
+          }
+        
     // 9. Sales Growth
     const prevStartDate = new Date(startDate.getTime() - periodDays * 24 * 60 * 60 * 1000);
     const prevOrders = orders.filter(order => {
@@ -625,8 +581,7 @@ export async function GET(req) {
     });
     
   } catch (error) {
-    console.error('Dashboard stats error:', error);
-    return new Response(JSON.stringify({ 
+        return new Response(JSON.stringify({ 
       success: false, 
       error: error.message 
     }), { 

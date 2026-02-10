@@ -27,8 +27,7 @@ export async function GET(request, { params }) {
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
-    console.error('Error fetching bill:', error);
-    return NextResponse.json(
+        return NextResponse.json(
       { success: false, message: 'Error fetching bill', error: error.message },
       { status: 500 }
     );
@@ -60,8 +59,7 @@ export async function PUT(request, { params }) {
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
-    console.error('Error updating bill:', error);
-    return NextResponse.json(
+        return NextResponse.json(
       { success: false, message: 'Error updating bill', error: error.message },
       { status: 500 }
     );
@@ -91,8 +89,7 @@ export async function DELETE(request, { params }) {
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
-    console.error('Error deleting bill:', error);
-    return NextResponse.json(
+        return NextResponse.json(
       { success: false, message: 'Error deleting bill', error: error.message },
       { status: 500 }
     );

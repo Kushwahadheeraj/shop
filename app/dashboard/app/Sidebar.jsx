@@ -5079,8 +5079,7 @@ const Sidebar = memo(function Sidebar({ onSetting, onLogout, open, onClose }) {
           setVisibilityConfig({ hiddenSections: {}, hiddenItems: [] });
         }
       } catch (err) {
-        console.error('Failed to load sidebar visibility:', err);
-      }
+              }
     };
 
     loadVisibility();

@@ -248,16 +248,6 @@ export default function ProductForm({ onSave }) {
     data.append('type', JSON.stringify(typeArray));
     
     // Debug: log what's being sent
-    console.log('Form data being sent:', {
-      name: form.name,
-      fixPrice: form.fixPrice,
-      minPrice: form.minPrice,
-      maxPrice: form.maxPrice,
-      totalProduct: form.totalProduct,
-      category: form.category,
-      type: typeArray,
-      files: files.length
-    });
     
     files.forEach(f => data.append('photos', f));
     const res = await fetch(`${API_BASE_URL}/pipe/finolex-pipes/create`, { method: 'POST', body: data });

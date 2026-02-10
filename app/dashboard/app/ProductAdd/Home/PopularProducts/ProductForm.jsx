@@ -272,8 +272,7 @@ export default function ProductForm() {
         alert(errorData.message || 'Error creating popular product');
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('Error creating popular product');
+            alert('Error creating popular product');
     }
   };
 

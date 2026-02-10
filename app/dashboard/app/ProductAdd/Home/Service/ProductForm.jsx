@@ -66,8 +66,7 @@ export default function ProductForm() {
         setError(errorData.message || 'Error creating service');
       }
     } catch (error) {
-      console.error('Error:', error);
-      setError('Error creating service');
+            setError('Error creating service');
     }
   };
 

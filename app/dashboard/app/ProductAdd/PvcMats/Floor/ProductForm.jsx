@@ -182,11 +182,6 @@ export default function ProductForm({ onSave }) {
     });
     files.forEach(f => data.append('photos', f));
     
-    console.log('Form data being sent:', {
-      name: form.name, price: form.price, totalProduct: form.totalProduct, 
-      category: form.category, tags: form.tags, variants: form.variants,
-      filesCount: files.length
-    });
     
     try {
       const res = await fetch(`${API_BASE_URL}/pvcmats/floor/create`, { method: 'POST', body: data });
@@ -198,7 +193,6 @@ export default function ProductForm({ onSave }) {
         alert(`Error: ${errorData.error || 'Failed to create product'}`);
       }
     } catch (error) {
-      console.error('Error creating product:', error);
       alert('Error creating product. Please try again.');
     }
   };

@@ -50,8 +50,7 @@ export default function ProductForm() {
         alert('Error loading category data');
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('Error loading category data');
+            alert('Error loading category data');
     } finally {
       setLoading(false);
     }
@@ -155,8 +154,7 @@ export default function ProductForm() {
         alert(isEditing ? 'Error updating category' : 'Error creating category');
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert(isEditing ? 'Error updating category' : 'Error creating category');
+            alert(isEditing ? 'Error updating category' : 'Error creating category');
     }
   };
 

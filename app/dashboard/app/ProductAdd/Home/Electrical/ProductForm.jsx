@@ -141,8 +141,7 @@ export default function ProductForm() {
         alert(`Error creating product: ${errorData.message || 'Unknown error'}`);
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('Error creating product');
+            alert('Error creating product');
     }
   };
 

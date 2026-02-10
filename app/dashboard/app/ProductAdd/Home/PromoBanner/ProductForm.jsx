@@ -51,8 +51,7 @@ export default function ProductForm() {
         setPreviews(data.cards ? data.cards.map(c => c.image) : ['', '', '', '']);
       }
     } catch (error) {
-      console.error("Error fetching banner:", error);
-    } finally {
+          } finally {
       setLoading(false);
     }
   };
@@ -95,8 +94,7 @@ export default function ProductForm() {
       }
       return data.secure_url;
     } catch (error) {
-      console.error("Upload error:", error);
-      alert(`Failed to upload image: ${error.message}`);
+            alert(`Failed to upload image: ${error.message}`);
       return null;
     }
   };
@@ -144,8 +142,7 @@ export default function ProductForm() {
         alert(`Failed to update banner: ${data.message}`);
       }
     } catch (error) {
-      console.error("Error updating banner:", error);
-      alert(`Error updating banner: ${error.message}`);
+            alert(`Error updating banner: ${error.message}`);
     } finally {
       setLoading(false);
     }

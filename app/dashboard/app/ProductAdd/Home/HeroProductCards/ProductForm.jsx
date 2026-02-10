@@ -39,8 +39,7 @@ export default function ProductForm({ productId }) {
         alert("Failed to fetch product details");
       }
     } catch (error) {
-      console.error("Error fetching product:", error);
-      alert("Error fetching product details");
+            alert("Error fetching product details");
     } finally {
       setLoading(false);
     }
@@ -116,8 +115,7 @@ export default function ProductForm({ productId }) {
         alert(result.message || 'Error saving item');
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('Error saving item');
+            alert('Error saving item');
     } finally {
       setLoading(false);
     }

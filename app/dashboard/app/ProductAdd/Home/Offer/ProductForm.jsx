@@ -70,8 +70,7 @@ export default function ProductForm() {
         alert('Error creating offer');
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('Error creating offer');
+            alert('Error creating offer');
     }
   };
 

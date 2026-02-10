@@ -252,17 +252,6 @@ export default function ProductForm({ onSave }) {
     // Add files
     files.forEach(f => data.append('photos', f));
     
-    console.log('Form data being sent:', {
-      name: form.name,
-      fixPrice: form.fixPrice,
-      minPrice: form.minPrice,
-      maxPrice: form.maxPrice,
-      totalProduct: form.totalProduct,
-      category: form.category,
-      type: typeArray,
-      tags: form.tags,
-      filesCount: files.length
-    });
     
     try {
       const res = await fetch(`${API_BASE_URL}/pipe/prince-pipes/create`, { 
@@ -278,7 +267,6 @@ export default function ProductForm({ onSave }) {
         alert(`Error: ${errorData.error || 'Failed to create product'}`);
       }
     } catch (error) {
-      console.error('Error creating product:', error);
       alert('Error creating product. Please try again.');
     }
   };

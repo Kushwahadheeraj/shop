@@ -75,8 +75,7 @@ export default function ProductForm() {
         alert('Error creating image slider item');
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('Error creating image slider item');
+            alert('Error creating image slider item');
     }
   };
 

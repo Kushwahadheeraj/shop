@@ -71,8 +71,7 @@ export default function ProductForm() {
         alert("Error creating item");
       }
     } catch (error) {
-      console.error("Error:", error);
-      alert("Error creating item");
+            alert("Error creating item");
     } finally {
       setLoading(false);
     }

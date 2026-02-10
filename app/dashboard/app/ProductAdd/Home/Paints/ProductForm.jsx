@@ -67,10 +67,8 @@ export default function ProductForm() {
 
   // Multiple image handling
   const handleFiles = (selectedFiles) => {
-    console.log('handleFiles called with:', selectedFiles);
-    const fileArray = Array.from(selectedFiles);
-    console.log('File array:', fileArray);
-    
+        const fileArray = Array.from(selectedFiles);
+        
     // Check if adding these files would exceed the limit
     if (files.length + fileArray.length > 8) {
       setPhotoError("You can upload maximum 8 images only.");
@@ -79,8 +77,7 @@ export default function ProductForm() {
 
     // Filter valid image files
     const validFiles = fileArray.filter(file => {
-      console.log('Checking file:', file.name, file.type, file.size);
-      if (!file.type.startsWith('image/')) {
+            if (!file.type.startsWith('image/')) {
         setPhotoError("Please select only image files.");
         return false;
       }
@@ -91,8 +88,7 @@ export default function ProductForm() {
       return true;
     });
 
-    console.log('Valid files:', validFiles.length);
-
+    
     if (validFiles.length === 0) return;
 
     // Create previews for new files
@@ -101,23 +97,18 @@ export default function ProductForm() {
     setFiles(prev => [...prev, ...validFiles]);
     setPreviews(prev => [...prev, ...newPreviews]);
     setPhotoError("");
-    console.log('Files and previews updated');
-  };
+      };
 
   const handleFileInput = (e) => {
-    console.log('File input changed:', e.target.files);
-    handleFiles(e.target.files);
+        handleFiles(e.target.files);
   };
 
   const handleFileButtonClick = (inputId) => {
-    console.log('File button clicked for:', inputId);
-    const fileInput = document.getElementById(inputId);
+        const fileInput = document.getElementById(inputId);
     if (fileInput) {
-      console.log('File input found, triggering click');
-      fileInput.click();
+            fileInput.click();
     } else {
-      console.log('File input not found for ID:', inputId);
-    }
+          }
   };
 
   const handleDragOver = (e) => {
@@ -134,8 +125,7 @@ export default function ProductForm() {
     e.preventDefault();
     setIsDragOver(false);
     const droppedFiles = e.dataTransfer.files;
-    console.log('Files dropped:', droppedFiles);
-    handleFiles(droppedFiles);
+        handleFiles(droppedFiles);
   };
 
   const handleRemoveImage = (index) => {
@@ -209,9 +199,7 @@ export default function ProductForm() {
       return;
     }
 
-    console.log('Form validation passed');
-    console.log('Files to upload:', files.length);
-
+        
     const data = new FormData();
     data.append('name', form.name);
     data.append('description', form.description);
@@ -226,8 +214,7 @@ export default function ProductForm() {
     
     // Append all images
     files.forEach((file, index) => {
-      console.log(`Appending file ${index + 1}:`, file.name, file.size);
-      data.append('images', file);
+            data.append('images', file);
     });
 
     try {
@@ -261,8 +248,7 @@ export default function ProductForm() {
         alert(errorData.message || 'Error creating paint product');
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('Error creating paint product');
+            alert('Error creating paint product');
     }
   };
 

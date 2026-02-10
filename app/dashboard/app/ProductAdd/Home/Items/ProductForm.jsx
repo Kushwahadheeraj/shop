@@ -95,8 +95,7 @@ export default function ProductForm() {
         setPhotoError(errorData.message || 'Error creating item');
       }
     } catch (error) {
-      console.error('Error:', error);
-      setPhotoError('Network error. Please try again.');
+            setPhotoError('Network error. Please try again.');
     }
   };
 

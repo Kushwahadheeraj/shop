@@ -257,8 +257,7 @@ const InvoiceGeneratorPage = () => {
         }
       }
     } catch (error) {
-      // console.error("Failed to load profiles", error);
-    } finally {
+      //     } finally {
       setProfilesLoading(false);
     }
   }, [issuerType, selectedProfileId]);
@@ -335,7 +334,6 @@ const InvoiceGeneratorPage = () => {
       const list = data?.data || [];
       setBillHistory(Array.isArray(list) ? list : []);
     } catch (error) {
-      // console.error("Failed to fetch invoice history", error);
     } finally {
       setHistoryLoading(false);
     }
@@ -365,7 +363,6 @@ const InvoiceGeneratorPage = () => {
           setActiveTab("form");
         }
       } catch (err) {
-        console.error("Delete invoice failed:", err);
         alert(err?.message || "Failed to delete invoice");
       } finally {
         setDeletingIds((prev) => prev.filter((x) => x !== id));
@@ -441,8 +438,7 @@ const InvoiceGeneratorPage = () => {
           setSelectedTemplate(null);
         }
       } catch (error) {
-        // console.error("Failed to load invoice", error);
-        alert(error.message || "Failed to load invoice");
+        //         alert(error.message || "Failed to load invoice");
       }
     },
     [businessProfiles]
@@ -480,7 +476,6 @@ const InvoiceGeneratorPage = () => {
       const url = currentBillId ? `${API_BASE_URL}/invoices/${currentBillId}` : `${API_BASE_URL}/invoices`;
       const method = currentBillId ? "PUT" : "POST";
       
-      // console.log("Saving invoice:", { url, method, payloadKeys: Object.keys(payload) });
       
       let response;
       try {
@@ -490,7 +485,6 @@ const InvoiceGeneratorPage = () => {
           body: JSON.stringify(payload)
         });
       } catch (fetchError) {
-        // console.error("Network error:", fetchError);
         throw new Error(`Network error: ${fetchError.message}. Please check your internet connection.`);
       }
       
@@ -504,21 +498,13 @@ const InvoiceGeneratorPage = () => {
           data = { success: false, message: 'Empty response from server' };
         }
       } catch (parseError) {
-        // console.error("Failed to parse response:", parseError);
-        // console.error("Response text:", responseText);
-        // console.error("Response status:", response.status);
-        throw new Error(`Server response is not valid JSON. Status: ${response.status}`);
+        //         //         //         throw new Error(`Server response is not valid JSON. Status: ${response.status}`);
       }
       
       if (!response.ok || data?.success === false) {
         const errorMessage = data?.message || data?.error || `HTTP ${response.status}: ${response.statusText}` || "Failed to save invoice";
         // Log error details separately to avoid Next.js console interception issues
-        // console.error("API Error - Status:", response.status);
-        // console.error("API Error - Status Text:", response.statusText);
-        // console.error("API Error - Response Text:", responseText);
-        // console.error("API Error - Parsed Data:", JSON.stringify(data, null, 2));
-        // console.error("API Error - Payload Keys:", payload ? Object.keys(payload) : []);
-        throw new Error(errorMessage);
+        //         //         //         //         //         throw new Error(errorMessage);
       }
       const savedBill = data?.data?.bill || data?.bill || data?.data || payload;
       const newId = savedBill?._id || currentBillId;
@@ -533,13 +519,7 @@ const InvoiceGeneratorPage = () => {
         router.push("/InvoiceGenerator");
       }
     } catch (error) {
-      // Log error details separately to avoid Next.js console interception issues
-      // console.error("Failed to save invoice");
-      // console.error("Error name:", error?.name);
-      // console.error("Error message:", error?.message);
-      // console.error("Error stack:", error?.stack);
-      // console.error("Error string:", error?.toString());
-      
+      console.error(error);
       const errorMessage = error?.message || error?.toString() || "Failed to save invoice. Please check your connection and try again.";
       alert(errorMessage);
     } finally {

@@ -140,8 +140,7 @@ export default function InvoicePreview() {
         }, 400);
       }
     } catch (err) {
-      console.error('WhatsApp share failed:', err);
-      if (err.message === 'MISSING_PDF_LIBS') {
+            if (err.message === 'MISSING_PDF_LIBS') {
         window.open(whatsappUrl, '_blank');
         alert('html2canvas / jspdf install नहीं हैं. कृपया चलाएँ:\n\ncd app\\dashboard\nnpm install html2canvas jspdf');
       } else {

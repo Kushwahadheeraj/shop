@@ -22,8 +22,7 @@ const GSTBillViewModal = ({ bill, isOpen, onClose, onEdit, onDelete }) => {
 
   const handleDownload = () => {
     // Create a downloadable PDF or Excel file
-    console.log('Downloading GST bill:', bill.invoiceNumber);
-    // Implementation for download functionality
+        // Implementation for download functionality
   };
 
   return (

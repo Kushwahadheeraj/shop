@@ -52,8 +52,7 @@ export default function CategoryListPage() {
           }
         }
       } catch (apiError) {
-        console.log('New API not available, trying fallback...');
-      }
+              }
       
       // Fallback: try old API endpoints
       const counts = {};
@@ -74,8 +73,7 @@ export default function CategoryListPage() {
       );
       setCategoryCounts(counts);
     } catch (error) {
-      console.error('Error fetching category counts:', error);
-      // Set default counts if everything fails
+            // Set default counts if everything fails
       const defaultCounts = {};
       categories.forEach(category => {
         defaultCounts[category.key] = 0;
@@ -101,8 +99,7 @@ export default function CategoryListPage() {
           }
         }
       } catch (apiError) {
-        console.log('New subcategory API not available, trying fallback...');
-      }
+              }
       
       // Fallback: try old API endpoint
       const fallbackRes = await fetch(`${API_BASE_URL}/${categoryKey}`);
@@ -129,8 +126,7 @@ export default function CategoryListPage() {
         setSubcategories([]);
       }
     } catch (error) {
-      console.error('Error fetching subcategories:', error);
-      setSubcategories([]);
+            setSubcategories([]);
     } finally {
       setSubcategoriesLoading(false);
     }
@@ -139,60 +135,46 @@ export default function CategoryListPage() {
   const fetchCategoryProducts = async (categoryKey, subcategoryName = null) => {
     try {
       setProductsLoading(true);
-      console.log(`Fetching products for category: ${categoryKey}, subcategory: ${subcategoryName}`);
-      
+            
       // Try to fetch from database first
       const res = await fetch(`${API_BASE_URL}/${categoryKey}`);
       if (res.ok) {
         const data = await res.json();
-        console.log(`API Response for ${categoryKey}:`, data);
-        console.log(`Total products in API response: ${Array.isArray(data) ? data.length : 0}`);
-        
+                        
         if (Array.isArray(data)) {
           let filteredProducts = data;
           if (subcategoryName) {
-            console.log(`Filtering by subcategory: ${subcategoryName}`);
-            console.log(`All products before filtering:`, data.map(p => ({ name: p.name, category: p.category, subcategory: p.subcategory })));
-            filteredProducts = data.filter(product => {
+                                    filteredProducts = data.filter(product => {
               // For AdhesivesModels, we need to check category field, not subcategory
               const productSubcategory = (product.subcategory || product.category || 'General').trim().toLowerCase();
               const targetSubcategory = subcategoryName.trim().toLowerCase();
               const matches = productSubcategory === targetSubcategory;
-              console.log(`Product: ${product.name}, Category: "${product.category}", Subcategory: "${product.subcategory}", Looking for: "${targetSubcategory}", Matches: ${matches}`);
-              return matches;
+                            return matches;
             });
-            console.log(`Products after subcategory filter: ${filteredProducts.length}`);
-          }
-          console.log(`Final filtered products count:`, filteredProducts.length);
-          setCategoryProducts(filteredProducts);
+                      }
+                    setCategoryProducts(filteredProducts);
         } else {
-          console.log('Data is not an array:', data);
-          setCategoryProducts([]);
+                    setCategoryProducts([]);
         }
       } else {
-        console.log(`API Error for ${categoryKey}:`, res.status);
-        setCategoryProducts([]);
+                setCategoryProducts([]);
       }
     } catch (error) {
-      console.error('Error fetching products:', error);
-      setCategoryProducts([]);
+            setCategoryProducts([]);
     } finally {
       setProductsLoading(false);
     }
   };
 
   const handleCategoryClick = (category) => {
-    console.log('Category clicked:', category);
-    setSelectedCategory(category);
+        setSelectedCategory(category);
     setSelectedSubcategory(null);
     fetchSubcategories(category.key);
     fetchCategoryProducts(category.key); // Fetch all products for this category
   };
 
   const handleSubcategoryClick = (subcategory) => {
-    console.log('Subcategory clicked:', subcategory);
-    console.log('Selected category:', selectedCategory);
-    setSelectedSubcategory(subcategory);
+            setSelectedSubcategory(subcategory);
     fetchCategoryProducts(selectedCategory.key, subcategory.name);
   };
 
@@ -213,21 +195,17 @@ export default function CategoryListPage() {
       const matchesSearch = product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            product.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            productSubcategory.toLowerCase().includes(searchTerm.toLowerCase());
-      console.log(`Filtering product: ${product.name}, subcategory: ${productSubcategory}, matches: ${matchesSubcategory}`);
-      return matchesSubcategory && matchesSearch;
+            return matchesSubcategory && matchesSearch;
     }
     
     // If no subcategory selected, show ALL products in this category with search filter
     const matchesSearch = product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          product.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          (product.subcategory || product.category || '').toLowerCase().includes(searchTerm.toLowerCase());
-    console.log(`Showing all products: ${product.name}, matches search: ${matchesSearch}`);
-    return matchesSearch;
+        return matchesSearch;
   }) : [];
 
-  console.log('Filtered products count:', filteredProducts.length);
-  console.log('Selected subcategory:', selectedSubcategory);
-
+    
   // Function to format subcategory names for better display
   const formatSubcategoryName = (name) => {
     return name
@@ -237,13 +215,11 @@ export default function CategoryListPage() {
   };
 
   useEffect(() => {
-    console.log('CategoryList component mounted, fetching data...');
-    fetchCategoryCounts();
+        fetchCategoryCounts();
     
     // Listen for order updates to refresh counts
     const handleOrderUpdate = () => {
-      console.log('Order updated, refreshing counts...');
-      fetchCategoryCounts();
+            fetchCategoryCounts();
     };
     
     window.addEventListener('orders-updated', handleOrderUpdate);

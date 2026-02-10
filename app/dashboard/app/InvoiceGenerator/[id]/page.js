@@ -89,8 +89,7 @@ const InvoicePreviewPage = () => {
           normalized?.templateId || normalized?.metadata?.templateId || "default";
         setSelectedTemplate({ id: templateId });
       } catch (err) {
-        // console.error(err);
-        setError(err.message || "Failed to load invoice");
+        //         setError(err.message || "Failed to load invoice");
       } finally {
         setLoading(false);
       }
@@ -208,8 +207,7 @@ const InvoicePreviewPage = () => {
         }, 400);
       }
     } catch (err) {
-      console.error("WhatsApp share failed:", err);
-      if (err.message === "MISSING_PDF_LIBS") {
+            if (err.message === "MISSING_PDF_LIBS") {
         window.open(whatsappUrl, "_blank");
         alert(
           "html2canvas / jspdf install नहीं हैं। कृपया यह चलाएँ:\n\ncd app\\dashboard\nnpm install html2canvas jspdf"

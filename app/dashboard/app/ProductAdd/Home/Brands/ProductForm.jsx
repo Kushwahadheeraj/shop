@@ -68,8 +68,7 @@ export default function ProductForm() {
         alert('Error creating product');
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('Error creating product');
+            alert('Error creating product');
     }
   };
 

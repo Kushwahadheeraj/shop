@@ -102,8 +102,7 @@ const ShopFormModal = ({ isOpen, mode = 'add', initialShop, onClose, onSaved }) 
       onSaved?.(data);
       onClose();
     } catch (e) {
-      console.error(e);
-      alert('Failed to save business');
+            alert('Failed to save business');
     }
   };
 

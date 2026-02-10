@@ -175,8 +175,7 @@ const EditGSTBillForm = ({ bill, onClose, onSave, shops }) => {
       await onSave(billData);
       onClose();
     } catch (error) {
-      console.error('Error updating GST bill:', error);
-    } finally {
+          } finally {
       setLoading(false);
     }
   };

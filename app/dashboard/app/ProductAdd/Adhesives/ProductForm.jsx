@@ -157,11 +157,7 @@ export default function ProductForm({ product, onSave }) {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    console.log('Form submission started');
-    console.log('Form data:', form);
-    console.log('Weights:', weights);
-    console.log('Files:', files);
-    
+                    
     if (files.length === 0) {
       setPhotoError("Please upload at least 1 photo.");
       return;
@@ -172,22 +168,18 @@ export default function ProductForm({ product, onSave }) {
     const formToSubmit = { ...form };
     const data = new FormData();
     
-    console.log('Building FormData...');
-    Object.entries(formToSubmit).forEach(([k, v]) => {
+        Object.entries(formToSubmit).forEach(([k, v]) => {
       if (k === 'tags') {
-        console.log('Adding tags:', v);
-        v.forEach(val => data.append('tags', val));
+                v.forEach(val => data.append('tags', val));
       } else if (k === 'weights') {
         // skip, we will append normalized weights from state below
       } else {
-        console.log(`Adding ${k}:`, v);
-        data.append(k, v);
+                data.append(k, v);
       }
     });
     
     // Add weights as JSON string
-    console.log('Adding weights as JSON:', weights);
-    // Normalize weights: keep array of objects {weight, price, discountPrice}
+        // Normalize weights: keep array of objects {weight, price, discountPrice}
     const normWeights = Array.isArray(weights) ? weights.filter(w=>w && (w.weight||w.price)).map(w=>({
       weight: String(w.weight || '').trim(),
       price: w.price !== '' && w.price != null ? Number(w.price) : undefined,
@@ -196,15 +188,11 @@ export default function ProductForm({ product, onSave }) {
     data.append('weights', JSON.stringify(normWeights));
     
     // Add files
-    console.log('Adding files to FormData...');
-    files.forEach((f, index) => {
-      console.log(`Adding file ${index}:`, f.name);
-      data.append('photos', f);
+        files.forEach((f, index) => {
+            data.append('photos', f);
     });
     
-    console.log('FormData built, sending request...');
-    console.log('API URL:', `${API_BASE_URL}/adhesives/create`);
-    
+            
     try {
       const endpoint = product ? `${API_BASE_URL}/adhesives/update/${product._id || product.id}` : `${API_BASE_URL}/adhesives/create`;
       const method = product ? 'PUT' : 'POST';
@@ -213,22 +201,17 @@ export default function ProductForm({ product, onSave }) {
         body: data 
       });
       
-      console.log('Response status:', res.status);
-      console.log('Response headers:', res.headers);
-      
+                  
       if (res.ok) {
         const result = await res.json();
-        console.log('Success response:', result);
-        alert('Product created successfully!');
+                alert('Product created successfully!');
         onSave && onSave();
       } else {
         const errorData = await res.json();
-        console.error('Error response:', errorData);
-        alert(`Error creating product: ${errorData.error || 'Unknown error'}`);
+                alert(`Error creating product: ${errorData.error || 'Unknown error'}`);
       }
     } catch (error) {
-      console.error('Network error:', error);
-      alert(`Network error: ${error.message}`);
+            alert(`Network error: ${error.message}`);
     }
   };
 

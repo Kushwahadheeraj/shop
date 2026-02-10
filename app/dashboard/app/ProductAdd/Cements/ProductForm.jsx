@@ -180,8 +180,7 @@ export default function ProductForm({ product, onSave }) {
       }
       onSave && onSave();
     } catch (err) {
-      console.error('Create cements error:', err);
-      alert(err.message);
+            alert(err.message);
     } finally {
       setSubmitting(false);
     }

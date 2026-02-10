@@ -284,15 +284,12 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
           const lastInvoice = sortedBills[0];
           if (lastInvoice?.invoiceNumber) {
             setLastInvoiceNumber(lastInvoice.invoiceNumber);
-            console.log('📊 Last invoice number found:', lastInvoice.invoiceNumber, 'Sequence:', getSequenceNumber(lastInvoice.invoiceNumber));
-          }
+                      }
         } else {
-          console.log('📊 No previous invoices found');
-          setLastInvoiceNumber('');
+                    setLastInvoiceNumber('');
         }
       } catch (error) {
-        console.error('❌ Error fetching last invoice number:', error);
-        setLastInvoiceNumber('');
+                setLastInvoiceNumber('');
       }
     })();
   }, []);
@@ -379,8 +376,7 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
       setShowShopDropdown(false);
       alert('Business added. Please refresh shops list.');
     } catch (e) {
-      console.error(e);
-      alert('Failed to add business');
+            alert('Failed to add business');
     }
   };
 
@@ -609,8 +605,7 @@ const AddGSTBillForm = ({ onClose, onSave, shops }) => {
       sessionStorage.setItem('pending_gst_bill', JSON.stringify(billData));
       router.push('/GSTBillManagement/BankDetails');
     } catch (error) {
-      console.error('Error preparing GST bill:', error);
-      setLoading(false);
+            setLoading(false);
     }
   };
 

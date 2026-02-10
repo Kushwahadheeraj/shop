@@ -83,8 +83,7 @@ export default function ContactsManager({ isOpen, onClose }) {
         alert(data?.message || 'Failed to delete client');
       }
     } catch (error) {
-      console.error('Error deleting client:', error);
-      alert(error?.message || 'Error deleting client. Please try again.');
+            alert(error?.message || 'Error deleting client. Please try again.');
     }
   };
 
@@ -119,8 +118,7 @@ export default function ContactsManager({ isOpen, onClose }) {
         alert(data?.message || 'Failed to delete shop');
       }
     } catch (error) {
-      console.error('Error deleting shop:', error);
-      alert(error?.message || 'Error deleting shop. Please try again.');
+            alert(error?.message || 'Error deleting shop. Please try again.');
     }
   };
 

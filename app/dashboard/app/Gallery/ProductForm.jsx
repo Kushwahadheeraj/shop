@@ -82,8 +82,7 @@ export default function ProductForm() {
         alert('Error creating product');
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('Error creating product');
+            alert('Error creating product');
     }
   };
 
@@ -104,7 +103,7 @@ export default function ProductForm() {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
       const responseData = await res.json();
-      console.log('API Response:', responseData); // Debug log
+       // Debug log
       
       // Handle the response format: {"success":true,"count":0,"data":[]}
       let cardsArray = [];
@@ -119,8 +118,7 @@ export default function ProductForm() {
       setCards(cardsArray);
     } catch (err) {
       setError(err.message);
-      console.error('Error fetching gallerys:', err);
-      setCards([]); // Set empty array on error
+            setCards([]); // Set empty array on error
     } finally {
       setLoading(false);
     }
@@ -139,8 +137,7 @@ export default function ProductForm() {
       await fetchCards(); // Refresh the list
     } catch (err) {
       setError(err.message);
-      console.error('Error deleting card:', err);
-    }
+          }
   };
 
   const handleView = (card) => {

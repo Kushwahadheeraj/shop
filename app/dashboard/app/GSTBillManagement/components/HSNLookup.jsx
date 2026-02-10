@@ -90,10 +90,8 @@ const HSNLookup = ({ onClose, onSelectHSN, selectedHSN }) => {
       await new Promise(resolve => setTimeout(resolve, 500));
       
       // In real implementation, you would call your HSN API here
-      console.log('Searching HSN code:', code);
-    } catch (error) {
-      console.error('HSN search error:', error);
-    } finally {
+          } catch (error) {
+          } finally {
       setLoading(false);
     }
   };

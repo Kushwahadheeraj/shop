@@ -60,8 +60,7 @@ function TitleEditor({ section, initialTitle, token }) {
         alert("Failed to save");
       }
     } catch (error) {
-      console.error("Error saving title", error);
-      alert("Error saving title");
+            alert("Error saving title");
     } finally {
       setSaving(false);
     }
@@ -105,8 +104,7 @@ export default function HomeTitlesPage() {
           setTitles(map);
         }
       } catch (error) {
-        console.error("Failed to fetch titles", error);
-      } finally {
+              } finally {
         setLoading(false);
       }
     };

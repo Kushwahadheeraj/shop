@@ -41,8 +41,7 @@ export default function CouponsPage() {
       // Handle array response from products endpoint
       setProducts(Array.isArray(dataProducts) ? dataProducts : (dataProducts.data || []));
     } catch (e) {
-      console.error("Failed to load data", e);
-    } finally {
+          } finally {
       setLoading(false);
     }
   };
@@ -61,8 +60,7 @@ export default function CouponsPage() {
         const data = await res.json();
         setProducts(Array.isArray(data) ? data : []);
       } catch (e) {
-        console.error("Search failed", e);
-      }
+              }
     } else if (term.length === 0) {
       // Reload initial random list
       const res = await fetch(`${API_BASE_URL}/products`);
@@ -197,8 +195,7 @@ export default function CouponsPage() {
           setSelectedDetails(data);
         }
       } catch (e) {
-        console.error("Failed to fetch selected product details", e);
-      }
+              }
     } else {
       setSelectedDetails([]);
     }

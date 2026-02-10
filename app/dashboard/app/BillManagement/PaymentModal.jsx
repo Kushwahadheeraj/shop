@@ -85,8 +85,7 @@ const PaymentModal = ({ bill, isOpen, onClose, onSave }) => {
       await onSave(paymentData);
       onClose();
     } catch (error) {
-      console.error('Error saving payment:', error);
-    } finally {
+          } finally {
       setLoading(false);
     }
   };

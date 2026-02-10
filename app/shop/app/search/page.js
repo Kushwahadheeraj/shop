@@ -29,7 +29,6 @@ export default function SearchPage() {
 
         setCategories(filteredCategories);
       } catch (err) {
-        console.error('Search error:', err);
         setError('Failed to search categories');
       } finally {
         setLoading(false);

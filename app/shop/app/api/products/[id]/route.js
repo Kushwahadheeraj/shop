@@ -35,8 +35,6 @@ export async function GET(request, { params }) {
   try {
     const { id } = params;
     
-    console.log('Searching for product with ID:', id);
-
     if (!id) {
       return NextResponse.json(
         { error: 'Product ID is required' },
@@ -87,7 +85,6 @@ export async function GET(request, { params }) {
       : productModels;
 
     // Search for the product in all models concurrently
-    console.log(`Starting parallel search for ID: ${id} in ${orderedModels.length} collections`);
     
     const searchPromises = orderedModels.map(async ({ model, category }) => {
       try {
@@ -112,7 +109,6 @@ export async function GET(request, { params }) {
         }
 
         if (product) {
-          // console.log(`Found product in ${category}`);
           return {
             ...product,
             category,
@@ -121,7 +117,6 @@ export async function GET(request, { params }) {
         }
         return null;
       } catch (err) {
-        console.error(`Error searching in ${category}:`, err.message);
         return null;
       }
     });
@@ -130,10 +125,7 @@ export async function GET(request, { params }) {
     const foundProduct = results.find(p => p !== null);
 
     if (foundProduct) {
-      console.log('Product found:', foundProduct.name);
       return NextResponse.json(foundProduct);
-    } else {
-      console.log(`No product found in any collection for ID: ${id}`);
     }
 
     // Product not found in any model
@@ -143,7 +135,6 @@ export async function GET(request, { params }) {
     );
 
   } catch (error) {
-    console.error('Error fetching product:', error);
     return NextResponse.json(
       { error: 'Failed to fetch product' },
       { status: 500 }

@@ -234,7 +234,6 @@ export default function ProductDetailModal({ product, isOpen, onClose }) {
                   e.preventDefault();
                   e.stopPropagation();
                   // Add to cart functionality can be added here
-                  console.log('Add to cart:', product);
                 }}
               >
                 {isOutOfStock ? 'READ MORE' : 'ADD TO CART'}
@@ -250,7 +249,6 @@ export default function ProductDetailModal({ product, isOpen, onClose }) {
                   e.preventDefault();
                   e.stopPropagation();
                   // Buy now functionality can be added here
-                  console.log('Buy now:', product);
                 }}
               >
                 {isOutOfStock ? 'NOTIFY ME' : 'VIEW DETAILS'}

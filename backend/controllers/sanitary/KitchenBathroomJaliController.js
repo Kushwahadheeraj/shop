@@ -102,8 +102,7 @@ exports.createKitchenBathroomJali = async (req, res) => {
     const savedProduct = await newProduct.save();
     res.status(201).json(savedProduct);
   } catch (err) {
-    console.error('Error creating KitchenBathroomJali product:', err);
-    if (err.name === 'ValidationError' || err.name === 'CastError') {
+        if (err.name === 'ValidationError' || err.name === 'CastError') {
       return res.status(400).json({ error: 'Validation Error', details: err.message });
     }
     res.status(500).json({ error: 'Server error', details: err.message });
@@ -115,8 +114,7 @@ exports.getAllKitchenBathroomJali = async (req, res) => {
     const products = await Sanitary.find({ category: 'KitchenBathroomJali' });
     res.status(200).json(products);
   } catch (err) {
-    console.error('Error fetching KitchenBathroomJali products:', err);
-    res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ error: 'Server error' });
   }
 };
 
@@ -128,8 +126,7 @@ exports.getKitchenBathroomJaliById = async (req, res) => {
     }
     res.status(200).json(product);
   } catch (err) {
-    console.error('Error fetching KitchenBathroomJali product:', err);
-    res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ error: 'Server error' });
   }
 };
 
@@ -184,8 +181,7 @@ exports.updateKitchenBathroomJali = async (req, res) => {
     }
     res.status(200).json(updatedProduct);
   } catch (err) {
-    console.error('Error updating KitchenBathroomJali product:', err);
-    res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ error: 'Server error' });
   }
 };
 
@@ -197,7 +193,6 @@ exports.deleteKitchenBathroomJali = async (req, res) => {
     }
     res.status(200).json({ message: 'Product deleted successfully' });
   } catch (err) {
-    console.error('Error deleting KitchenBathroomJali product:', err);
-    res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ error: 'Server error' });
   }
 };

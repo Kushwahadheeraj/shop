@@ -1,8 +1,6 @@
 const ElectricalModels = require('../../models/ElectricalModels');
 const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
-const shouldLog = process.env.APP_DEBUG === 'true';
-
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream((err, result) => {
@@ -48,11 +46,7 @@ function sanitizeAmps(amps) {
 
 exports.createCeilingRoses = async (req, res) => {
   try {
-    if (shouldLog) {
-      console.log('[CeilingRoses] Create request');
-      console.log('[CeilingRoses] Body:', req.body);
-      console.log('[CeilingRoses] Files:', req.files);
-    }
+    
 
     if (!req.files || req.files.length < 1) {
       return res.status(400).json({ error: 'At least 1 image is required.' });
@@ -61,16 +55,10 @@ exports.createCeilingRoses = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
 
-    if (shouldLog) console.log('[CeilingRoses] Uploading images to Cloudinary...');
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    if (shouldLog) console.log('[CeilingRoses] Uploaded URLs:', photoUrls);
-
     // Parse amps and tag if sent as JSON string or array entries
     let { amps, tag, ...rest } = req.body;
-    if (shouldLog) {
-      console.log('[CeilingRoses] Raw amps:', amps);
-      console.log('[CeilingRoses] Raw tag:', tag);
-    }
+    
 
     // Coerce and sanitize amps
     const coercedAmps = coerceAmps(amps);
@@ -99,15 +87,11 @@ exports.createCeilingRoses = async (req, res) => {
       category: rest.category || 'CeilingRoses'
     };
 
-    if (shouldLog) console.log('[CeilingRoses] Creating with data:', productData);
     const product = new ElectricalModels(productData);
     await product.save();
-    if (shouldLog) console.log('[CeilingRoses] Created:', product._id);
-
     res.status(201).json(product);
   } catch (err) {
-    console.error('Error in createCeilingRoses:', err);
-    res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message });
   }
 };
 
@@ -132,11 +116,7 @@ exports.getOneCeilingRoses = async (req, res) => {
 
 exports.updateCeilingRoses = async (req, res) => {
   try {
-    if (shouldLog) {
-      console.log('[CeilingRoses] Update id:', req.params.id);
-      console.log('[CeilingRoses] Body:', req.body);
-      console.log('[CeilingRoses] Files:', req.files);
-    }
+    
 
     let update = { ...req.body };
 
@@ -174,8 +154,7 @@ exports.updateCeilingRoses = async (req, res) => {
 
     res.json(product);
   } catch (err) {
-    console.error('Error in updateCeilingRoses:', err);
-    res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message });
   }
 };
 

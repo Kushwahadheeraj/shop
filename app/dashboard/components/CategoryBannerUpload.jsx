@@ -24,7 +24,6 @@ export default function CategoryBannerUpload({ category }) {
         setCurrentBanner(data?.imageUrl || null);
       }
     } catch (error) {
-      console.error('Failed to fetch banner:', error);
     } finally {
       setLoading(false);
     }
@@ -83,7 +82,6 @@ export default function CategoryBannerUpload({ category }) {
       setCurrentBanner(imageUrl);
       
     } catch (error) {
-      console.error('Error uploading banner:', error);
       alert('Failed to upload banner');
     } finally {
       setUploading(false);

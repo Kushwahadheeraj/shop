@@ -93,7 +93,6 @@ const getPaintUpdateSubEndpoint = (product) => {
   ].filter(Boolean);
 
   let raw = candidates[0] || '';
-  console.log('Raw category from product:', raw);
 
   // Normalize camelCase/PascalCase to kebab-case
   let slug = String(raw)
@@ -101,7 +100,6 @@ const getPaintUpdateSubEndpoint = (product) => {
     .replace(/\s+/g, '-')
     .toLowerCase();
   
-  console.log('Normalized slug:', slug);
 
   // Known special cases mapping (extend as needed)
   if (["satinenamel", "satin-enamel"].includes(slug)) {
@@ -264,20 +262,7 @@ export default function ProductUpdateForm({ product, category, onUpdate, onClose
     }
   }, [product, category]);
 
-  // Check if all required fields are filled
-  // const isFormValid = () => {
-  //   if (!form.name.trim()) return false;
-  //   if (!form.minPrice || isNaN(Number(form.minPrice))) return false;
-  //   if (!form.maxPrice || isNaN(Number(form.maxPrice))) return false;
-  //   if (form.discount === '' || isNaN(Number(form.discount))) return false;
-  //   if (!form.totalProduct || isNaN(Number(form.totalProduct))) return false;
-  //   if (!form.tag || !Array.isArray(form.tag) || form.tag.length === 0) return false;
-  //   if (!form.weights || !Array.isArray(form.weights) || form.weights.length === 0) return false;
-  //   for (const w of form.weights) {
-  //     if (!w.weight || !w.price || isNaN(Number(w.price))) return false;
-  //   }
-  //   return true;
-  // };
+
 
   // Discount price auto-calc (same as Add form)
   const handleChange = e => {
@@ -506,16 +491,11 @@ export default function ProductUpdateForm({ product, category, onUpdate, onClose
       let base = `${API_BASE_URL}/${getCategoryEndpoint(category)}`;
       
       // Debug logging
-      console.log('Category:', category);
-      console.log('Product category:', product?.category);
-      console.log('Base endpoint:', base);
-      console.log('Form tags being sent:', form.tags);
       
       // Paint routes use specific slugs and 'Update' with capital U
       // Check if this is a paint-related category (more flexible check)
       if (base.endsWith('/paint') || category?.toLowerCase().includes('paint') || product?.category?.toLowerCase().includes('paint')) {
         const sub = getPaintUpdateSubEndpoint(product);
-        console.log('Paint sub-endpoint:', sub);
         if (sub) {
           base = `${API_BASE_URL}/paint/${sub}`;
         } else {
@@ -527,7 +507,6 @@ export default function ProductUpdateForm({ product, category, onUpdate, onClose
               .replace(/\s+/g, '-')
               .toLowerCase();
             base = `${API_BASE_URL}/paint/${slug}`;
-            console.log('Constructed paint endpoint from product category:', base);
           }
         }
       }
@@ -535,7 +514,6 @@ export default function ProductUpdateForm({ product, category, onUpdate, onClose
       // Electrical routes are segmented under /electrical/<sub>
       if (base.endsWith('/electrical') || category === 'Electrical Products' || product?.category?.toLowerCase() === 'adaptors') {
         const subElec = getElectricalUpdateSubEndpoint(product);
-        console.log('Electrical sub-endpoint:', subElec);
         if (subElec) {
           base = `${API_BASE_URL}/electrical/${subElec}`;
         }
@@ -543,12 +521,10 @@ export default function ProductUpdateForm({ product, category, onUpdate, onClose
 
       // Some paint routes use '/Update/:id' (capital U). Try capital U first, then fallback to lowercase 'update'
       let url = `${base}/Update/${product._id}`;
-      console.log('Trying URL:', url);
       let res = await fetch(url, { method: 'PUT', body: data });
       if (!res.ok) {
         // Fallback attempt: lowercase 'update'
         url = `${base}/update/${product._id}`;
-        console.log('Fallback URL:', url);
         res = await fetch(url, { method: 'PUT', body: data });
       }
       
@@ -563,7 +539,6 @@ export default function ProductUpdateForm({ product, category, onUpdate, onClose
       
     } catch (err) {
       setError(err.message);
-      console.error('Error updating product:', err);
     } finally {
       setLoading(false);
     }

@@ -3,8 +3,6 @@
 const cloudinary = require('../config/cloudinary');
 const streamifier = require('streamifier');
 const DryModels = require('../models/DryModels');
-const shouldLog = process.env.APP_DEBUG === 'true';
-
 /**
  * Uploads a buffer to Cloudinary and returns the secure URL.
  * @param {Buffer} buffer
@@ -25,11 +23,7 @@ function uploadToCloudinary(buffer) {
  */
 exports.createDry = async (req, res) => {
   try {
-    if (shouldLog) {
-      console.log('[Dry] Create request');
-      console.log('[Dry] Body:', req.body);
-      console.log('[Dry] Files:', req.files);
-    }
+    
 
     if (!req.files || req.files.length < 1) {
       return res.status(400).json({ error: 'At least 1 image is required.' });
@@ -38,23 +32,16 @@ exports.createDry = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
 
-    if (shouldLog) console.log('[Dry] Uploading images to Cloudinary...');
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    if (shouldLog) console.log('[Dry] Uploaded URLs:', photoUrls);
-
     // Parse sizes and tags if sent as JSON string
     let { sizes, tags, ...rest } = req.body;
-    if (shouldLog) {
-      console.log('[Dry] Raw sizes:', sizes);
-      console.log('[Dry] Raw tags:', tags);
-    }
+    
 
     if (typeof sizes === 'string') {
       try {
         sizes = JSON.parse(sizes);
       } catch (parseErr) {
-        if (shouldLog) console.error('[Dry] Error parsing sizes:', parseErr);
-        return res.status(400).json({ error: 'Invalid sizes format' });
+        if (shouldLog)         return res.status(400).json({ error: 'Invalid sizes format' });
       }
     }
 
@@ -94,15 +81,11 @@ exports.createDry = async (req, res) => {
       category: rest.category || 'Dry'
     };
 
-    if (shouldLog) console.log('[Dry] Creating with data:', productData);
     const product = new DryModels(productData);
     await product.save();
-    if (shouldLog) console.log('[Dry] Created:', product._id);
-
     res.status(201).json(product);
   } catch (err) {
-    console.error('Error in createDry:', err);
-    res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message });
   }
 };
 
@@ -111,11 +94,7 @@ exports.createDry = async (req, res) => {
  */
 exports.updateDry = async (req, res) => {
   try {
-    if (shouldLog) {
-      console.log('[Dry] Update id:', req.params.id);
-      console.log('[Dry] Body:', req.body);
-      console.log('[Dry] Files:', req.files);
-    }
+    
 
     let update = { ...req.body };
 
@@ -124,8 +103,7 @@ exports.updateDry = async (req, res) => {
       try {
         update.sizes = JSON.parse(update.sizes);
       } catch (parseErr) {
-        if (shouldLog) console.error('[Dry] Error parsing sizes in update:', parseErr);
-        return res.status(400).json({ error: 'Invalid sizes format' });
+        if (shouldLog)         return res.status(400).json({ error: 'Invalid sizes format' });
       }
     }
     if (update.sizes && Array.isArray(update.sizes)) {
@@ -170,8 +148,7 @@ exports.updateDry = async (req, res) => {
 
     res.json(product);
   } catch (err) {
-    console.error('Error in updateDry:', err);
-    res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message });
   }
 };
 

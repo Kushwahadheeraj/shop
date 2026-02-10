@@ -59,59 +59,6 @@ const ToolsImage = () => {
             className='w-full h-screen object-cover'
             loading='lazy'
           />
-          {/* <div
-            className='absolute z-40 flex flex-col items-center justify-center
-                       bg-[#333333] bg-opacity-95 text-white
-                       w-[220px] sm:w-[260px] h-[240px]
-                       md:bg-white md:bg-opacity-70 md:text-black md:w-[600px] md:h-[280px]
-                       lg:w-[700px] lg:h-[280px] lg:bg-opacity-70
-                       top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                       lg:space-x-2 rounded-xl text-center'
-          >
-            <h2 className='lg:text-4xl md:text-4xl text-xl sm:text-2xl px-4 leading-6 pt-4 font-bold'>
-              {slide.mainText}
-            </h2>
-            {slide.subText && (
-              <p className='mt-4 px-4 lg:text-xl md:text-xl text-sm leading-5 font-bold'>
-                {slide.subText}
-              </p>
-            )}
-            {slide.descrText && (
-              <p className='mt-2 lg:text-sm md:text-sm text-[10px]'>
-                {slide.descrText}
-              </p>
-            )}
-            {slide.descText && (
-              <p className='lg:text-sm md:text-sm text-[10px] px-6'>
-                {slide.descText}
-              </p>
-            )}
-            {slide.desText && (
-              <p className='lg:text-2xl md:text-2xl text-lg mt-2'>
-                {slide.desText}
-              </p>
-            )}
-            <ul className='flex md:flex lg:flex items-center justify-center gap-2'>
-              {slide.buttonText && (
-                <li>
-                  <Link href={slide.link} passHref>
-                    <button className='text-white lg:text-xl md:text-xl text-sm font-bold mt-4 lg:w-36 md:w-36 w-24 bg-yellow-300 hover:bg-yellow-300'>
-                      {slide.buttonText}
-                    </button>
-                  </Link>
-                </li>
-              )}
-              {slide.buttonTextTwo && (
-                <li>
-                  <Link href={slide.linkTwo || slide.link || '#'} passHref>
-                    <button className='mt-4 border-2 border-white text-white md:border-black md:text-black lg:text-xl md:text-xl text-sm lg:w-48 md:w-48 w-24 antialiased font-bold lg:px-6 hover:bg-white hover:text-black'>
-                      {slide.buttonTextTwo}
-                    </button>
-                  </Link>
-                </li>
-              )}
-            </ul>
-          </div> */}
         </div>
       ))}
     </>

@@ -98,11 +98,7 @@ function crudRoutes(resource, controller) {
   const deleteHandler = controller && controller[`delete${capitalize(resource)}`];
 
   if (!createHandler || !getAllHandler || !getOneHandler || !updateHandler || !deleteHandler) {
-    console.error(
-      `Missing handler for resource: ${resource}\n` +
-      `create: ${!!createHandler}, getAll: ${!!getAllHandler}, getOne: ${!!getOneHandler}, update: ${!!updateHandler}, delete: ${!!deleteHandler}`
-    );
-    return;
+        return;
   }
 
   router.post(`/${resource}/create`, upload.array('photos', 5), createHandler);
@@ -120,11 +116,7 @@ function crudRoutesSimple(resource, controller) {
   const deleteHandler = controller && controller.delete;
 
   if (!createHandler || !getAllHandler || !getOneHandler || !updateHandler || !deleteHandler) {
-    console.error(
-      `Missing handler for resource: ${resource}\n` +
-      `create: ${!!createHandler}, getAll: ${!!getAllHandler}, getOne: ${!!getOneHandler}, update: ${!!updateHandler}, delete: ${!!deleteHandler}`
-    );
-    return;
+        return;
   }
 
   router.post(`/${resource}/create`, upload.array('photos', 5), createHandler);
@@ -228,8 +220,7 @@ router.get('/', async (req, res) => {
     const products = await ElectricalModels.find({});
     res.json(products);
   } catch (error) {
-    console.error('Error fetching electrical products:', error);
-    res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: 'Internal server error' });
   }
 });
 

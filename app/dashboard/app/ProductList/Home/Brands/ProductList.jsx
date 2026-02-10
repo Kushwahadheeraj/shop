@@ -36,7 +36,7 @@ export default function ProductList() {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
       const responseData = await res.json();
-      console.log('API Response:', responseData); // Debug log
+       // Debug log
       
       // Handle the response format: {"success":true,"count":0,"data":[]}
       let brandsArray = [];
@@ -51,7 +51,6 @@ export default function ProductList() {
       setBrands(brandsArray);
     } catch (err) {
       setError(err.message);
-      console.error('Error fetching brands:', err);
       setBrands([]); // Set empty array on error
     } finally {
       setLoading(false);
@@ -71,7 +70,6 @@ export default function ProductList() {
       await fetchBrands(); // Refresh the list
     } catch (err) {
       setError(err.message);
-      console.error('Error deleting brand:', err);
     }
   };
 

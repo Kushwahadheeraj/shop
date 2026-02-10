@@ -1,5 +1,3 @@
-// AUTO-GENERATED ROUTES AND SERVER IMPORTS. DO NOT EDIT MANUALLY.
-
 const express = require('express');
 const multer = require('multer');
 const storage = multer.memoryStorage();
@@ -49,7 +47,7 @@ const diamondBladesController = require('../controllers/tools/abrasives/diamondB
 const drillController = require('../controllers/tools/powerTools/drillController');
 const grindersController = require('../controllers/tools/powerTools/grindersController');
 const marbleCutterController = require('../controllers/tools/powerTools/marbleCutterController');
-// ...add imports for any additional controllers or subfolders
+
 
 
 // Register all routes
@@ -314,8 +312,7 @@ router.get('/', async (req, res) => {
     const products = await ToolsModels.find({});
     res.json(products);
   } catch (error) {
-    console.error('Error fetching tools products:', error);
-    res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: 'Internal server error' });
   }
 });
 

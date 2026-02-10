@@ -33,7 +33,6 @@ export default function ProductList() {
       setOffers(offersArray);
     } catch (err) {
       setError(err.message);
-      console.error('Error fetching offers:', err);
       setOffers([]);
     } finally {
       setLoading(false);
@@ -53,7 +52,6 @@ export default function ProductList() {
       await fetchOffers();
     } catch (err) {
       setError(err.message);
-      console.error('Error deleting offer:', err);
     }
   };
 

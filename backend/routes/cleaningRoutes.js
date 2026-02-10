@@ -20,8 +20,7 @@ router.get('/', async (req, res) => {
     const products = await CleaningModels.find({});
     res.json(products);
   } catch (error) {
-    console.error('Error fetching cleaning products:', error);
-    res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: 'Internal server error' });
   }
 });
 

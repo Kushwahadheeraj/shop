@@ -239,7 +239,7 @@ gstBillSchema.pre('save', function(next) {
 // Index for better query performance
 gstBillSchema.index({ sellerId: 1, invoiceDate: -1 });
 gstBillSchema.index({ shopId: 1, invoiceDate: -1 });
-gstBillSchema.index({ invoiceNumber: 1 });
+// invoiceNumber is already unique, so it has an index
 gstBillSchema.index({ customerName: 1 });
 
 module.exports = mongoose.model('GSTBill', gstBillSchema);

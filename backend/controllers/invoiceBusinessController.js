@@ -12,8 +12,7 @@ const getProfiles = async (req, res) => {
       data: profiles
     });
   } catch (error) {
-    console.error('Error fetching business profiles:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server Error'
     });
@@ -49,8 +48,7 @@ const createProfile = async (req, res) => {
       data: profile
     });
   } catch (error) {
-    console.error('Error creating business profile:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server Error'
     });
@@ -89,8 +87,7 @@ const updateProfile = async (req, res) => {
       data: profile
     });
   } catch (error) {
-    console.error('Error updating business profile:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server Error'
     });
@@ -126,8 +123,7 @@ const deleteProfile = async (req, res) => {
       data: {}
     });
   } catch (error) {
-    console.error('Error deleting business profile:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Server Error'
     });

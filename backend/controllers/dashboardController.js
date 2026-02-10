@@ -19,17 +19,12 @@ const getDashboardAnalytics = async (req, res) => {
     const allGstBills = await GstBill.find({});
     const allRegularBills = await Bill.find({});
     
-    console.log(`Found ${allGstBills.length} GST bills and ${allRegularBills.length} regular bills`);
-    
     // Log seller IDs to identify the correct one
     const gstSellerIds = [...new Set(allGstBills.map(bill => bill.sellerId))];
     const regularSellerIds = [...new Set(allRegularBills.map(bill => bill.sellerId))];
-    console.log('GST Bill Seller IDs:', gstSellerIds);
-    console.log('Regular Bill Seller IDs:', regularSellerIds);
     
     // Use the first available sellerId or the provided one
     const actualSellerId = gstSellerIds[0] || regularSellerIds[0] || sellerId;
-    console.log('Using Seller ID:', actualSellerId);
     
     // Filter bills by seller and date (include missing/null sellerId and createdBy)
     const gstBills = allGstBills.filter(bill => 
@@ -46,8 +41,6 @@ const getDashboardAnalytics = async (req, res) => {
       new Date(bill.billDate) <= endDate
     );
     
-    console.log(`Filtered to ${gstBills.length} GST bills and ${regularBills.length} regular bills for seller ${actualSellerId}`);
-
     // We only use Bills/GSTBills for order counts (avoid double-counting)
 
     // Calculate totals
@@ -309,8 +302,7 @@ const getDashboardAnalytics = async (req, res) => {
     }
 
   } catch (error) {
-    console.error('Dashboard analytics error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       error: error.message
     });
@@ -391,8 +383,7 @@ const getDeliveryAnalytics = async (req, res) => {
     });
     
   } catch (error) {
-    console.error('Delivery analytics error:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       error: error.message
     });

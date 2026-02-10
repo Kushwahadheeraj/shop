@@ -39,8 +39,7 @@ router.post('/', async (req, res) => {
           }
         );
       } catch (couponErr) {
-        console.error('Failed to update coupon usage:', couponErr);
-      }
+              }
     }
 
     // After successful order creation, decrement inventory quantities per item
@@ -95,7 +94,6 @@ router.post('/', async (req, res) => {
       }
     } catch (invErr) {
       // Log and proceed without failing order creation
-      console.error('Inventory decrement error:', invErr);
     }
 
     res.json({ ok: true, data: order });

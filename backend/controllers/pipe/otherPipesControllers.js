@@ -1,5 +1,4 @@
 const Pipe = require('../../models/PipeModels');
-// AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
 
 const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
@@ -24,9 +23,7 @@ function uploadToCloudinary(buffer) {
 exports.createOtherPipes = async (req, res) => {
   try {
     // Debug: log received data
-    console.log('Received request body:', req.body);
-    console.log('Received files:', req.files ? req.files.length : 'No files');
-    if (!req.files || req.files.length < 1) {
+            if (!req.files || req.files.length < 1) {
       return res.status(400).json({ error: 'At least 1 image is required.' });
     }
     if (req.files.length > 5) {
@@ -75,14 +72,12 @@ exports.createOtherPipes = async (req, res) => {
       return res.status(400).json({ error: 'Max price must be greater than or equal to min price' });
     }
     
-    console.log('Product data to save:', productData);
-    
+        
     const product = new Pipe(productData);
     await product.save();
     res.status(201).json(product);
   } catch (err) {
-    console.error('Error creating product:', err);
-    
+        
     // Check if it's a validation error
     if (err.name === 'ValidationError') {
       return res.status(400).json({ 
@@ -155,8 +150,7 @@ exports.updateOtherPipes = async (req, res) => {
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
-    console.error('Error updating product:', err);
-    res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message });
   }
 };
 exports.getAllOtherPipes = async (req, res) => {

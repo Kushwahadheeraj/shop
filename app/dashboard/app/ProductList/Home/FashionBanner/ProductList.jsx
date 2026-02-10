@@ -62,7 +62,6 @@ export default function ProductList() {
       setItems(itemsArray);
     } catch (err) {
       setError(err.message);
-      console.error('Error fetching items:', err);
       setItems([]);
     } finally {
       setLoading(false);
@@ -78,7 +77,6 @@ export default function ProductList() {
       await fetchItems(); // Refresh the list
     } catch (err) {
       setError(err.message);
-      console.error('Error deleting item:', err);
     }
   };
 

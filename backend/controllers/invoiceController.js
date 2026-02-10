@@ -113,8 +113,7 @@ const createInvoice = async (req, res) => {
       data: invoice,
     });
   } catch (error) {
-    console.error('Error creating invoice:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error creating invoice',
       error: error.message,
@@ -143,8 +142,7 @@ const getInvoices = async (req, res) => {
       data: invoices,
     });
   } catch (error) {
-    console.error('Error fetching invoices:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error fetching invoices',
       error: error.message,
@@ -179,8 +177,7 @@ const getInvoiceById = async (req, res) => {
       data: invoice,
     });
   } catch (error) {
-    console.error('Error fetching invoice:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error fetching invoice',
       error: error.message,
@@ -248,8 +245,7 @@ const updateInvoice = async (req, res) => {
       data: invoice,
     });
   } catch (error) {
-    console.error('Error updating invoice:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error updating invoice',
       error: error.message,
@@ -286,8 +282,7 @@ const deleteInvoice = async (req, res) => {
       message: 'Invoice deleted successfully',
     });
   } catch (error) {
-    console.error('Error deleting invoice:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error deleting invoice',
       error: error.message,

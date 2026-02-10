@@ -1,8 +1,6 @@
 const ElectricalModels = require('../../models/ElectricalModels');
 const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
-const shouldLog = process.env.APP_DEBUG === 'true';
-
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream((err, result) => {
@@ -48,11 +46,7 @@ function sanitizeAmps(amps) {
 
 exports.createPowerStrips = async (req, res) => {
   try {
-    if (shouldLog) {
-      console.log('[PowerStrips] Create request');
-      console.log('[PowerStrips] Body:', req.body);
-      console.log('[PowerStrips] Files:', req.files);
-    }
+    
 
     if (!req.files || req.files.length < 1) {
       return res.status(400).json({ error: 'At least 1 image is required.' });
@@ -61,16 +55,10 @@ exports.createPowerStrips = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
 
-    if (shouldLog) console.log('[PowerStrips] Uploading images to Cloudinary...');
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    if (shouldLog) console.log('[PowerStrips] Uploaded URLs:', photoUrls);
-
     // Parse amps and tag if sent as JSON string or array entries
     let { amps, tag, ...rest } = req.body;
-    if (shouldLog) {
-      console.log('[PowerStrips] Raw amps:', amps);
-      console.log('[PowerStrips] Raw tag:', tag);
-    }
+    
 
     // Coerce and sanitize amps
     const coercedAmps = coerceAmps(amps);
@@ -99,15 +87,11 @@ exports.createPowerStrips = async (req, res) => {
       category: rest.category || 'PowerStrips'
     };
 
-    if (shouldLog) console.log('[PowerStrips] Creating with data:', productData);
     const product = new ElectricalModels(productData);
     await product.save();
-    if (shouldLog) console.log('[PowerStrips] Created:', product._id);
-
     res.status(201).json(product);
   } catch (err) {
-    console.error('Error in createPowerStrips:', err);
-    res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message });
   }
 };
 
@@ -132,11 +116,7 @@ exports.getOnePowerStrips = async (req, res) => {
 
 exports.updatePowerStrips = async (req, res) => {
   try {
-    if (shouldLog) {
-      console.log('[PowerStrips] Update id:', req.params.id);
-      console.log('[PowerStrips] Body:', req.body);
-      console.log('[PowerStrips] Files:', req.files);
-    }
+    
 
     let update = { ...req.body };
 
@@ -174,8 +154,7 @@ exports.updatePowerStrips = async (req, res) => {
 
     res.json(product);
   } catch (err) {
-    console.error('Error in updatePowerStrips:', err);
-    res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message });
   }
 };
 

@@ -30,7 +30,6 @@ export default function SectionTitleEditor({ sectionId, defaultTitle = "Section 
         }
       }
     } catch (err) {
-      console.error("Error fetching title:", err);
     } finally {
       setLoading(false);
     }
@@ -49,7 +48,6 @@ export default function SectionTitleEditor({ sectionId, defaultTitle = "Section 
         setIsEditing(false);
       }
     } catch (err) {
-      console.error("Error updating title:", err);
     }
   };
 

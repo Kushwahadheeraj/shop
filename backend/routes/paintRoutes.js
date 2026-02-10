@@ -492,8 +492,7 @@ router.get('/', async (req, res) => {
     const products = await PaintModels.find({});
     res.json(products);
   } catch (error) {
-    console.error('Error fetching paint products:', error);
-    res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: 'Internal server error' });
   }
 });
 

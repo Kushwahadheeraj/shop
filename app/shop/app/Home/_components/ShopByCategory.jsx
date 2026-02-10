@@ -26,7 +26,6 @@ export default function ShopByCategory() {
           }
         }
       } catch (error) {
-        console.error("Error fetching shop by category data:", error);
       } finally {
         setLoading(false);
       }
@@ -93,7 +92,6 @@ export default function ShopByCategory() {
                 }
                 
                 const path = matchedCategory ? matchedCategory.path : (item.link || '/ShopPage/Uncategorized');
-                console.log(`Searching for: "${query}" -> Found: ${matchedCategory?.name} (${path})`);
                 router.push(path);
               }}
             >

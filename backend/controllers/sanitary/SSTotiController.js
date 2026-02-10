@@ -120,8 +120,7 @@ exports.createSSToti = async (req, res) => {
     const savedProduct = await newProduct.save();
     res.status(201).json(savedProduct);
   } catch (err) {
-    console.error('Error creating SSToti product:', err);
-    if (err.name === 'ValidationError' || err.name === 'CastError') {
+        if (err.name === 'ValidationError' || err.name === 'CastError') {
       return res.status(400).json({ error: 'Validation Error', details: err.message });
     }
     res.status(500).json({ error: 'Server error', details: err.message });
@@ -136,8 +135,7 @@ exports.getAllSSToti = async (req, res) => {
     const products = await Sanitary.find({ category: 'SSToti' });
     res.status(200).json(products);
   } catch (err) {
-    console.error('Error fetching SSToti products:', err);
-    res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ error: 'Server error' });
   }
 };
 
@@ -152,8 +150,7 @@ exports.getSSTotiById = async (req, res) => {
     }
     res.status(200).json(product);
   } catch (err) {
-    console.error('Error fetching SSToti product:', err);
-    res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ error: 'Server error' });
   }
 };
 
@@ -214,8 +211,7 @@ exports.updateSSToti = async (req, res) => {
     }
     res.status(200).json(updatedProduct);
   } catch (err) {
-    console.error('Error updating SSToti product:', err);
-    res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ error: 'Server error' });
   }
 };
 
@@ -230,7 +226,6 @@ exports.deleteSSToti = async (req, res) => {
     }
     res.status(200).json({ message: 'Product deleted successfully' });
   } catch (err) {
-    console.error('Error deleting SSToti product:', err);
-    res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ error: 'Server error' });
   }
 };

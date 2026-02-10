@@ -9,7 +9,6 @@ export default function SafeDashboardLayout({ children }) {
     // If DashboardLayout fails during build, just render children
     // This can happen when React is null during static generation
     if (process.env.NODE_ENV === 'development') {
-      console.warn('SafeDashboardLayout: DashboardLayout unavailable during build:', error.message);
     }
     return <>{children}</>;
   }

@@ -1,8 +1,6 @@
 const ElectricalModels = require('../../models/ElectricalModels');
 const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
-const shouldLog = process.env.APP_DEBUG === 'true';
-
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream((err, result) => {
@@ -48,11 +46,7 @@ function sanitizeAmps(amps) {
 
 exports.createSockets = async (req, res) => {
   try {
-    if (shouldLog) {
-      console.log('[Sockets] Create request');
-      console.log('[Sockets] Body:', req.body);
-      console.log('[Sockets] Files:', req.files);
-    }
+    
 
     if (!req.files || req.files.length < 1) {
       return res.status(400).json({ error: 'At least 1 image is required.' });
@@ -61,16 +55,10 @@ exports.createSockets = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
 
-    if (shouldLog) console.log('[Sockets] Uploading images to Cloudinary...');
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    if (shouldLog) console.log('[Sockets] Uploaded URLs:', photoUrls);
-
     // Parse amps and tag if sent as JSON string or array entries
     let { amps, tag, ...rest } = req.body;
-    if (shouldLog) {
-      console.log('[Sockets] Raw amps:', amps);
-      console.log('[Sockets] Raw tag:', tag);
-    }
+    
 
     // Coerce and sanitize amps
     const coercedAmps = coerceAmps(amps);
@@ -99,15 +87,11 @@ exports.createSockets = async (req, res) => {
       category: rest.category || 'Sockets'
     };
 
-    if (shouldLog) console.log('[Sockets] Creating with data:', productData);
     const product = new ElectricalModels(productData);
     await product.save();
-    if (shouldLog) console.log('[Sockets] Created:', product._id);
-
     res.status(201).json(product);
   } catch (err) {
-    console.error('Error in createSockets:', err);
-    res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message });
   }
 };
 
@@ -132,11 +116,7 @@ exports.getOneSockets = async (req, res) => {
 
 exports.updateSockets = async (req, res) => {
   try {
-    if (shouldLog) {
-      console.log('[Sockets] Update id:', req.params.id);
-      console.log('[Sockets] Body:', req.body);
-      console.log('[Sockets] Files:', req.files);
-    }
+    
 
     let update = { ...req.body };
 
@@ -174,8 +154,7 @@ exports.updateSockets = async (req, res) => {
 
     res.json(product);
   } catch (err) {
-    console.error('Error in updateSockets:', err);
-    res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message });
   }
 };
 

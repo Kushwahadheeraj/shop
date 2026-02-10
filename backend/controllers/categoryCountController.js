@@ -50,8 +50,7 @@ const countFilesRecursively = (dirPath) => {
       }
     }
   } catch (error) {
-    console.error(`Error counting files in ${dirPath}:`, error);
-  }
+      }
   
   return count;
 };
@@ -107,8 +106,7 @@ const countActualProducts = (dirPath) => {
       }
     }
   } catch (error) {
-    console.error(`Error counting products in ${dirPath}:`, error);
-  }
+      }
   
   return count;
 };
@@ -142,8 +140,7 @@ exports.getCategoryCount = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error getting category count:', error);
-    res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -226,8 +223,7 @@ exports.getAllCategoryCounts = async (req, res) => {
         const count = await Model.countDocuments({});
         counts[categoryKey] = count;
       } catch (modelError) {
-        console.error(`Error loading model for ${categoryKey}:`, modelError);
-        counts[categoryKey] = 0;
+                counts[categoryKey] = 0;
       }
     }
     
@@ -236,8 +232,7 @@ exports.getAllCategoryCounts = async (req, res) => {
       data: counts
     });
   } catch (error) {
-    console.error('Error getting all category counts:', error);
-    res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -318,8 +313,7 @@ exports.getCategorySubcategories = async (req, res) => {
           return res.status(400).json({ error: 'Invalid category' });
       }
     } catch (modelError) {
-      console.error('Error loading model:', modelError);
-      return res.status(500).json({ error: 'Model not found' });
+            return res.status(500).json({ error: 'Model not found' });
     }
     
     // Get all products from database for this category
@@ -350,7 +344,6 @@ exports.getCategorySubcategories = async (req, res) => {
       data: subcategories
     });
   } catch (error) {
-    console.error('Error getting category subcategories:', error);
-    res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: 'Internal server error' });
   }
 };

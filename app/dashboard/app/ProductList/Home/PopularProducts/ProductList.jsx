@@ -45,14 +45,12 @@ export default function ProductList() {
     setLoading(true);
     setError(null);
     try {
-      console.log('API URL:', API_URL + '/get');
       const res = await fetch(API_URL + '/get');
-      console.log('Response status:', res.status);
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
       const responseData = await res.json();
-      console.log('API Response:', responseData); // Debug log
+       // Debug log
       
       // Handle the response format: {"success":true,"count":0,"data":[]}
       let productsArray = [];
@@ -64,15 +62,14 @@ export default function ProductList() {
         productsArray = responseData.products;
       }
       
-      console.log('Processed products array:', productsArray); // Debug log
+       // Debug log
       if (productsArray.length > 0) {
-        console.log('First product images:', productsArray[0].images); // Debug log
+         // Debug log
       }
       
       setProducts(productsArray);
     } catch (err) {
       setError(err.message);
-      console.error('Error fetching products:', err);
       setProducts([]); // Set empty array on error
     } finally {
       setLoading(false);
@@ -86,7 +83,6 @@ export default function ProductList() {
   const handleDelete = async (id) => {
     try {
       const deleteUrl = `${API_URL}/delete/${id}`;
-      console.log('Delete URL:', deleteUrl);
       const res = await fetch(deleteUrl, { method: "DELETE" });
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
@@ -94,7 +90,6 @@ export default function ProductList() {
       alert('Product deleted successfully!');
       await fetchProducts(); // Refresh the list
     } catch (err) {
-      console.error('Error deleting product:', err);
       alert(`Error deleting product: ${err.message}`);
       setError(err.message);
     }
@@ -256,7 +251,6 @@ export default function ProductList() {
                           {(() => {
                             // Handle both old 'image' and new 'images' field for backward compatibility
                             const productImages = product.images || (product.image ? [product.image] : []);
-                            console.log('Rendering images for product:', product.name, 'Images:', productImages);
                             
                             if (productImages && productImages.length > 0) {
                               return (
@@ -266,11 +260,10 @@ export default function ProductList() {
                                     alt={product.name}
                                     className="w-12 h-12 object-cover rounded border flex-shrink-0"
                                     onError={(e) => {
-                                      console.error('Image failed to load:', productImages[0], e);
                                       e.target.style.display = 'none';
                                       e.target.nextSibling.style.display = 'flex';
                                     }}
-                                    onLoad={() => console.log('Image loaded successfully:', productImages[0])}
+                                    onLoad={() => }
                                   />
                                   <div 
                                     className="w-12 h-12 bg-gray-100 rounded border flex items-center justify-center hidden"

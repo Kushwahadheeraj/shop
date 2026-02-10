@@ -19,7 +19,6 @@ export async function GET(request) {
     const banners = await CategoryBanner.find({});
     return NextResponse.json(banners);
   } catch (error) {
-    console.error('Error fetching category banners:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Failed to fetch banners' }, { status: 500 });
   }
 }

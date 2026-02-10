@@ -22,9 +22,6 @@ async function connectDB() {
     throw new Error('Please define the MONGO_URI environment variable inside .env');
   }
   
-  // Log environment variable status
-  console.log('🔍 connectDB() called');
-  
   // Check if we have a cached connection and if it's still alive
   if (cached.conn) {
     const state = mongoose.connection.readyState;
@@ -46,10 +43,8 @@ async function connectDB() {
     };
 
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-      console.log('✅ MongoDB connected successfully');
       return mongoose;
     }).catch((err) => {
-      console.error('❌ MongoDB connection failed:', err);
       throw err;
     });
   }

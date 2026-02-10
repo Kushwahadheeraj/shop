@@ -31,7 +31,6 @@ export default function ProductList() {
       }
     } catch (err) {
       setError('Network error. Please try again.');
-      console.error('Error fetching products:', err);
     } finally {
       setLoading(false);
     }
@@ -61,7 +60,6 @@ export default function ProductList() {
       }
     } catch (err) {
       alert('Network error. Please try again.');
-      console.error('Error deleting product:', err);
     }
   };
 
@@ -127,7 +125,6 @@ export default function ProductList() {
       }
     } catch (err) {
       alert('Network error. Please try again.');
-      console.error('Error updating product:', err);
     }
   };
 

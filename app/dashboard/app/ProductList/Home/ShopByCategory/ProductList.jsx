@@ -52,7 +52,6 @@ export default function ProductList() {
         }
       }
     } catch (err) {
-      console.error("Error fetching title:", err);
     }
   };
 
@@ -69,7 +68,6 @@ export default function ProductList() {
         setIsEditingTitle(false);
       }
     } catch (err) {
-      console.error("Error updating title:", err);
     }
   };
 
@@ -93,7 +91,6 @@ export default function ProductList() {
       setItems(itemsArray);
     } catch (err) {
       setError(err.message);
-      console.error("Error fetching items:", err);
       setItems([]);
     } finally {
       setLoading(false);
@@ -109,7 +106,6 @@ export default function ProductList() {
       await fetchItems();
     } catch (err) {
       setError(err.message);
-      console.error("Error deleting item:", err);
     }
   };
 

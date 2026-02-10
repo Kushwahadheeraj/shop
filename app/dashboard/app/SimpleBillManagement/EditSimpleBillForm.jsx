@@ -247,7 +247,6 @@ const EditSimpleBillForm = ({ bill, onClose, onSave, shops }) => {
       await onSave(processedData);
       onClose();
     } catch (error) {
-      console.error('Error saving bill:', error);
     } finally {
       setLoading(false);
     }

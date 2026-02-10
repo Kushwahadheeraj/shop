@@ -52,7 +52,6 @@ export default function ProductList() {
       const data = await res.json();
       setProducts(Array.isArray(data?.data) ? data.data : []);
     } catch (err) {
-      console.error('Error fetching products:', err);
       setError(err.message);
       setProducts([]);
     } finally {
@@ -74,7 +73,6 @@ export default function ProductList() {
       alert('Product deleted successfully!');
       await fetchProducts(); // Refresh the list
     } catch (err) {
-      console.error('Error deleting product:', err);
       alert(`Error deleting product: ${err.message}`);
       setError(err.message);
     }

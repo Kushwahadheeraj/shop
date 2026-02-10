@@ -3,8 +3,6 @@
 const cloudinary = require('../config/cloudinary');
 const streamifier = require('streamifier');
 const CleaningModels = require('../models/CleaningModels');
-const shouldLog = process.env.APP_DEBUG === 'true';
-
 /**
  * Uploads a buffer to Cloudinary and returns the secure URL.
  * @param {Buffer} buffer
@@ -25,11 +23,7 @@ function uploadToCloudinary(buffer) {
  */
 exports.createCleaning = async (req, res) => {
   try {
-    if (shouldLog) {
-      console.log('[Cleaning] Create request');
-      console.log('[Cleaning] Body:', req.body);
-      console.log('[Cleaning] Files:', req.files);
-    }
+    
 
     if (!req.files || req.files.length < 1) {
       return res.status(400).json({ error: 'At least 1 image is required.' });
@@ -38,14 +32,9 @@ exports.createCleaning = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
 
-    if (shouldLog) console.log('[Cleaning] Uploading images to Cloudinary...');
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    if (shouldLog) console.log('[Cleaning] Uploaded URLs:', photoUrls);
-
     // Parse tag if sent as JSON string or array entries
     let { tag, ...rest } = req.body;
-    if (shouldLog) console.log('[Cleaning] Raw tag:', tag);
-
     // Ensure tag is an array
     if (typeof tag === 'string') {
       try {
@@ -68,15 +57,11 @@ exports.createCleaning = async (req, res) => {
       category: rest.category || 'Cleaning'
     };
 
-    if (shouldLog) console.log('[Cleaning] Creating with data:', productData);
     const product = new CleaningModels(productData);
     await product.save();
-    if (shouldLog) console.log('[Cleaning] Created:', product._id);
-
     res.status(201).json(product);
   } catch (err) {
-    console.error('Error in createCleaning:', err);
-    res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message });
   }
 };
 
@@ -85,11 +70,7 @@ exports.createCleaning = async (req, res) => {
  */
 exports.updateCleaning = async (req, res) => {
   try {
-    if (shouldLog) {
-      console.log('[Cleaning] Update id:', req.params.id);
-      console.log('[Cleaning] Body:', req.body);
-      console.log('[Cleaning] Files:', req.files);
-    }
+    
 
     let update = { ...req.body };
 
@@ -124,8 +105,7 @@ exports.updateCleaning = async (req, res) => {
 
     res.json(product);
   } catch (err) {
-    console.error('Error in updateCleaning:', err);
-    res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message });
   }
 };
 

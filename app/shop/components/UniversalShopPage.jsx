@@ -39,12 +39,11 @@ function ShopBanner({ category, title }) {
                 }
             }
         } catch (e) {
-            console.error('Network error fetching banner:', e);
+            // Network error fetching banner
         }
         
         setBannerUrl(null);
       } catch (e) {
-        console.error("Error fetching banner:", e);
         setBannerUrl(null);
       }
     };
@@ -60,7 +59,6 @@ function ShopBanner({ category, title }) {
             alt={title} 
             className="w-full h-full object-cover" 
             onError={(e) => {
-                console.error('Image failed to load:', bannerUrl);
                 setImageError(true);
             }}
         />
@@ -368,14 +366,6 @@ export default function UniversalShopPage() {
 
   const title = shopSegments.join(' / ').toUpperCase() || 'SHOP';
   const handleProductClick = (product) => {
-    // Debug: Log the product structure
-    console.log('Product clicked:', {
-      product,
-      _id: product._id,
-      id: product.id,
-      name: product.name
-    });
-    
     // Navigate to product details page
     // Persist the product as a fallback if API lookup fails on details page
     try {
@@ -386,7 +376,6 @@ export default function UniversalShopPage() {
 
     const productId = product._id || product.id;
     const categoryHint = product.category || product.Category || product?.type || '';
-    console.log('Navigating to product ID:', productId, 'category:', categoryHint);
     const query = categoryHint ? `?cat=${encodeURIComponent(String(categoryHint))}` : '';
     router.push(`/product/${productId}${query}`);
   };
@@ -462,16 +451,7 @@ export default function UniversalShopPage() {
       <ShopBanner category={currentCategory} title={displayTitle} />
 
       {/* Main Content */}
-            {/* Results Header (mobile only) */}
-            {/* <div className="md:hidden flex justify-between items-center mb-4">
-              <p className="text-gray-600 text-xs">
-                {products.length > 0 
-                  ? `Showing 1-${Math.min(products.length, 12)} of ${products.length} results` 
-                  : 'No products found'
-                }
-              </p>
-            </div> */}
-
+            
             
 
             {/* Products - Mobile: Linear/Horizontal layout, Desktop: Grid layout */}
@@ -565,7 +545,6 @@ export default function UniversalShopPage() {
                             if (fallback) fallback.style.display = 'none';
                           }}
                           onError={(e) => {
-                            console.warn('Image failed, trying uploads prefix fallback for:', img);
                             if (img && typeof img === 'string' && !img.startsWith('http')) {
                               const ORIGIN = API_BASE_URL.replace(/\/api\/?$/, '');
                               const candidate = img.startsWith('/') ? `${ORIGIN}${img}` : `${ORIGIN}/${img}`;

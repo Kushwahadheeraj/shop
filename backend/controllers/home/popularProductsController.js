@@ -38,8 +38,7 @@ exports.createPopularProduct = async (req, res) => {
       try {
         customFields = JSON.parse(req.body.customFields);
       } catch (e) {
-        console.log('Error parsing custom fields:', e);
-      }
+              }
     }
 
     // Parse variants from request body
@@ -48,8 +47,7 @@ exports.createPopularProduct = async (req, res) => {
       try {
         variants = JSON.parse(req.body.variants);
       } catch (e) {
-        console.log('Error parsing variants:', e);
-      }
+              }
     }
 
     const productData = {
@@ -178,8 +176,7 @@ exports.updatePopularProduct = async (req, res) => {
       try {
         customFields = JSON.parse(req.body.customFields);
       } catch (e) {
-        console.log('Error parsing custom fields:', e);
-      }
+              }
     }
 
     // Parse variants from request body
@@ -188,8 +185,7 @@ exports.updatePopularProduct = async (req, res) => {
       try {
         variants = JSON.parse(req.body.variants);
       } catch (e) {
-        console.log('Error parsing variants:', e);
-      }
+              }
     }
 
     let updateData = { 

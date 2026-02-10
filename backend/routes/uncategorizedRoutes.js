@@ -1,5 +1,3 @@
-// AUTO-GENERATED ROUTES AND SERVER IMPORTS. DO NOT EDIT MANUALLY.
-
 const express = require('express');
 const multer = require('multer');
 const storage = multer.memoryStorage();
@@ -20,8 +18,7 @@ router.get('/', async (req, res) => {
     const products = await UncategorizedModels.find({});
     res.json(products);
   } catch (error) {
-    console.error('Error fetching uncategorized products:', error);
-    res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: 'Internal server error' });
   }
 });
 

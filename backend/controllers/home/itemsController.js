@@ -29,8 +29,7 @@ exports.createItem = async (req, res) => {
     try {
       imageUrl = await uploadToCloudinary(req.file.buffer);
     } catch (uploadError) {
-      console.error('Cloudinary upload error:', uploadError);
-      return res.status(500).json({
+            return res.status(500).json({
         success: false,
         message: 'Error uploading image to Cloudinary',
         error: uploadError.message
@@ -61,8 +60,7 @@ exports.createItem = async (req, res) => {
       data: savedItem
     });
   } catch (error) {
-    console.error('Error creating item:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error creating item',
       error: error.message
@@ -126,8 +124,7 @@ exports.updateItem = async (req, res) => {
         const imageUrl = await uploadToCloudinary(req.file.buffer);
         updateData.image = imageUrl;
       } catch (uploadError) {
-        console.error('Cloudinary upload error:', uploadError);
-        return res.status(500).json({
+                return res.status(500).json({
           success: false,
           message: 'Error uploading image to Cloudinary',
           error: uploadError.message
@@ -162,8 +159,7 @@ exports.updateItem = async (req, res) => {
       data: item
     });
   } catch (error) {
-    console.error('Error updating item:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error updating item',
       error: error.message

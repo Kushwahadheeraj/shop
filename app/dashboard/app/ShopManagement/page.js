@@ -69,7 +69,6 @@ export default function ShopManagementPage() {
       });
       setFilesByShop(map);
     } catch (err) {
-      console.error("Load shops failed:", err);
       alert("Shops load नहीं हो सके. कृपया दुबारा प्रयास करें.");
     } finally {
       setLoading(false);
@@ -120,7 +119,6 @@ export default function ShopManagementPage() {
         setShowForm(false);
       })
       .catch((err) => {
-        console.error("Create/update shop failed:", err);
         alert("Shop नहीं बन सका. कृपया फिर प्रयास करें.");
       });
   };
@@ -142,7 +140,6 @@ export default function ShopManagementPage() {
         if (selectedShopId === shopId) setSelectedShopId(null);
       })
       .catch((err) => {
-        console.error("Delete shop failed:", err);
         alert("Shop delete नहीं हुआ.");
       });
   };
@@ -168,7 +165,6 @@ export default function ShopManagementPage() {
         setFilesByShop((prev) => ({ ...prev, [selectedShopId]: shop?.files || [] }));
       })
       .catch((err) => {
-        console.error("Upload failed:", err);
         alert("Upload नहीं हुआ. कृपया दोबारा प्रयास करें.");
       });
 
@@ -189,7 +185,6 @@ export default function ShopManagementPage() {
         setFilesByShop((prev) => ({ ...prev, [selectedShopId]: shop?.files || [] }));
       })
       .catch((err) => {
-        console.error("Delete file failed:", err);
         alert("File delete नहीं हो सका.");
       });
   };

@@ -114,8 +114,7 @@ const createSimpleBill = async (req, res) => {
       data: bill
     });
   } catch (error) {
-    console.error('Error creating simple bill:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error creating simple bill',
       error: error.message
@@ -180,8 +179,7 @@ const getSimpleBills = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error fetching simple bills:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error fetching simple bills',
       error: error.message
@@ -208,8 +206,7 @@ const getSimpleBillById = async (req, res) => {
       data: bill
     });
   } catch (error) {
-    console.error('Error fetching simple bill:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error fetching simple bill',
       error: error.message
@@ -314,8 +311,7 @@ const updateSimpleBill = async (req, res) => {
       data: bill
     });
   } catch (error) {
-    console.error('Error updating simple bill:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error updating simple bill',
       error: error.message
@@ -341,8 +337,7 @@ const deleteSimpleBill = async (req, res) => {
       message: 'Simple bill deleted successfully'
     });
   } catch (error) {
-    console.error('Error deleting simple bill:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error deleting simple bill',
       error: error.message
@@ -397,8 +392,7 @@ const getSimpleBillStats = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error fetching simple bill stats:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error fetching simple bill statistics',
       error: error.message
@@ -506,8 +500,7 @@ const addPayment = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error adding payment:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error adding payment',
       error: error.message

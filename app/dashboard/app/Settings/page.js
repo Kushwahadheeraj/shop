@@ -89,7 +89,6 @@ export default function SettingsPage() {
         });
       }
     } catch (err) {
-      console.error("Failed to load settings:", err);
     } finally {
       setInitialised(true);
     }
@@ -178,7 +177,6 @@ export default function SettingsPage() {
       setLastSaved(new Date(payload.lastSaved));
       setSaveStatus("success");
     } catch (error) {
-      console.error("Error saving settings:", error);
       setSaveStatus("error");
     } finally {
       setLoading(false);

@@ -1,7 +1,6 @@
 const ElectricalModels = require('../../models/ElectricalModels');
 const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
-const shouldLog = process.env.APP_DEBUG === 'true';
 
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
@@ -48,12 +47,6 @@ function sanitizeAmps(amps) {
 
 exports.createAdaptors = async (req, res) => {
   try {
-    if (shouldLog) {
-      console.log('[Adaptors] Create request');
-      console.log('[Adaptors] Body:', req.body);
-      console.log('[Adaptors] Files:', req.files);
-    }
-
     if (!req.files || req.files.length < 1) {
       return res.status(400).json({ error: 'At least 1 image is required.' });
     }
@@ -61,16 +54,10 @@ exports.createAdaptors = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
 
-    if (shouldLog) console.log('[Adaptors] Uploading images to Cloudinary...');
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    if (shouldLog) console.log('[Adaptors] Uploaded URLs:', photoUrls);
 
     // Parse amps and tag if sent as JSON string or array entries
     let { amps, tag, ...rest } = req.body;
-    if (shouldLog) {
-      console.log('[Adaptors] Raw amps:', amps);
-      console.log('[Adaptors] Raw tag:', tag);
-    }
 
     // Coerce and sanitize amps
     const coercedAmps = coerceAmps(amps);
@@ -99,14 +86,11 @@ exports.createAdaptors = async (req, res) => {
       category: rest.category || 'Adaptors'
     };
 
-    if (shouldLog) console.log('[Adaptors] Creating with data:', productData);
     const product = new ElectricalModels(productData);
     await product.save();
-    if (shouldLog) console.log('[Adaptors] Created:', product._id);
 
     res.status(201).json(product);
   } catch (err) {
-    console.error('Error in createAdaptors:', err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -132,12 +116,6 @@ exports.getOneAdaptors = async (req, res) => {
 
 exports.updateAdaptors = async (req, res) => {
   try {
-    if (shouldLog) {
-      console.log('[Adaptors] Update id:', req.params.id);
-      console.log('[Adaptors] Body:', req.body);
-      console.log('[Adaptors] Files:', req.files);
-    }
-
     let update = { ...req.body };
 
     if (update.amps) {
@@ -174,7 +152,6 @@ exports.updateAdaptors = async (req, res) => {
 
     res.json(product);
   } catch (err) {
-    console.error('Error in updateAdaptors:', err);
     res.status(500).json({ error: err.message });
   }
 };

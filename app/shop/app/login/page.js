@@ -41,7 +41,6 @@ export default function LoginPage() {
           }
         }
       } catch (error) {
-        console.error('Error checking authentication:', error);
       }
     };
 
@@ -100,7 +99,6 @@ export default function LoginPage() {
       }
     } catch (err) {
       setError('Network error. Please try again.');
-      console.error('Login error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -173,7 +171,6 @@ export default function LoginPage() {
       }
     } catch (err) {
       setError('Network error. Please try again.');
-      console.error('Registration error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -206,7 +203,6 @@ export default function LoginPage() {
       }
     } catch (err) {
       setError('Network error. Please try again.');
-      console.error('Forgot password error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -268,7 +264,6 @@ export default function LoginPage() {
       }
     } catch (err) {
       setError('Network error. Please try again.');
-      console.error('Reset password error:', err);
     } finally {
       setIsLoading(false);
     }

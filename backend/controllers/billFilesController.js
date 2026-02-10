@@ -60,8 +60,7 @@ exports.createBillFiles = async (req, res) => {
       data: savedFiles
     });
   } catch (error) {
-    console.error('Error creating bill files:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error saving files',
       error: error.message
@@ -109,8 +108,7 @@ exports.getBillFiles = async (req, res) => {
       data: files
     });
   } catch (error) {
-    console.error('Error fetching bill files:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error fetching files',
       error: error.message
@@ -182,8 +180,7 @@ exports.getBillFilesSummary = async (req, res) => {
       summary: stats
     });
   } catch (error) {
-    console.error('Error fetching bill files summary:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error fetching files summary',
       error: error.message
@@ -218,8 +215,7 @@ exports.deleteBillFile = async (req, res) => {
       message: 'File deleted successfully'
     });
   } catch (error) {
-    console.error('Error deleting bill file:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error deleting file',
       error: error.message

@@ -43,7 +43,6 @@ const ShopDetailsPage = () => {
       });
       
       if (!response.ok) {
-        console.error('Failed to fetch shops');
         return;
       }
       
@@ -61,7 +60,6 @@ const ShopDetailsPage = () => {
       
       setShops(shopList);
     } catch (error) {
-      console.error('Error fetching shops:', error);
       setShops([]);
     } finally {
       setLoading(false);

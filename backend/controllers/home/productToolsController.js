@@ -149,8 +149,7 @@ exports.createProductTool = async (req, res) => {
       try {
         customFields = JSON.parse(req.body.customFields);
       } catch (e) {
-        console.log('Error parsing custom fields:', e);
-      }
+              }
     }
 
     // Parse variants from request body
@@ -159,8 +158,7 @@ exports.createProductTool = async (req, res) => {
       try {
         variants = JSON.parse(req.body.variants);
       } catch (e) {
-        console.log('Error parsing variants:', e);
-      }
+              }
     }
 
     const productToolData = {
@@ -287,8 +285,7 @@ exports.updateProductTool = async (req, res) => {
       try {
         customFields = JSON.parse(req.body.customFields);
       } catch (e) {
-        console.log('Error parsing custom fields:', e);
-      }
+              }
     }
 
     // Parse variants from request body
@@ -297,8 +294,7 @@ exports.updateProductTool = async (req, res) => {
       try {
         variants = JSON.parse(req.body.variants);
       } catch (e) {
-        console.log('Error parsing variants:', e);
-      }
+              }
     }
 
     let updateData = { 

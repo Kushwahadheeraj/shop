@@ -52,8 +52,7 @@ exports.createPlasticToti = async (req, res) => {
                 productData.customFields = parsedFields;
             }
         } catch (e) {
-            console.error('Error parsing customFields:', e);
-        }
+                    }
     } else {
         // Fallback to legacy field loop if customFields is not provided as JSON
         const customFields = [];
@@ -116,8 +115,7 @@ exports.createPlasticToti = async (req, res) => {
     const savedProduct = await newProduct.save();
     res.status(201).json(savedProduct);
   } catch (err) {
-    console.error('Error creating PlasticToti product:', err);
-    if (err.name === 'ValidationError' || err.name === 'CastError') {
+        if (err.name === 'ValidationError' || err.name === 'CastError') {
       return res.status(400).json({ error: 'Validation Error', details: err.message });
     }
     res.status(500).json({ error: 'Server error', details: err.message });
@@ -132,8 +130,7 @@ exports.getAllPlasticToti = async (req, res) => {
     const products = await Sanitary.find({ category: 'PlasticToti' });
     res.status(200).json(products);
   } catch (err) {
-    console.error('Error fetching PlasticToti products:', err);
-    res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ error: 'Server error' });
   }
 };
 
@@ -148,8 +145,7 @@ exports.getPlasticTotiById = async (req, res) => {
     }
     res.status(200).json(product);
   } catch (err) {
-    console.error('Error fetching PlasticToti product:', err);
-    res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ error: 'Server error' });
   }
 };
 
@@ -215,8 +211,7 @@ exports.updatePlasticToti = async (req, res) => {
     }
     res.status(200).json(updatedProduct);
   } catch (err) {
-    console.error('Error updating PlasticToti product:', err);
-    res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ error: 'Server error' });
   }
 };
 
@@ -231,7 +226,6 @@ exports.deletePlasticToti = async (req, res) => {
     }
     res.status(200).json({ message: 'Product deleted successfully' });
   } catch (err) {
-    console.error('Error deleting PlasticToti product:', err);
-    res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ error: 'Server error' });
   }
 };

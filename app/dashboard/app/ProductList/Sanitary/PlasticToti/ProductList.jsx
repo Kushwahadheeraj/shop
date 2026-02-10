@@ -29,7 +29,6 @@ export default function ProductList() {
       const data = await res.json();
       setProducts(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error('Error fetching products:', err);
       setError(err.message);
       setProducts([]);
     } finally {
@@ -52,7 +51,6 @@ export default function ProductList() {
       alert('Product deleted successfully!');
       await fetchProducts(); // Refresh the list
     } catch (err) {
-      console.error('Error deleting product:', err);
       alert(`Error deleting product: ${err.message}`);
       setError(err.message);
     }
@@ -60,9 +58,6 @@ export default function ProductList() {
 
   const handleView = (product) => {
     // Placeholder for view functionality
-    console.log("View product:", product);
-    // You can implement navigation to a view page if it exists
-    // router.push(`/dashboard/app/ProductView/Sanitary/PlasticToti/${product._id}`);
   };
 
   if (loading && products.length === 0) {

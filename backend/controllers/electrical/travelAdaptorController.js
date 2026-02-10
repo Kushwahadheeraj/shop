@@ -1,8 +1,6 @@
 const ElectricalModels = require('../../models/ElectricalModels');
 const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
-const shouldLog = process.env.APP_DEBUG === 'true';
-
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream((err, result) => {
@@ -48,11 +46,7 @@ function sanitizeAmps(amps) {
 
 exports.createTravelAdaptor = async (req, res) => {
   try {
-    if (shouldLog) {
-      console.log('[TravelAdaptor] Create request');
-      console.log('[TravelAdaptor] Body:', req.body);
-      console.log('[TravelAdaptor] Files:', req.files);
-    }
+    
 
     if (!req.files || req.files.length < 1) {
       return res.status(400).json({ error: 'At least 1 image is required.' });
@@ -61,16 +55,10 @@ exports.createTravelAdaptor = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
 
-    if (shouldLog) console.log('[TravelAdaptor] Uploading images to Cloudinary...');
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    if (shouldLog) console.log('[TravelAdaptor] Uploaded URLs:', photoUrls);
-
     // Parse amps and tag if sent as JSON string or array entries
     let { amps, tag, ...rest } = req.body;
-    if (shouldLog) {
-      console.log('[TravelAdaptor] Raw amps:', amps);
-      console.log('[TravelAdaptor] Raw tag:', tag);
-    }
+    
 
     // Coerce and sanitize amps
     const coercedAmps = coerceAmps(amps);
@@ -99,15 +87,11 @@ exports.createTravelAdaptor = async (req, res) => {
       category: rest.category || 'TravelAdaptor'
     };
 
-    if (shouldLog) console.log('[TravelAdaptor] Creating with data:', productData);
     const product = new ElectricalModels(productData);
     await product.save();
-    if (shouldLog) console.log('[TravelAdaptor] Created:', product._id);
-
     res.status(201).json(product);
   } catch (err) {
-    console.error('Error in createTravelAdaptor:', err);
-    res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message });
   }
 };
 
@@ -132,11 +116,7 @@ exports.getOneTravelAdaptor = async (req, res) => {
 
 exports.updateTravelAdaptor = async (req, res) => {
   try {
-    if (shouldLog) {
-      console.log('[TravelAdaptor] Update id:', req.params.id);
-      console.log('[TravelAdaptor] Body:', req.body);
-      console.log('[TravelAdaptor] Files:', req.files);
-    }
+    
 
     let update = { ...req.body };
 
@@ -174,8 +154,7 @@ exports.updateTravelAdaptor = async (req, res) => {
 
     res.json(product);
   } catch (err) {
-    console.error('Error in updateTravelAdaptor:', err);
-    res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message });
   }
 };
 

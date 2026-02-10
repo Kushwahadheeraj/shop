@@ -136,7 +136,6 @@ export default function Update() {
 
         setLatestProducts(mappedProducts);
       } catch (error) {
-        console.error('Error fetching latest products:', error);
         setLatestProducts([]);
       }
     };
@@ -268,7 +267,6 @@ export default function Update() {
 
         setBestSellingProducts(mappedProducts);
       } catch (error) {
-        console.error('Error fetching best selling products:', error);
         setBestSellingProducts([]);
       }
     };
@@ -300,11 +298,8 @@ export default function Update() {
           if (r.status === 'fulfilled') {
             const products = flatten(r.value);
             allProducts = allProducts.concat(products);
-            console.log('Fetched products for top rated:', products.length);
           }
         }
-        
-        console.log('Total products for top rated:', allProducts.length);
 
         // Sort products by rating (highest first), but include all products
         const sortedProducts = allProducts
@@ -328,9 +323,6 @@ export default function Update() {
           });
 
         const top4 = sortedProducts.slice(0, 4);
-        
-        console.log('Top 4 products for top rated:', top4.length);
-        console.log('Products data:', top4.map(p => ({ name: p.name, rating: p.rating })));
 
         // Map products to the expected format
         const toAbs = (u) => {
@@ -395,7 +387,6 @@ export default function Update() {
 
         setTopRatedProducts(mappedProducts);
       } catch (error) {
-        console.error('Error fetching top rated products:', error);
         setTopRatedProducts([]);
       }
     };

@@ -14,7 +14,6 @@ export function useSectionTitle(sectionId, defaultTitle) {
           setCustomTitle(data.data.title);
         }
       } catch (error) {
-        console.error(`Error fetching title for ${sectionId}:`, error);
       }
     };
 

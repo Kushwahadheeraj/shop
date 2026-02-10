@@ -46,12 +46,10 @@ const getModels = () => {
           const model = require(`../models/${fileName}`);
           if (model) models.push(model);
         } catch (requireErr) {
-          console.error(`Failed to load model ${modelName} from ${fileName}:`, requireErr.message);
-        }
+                  }
       }
     } catch (err) {
-      console.error(`Error loading model ${modelName}:`, err);
-    }
+          }
   }
   return models;
 };
@@ -74,8 +72,7 @@ const getAllProducts = async (req, res) => {
         }));
         products.push(...productsWithCategory);
       } catch (err) {
-        console.error(`Error fetching from ${model.modelName}:`, err.message);
-        continue;
+                continue;
       }
     }
 
@@ -85,8 +82,7 @@ const getAllProducts = async (req, res) => {
 
     res.status(200).json(limitedProducts);
   } catch (error) {
-    console.error('Error fetching all products:', error);
-    res.status(500).json({ 
+        res.status(500).json({ 
       success: false, 
       message: 'Error fetching products',
       error: error.message 
@@ -131,8 +127,7 @@ const getProductsByCategory = async (req, res) => {
 
     res.status(200).json(products);
   } catch (error) {
-    console.error('Error fetching products by category:', error);
-    res.status(500).json({ 
+        res.status(500).json({ 
       success: false, 
       message: 'Error fetching products',
       error: error.message 
@@ -181,8 +176,7 @@ const searchProducts = async (req, res) => {
 
     res.status(200).json(products);
   } catch (error) {
-    console.error('Error searching products:', error);
-    res.status(500).json({ 
+        res.status(500).json({ 
       success: false, 
       message: 'Error searching products',
       error: error.message 
@@ -228,8 +222,7 @@ const getProductsByIds = async (req, res) => {
 
     res.status(200).json(foundProducts);
   } catch (error) {
-    console.error('Error fetching products by IDs:', error);
-    res.status(500).json({ 
+        res.status(500).json({ 
       success: false, 
       message: 'Error fetching products details',
       error: error.message 

@@ -58,8 +58,7 @@ const getGSTBills = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error fetching GST bills:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error fetching GST bills'
     });
@@ -99,8 +98,7 @@ const getGSTBill = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error fetching GST bill:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error fetching GST bill'
     });
@@ -146,8 +144,7 @@ const createGSTBill = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error creating GST bill:', error);
-    // Duplicate invoice number
+        // Duplicate invoice number
     if (error && (error.code === 11000 || String(error.message || '').includes('duplicate key'))) {
       return res.status(409).json({ success: false, message: 'Invoice number already exists. Please change the last number.' });
     }
@@ -191,8 +188,7 @@ const updateGSTBill = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error updating GST bill:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error updating GST bill'
     });
@@ -223,8 +219,7 @@ const deleteGSTBill = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error deleting GST bill:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error deleting GST bill'
     });
@@ -343,8 +338,7 @@ const getGSTBillsStats = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error fetching GST bills stats:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error fetching GST bills statistics'
     });

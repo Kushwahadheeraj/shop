@@ -56,8 +56,7 @@ exports.createDoor = async (req, res) => {
       try {
         productData.variants = JSON.parse(req.body.variants);
       } catch (e) {
-        console.log('Failed to parse variants:', e.message);
-      }
+              }
     }
     
     // Handle custom fields
@@ -90,14 +89,12 @@ exports.createDoor = async (req, res) => {
     if (productData.discount) productData.discount = parseFloat(productData.discount);
     if (productData.totalProduct) productData.totalProduct = parseInt(productData.totalProduct, 10);
     
-    console.log('Creating Door product with data:', productData);
-    
+        
     const product = new PvcMats(productData);
     await product.save();
     res.status(201).json(product);
   } catch (err) {
-    console.error('Error creating Door product:', err);
-    res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message });
   }
 };
 
@@ -136,8 +133,7 @@ exports.updateDoor = async (req, res) => {
       try {
         update.variants = JSON.parse(req.body.variants);
       } catch (e) {
-        console.log('Failed to parse variants:', e.message);
-      }
+              }
     }
     
     // Handle custom fields
@@ -170,8 +166,7 @@ exports.updateDoor = async (req, res) => {
     if (update.discount) update.discount = parseFloat(update.discount);
     if (update.totalProduct) update.totalProduct = parseInt(update.totalProduct, 10);
     
-    console.log('Updating Door product with data:', update);
-    
+        
     const product = await PvcMats.findOneAndUpdate(
       { _id: req.params.id, category: 'Door' },
       update,
@@ -180,8 +175,7 @@ exports.updateDoor = async (req, res) => {
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
-    console.error('Error updating Door product:', err);
-    res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message });
   }
 };
 exports.getAllDoor = async (req, res) => {

@@ -64,7 +64,7 @@ export function AuthProvider({ children }) {
           setUser(null);
         }
       } catch (error) {
-        console.error('Auth check failed:', error);
+        // Auth check failed
         // On network error, keep token and user null (will retry later)
         setUser(null);
       }
@@ -112,7 +112,6 @@ export function AuthProvider({ children }) {
         return { success: false, error: data.message || 'Login failed' };
       }
     } catch (error) {
-      console.error('Login error:', error);
       return { success: false, error: 'Network error' };
     }
   };
@@ -196,7 +195,6 @@ export function AuthProvider({ children }) {
         return { success: false, error: errorData.message };
       }
     } catch (error) {
-      console.error('Profile update error:', error);
       return { success: false, error: 'Network error' };
     }
   };
@@ -224,7 +222,6 @@ export function AuthProvider({ children }) {
         return { success: false, error: errorData.message };
       }
     } catch (error) {
-      console.error('Password change error:', error);
       return { success: false, error: 'Network error' };
     }
   };

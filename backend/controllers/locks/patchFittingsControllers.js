@@ -48,16 +48,6 @@ exports.getAllPatchFittings = async (req, res) => {
   }
 };
 
-// exports.getPatchFittingsById = async (req, res) => {
-//   try {
-//     const item = await Lock.findOne({ _id: req.params.id, type: 'PatchFittings' });
-//     if (!item) return res.status(404).json({ error: 'Not found' });
-//     res.json(item);
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// };
-
 exports.updatePatchFittings = async (req, res) => {
   try {
     const item = await Lock.findOneAndUpdate(

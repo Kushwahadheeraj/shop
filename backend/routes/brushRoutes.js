@@ -20,8 +20,7 @@ router.get('/', async (req, res) => {
     const products = await BrushModels.find({});
     res.json(products);
   } catch (error) {
-    console.error('Error fetching brush products:', error);
-    res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: 'Internal server error' });
   }
 });
 

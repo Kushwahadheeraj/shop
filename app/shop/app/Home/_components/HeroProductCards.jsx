@@ -1,8 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import Image from "next/image";
 import API_BASE_URL from "@/lib/apiConfig";
 import { allCategories } from "@/lib/categoryData";
 
@@ -72,7 +71,7 @@ export default function HeroProductCards() {
           setGroupedItems(json.data);
         }
       } catch (error) {
-        console.error("Error fetching hero cards:", error);
+        // Error fetching hero cards
       } finally {
         setLoading(false);
       }
@@ -86,9 +85,6 @@ export default function HeroProductCards() {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 px-4 z-20 relative -mt-32 md:-mt-48 lg:-mt-64 mb-8 max-w-[1500px] mx-auto">
       {SECTIONS.map((section, idx) => {
         const items = groupedItems[section.key] || [];
-        // Fill with placeholders if less than 4 items to maintain layout? 
-        // Or just show what we have. Amazon cards usually have 4.
-        // Let's just show available items.
 
         return (
           <div key={idx} className="bg-white p-4 shadow-lg rounded-sm flex flex-col h-full z-20">
@@ -97,8 +93,6 @@ export default function HeroProductCards() {
             <div className="grid grid-cols-2 gap-3 mb-4 flex-grow">
               {items.length > 0 ? (
                 items.slice(0, 4).map((item, i) => {
-                  // Force dynamic matching by ignoring item.link unless we are sure it's correct. 
-                  // Given user feedback, we prioritize the matching logic.
                   const href = getCategoryPath(item.name);
                   return (
                     <Link 

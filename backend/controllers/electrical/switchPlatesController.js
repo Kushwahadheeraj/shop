@@ -1,8 +1,6 @@
 const ElectricalModels = require('../../models/ElectricalModels');
 const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
-const shouldLog = process.env.APP_DEBUG === 'true';
-
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream((err, result) => {
@@ -48,11 +46,7 @@ function sanitizeAmps(amps) {
 
 exports.createSwitchPlates = async (req, res) => {
   try {
-    if (shouldLog) {
-      console.log('[SwitchPlates] Create request');
-      console.log('[SwitchPlates] Body:', req.body);
-      console.log('[SwitchPlates] Files:', req.files);
-    }
+    
 
     if (!req.files || req.files.length < 1) {
       return res.status(400).json({ error: 'At least 1 image is required.' });
@@ -61,16 +55,10 @@ exports.createSwitchPlates = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
 
-    if (shouldLog) console.log('[SwitchPlates] Uploading images to Cloudinary...');
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    if (shouldLog) console.log('[SwitchPlates] Uploaded URLs:', photoUrls);
-
     // Parse amps and tag if sent as JSON string or array entries
     let { amps, tag, ...rest } = req.body;
-    if (shouldLog) {
-      console.log('[SwitchPlates] Raw amps:', amps);
-      console.log('[SwitchPlates] Raw tag:', tag);
-    }
+    
 
     // Coerce and sanitize amps
     const coercedAmps = coerceAmps(amps);
@@ -99,15 +87,11 @@ exports.createSwitchPlates = async (req, res) => {
       category: rest.category || 'SwitchPlates'
     };
 
-    if (shouldLog) console.log('[SwitchPlates] Creating with data:', productData);
     const product = new ElectricalModels(productData);
     await product.save();
-    if (shouldLog) console.log('[SwitchPlates] Created:', product._id);
-
     res.status(201).json(product);
   } catch (err) {
-    console.error('Error in createSwitchPlates:', err);
-    res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message });
   }
 };
 
@@ -132,11 +116,7 @@ exports.getOneSwitchPlates = async (req, res) => {
 
 exports.updateSwitchPlates = async (req, res) => {
   try {
-    if (shouldLog) {
-      console.log('[SwitchPlates] Update id:', req.params.id);
-      console.log('[SwitchPlates] Body:', req.body);
-      console.log('[SwitchPlates] Files:', req.files);
-    }
+    
 
     let update = { ...req.body };
 
@@ -174,8 +154,7 @@ exports.updateSwitchPlates = async (req, res) => {
 
     res.json(product);
   } catch (err) {
-    console.error('Error in updateSwitchPlates:', err);
-    res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message });
   }
 };
 

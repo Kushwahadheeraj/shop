@@ -1,8 +1,6 @@
 const ElectricalModels = require('../../models/ElectricalModels');
 const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');
-const shouldLog = process.env.APP_DEBUG === 'true';
-
 function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream((err, result) => {
@@ -48,11 +46,7 @@ function sanitizeAmps(amps) {
 
 exports.createRegulators = async (req, res) => {
   try {
-    if (shouldLog) {
-      console.log('[Regulators] Create request');
-      console.log('[Regulators] Body:', req.body);
-      console.log('[Regulators] Files:', req.files);
-    }
+    
 
     if (!req.files || req.files.length < 1) {
       return res.status(400).json({ error: 'At least 1 image is required.' });
@@ -61,16 +55,10 @@ exports.createRegulators = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
 
-    if (shouldLog) console.log('[Regulators] Uploading images to Cloudinary...');
     const photoUrls = await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)));
-    if (shouldLog) console.log('[Regulators] Uploaded URLs:', photoUrls);
-
     // Parse amps and tag if sent as JSON string or array entries
     let { amps, tag, ...rest } = req.body;
-    if (shouldLog) {
-      console.log('[Regulators] Raw amps:', amps);
-      console.log('[Regulators] Raw tag:', tag);
-    }
+    
 
     // Coerce and sanitize amps
     const coercedAmps = coerceAmps(amps);
@@ -99,15 +87,11 @@ exports.createRegulators = async (req, res) => {
       category: rest.category || 'Regulators'
     };
 
-    if (shouldLog) console.log('[Regulators] Creating with data:', productData);
     const product = new ElectricalModels(productData);
     await product.save();
-    if (shouldLog) console.log('[Regulators] Created:', product._id);
-
     res.status(201).json(product);
   } catch (err) {
-    console.error('Error in createRegulators:', err);
-    res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message });
   }
 };
 
@@ -132,11 +116,7 @@ exports.getOneRegulators = async (req, res) => {
 
 exports.updateRegulators = async (req, res) => {
   try {
-    if (shouldLog) {
-      console.log('[Regulators] Update id:', req.params.id);
-      console.log('[Regulators] Body:', req.body);
-      console.log('[Regulators] Files:', req.files);
-    }
+    
 
     let update = { ...req.body };
 
@@ -174,8 +154,7 @@ exports.updateRegulators = async (req, res) => {
 
     res.json(product);
   } catch (err) {
-    console.error('Error in updateRegulators:', err);
-    res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message });
   }
 };
 

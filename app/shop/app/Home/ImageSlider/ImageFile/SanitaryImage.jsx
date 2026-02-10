@@ -50,18 +50,6 @@ const SanitaryImage = () => {
     {slides.map((slide) => (
         <div key={slide.id} className="relative">
           <img src={slide.image} alt={slide.mainText} className="w-full h-screen  object-cover" loading="lazy" />
-          {/* <div className="flex flex-col text-center gap-2 p-6 md:p-12 absolute inset-0 bg-opacity-50 
-          justify-center items-center text-white  z-40 
-           lg:w-[800px] md:[500px] w-[300px] -translate-x-1/2 left-1/2 space-x-2">
-            <h2 className="lg:text-5xl text-4xl font-bold uppercase">{slide.mainText}</h2>
-            {slide.descText && <p className="mt-2 lg:text-lg text-xs">{slide.descText}</p>}
-            {slide.subText && <p className="mt-2 lg:text-lg text-xs">{slide.subText}</p>}
-            {slide.buttonText && (
-              <Link href={slide.link} passHref>
-                <button className="mt-4 border-2 border-white text-white text-sm lg:text-lg antialiased font-bold px-6 py-1 hover:bg-white hover:text-black">{slide.buttonText}</button>
-              </Link>
-            )}
-          </div> */}
         </div>
       ))}
    </>

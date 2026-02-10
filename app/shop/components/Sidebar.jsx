@@ -3,7 +3,6 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { FiChevronDown } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
-// import Image from "next/image";
 
 const getNavItems = (isLoggedIn) => {
   const baseItems = [
@@ -220,10 +219,6 @@ export default function Sidebar({ open, onClose }) {
             {/* Dropdown Menu */}
             <div className={`absolute top-full left-0 w-48 bg-white border border-gray-200 shadow-xl z-[2000] ${allOpen ? 'block' : 'hidden'}`}>
                   <div className=''>
-                    {/* <div className='px-4 py-0.2 hover:bg-blue-600 cursor-pointer flex items-center border-b border-gray-100'>
-                      
-                      <span className='text-sm font-medium text-gray-600 hover:text-white'>All</span>
-                    </div> */}
                     <Link href='/ShopPage/Adhesives' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Adhesives</Link>
                     <Link href='/ShopPage/Cements' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Cements & POP</Link>
                     <Link href='/ShopPage/Cleaning' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Cleaning</Link>
@@ -231,7 +226,6 @@ export default function Sidebar({ open, onClose }) {
                     <Link href='/ShopPage/Electrical/Adaptors' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Electrical Items</Link>
                     <Link href='/ShopPage/Hardware' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>House Hold Ladder</Link>
                     <Link href='/ShopPage/Locks/FoldingBrackets/BlindCornerHinge' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Locks & accessories</Link>
-                    {/* <Link href='/ShopPage/Cleaning' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Mask & Sanitizers</Link> */}
                     <Link href='/ShopPage/Paint/AcrylicEmulsionPaint' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Paints</Link>
                     <Link href='/ShopPage/Pipe/AshirvadPipes' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Pipes & Fittings</Link>
                     <Link href='/ShopPage/Sanitary/AcrylicProducts' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>Sanitary Ware & faucets</Link>
@@ -240,41 +234,7 @@ export default function Sidebar({ open, onClose }) {
                     <Link href='/ShopPage/WaterProofing/Interiors' className='block px-4 py-1.5 hover:bg-yellow-300 text-sm text-gray-700 hover:text-white'>WaterProofing</Link>
                   </div>
                 </div>
-            {/* <div className={`absolute top-full left-0 mt-1 w-56 bg-white border border-gray-200 rounded-lg shadow-xl z-50 ${allOpen ? 'block' : 'hidden'}`}>
-              <div className="py-1">
-                {[
-                  "Adhesives",
-                  "Cements & POP",
-                  "Cleaning",
-                  "Dry Wall Gypsum Screws",
-                  "Electrical Items",
-                  "House Hold Ladder",
-                  "Locks & accessories",
-                  "Mask & Sanitizers",
-                  "Paints",
-                  "Pipes & Fittings",
-                  "Sanitary Ware & faucets",
-                  "Tools",
-                  "Uncategorized",
-                  "WaterProofing",
-                ].map((opt) => {
-                  const folder = getFolderName(opt);
-                  const href = folder ? `/ShopPage/${folder}` : "/";
-                  return (
-                    <Link
-                      key={opt}
-                      href={href}
-                      onClick={onClose}
-                      className="block px-4 py-2 hover:bg-blue-600"
-                    >
-                      <span className="text-sm text-gray-700 hover:text-white">
-                        {opt}
-                      </span>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div> */}
+            
           </div> 
           <div className="w-2"></div>
           {/* Search pill */}

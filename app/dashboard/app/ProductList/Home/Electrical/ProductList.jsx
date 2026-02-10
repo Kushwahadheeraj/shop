@@ -46,14 +46,11 @@ export default function ProductList() {
     setLoading(true);
     setError(null);
     try {
-      console.log('API URL:', API_URL + '/get');
       const res = await fetch(API_URL + '/get');
-      console.log('Response status:', res.status);
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
       const responseData = await res.json();
-      console.log('API Response:', responseData);
 
       let productsArray = [];
       if (responseData && responseData.success && Array.isArray(responseData.data)) {
@@ -66,7 +63,6 @@ export default function ProductList() {
 
       setProducts(productsArray);
     } catch (err) {
-      console.error('Error fetching products:', err);
       setError(err.message);
       setProducts([]);
     } finally {
@@ -82,7 +78,6 @@ export default function ProductList() {
   const handleDelete = async (id) => {
     try {
       const deleteUrl = `${API_URL}/delete/${id}`;
-      console.log('Delete URL:', deleteUrl);
       const res = await fetch(deleteUrl, { method: "DELETE" });
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
@@ -90,7 +85,6 @@ export default function ProductList() {
       alert('Product deleted successfully!');
       await fetchProducts(); // Refresh the list
     } catch (err) {
-      console.error('Error deleting product:', err);
       alert(`Error deleting product: ${err.message}`);
       setError(err.message);
     }

@@ -18,7 +18,6 @@ try {
     });
   }
 } catch (error) {
-  console.log('Cloudinary not configured, using local storage fallback');
 }
 
 // Configure multer for memory storage
@@ -386,8 +385,7 @@ const getAllSellers = async (req, res) => {
       }))
     });
   } catch (error) {
-    console.error('Error fetching sellers:', error);
-    res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -428,8 +426,7 @@ const controlSellerAccess = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error controlling seller access:', error);
-    res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -475,8 +472,7 @@ const updateSellerAccess = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error updating seller access:', error);
-    res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -520,8 +516,7 @@ const updateSellerRole = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error updating user role:', error);
-    res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -550,8 +545,7 @@ const getAllUsers = async (req, res) => {
       }))
     });
   } catch (error) {
-    console.error('Error fetching users:', error);
-    res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -582,8 +576,7 @@ const deleteUser = async (req, res) => {
       message: `User ${user.username || user.email} has been permanently deleted`
     });
   } catch (error) {
-    console.error('Error deleting user:', error);
-    res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ message: "Internal server error" });
   }
 };
 

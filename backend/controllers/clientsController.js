@@ -10,8 +10,7 @@ const createClient = async (req, res) => {
     await client.save();
     res.status(201).json({ success: true, data: { client } });
   } catch (error) {
-    console.error('Error creating client:', error);
-    res.status(500).json({ success: false, message: 'Error creating client' });
+        res.status(500).json({ success: false, message: 'Error creating client' });
   }
 };
 
@@ -35,8 +34,7 @@ const listClients = async (req, res) => {
     const clients = await Client.find(query).sort({ name: 1 });
     res.json({ success: true, data: { clients } });
   } catch (error) {
-    console.error('Error listing clients:', error);
-    res.status(500).json({ success: false, message: 'Error listing clients' });
+        res.status(500).json({ success: false, message: 'Error listing clients' });
   }
 };
 
@@ -51,8 +49,7 @@ const getClient = async (req, res) => {
     if (!client) return res.status(404).json({ success: false, message: 'Client not found' });
     res.json({ success: true, data: { client } });
   } catch (error) {
-    console.error('Error getting client:', error);
-    res.status(500).json({ success: false, message: 'Error getting client' });
+        res.status(500).json({ success: false, message: 'Error getting client' });
   }
 };
 
@@ -74,8 +71,7 @@ const updateClient = async (req, res) => {
     if (!client) return res.status(404).json({ success: false, message: 'Client not found' });
     res.json({ success: true, data: { client } });
   } catch (error) {
-    console.error('Error updating client:', error);
-    res.status(500).json({ success: false, message: 'Error updating client' });
+        res.status(500).json({ success: false, message: 'Error updating client' });
   }
 };
 
@@ -90,8 +86,7 @@ const deleteClient = async (req, res) => {
     if (!client) return res.status(404).json({ success: false, message: 'Client not found' });
     res.json({ success: true, message: 'Client deleted successfully' });
   } catch (error) {
-    console.error('Error deleting client:', error);
-    res.status(500).json({ success: false, message: 'Error deleting client' });
+        res.status(500).json({ success: false, message: 'Error deleting client' });
   }
 };
 

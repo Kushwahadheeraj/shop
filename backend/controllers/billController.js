@@ -38,9 +38,6 @@ const upload = multer({
 // Create a new bill
 const createBill = async (req, res) => {
   try {
-    console.log('🔍 Creating bill with sellerId:', req.sellerId);
-    console.log('🔍 Bill data received:', req.body);
-    
     const {
       shopId,
       items,
@@ -55,7 +52,6 @@ const createBill = async (req, res) => {
 
     // Validate required fields
     if (!shopId || !items || !pricing) {
-      console.log('❌ Missing required fields:', { shopId, items, pricing });
       return res.status(400).json({
         success: false,
         message: 'Shop ID, items, and pricing are required'
@@ -63,7 +59,6 @@ const createBill = async (req, res) => {
     }
 
     if (!req.sellerId) {
-      console.log('❌ No sellerId found in request');
       return res.status(401).json({
         success: false,
         message: 'Authentication required'
@@ -82,7 +77,6 @@ const createBill = async (req, res) => {
     // Generate unique bill number
     const billCount = await Bill.countDocuments();
     const billNumber = `BILL-${String(billCount + 1).padStart(6, '0')}`;
-    console.log('🔍 Generated bill number:', billNumber);
 
     // Calculate totals if not provided
     const calculatedPricing = {
@@ -136,8 +130,7 @@ const createBill = async (req, res) => {
       data: bill
     });
   } catch (error) {
-    console.error('Error creating bill:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error creating bill',
       error: error.message
@@ -204,8 +197,7 @@ const getBills = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error fetching bills:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error fetching bills',
       error: error.message
@@ -232,8 +224,7 @@ const getBillById = async (req, res) => {
       data: bill
     });
   } catch (error) {
-    console.error('Error fetching bill:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error fetching bill',
       error: error.message
@@ -308,8 +299,7 @@ const updateBill = async (req, res) => {
       data: bill
     });
   } catch (error) {
-    console.error('Error updating bill:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error updating bill',
       error: error.message
@@ -345,8 +335,7 @@ const deleteBill = async (req, res) => {
       message: 'Bill deleted successfully'
     });
   } catch (error) {
-    console.error('Error deleting bill:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error deleting bill',
       error: error.message
@@ -389,8 +378,7 @@ const uploadAttachment = async (req, res) => {
       data: attachment
     });
   } catch (error) {
-    console.error('Error uploading attachment:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error uploading attachment',
       error: error.message
@@ -403,9 +391,6 @@ const getBillStats = async (req, res) => {
   try {
     const { shopId, startDate, endDate } = req.query;
     
-    console.log('🔍 Stats request - shopId:', shopId, 'startDate:', startDate, 'endDate:', endDate);
-    console.log('🔍 Stats request - sellerId:', req.sellerId);
-    
     if (!req.sellerId) {
       return res.status(401).json({
         success: false,
@@ -416,9 +401,6 @@ const getBillStats = async (req, res) => {
     const filter = { createdBy: req.sellerId };
     if (shopId) {
       filter.shopId = shopId;
-      console.log('🔍 Filtering by shopId:', shopId);
-    } else {
-      console.log('🔍 No shopId provided - showing all shops');
     }
     if (startDate || endDate) {
       filter.billDate = {};
@@ -426,8 +408,6 @@ const getBillStats = async (req, res) => {
       if (endDate) filter.billDate.$lte = new Date(endDate);
     }
     
-    console.log('🔍 Final filter:', JSON.stringify(filter, null, 2));
-
     const stats = await Bill.aggregate([
       { $match: filter },
       {
@@ -477,11 +457,9 @@ const getBillStats = async (req, res) => {
       }
     };
 
-    console.log('🔍 Stats result:', JSON.stringify(result, null, 2));
     res.json(result);
   } catch (error) {
-    console.error('Error fetching bill stats:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error fetching bill statistics',
       error: error.message
@@ -494,9 +472,6 @@ const addPayment = async (req, res) => {
   try {
     const { amount, method, paymentDate, notes } = req.body;
     const billId = req.params.id;
-
-    console.log('🔍 Adding payment to bill:', billId);
-    console.log('🔍 Payment data:', { amount, method, paymentDate, notes });
 
     if (!req.sellerId) {
       return res.status(401).json({
@@ -577,8 +552,6 @@ const addPayment = async (req, res) => {
 
     await bill.save();
 
-    console.log('✅ Payment added successfully');
-
     res.json({
       success: true,
       message: 'Payment added successfully',
@@ -591,8 +564,7 @@ const addPayment = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error adding payment:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error adding payment',
       error: error.message

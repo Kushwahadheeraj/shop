@@ -3,9 +3,6 @@ const Shop = require('../models/Shop');
 // Create a new shop
 const createShop = async (req, res) => {
   try {
-    console.log('🔍 Creating shop with sellerId:', req.sellerId);
-    console.log('🔍 Shop data received:', req.body);
-    
     const {
       name,
       address,
@@ -18,7 +15,6 @@ const createShop = async (req, res) => {
 
     // Validate required fields
     if (!name || !address) {
-      console.log('❌ Missing required fields:', { name, address });
       return res.status(400).json({
         success: false,
         message: 'Shop name and address are required'
@@ -26,7 +22,6 @@ const createShop = async (req, res) => {
     }
 
     if (!req.sellerId) {
-      console.log('❌ No sellerId found in request');
       return res.status(401).json({
         success: false,
         message: 'Authentication required'
@@ -53,8 +48,7 @@ const createShop = async (req, res) => {
       data: shop
     });
   } catch (error) {
-    console.error('Error creating shop:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error creating shop',
       error: error.message
@@ -83,12 +77,6 @@ const getShops = async (req, res) => {
 
     let filter = {};
     
-    // Check if user is admin - RESTRICTION REMOVED per user request
-    // const seller = await Seller.findById(req.sellerId);
-    // if (!seller || seller.role !== 'admin') {
-    //   filter.createdBy = req.sellerId;
-    // }
-
     if (status) filter.status = status;
     if (city) filter['location.city'] = { $regex: city, $options: 'i' };
     if (state) filter['location.state'] = { $regex: state, $options: 'i' };
@@ -121,8 +109,7 @@ const getShops = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error fetching shops:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error fetching shops',
       error: error.message
@@ -147,8 +134,7 @@ const getShopById = async (req, res) => {
       data: shop
     });
   } catch (error) {
-    console.error('Error fetching shop:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error fetching shop',
       error: error.message
@@ -196,8 +182,7 @@ const updateShop = async (req, res) => {
       data: shop
     });
   } catch (error) {
-    console.error('Error updating shop:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error updating shop',
       error: error.message
@@ -234,8 +219,7 @@ const deleteShop = async (req, res) => {
       message: 'Shop deleted successfully'
     });
   } catch (error) {
-    console.error('Error deleting shop:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error deleting shop',
       error: error.message
@@ -282,8 +266,7 @@ const getShopStats = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error fetching shop stats:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error fetching shop statistics',
       error: error.message

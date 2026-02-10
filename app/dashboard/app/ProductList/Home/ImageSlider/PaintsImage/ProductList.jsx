@@ -24,19 +24,13 @@ export default function ProductList() {
     setLoading(true);
     setError(null);
     try {
-      console.log('API URL:', API_URL + '/get');
       const res = await fetch(API_URL + '/get');
-      console.log('Response status:', res.status);
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
       const data = await res.json();
-      console.log('Response data:', data);
-      console.log('Data type:', typeof data);
-      console.log('Data length:', Array.isArray(data) ? data.length : 'Not an array');
       setProducts(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error('Error fetching products:', err);
       setError(err.message);
       setProducts([]);
     } finally {
@@ -57,7 +51,6 @@ export default function ProductList() {
       await fetchProducts();
     } catch (err) {
       setError(err.message);
-      console.error('Error deleting product:', err);
     }
   };
 

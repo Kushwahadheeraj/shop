@@ -46,8 +46,7 @@ exports.createWoodPrimer = async (req, res) => {
     await product.save();
     res.status(201).json(product);
   } catch (err) {
-    console.error('Error creating WoodPrimer:', err);
-    res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message });
   }
 };
 
@@ -82,8 +81,7 @@ exports.updateWoodPrimer = async (req, res) => {
     if (!product) return res.status(404).json({ error: 'Not found' });
     res.json(product);
   } catch (err) {
-    console.error('Error updating WoodPrimer:', err);
-    res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message });
   }
 };
 exports.getAllWoodPrimer = async (req, res) => {

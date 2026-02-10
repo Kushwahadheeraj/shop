@@ -84,13 +84,8 @@ const SimpleBillManagementPage = () => {
       
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        // console.error('❌ Error fetching shops - Response:', response.status, errorData);
-        // console.error('❌ Error details:', {
-        //   message: errorData.message,
-        //   error: errorData.error,
-        //   errorName: errorData.errorName,
-        //   errorCode: errorData.errorCode
-        // });
+        // 
+        // 
         // Show user-friendly error
         if (errorData.message) {
           alert(`Error loading shops: ${errorData.message}`);
@@ -103,8 +98,8 @@ const SimpleBillManagementPage = () => {
       const list = toArray(data);
       setShops(Array.isArray(list) ? list : []);
     } catch (error) {
-      // console.error('❌ Error fetching shops:', error);
-      // console.error('❌ Error stack:', error.stack);
+      // 
+      // 
       alert(`Error loading shops: ${error.message || 'Unknown error'}`);
       setShops([]);
     } finally {
@@ -142,7 +137,7 @@ const SimpleBillManagementPage = () => {
       const list = toArray(data);
       setBills(Array.isArray(list) ? list : []);
     } catch (error) {
-      // console.error('❌ Error fetching bills:', error);
+      // 
     } finally {
       setLoading(false);
       fetchingBillsRef.current = false;
@@ -298,7 +293,7 @@ const SimpleBillManagementPage = () => {
         await fetchBills(); // Fetch all bills, filtering is done client-side
         await fetchStats();
       } catch (error) {
-        // console.error('❌ Error loading data:', error);
+        // 
         hasLoadedOnceRef.current = false; // Reset on error so it can retry
       }
     };
@@ -367,7 +362,7 @@ const SimpleBillManagementPage = () => {
         throw new Error(data.message || 'Failed to create bill');
       }
     } catch (error) {
-      // console.error('❌ Error saving bill:', error);
+      // 
       throw error;
     }
   };
@@ -388,13 +383,8 @@ const SimpleBillManagementPage = () => {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        // console.error('❌ Error creating shop - Response:', response.status, errorData);
-        // console.error('❌ Error details:', {
-        //   message: errorData.message,
-        //   error: errorData.error,
-        //   errorName: errorData.errorName,
-        //   errorCode: errorData.errorCode
-        // });
+        // 
+        // 
         
         if (response.status === 401) {
           localStorage.removeItem('token');
@@ -413,8 +403,8 @@ const SimpleBillManagementPage = () => {
         throw new Error(data.message || 'Failed to create shop');
       }
     } catch (error) {
-      // console.error('❌ Error saving shop:', error);
-      // console.error('❌ Error stack:', error.stack);
+      // 
+      // 
       throw error;
     }
   };
@@ -517,7 +507,7 @@ const SimpleBillManagementPage = () => {
         throw new Error(data.message || 'Failed to add payment');
       }
     } catch (error) {
-      // console.error('❌ Error adding payment:', error);
+      // 
       throw error;
     }
   };
@@ -578,7 +568,7 @@ const SimpleBillManagementPage = () => {
       setShowPaymentModal(false);
       
     } catch (error) {
-      // console.error('❌ Error processing combined bill payment:', error);
+      // 
       throw error;
     }
   };
@@ -613,7 +603,7 @@ const SimpleBillManagementPage = () => {
         throw new Error(data.message || 'Failed to update bill');
       }
     } catch (error) {
-      // console.error('❌ Error updating bill:', error);
+      // 
       throw error;
     }
   };
@@ -638,7 +628,7 @@ const SimpleBillManagementPage = () => {
         throw new Error(data.message);
       }
     } catch (error) {
-      // console.error('Error deleting bill:', error);
+      // 
     }
   };
 

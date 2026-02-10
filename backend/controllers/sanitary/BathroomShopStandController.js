@@ -102,8 +102,7 @@ exports.createBathroomShopStand = async (req, res) => {
     const savedProduct = await newProduct.save();
     res.status(201).json(savedProduct);
   } catch (err) {
-    console.error('Error creating BathroomShopStand product:', err);
-    if (err.name === 'ValidationError' || err.name === 'CastError') {
+        if (err.name === 'ValidationError' || err.name === 'CastError') {
       return res.status(400).json({ error: 'Validation Error', details: err.message });
     }
     res.status(500).json({ error: 'Server error', details: err.message });
@@ -115,8 +114,7 @@ exports.getAllBathroomShopStand = async (req, res) => {
     const products = await Sanitary.find({ category: 'BathroomShopStand' });
     res.status(200).json(products);
   } catch (err) {
-    console.error('Error fetching BathroomShopStand products:', err);
-    res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ error: 'Server error' });
   }
 };
 
@@ -128,8 +126,7 @@ exports.getBathroomShopStandById = async (req, res) => {
     }
     res.status(200).json(product);
   } catch (err) {
-    console.error('Error fetching BathroomShopStand product:', err);
-    res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ error: 'Server error' });
   }
 };
 
@@ -184,8 +181,7 @@ exports.updateBathroomShopStand = async (req, res) => {
     }
     res.status(200).json(updatedProduct);
   } catch (err) {
-    console.error('Error updating BathroomShopStand product:', err);
-    res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ error: 'Server error' });
   }
 };
 
@@ -197,7 +193,6 @@ exports.deleteBathroomShopStand = async (req, res) => {
     }
     res.status(200).json({ message: 'Product deleted successfully' });
   } catch (err) {
-    console.error('Error deleting BathroomShopStand product:', err);
-    res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ error: 'Server error' });
   }
 };

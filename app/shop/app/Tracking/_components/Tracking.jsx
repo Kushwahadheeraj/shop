@@ -78,7 +78,6 @@ export default function Tracking({ initialSection = 'orders' }) {
           loadUserOrders(parsedUser.id);
         }
       } catch (error) {
-        console.error('Error loading user data:', error);
       } finally {
         setLoading(false);
       }
@@ -98,11 +97,9 @@ export default function Tracking({ initialSection = 'orders' }) {
         const data = await response.json();
         setOrders(data.data || []);
       } else {
-        console.error('Failed to load orders');
         setOrders([]);
       }
     } catch (error) {
-      console.error('Error loading orders:', error);
       setOrders([]);
     } finally {
       setOrdersLoading(false);
@@ -130,7 +127,6 @@ export default function Tracking({ initialSection = 'orders' }) {
         setOrders([]);
       }
     } catch (error) {
-      console.error('Error tracking order:', error);
       alert('Failed to track order. Please try again.');
       setSelectedOrder(null);
       setOrders([]);
@@ -175,7 +171,6 @@ export default function Tracking({ initialSection = 'orders' }) {
         setAddresses(data.addresses || []);
       }
     } catch (error) {
-      console.error('Error loading addresses:', error);
     }
   };
 
@@ -220,7 +215,6 @@ export default function Tracking({ initialSection = 'orders' }) {
         alert(error.message || 'Failed to add address');
       }
     } catch (error) {
-      console.error('Error adding address:', error);
       alert('Failed to add address');
     }
   };
@@ -252,7 +246,6 @@ export default function Tracking({ initialSection = 'orders' }) {
         alert(error.message || 'Failed to delete address');
       }
     } catch (error) {
-      console.error('Error deleting address:', error);
       alert('Failed to delete address');
     }
   };
@@ -324,7 +317,6 @@ export default function Tracking({ initialSection = 'orders' }) {
         alert(error.message || 'Failed to update address');
       }
     } catch (error) {
-      console.error('Error updating address:', error);
       alert('Failed to update address');
     }
   };
@@ -390,7 +382,6 @@ export default function Tracking({ initialSection = 'orders' }) {
         alert(errorData.message || 'Failed to update profile');
       }
     } catch (error) {
-      console.error('Error updating profile:', error);
       alert('Failed to update profile. Please try again.');
     } finally {
       setUpdating(false);
@@ -440,7 +431,6 @@ export default function Tracking({ initialSection = 'orders' }) {
         alert(errorData.message || 'Failed to update password');
       }
     } catch (error) {
-      console.error('Error updating password:', error);
       alert('Failed to update password. Please try again.');
     } finally {
       setUpdating(false);
@@ -517,7 +507,6 @@ export default function Tracking({ initialSection = 'orders' }) {
         throw new Error('Failed to update profile');
       }
     } catch (error) {
-      console.error('Error uploading image:', error);
       alert('Failed to upload image. Please try again.');
     } finally {
       setUploading(false);

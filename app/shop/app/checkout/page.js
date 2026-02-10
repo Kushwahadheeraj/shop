@@ -71,7 +71,6 @@ export default function CheckoutPage() {
           setIsAuthenticated(false);
         }
       } catch (error) {
-        console.error('Error checking authentication:', error);
         setIsAuthenticated(false);
       } finally {
         setIsLoading(false);
@@ -136,7 +135,6 @@ export default function CheckoutPage() {
 
       setForm((f) => ({ ...f, ...savedForm }));
     } catch (err) {
-        console.error('Failed to load checkout data:', err);
     }
     };
 
@@ -271,7 +269,6 @@ export default function CheckoutPage() {
     });
     setShowAddForm(false);
     } catch (err) {
-      console.error('Failed to add address:', err);
       alert(err.message || 'Failed to add address');
     }
   };
@@ -309,7 +306,6 @@ export default function CheckoutPage() {
     setShowAddForm(false);
       setEditingAddressIndex(null);
     } catch (err) {
-      console.error('Failed to update address:', err);
       alert(err.message || 'Failed to update address');
     }
   };
@@ -340,7 +336,6 @@ export default function CheckoutPage() {
         setSelectedAddressIndex(null);
       }
     } catch (err) {
-      console.error('Failed to delete address:', err);
       alert(err.message || 'Failed to delete address');
     }
   };
@@ -379,14 +374,9 @@ export default function CheckoutPage() {
   // Quantity update functions
   const updateQuantity = (itemId, newQuantity) => {
     if (newQuantity < 1) return;
-    // This would typically update the cart context
-    // For now, we'll just log it
-    console.log(`Update quantity for item ${itemId} to ${newQuantity}`);
   };
 
   const removeItem = (itemId) => {
-    // This would typically remove from cart context
-    console.log(`Remove item ${itemId}`);
   };
 
   const changeAddress = () => {

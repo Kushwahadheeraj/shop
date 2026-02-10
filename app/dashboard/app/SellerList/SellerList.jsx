@@ -155,7 +155,6 @@ export default function SellerList() {
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Fetched sellers:', data.sellers);
         setSellers(data.sellers || []);
         setError("");
       } else {
@@ -163,7 +162,6 @@ export default function SellerList() {
         setError(errorData.message || "Failed to fetch sellers");
       }
     } catch (err) {
-      console.error('Error fetching sellers:', err);
       setError("Network error - please check your connection");
     } finally {
       setLoading(false);

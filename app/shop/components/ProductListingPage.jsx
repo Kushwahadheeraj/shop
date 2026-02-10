@@ -97,7 +97,6 @@ export default function ProductListingPage() {
 
         setData(list);
       } catch (err) {
-        console.error("Error fetching products:", err);
         setError("Failed to load products");
         if (mounted) setData([]);
       } finally {

@@ -1,5 +1,4 @@
 const WaterProofing = require('../../models/WaterProofingModels');
-// AUTO-REFRACTORED FOR CLOUDINARY IMAGE UPLOAD. DO NOT EDIT MANUALLY.
 
 const cloudinary = require('../../config/cloudinary');
 const streamifier = require('streamifier');

@@ -45,8 +45,7 @@ const getAllProducts = async (req, res) => {
       data: products
     });
   } catch (error) {
-    console.error('Error fetching products:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error fetching products',
       error: error.message
@@ -72,8 +71,7 @@ const getProductById = async (req, res) => {
       data: product
     });
   } catch (error) {
-    console.error('Error fetching product:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error fetching product',
       error: error.message
@@ -115,8 +113,7 @@ const createProduct = async (req, res) => {
       data: savedProduct
     });
   } catch (error) {
-    console.error('Error creating product:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error creating product',
       error: error.message
@@ -160,8 +157,7 @@ const updateProduct = async (req, res) => {
       data: updatedProduct
     });
   } catch (error) {
-    console.error('Error updating product:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error updating product',
       error: error.message
@@ -196,8 +192,7 @@ const deleteProduct = async (req, res) => {
       message: 'Product deleted successfully'
     });
   } catch (error) {
-    console.error('Error deleting product:', error);
-    res.status(500).json({
+        res.status(500).json({
       success: false,
       message: 'Error deleting product',
       error: error.message

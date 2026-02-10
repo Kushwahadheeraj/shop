@@ -115,10 +115,8 @@ export default function ProductDetailPage() {
             } else {
               // If unified endpoint fails (e.g. 404), maybe try legacy method as backup?
               // But strictly, the unified endpoint SHOULD find it if it exists.
-              console.warn('Product not found via unified API, status:', res.status);
             }
           } catch (err) {
-            console.error('Error fetching product from unified API:', err);
           }
         }
 
@@ -941,35 +939,7 @@ export default function ProductDetailPage() {
               ));
             })()}
 
-            {/* Same-category preview (first 5) inside Additional Information */}
-            {/* {Array.isArray(sameCategoryFive) && sameCategoryFive.length > 0 && (
-              <div className="mt-6">
-                <h3 className="text-base font-semibold mb-3">RELATED PRODUCTS</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                  {sameCategoryFive.map(r => (
-                    <div key={r.id} className="group bg-white rounded border p-3 flex flex-col hover:shadow-md transition">
-                      {r.discount > 0 && (
-                        <span className="absolute ml-2 mt-2 bg-black text-white text-[10px] font-bold px-2 py-1 rounded-full">-{r.discount}%</span>
-                      )}
-                      <Link href={`/product/${r.id}`} className="h-28 flex items-center justify-center overflow-hidden mb-2">
-                        <Image src={r.image} alt={r.name} width={200} height={200} className="object-contain h-full w-full transform transition-transform duration-300 group-hover:scale-105" />
-                      </Link>
-                      <div className="text-[11px] text-gray-500">{r.type}</div>
-                      <Link href={`/product/${r.id}`} className="text-xs font-medium line-clamp-2 mb-1">{r.name}</Link>
-                      <div className="mt-auto">
-                        {r.price != null && r.discount > 0 && (
-                          <span className="text-gray-400 line-through text-[11px] mr-2">₹{Number(r.price).toLocaleString('en-IN')}</span>
-                        )}
-                        <span className="font-semibold text-sm">₹{Number((r.discountPrice ?? r.price) || 0).toLocaleString('en-IN')}</span>
-                      </div>
-                      <div className="pt-2">
-                        <Link href={`/product/${r.id}`} className="block text-center text-[11px] bg-yellow-300 hover:bg-yellow-300 text-white font-semibold py-2 rounded">SELECT OPTIONS</Link>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )} */}
+
           </div>
         )}
       </div>

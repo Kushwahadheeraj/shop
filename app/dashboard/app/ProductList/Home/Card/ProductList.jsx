@@ -36,7 +36,7 @@ export default function ProductList() {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
       const responseData = await res.json();
-      console.log('API Response:', responseData); // Debug log
+       // Debug log
       
       // Handle the response format: {"success":true,"count":0,"data":[]}
       let cardsArray = [];
@@ -51,7 +51,6 @@ export default function ProductList() {
       setCards(cardsArray);
     } catch (err) {
       setError(err.message);
-      console.error('Error fetching cards:', err);
       setCards([]); // Set empty array on error
     } finally {
       setLoading(false);
@@ -71,7 +70,6 @@ export default function ProductList() {
       await fetchCards(); // Refresh the list
     } catch (err) {
       setError(err.message);
-      console.error('Error deleting card:', err);
     }
   };
 

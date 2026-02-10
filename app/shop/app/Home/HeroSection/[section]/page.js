@@ -23,7 +23,7 @@ export default function SectionPage() {
           setItems(json.data);
         }
       } catch (error) {
-        console.error("Error fetching items:", error);
+        // Error fetching items
       } finally {
         setLoading(false);
       }

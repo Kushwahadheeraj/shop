@@ -200,7 +200,6 @@ exports.requestPasswordReset = async (req, res) => {
       }
       
       if (user.phone) {
-        console.log(`[SMS] Attempting to send OTP ${code} to phone ${user.phone}`);
         // Fast2SMS Implementation Example
         if (process.env.FAST2SMS_API_KEY) {
            const axios = require('axios'); 
@@ -212,21 +211,16 @@ exports.requestPasswordReset = async (req, res) => {
              const url = `https://www.fast2sms.com/dev/bulkV2?authorization=${apiKey}&route=q&message=${encodeURIComponent(message)}&language=english&flash=0&numbers=${user.phone}`;
              
              await axios.get(url);
-             console.log('[SMS] Fast2SMS sent successfully');
            } catch (smsErr) {
-             console.error('[SMS] Fast2SMS failed:', smsErr.message);
              if (smsErr.response) {
-               console.error('[SMS] Response data:', smsErr.response.data);
+               // log if needed
              }
            }
-        } else {
-           console.log('[SMS] No FAST2SMS_API_KEY found in .env');
         }
       }
 
     } catch (mailErr) {
       // Mailing failure shouldn't leak code; still allow fallback display in dev
-      console.error('Notification error:', mailErr);
     }
 
     const sentTo = [];

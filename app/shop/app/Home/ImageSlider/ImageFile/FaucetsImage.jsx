@@ -56,24 +56,6 @@ const FaucetsImage = () => {
             className='w-full h-screen object-cover'
             loading='lazy'
           />
-          {/* <div className='absolute inset-0 lg:ml-36 lg:w-[422px] w-[220px] mx-auto flex flex-col justify-center items-center text-center lg:text-center lg:items-center text-white lg:p-4'>
-            <h2 className='lg:text-5xl text-4xl font-bold uppercase'>{slide.mainText}</h2>
-            {slide.descText && (
-              <p className='lg:mt-6 mt-2 lg:text-xs text-[10px]'>
-                {slide.descText}
-              </p>
-            )}
-            {slide.subText && (
-              <p className='lg:mt-6 mt-2 lg:text-4xl text-2xl lg:mb-6'>{slide.subText}</p>
-            )}
-            {slide.buttonText && (
-              <Link href={slide.link} passHref>
-                <button className={`${slide.cssClasses} w-36`}> 
-                  {slide.buttonText}
-                </button>
-              </Link>
-            )}
-          </div> */}
         </div>
       ))}
     </>

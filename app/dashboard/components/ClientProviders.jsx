@@ -25,7 +25,6 @@ export default function ClientProviders({ children }) {
     // If providers fail during build (e.g., React is null), just render children
     // This can happen during static generation of error pages
     if (process.env.NODE_ENV === 'development') {
-      console.warn('ClientProviders: Providers unavailable during build:', error.message);
     }
     return children;
   }

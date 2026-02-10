@@ -9,7 +9,6 @@ export default function SafeAuthProvider({ children }) {
     // If AuthProvider fails during build, just render children
     // This can happen when React is null during static generation
     if (process.env.NODE_ENV === 'development') {
-      console.warn('SafeAuthProvider: AuthProvider unavailable during build:', error.message);
     }
     return <>{children}</>;
   }

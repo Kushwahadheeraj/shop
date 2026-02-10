@@ -120,8 +120,7 @@ exports.createPTMTToti = async (req, res) => {
     const savedProduct = await newProduct.save();
     res.status(201).json(savedProduct);
   } catch (err) {
-    console.error('Error creating PTMTToti product:', err);
-    if (err.name === 'ValidationError' || err.name === 'CastError') {
+        if (err.name === 'ValidationError' || err.name === 'CastError') {
       return res.status(400).json({ error: 'Validation Error', details: err.message });
     }
     res.status(500).json({ error: 'Server error', details: err.message });
@@ -136,8 +135,7 @@ exports.getAllPTMTToti = async (req, res) => {
     const products = await Sanitary.find({ category: 'PTMTToti' });
     res.status(200).json(products);
   } catch (err) {
-    console.error('Error fetching PTMTToti products:', err);
-    res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ error: 'Server error' });
   }
 };
 
@@ -152,8 +150,7 @@ exports.getPTMTTotiById = async (req, res) => {
     }
     res.status(200).json(product);
   } catch (err) {
-    console.error('Error fetching PTMTToti product:', err);
-    res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ error: 'Server error' });
   }
 };
 
@@ -211,8 +208,7 @@ exports.updatePTMTToti = async (req, res) => {
     }
     res.status(200).json(updatedProduct);
   } catch (err) {
-    console.error('Error updating PTMTToti product:', err);
-    res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ error: 'Server error' });
   }
 };
 
@@ -227,7 +223,6 @@ exports.deletePTMTToti = async (req, res) => {
     }
     res.status(200).json({ message: 'Product deleted successfully' });
   } catch (err) {
-    console.error('Error deleting PTMTToti product:', err);
-    res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ error: 'Server error' });
   }
 };

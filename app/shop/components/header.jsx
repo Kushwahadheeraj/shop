@@ -4,7 +4,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Logo from '@/public/logo.png';
-// import BrandLogo from './BrandLogo';
 import Sidebar from './Sidebar';
 import { FiMenu } from 'react-icons/fi';
 import { IoClose } from 'react-icons/io5';
@@ -578,7 +577,6 @@ export default function Header() {
         category.description.toLowerCase().includes(searchQuery.toLowerCase())
       );
 
-      console.log('Category search results:', filteredCategories);
       setSearchResults(filteredCategories);
       setShowSearchResults(true);
     };
@@ -706,7 +704,6 @@ export default function Header() {
                 </form>
                 
                 {/* Search Results Dropdown */}
-                {console.log('Search debug:', { showSearchResults, resultsLength: searchResults.length, searchResults })}
                 {(showSearchResults || searchResults.length > 0) && searchResults.length > 0 && (
                   <div className='absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-xl z-[2000] max-h-80 overflow-y-auto'>
                     {searchResults.slice(0, 8).map((category, index) => (

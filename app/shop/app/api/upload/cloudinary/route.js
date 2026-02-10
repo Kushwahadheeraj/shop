@@ -45,7 +45,6 @@ export async function POST(req) {
       headers: { 'Content-Type': 'application/json' }
     });
   } catch (e) {
-    console.error('Upload error:', e);
     return new Response(JSON.stringify({ 
       success: false, 
       error: e?.message || 'proxy error' 

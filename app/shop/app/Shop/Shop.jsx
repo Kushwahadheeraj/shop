@@ -117,7 +117,6 @@ export default function Shop() {
         }
       } catch (err) {
         setError(err.message);
-        console.error('Error fetching products:', err);
       } finally {
         setLoading(false);
       }

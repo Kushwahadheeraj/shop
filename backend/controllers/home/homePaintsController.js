@@ -17,24 +17,17 @@ function uploadToCloudinary(buffer) {
 // Create a new home paint product
 exports.createHomePaint = async (req, res) => {
   try {
-    console.log('Create home paint request received');
-    console.log('Files received:', req.files ? req.files.length : 0);
-    console.log('Body received:', req.body);
-    
+                
     let imageUrls = [];
     
     // Handle multiple image uploads if provided
     if (req.files && req.files.length > 0) {
-      console.log('Processing', req.files.length, 'files');
-      for (const file of req.files) {
-        console.log('Uploading file:', file.originalname, file.size);
-        const imageUrl = await uploadToCloudinary(file.buffer);
+            for (const file of req.files) {
+                const imageUrl = await uploadToCloudinary(file.buffer);
         imageUrls.push(imageUrl);
-        console.log('Uploaded to:', imageUrl);
-      }
+              }
     } else {
-      console.log('No files received');
-    }
+          }
 
     // Parse tags and colors from request body
     let tags = [];

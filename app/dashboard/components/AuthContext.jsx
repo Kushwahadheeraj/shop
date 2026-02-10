@@ -156,7 +156,6 @@ export function AuthProvider({ children }) {
       }
     } catch (error) {
       if (error.name !== 'AbortError') {
-        console.error('Auth check failed:', error);
       }
       // On network error, keep token (will retry later if needed)
       // Don't clear user if we already have one (optimistic)
@@ -219,7 +218,6 @@ export function AuthProvider({ children }) {
         return { success: false, error: data.message || 'Login failed' };
       }
     } catch (error) {
-      console.error('Login error:', error);
       return { success: false, error: 'Network error' };
     }
   }, []);
@@ -335,19 +333,11 @@ export function AuthProvider({ children }) {
           
           // Log detailed error for debugging
           if (process.env.NODE_ENV === 'development') {
-            console.error('Profile update error:', {
-              status: response.status,
-              statusText: response.statusText,
-              errorData: errorData,
-              responseText: responseText,
-              formData: isFormData ? 'FormData (see network tab for details)' : profileData
-            });
           }
         } catch (e) {
           // If we can't read the response, use status info
           errorMessage = `Server error: ${response.status} ${response.statusText || 'Bad Request'}`;
           if (process.env.NODE_ENV === 'development') {
-            console.error('Error reading response:', e);
           }
         }
         
@@ -367,7 +357,6 @@ export function AuthProvider({ children }) {
         return { success: false, error: errorMessage };
       }
     } catch (error) {
-      console.error('Profile update error:', error);
       return { success: false, error: 'Network error' };
     }
   }, [user]);
@@ -396,7 +385,6 @@ export function AuthProvider({ children }) {
         return { success: false, error: errorData.message };
       }
     } catch (error) {
-      console.error('Password change error:', error);
       return { success: false, error: 'Network error' };
     }
   }, []);

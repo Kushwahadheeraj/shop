@@ -26,8 +26,7 @@ router.get('/get', async (req, res) => {
     const products = await PvcMatsModels.find({});
     res.json(products);
   } catch (error) {
-    console.error('Error fetching pvc mats products:', error);
-    res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -37,8 +36,7 @@ router.get('/', async (req, res) => {
     const products = await PvcMatsModels.find({});
     res.json(products);
   } catch (error) {
-    console.error('Error fetching pvc mats products:', error);
-    res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: 'Internal server error' });
   }
 });
 

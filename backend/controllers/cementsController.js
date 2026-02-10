@@ -3,7 +3,6 @@
 const cloudinary = require('../config/cloudinary');
 const streamifier = require('streamifier');
 const CementsModels = require('../models/CementsModels');
-const shouldLog = process.env.APP_DEBUG === 'true';
 /**
  * Uploads a buffer to Cloudinary and returns the secure URL.
  * @param {Buffer} buffer
@@ -60,11 +59,7 @@ function sanitizeWeights(weights) {
  */
 exports.createCements = async (req, res) => {
   try {
-    if (shouldLog) {
-      console.log('[Cements] Create request');
-      console.log('[Cements] Body:', req.body);
-      console.log('[Cements] Files:', req.files);
-    }
+    
 
     if (!req.files || req.files.length < 1) {
       return res.status(400).json({ error: 'At least 1 image is required.' });
@@ -73,12 +68,9 @@ exports.createCements = async (req, res) => {
       return res.status(400).json({ error: 'No more than 5 images allowed.' });
     }
 
-    if (shouldLog) console.log('[Cements] Uploading images to Cloudinary...');
     const photoUrls = await Promise.all(
       req.files.map(file => uploadToCloudinary(file.buffer))
     );
-    if (shouldLog) console.log('[Cements] Uploaded URLs:', photoUrls);
-
     let { weights, tags, ...rest } = req.body;
 
     // Coerce and sanitize weights
@@ -99,15 +91,11 @@ exports.createCements = async (req, res) => {
       category: rest.category || 'Cements'
     };
 
-    if (shouldLog) console.log('[Cements] Creating with data:', productData);
     const product = new CementsModels(productData);
     await product.save();
-    if (shouldLog) console.log('[Cements] Created:', product._id);
-
     res.status(201).json(product);
   } catch (err) {
-    console.error('Error in createCements:', err);
-    res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message });
   }
 };
 
@@ -116,11 +104,7 @@ exports.createCements = async (req, res) => {
  */
 exports.updateCements = async (req, res) => {
   try {
-    if (shouldLog) {
-      console.log('[Cements] Update id:', req.params.id);
-      console.log('[Cements] Body:', req.body);
-      console.log('[Cements] Files:', req.files);
-    }
+    
 
     let update = { ...req.body };
 
@@ -153,8 +137,7 @@ exports.updateCements = async (req, res) => {
 
     res.json(product);
   } catch (err) {
-    console.error('Error in updateCements:', err);
-    res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message });
   }
 };
 

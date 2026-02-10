@@ -18,7 +18,6 @@ export default function PromoBanner() {
         setLoading(false);
       })
       .catch((err) => {
-        console.error("Error fetching promo banner:", err);
         setLoading(false);
       });
   }, []);
@@ -37,14 +36,6 @@ export default function PromoBanner() {
            
            <h3 className="text-xl md:text-2xl font-medium mb-1 z-10">{title}</h3>
            <h2 className="text-3xl md:text-5xl font-bold mb-4 z-10 text-yellow-100">{data.subtitle}</h2>
-           
-           {/* <p className="text-sm md:text-base font-medium mb-6 bg-white/20 px-3 py-1 rounded-full z-10">
-             {data.highlightText}
-           </p>
-           
-           <Link href={data.buttonLink || "/"} className="bg-white text-amber-600 px-6 py-2 rounded-full font-bold hover:bg-gray-100 transition z-10 shadow-md">
-             {data.buttonText}
-           </Link> */}
         </div>
 
         {/* Right Section - 4 Cards */}

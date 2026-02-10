@@ -18,8 +18,7 @@ const createShop = async (req, res) => {
     const shop = await ShopManagementShop.create({ sellerId, name, phone, address });
     res.status(201).json({ success: true, data: shop });
   } catch (err) {
-    console.error('Error creating shop:', err);
-    res.status(500).json({ success: false, message: 'Error creating shop', error: err.message });
+        res.status(500).json({ success: false, message: 'Error creating shop', error: err.message });
   }
 };
 
@@ -31,8 +30,7 @@ const listShops = async (req, res) => {
     const shops = await ShopManagementShop.find({ sellerId }).sort({ createdAt: -1 });
     res.json({ success: true, data: shops });
   } catch (err) {
-    console.error('Error listing shops:', err);
-    res.status(500).json({ success: false, message: 'Error listing shops', error: err.message });
+        res.status(500).json({ success: false, message: 'Error listing shops', error: err.message });
   }
 };
 
@@ -51,8 +49,7 @@ const updateShop = async (req, res) => {
     if (!updated) return res.status(404).json({ success: false, message: 'Shop not found' });
     res.json({ success: true, data: updated });
   } catch (err) {
-    console.error('Error updating shop:', err);
-    res.status(500).json({ success: false, message: 'Error updating shop', error: err.message });
+        res.status(500).json({ success: false, message: 'Error updating shop', error: err.message });
   }
 };
 
@@ -66,8 +63,7 @@ const deleteShop = async (req, res) => {
     if (!deleted) return res.status(404).json({ success: false, message: 'Shop not found' });
     res.json({ success: true, message: 'Shop deleted' });
   } catch (err) {
-    console.error('Error deleting shop:', err);
-    res.status(500).json({ success: false, message: 'Error deleting shop', error: err.message });
+        res.status(500).json({ success: false, message: 'Error deleting shop', error: err.message });
   }
 };
 
@@ -99,8 +95,7 @@ const addFiles = async (req, res) => {
     await shop.save();
     res.json({ success: true, data: shop });
   } catch (err) {
-    console.error('Error adding files:', err);
-    res.status(500).json({ success: false, message: 'Error adding files', error: err.message });
+        res.status(500).json({ success: false, message: 'Error adding files', error: err.message });
   }
 };
 
@@ -134,8 +129,7 @@ const deleteFile = async (req, res) => {
 
     res.json({ success: true, data: shop });
   } catch (err) {
-    console.error('Error deleting file:', err);
-    res.status(500).json({ success: false, message: 'Error deleting file', error: err.message });
+        res.status(500).json({ success: false, message: 'Error deleting file', error: err.message });
   }
 };
 

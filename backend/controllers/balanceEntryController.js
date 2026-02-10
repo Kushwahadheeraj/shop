@@ -80,8 +80,7 @@ const getAllBalanceEntries = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error fetching balance entries:', error);
-    res.status(500).json({ success: false, message: 'Error fetching balance entries' });
+        res.status(500).json({ success: false, message: 'Error fetching balance entries' });
   }
 };
 
@@ -137,8 +136,7 @@ const createBalanceEntry = async (req, res) => {
       data: { entry }
     });
   } catch (error) {
-    console.error('Error creating balance entry:', error);
-    res.status(500).json({ success: false, message: 'Error creating balance entry' });
+        res.status(500).json({ success: false, message: 'Error creating balance entry' });
   }
 };
 
@@ -181,8 +179,7 @@ const updateBalanceEntry = async (req, res) => {
       data: { entry }
     });
   } catch (error) {
-    console.error('Error updating balance entry:', error);
-    res.status(500).json({ success: false, message: 'Error updating balance entry' });
+        res.status(500).json({ success: false, message: 'Error updating balance entry' });
   }
 };
 
@@ -212,8 +209,7 @@ const deleteBalanceEntry = async (req, res) => {
       message: 'Entry deleted successfully'
     });
   } catch (error) {
-    console.error('Error deleting balance entry:', error);
-    res.status(500).json({ success: false, message: 'Error deleting balance entry' });
+        res.status(500).json({ success: false, message: 'Error deleting balance entry' });
   }
 };
 
@@ -234,8 +230,7 @@ const deletePersonEntries = async (req, res) => {
       message: `Deleted ${result.deletedCount} entries for this person`
     });
   } catch (error) {
-    console.error('Error deleting person entries:', error);
-    res.status(500).json({ success: false, message: 'Error deleting person entries' });
+        res.status(500).json({ success: false, message: 'Error deleting person entries' });
   }
 };
 
@@ -265,8 +260,7 @@ const updatePersonStatus = async (sellerId, phone) => {
       );
     }
   } catch (error) {
-    console.error('Error updating person status:', error);
-  }
+      }
 };
 
 module.exports = {

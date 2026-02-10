@@ -129,8 +129,7 @@ router.get('/search', async (req, res) => {
 
     res.json({ products: limitedProducts });
   } catch (error) {
-    console.error('Search error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: 'Internal server error' });
   }
 });
 

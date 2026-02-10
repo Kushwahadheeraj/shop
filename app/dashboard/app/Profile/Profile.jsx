@@ -196,14 +196,6 @@ export default function ProfilePage() {
 
       // Debug log in development
       if (process.env.NODE_ENV === 'development') {
-        console.log('Sending profile update:', {
-          username: formData.username,
-          email: formData.email,
-          mobile: formData.mobile,
-          shopName: formData.shopName,
-          gstNumber: formData.gstNumber,
-          hasAvatar: !!fileInputRef.current?.files[0]
-        });
       }
 
       const result = await updateProfile(formDataToSend);
@@ -347,12 +339,6 @@ export default function ProfilePage() {
 
   // Debug information (only in development)
   if (process.env.NODE_ENV === 'development') {
-  console.log('Profile Debug Info:', {
-    user,
-    currentAvatar,
-    avatarPreview,
-    hasAvatar: !!user?.avatar
-  });
   }
 
   return (

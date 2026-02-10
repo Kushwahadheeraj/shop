@@ -58,8 +58,7 @@ router.get('/', async (req, res) => {
     const products = await PipeModels.find({});
     res.json(products);
   } catch (error) {
-    console.error('Error fetching pipe products:', error);
-    res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: 'Internal server error' });
   }
 });
 

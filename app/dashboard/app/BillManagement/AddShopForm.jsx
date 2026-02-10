@@ -99,8 +99,7 @@ const AddShopForm = ({ onClose, onSave }) => {
       await onSave(formData);
       onClose();
     } catch (error) {
-      console.error('Error saving shop:', error);
-      alert('Error saving shop. Please try again.');
+            alert('Error saving shop. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

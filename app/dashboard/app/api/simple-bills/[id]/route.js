@@ -25,8 +25,7 @@ export async function GET(request, { params }) {
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
-    console.error('Error fetching simple bill:', error);
-    return NextResponse.json(
+        return NextResponse.json(
       { success: false, message: 'Error fetching simple bill', error: error.message },
       { status: 500 }
     );
@@ -46,10 +45,7 @@ export async function PUT(request, { params }) {
       );
     }
 
-    console.log(`[PROXY PUT] Updating bill ${id}. Payload keys:`, Object.keys(body));
-    if (body.pricing) console.log('[PROXY PUT] Pricing:', body.pricing);
-    if (body.shopName) console.log('[PROXY PUT] ShopName:', body.shopName);
-    
+        if (body.pricing)     if (body.shopName)     
     const response = await fetch(`${API_BASE_URL}/simple-bills/${id}`, {
       method: 'PUT',
       headers: {
@@ -68,8 +64,7 @@ export async function PUT(request, { params }) {
     }
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
-    console.error('Error updating simple bill:', error);
-    return NextResponse.json(
+        return NextResponse.json(
       { success: false, message: 'Error updating simple bill', error: error.message },
       { status: 500 }
     );
@@ -99,8 +94,7 @@ export async function DELETE(request, { params }) {
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
-    console.error('Error deleting simple bill:', error);
-    return NextResponse.json(
+        return NextResponse.json(
       { success: false, message: 'Error deleting simple bill', error: error.message },
       { status: 500 }
     );
@@ -140,8 +134,7 @@ export async function POST(request, { params }) {
       { status: 400 }
     );
   } catch (error) {
-    console.error('Error processing payment:', error);
-    return NextResponse.json(
+        return NextResponse.json(
       { success: false, message: 'Error processing payment', error: error.message },
       { status: 500 }
     );

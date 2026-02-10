@@ -224,8 +224,7 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
       await onSave(processedData);
       onClose();
     } catch (error) {
-      console.error('Error saving bill:', error);
-      alert('Error saving bill. Please try again.');
+            alert('Error saving bill. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

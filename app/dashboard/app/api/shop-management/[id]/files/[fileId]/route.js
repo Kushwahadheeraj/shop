@@ -16,8 +16,7 @@ export async function DELETE(request, { params }) {
     const data = await resp.json();
     return NextResponse.json(data, { status: resp.status });
   } catch (err) {
-    console.error('Error deleting shop file:', err);
-    return NextResponse.json({ success: false, message: 'Error deleting file', error: err.message }, { status: 500 });
+        return NextResponse.json({ success: false, message: 'Error deleting file', error: err.message }, { status: 500 });
   }
 }
 

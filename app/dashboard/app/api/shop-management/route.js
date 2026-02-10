@@ -15,8 +15,7 @@ export async function GET(request) {
     const data = await resp.json();
     return NextResponse.json(data, { status: resp.status });
   } catch (err) {
-    console.error('Error fetching shops:', err);
-    return NextResponse.json({ success: false, message: 'Error fetching shops', error: err.message }, { status: 500 });
+        return NextResponse.json({ success: false, message: 'Error fetching shops', error: err.message }, { status: 500 });
   }
 }
 
@@ -34,8 +33,7 @@ export async function POST(request) {
     const data = await resp.json();
     return NextResponse.json(data, { status: resp.status });
   } catch (err) {
-    console.error('Error creating shop:', err);
-    return NextResponse.json({ success: false, message: 'Error creating shop', error: err.message }, { status: 500 });
+        return NextResponse.json({ success: false, message: 'Error creating shop', error: err.message }, { status: 500 });
   }
 }
 

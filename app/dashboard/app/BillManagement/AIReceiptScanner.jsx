@@ -46,26 +46,21 @@ const AIReceiptScanner = ({ onScanComplete, onClose }) => {
         body: JSON.stringify({ filename: file.name, mimeType: file.type, base64 })
       });
       
-      console.log('API Response status:', res.status);
-      let data;
+            let data;
       try { 
         data = await res.json(); 
-        console.log('API Response data:', data);
-      } catch (e) { 
+              } catch (e) { 
         // Fallback: try text so we at least see the body in console
         try {
           const txt = await res.text();
-          console.error('Failed to parse API response JSON. Raw text:', txt);
-          data = txt ? { message: txt } : null;
+                    data = txt ? { message: txt } : null;
         } catch (e2) {
-          console.error('Failed to parse API response:', e, e2);
-          data = null; 
+                    data = null; 
         }
       }
       if (!res.ok && (!data || !data.raw)) {
         const msg = data?.message || data?.error || `Scan API error (${res.status})`;
-        console.error('API Error:', { status: res.status, message: msg, data });
-
+        
         // New free-mode error hints
         if (data?.error === 'MISSING_IMAGE') {
           setError('Image data missing. कृपया दोबारा इमेज चुनें।');
@@ -203,8 +198,7 @@ const AIReceiptScanner = ({ onScanComplete, onClose }) => {
       }
       setScanResult(normalized);
     } catch (error) {
-      console.error('Error processing image:', error);
-      setError(error?.message || 'Failed to process the image. Please try again.');
+            setError(error?.message || 'Failed to process the image. Please try again.');
     } finally {
       setIsScanning(false);
     }

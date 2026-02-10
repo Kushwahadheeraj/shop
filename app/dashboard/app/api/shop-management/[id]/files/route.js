@@ -18,8 +18,7 @@ export async function POST(request, { params }) {
     const data = await resp.json();
     return NextResponse.json(data, { status: resp.status });
   } catch (err) {
-    console.error('Error uploading files:', err);
-    return NextResponse.json({ success: false, message: 'Error uploading files', error: err.message }, { status: 500 });
+        return NextResponse.json({ success: false, message: 'Error uploading files', error: err.message }, { status: 500 });
   }
 }
 

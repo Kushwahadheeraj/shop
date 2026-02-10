@@ -22,8 +22,7 @@ export async function GET(request, { params }) {
       data: shop
     });
   } catch (error) {
-    console.error('Error fetching shop:', error);
-    return NextResponse.json(
+        return NextResponse.json(
       { success: false, message: 'Error fetching shop', error: error.message },
       { status: 500 }
     );
@@ -72,8 +71,7 @@ export async function PUT(request, { params }) {
       data: shop
     });
   } catch (error) {
-    console.error('Error updating shop:', error);
-    return NextResponse.json(
+        return NextResponse.json(
       { success: false, message: 'Error updating shop', error: error.message },
       { status: 500 }
     );
@@ -110,8 +108,7 @@ export async function DELETE(request, { params }) {
       message: 'Shop deleted successfully'
     });
   } catch (error) {
-    console.error('Error deleting shop:', error);
-    return NextResponse.json(
+        return NextResponse.json(
       { success: false, message: 'Error deleting shop', error: error.message },
       { status: 500 }
     );

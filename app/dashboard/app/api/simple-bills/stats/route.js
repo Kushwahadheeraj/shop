@@ -24,8 +24,7 @@ export async function GET(request) {
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
-    console.error('Error fetching simple bill stats:', error);
-    return NextResponse.json(
+        return NextResponse.json(
       { success: false, message: 'Error fetching simple bill stats', error: error.message },
       { status: 500 }
     );

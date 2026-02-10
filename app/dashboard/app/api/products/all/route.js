@@ -22,8 +22,7 @@ export async function GET(request) {
       backendUrl.searchParams.set(key, value);
     });
 
-    console.log('Proxying products/all request to backend:', backendUrl.toString());
-
+    
     const response = await fetch(backendUrl.toString(), {
       headers: {
         'Content-Type': 'application/json'
@@ -34,8 +33,7 @@ export async function GET(request) {
     const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      console.error('Backend responded with error:', data);
-      return NextResponse.json(
+            return NextResponse.json(
         { error: data?.message || 'Failed to fetch products' },
         { status: response.status || 500 }
       );
@@ -43,8 +41,7 @@ export async function GET(request) {
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error fetching all products:', error);
-    return NextResponse.json(
+        return NextResponse.json(
       { error: 'Failed to fetch products' },
       { status: 500 }
     );

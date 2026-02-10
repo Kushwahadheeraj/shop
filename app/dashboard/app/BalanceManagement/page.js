@@ -50,8 +50,7 @@ const BalanceManagementPage = () => {
         }
       }
     } catch (error) {
-      console.error('Error fetching balance entries:', error);
-    } finally {
+          } finally {
       setLoading(false);
     }
   }, [searchTerm]);
@@ -94,8 +93,7 @@ const BalanceManagementPage = () => {
         alert(data.message || 'Error adding person');
       }
     } catch (error) {
-      console.error('Error adding person:', error);
-      alert('Error adding person');
+            alert('Error adding person');
     }
   };
 
@@ -129,8 +127,7 @@ const BalanceManagementPage = () => {
         fetchBalanceEntries();
       }
     } catch (error) {
-      console.error('Error adding credit:', error);
-      alert('Error adding credit entry');
+            alert('Error adding credit entry');
     }
   };
 
@@ -164,8 +161,7 @@ const BalanceManagementPage = () => {
         fetchBalanceEntries();
       }
     } catch (error) {
-      console.error('Error adding payment:', error);
-      alert('Error adding payment entry');
+            alert('Error adding payment entry');
     }
   };
 
@@ -183,8 +179,7 @@ const BalanceManagementPage = () => {
         fetchBalanceEntries();
       }
     } catch (error) {
-      console.error('Error deleting entry:', error);
-      alert('Error deleting entry');
+            alert('Error deleting entry');
     }
   };
 
@@ -202,8 +197,7 @@ const BalanceManagementPage = () => {
         fetchBalanceEntries();
       }
     } catch (error) {
-      console.error('Error deleting person:', error);
-      alert('Error deleting person entries');
+            alert('Error deleting person entries');
     }
   };
 

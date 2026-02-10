@@ -36,8 +36,7 @@ export async function GET(request) {
       }
     });
   } catch (error) {
-    console.error('Error fetching shop stats:', error);
-    
+        
     if (error.message.includes('Authentication') || error.message.includes('token')) {
       return NextResponse.json(
         { success: false, message: error.message },

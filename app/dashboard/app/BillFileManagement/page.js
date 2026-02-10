@@ -66,8 +66,7 @@ const BillFileManagementPage = () => {
       const list = toArray(data);
       setShops(Array.isArray(list) ? list : []);
     } catch (error) {
-      console.error('❌ Error fetching shops:', error);
-    } finally {
+          } finally {
       setShopsLoading(false);
       fetchingShopsRef.current = false;
     }
@@ -97,8 +96,7 @@ const BillFileManagementPage = () => {
         setBillFiles(data.data || []);
       }
     } catch (error) {
-      console.error('Error fetching bill files:', error);
-    } finally {
+          } finally {
       setFilesLoading(false);
     }
   }, [api, filterShop, filterStartDate, filterEndDate]);
@@ -204,8 +202,7 @@ const BillFileManagementPage = () => {
           progress[i] = 100;
           setUploadProgress({ ...progress });
         } catch (error) {
-          console.error(`Error uploading ${file.name}:`, error);
-          alert(`Failed to upload ${file.name}: ${error.message || 'Unknown error'}`);
+                    alert(`Failed to upload ${file.name}: ${error.message || 'Unknown error'}`);
           progress[i] = -1; // Error
           setUploadProgress({ ...progress });
         }
@@ -244,8 +241,7 @@ const BillFileManagementPage = () => {
       }
 
     } catch (error) {
-      console.error('Error uploading files:', error);
-      const errorMessage = error.message || 'Error uploading files. Please try again.';
+            const errorMessage = error.message || 'Error uploading files. Please try again.';
       alert(errorMessage);
     } finally {
       setUploading(false);
@@ -281,8 +277,7 @@ const BillFileManagementPage = () => {
         throw new Error(data.message || 'Failed to create shop');
       }
     } catch (error) {
-      console.error('Error saving shop:', error);
-      alert('Error saving shop: ' + error.message);
+            alert('Error saving shop: ' + error.message);
       throw error;
     }
   };
@@ -308,8 +303,7 @@ const BillFileManagementPage = () => {
         throw new Error(data.message || 'Failed to delete file');
       }
     } catch (error) {
-      console.error('Error deleting file:', error);
-      alert('Error deleting file: ' + error.message);
+            alert('Error deleting file: ' + error.message);
     }
   };
 

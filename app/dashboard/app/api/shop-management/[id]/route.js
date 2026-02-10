@@ -17,8 +17,7 @@ export async function PUT(request, { params }) {
     const data = await resp.json();
     return NextResponse.json(data, { status: resp.status });
   } catch (err) {
-    console.error('Error updating shop:', err);
-    return NextResponse.json({ success: false, message: 'Error updating shop', error: err.message }, { status: 500 });
+        return NextResponse.json({ success: false, message: 'Error updating shop', error: err.message }, { status: 500 });
   }
 }
 
@@ -34,8 +33,7 @@ export async function DELETE(request, { params }) {
     const data = await resp.json();
     return NextResponse.json(data, { status: resp.status });
   } catch (err) {
-    console.error('Error deleting shop:', err);
-    return NextResponse.json({ success: false, message: 'Error deleting shop', error: err.message }, { status: 500 });
+        return NextResponse.json({ success: false, message: 'Error deleting shop', error: err.message }, { status: 500 });
   }
 }
 

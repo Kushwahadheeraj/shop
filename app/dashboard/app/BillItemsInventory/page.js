@@ -61,23 +61,15 @@ const BillItemsInventoryPage = () => {
       });
       
       if (!response.ok) {
-        console.error('❌ Failed to fetch simple bills:', response.status, response.statusText);
-        setAllItems([]);
+                setAllItems([]);
         setUniqueCategories([]);
         return;
       }
       
       const data = await response.json().catch(() => ({}));
-      console.log('📦 Simple bills response:', { 
-        success: data.success, 
-        dataType: typeof data.data,
-        isArray: Array.isArray(data.data),
-        dataLength: Array.isArray(data.data) ? data.data.length : 'N/A'
-      });
-      
+            
       const bills = toArray(data);
-      console.log('📋 Parsed bills:', bills.length);
-      
+            
       // Extract all items from bills
       const items = [];
       bills.forEach((bill, billIndex) => {
@@ -98,14 +90,11 @@ const BillItemsInventoryPage = () => {
             });
           });
         } else {
-          console.warn(`⚠️ Bill ${billIndex} has no items array:`, bill);
-        }
+                  }
       });
       
-      console.log('✅ Extracted items from simple bills:', items.length);
-      if (items.length > 0) {
-        console.log('Sample item:', items[0]);
-      }
+            if (items.length > 0) {
+              }
       
       setAllItems(items);
       
@@ -114,8 +103,7 @@ const BillItemsInventoryPage = () => {
       setUniqueCategories(categories.sort());
       
     } catch (error) {
-      console.error('❌ Error fetching simple bills:', error);
-    } finally {
+          } finally {
       setLoading(false);
       fetchingBillsRef.current = false;
     }
@@ -146,23 +134,15 @@ const BillItemsInventoryPage = () => {
       });
       
       if (!response.ok) {
-        console.error('❌ Failed to fetch GST bills:', response.status, response.statusText);
-        setAllItems([]);
+                setAllItems([]);
         setUniqueCategories([]);
         return;
       }
       
       const data = await response.json().catch(() => ({}));
-      console.log('📦 GST bills response:', { 
-        success: data.success, 
-        dataType: typeof data.data,
-        isArray: Array.isArray(data.data),
-        dataLength: Array.isArray(data.data) ? data.data.length : 'N/A'
-      });
-      
+            
       const bills = toArray(data);
-      console.log('📋 Parsed GST bills:', bills.length);
-      
+            
       // Extract all items from bills (these are GST bills from BillManagement)
       const items = [];
       bills.forEach((bill, billIndex) => {
@@ -183,14 +163,11 @@ const BillItemsInventoryPage = () => {
             });
           });
         } else {
-          console.warn(`⚠️ GST Bill ${billIndex} has no items array:`, bill);
-        }
+                  }
       });
       
-      console.log('✅ Extracted items from GST bills:', items.length);
-      if (items.length > 0) {
-        console.log('Sample GST item:', items[0]);
-      }
+            if (items.length > 0) {
+              }
       
       setAllItems(items);
       
@@ -199,8 +176,7 @@ const BillItemsInventoryPage = () => {
       setUniqueCategories(categories.sort());
       
     } catch (error) {
-      console.error('❌ Error fetching GST bills:', error);
-    } finally {
+          } finally {
       setLoading(false);
       fetchingBillsRef.current = false;
     }

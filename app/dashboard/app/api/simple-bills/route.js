@@ -29,8 +29,7 @@ export async function GET(request) {
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
-    console.error('Error fetching simple bills:', error);
-    return NextResponse.json(
+        return NextResponse.json(
       { success: false, message: 'Error fetching simple bills', error: error.message },
       { status: 500 }
     );
@@ -49,9 +48,7 @@ export async function POST(request) {
       );
     }
     
-    console.log('Calling backend API:', `${API_BASE_URL}/simple-bills`);
-    console.log('Request body keys:', Object.keys(body));
-    
+            
     let response;
     try {
       response = await fetch(`${API_BASE_URL}/simple-bills`, {
@@ -63,8 +60,7 @@ export async function POST(request) {
         body: JSON.stringify(body),
       });
     } catch (fetchError) {
-      console.error('Backend fetch failed:', fetchError);
-      return NextResponse.json(
+            return NextResponse.json(
         { 
           success: false, 
           message: 'Failed to connect to backend server', 
@@ -78,17 +74,14 @@ export async function POST(request) {
     let data;
     try {
       const responseText = await response.text();
-      console.log('Backend response status:', response.status);
-      console.log('Backend response text length:', responseText.length);
-      
+                  
       if (responseText) {
         data = JSON.parse(responseText);
       } else {
         data = { success: false, message: 'Empty response from server' };
       }
     } catch (parseError) {
-      console.error('Failed to parse backend response:', parseError);
-      return NextResponse.json(
+            return NextResponse.json(
         { 
           success: false, 
           message: 'Invalid response from server', 
@@ -101,11 +94,7 @@ export async function POST(request) {
     
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
-    console.error('Error creating simple bill:', error);
-    console.error('Error name:', error?.name);
-    console.error('Error message:', error?.message);
-    console.error('Error stack:', error?.stack);
-    return NextResponse.json(
+                    return NextResponse.json(
       { 
         success: false, 
         message: 'Error creating simple bill', 

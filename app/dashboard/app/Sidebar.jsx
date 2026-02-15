@@ -2250,7 +2250,6 @@ export const sidebarSections = [
           },
         ],
       },
-      { name: 'Shop', path: '/ProductAdd/Shop' },
       {
         name: 'Tools',
         subItemsName: [
@@ -2914,12 +2913,8 @@ export const sidebarSections = [
             path: '/ProductList/Home/HeroProductCards',
           },
         ],
-      },
-        
-         
+      },         
       { name: 'Home Decor', path: '/ProductList/HomeDecor' },
-      // { name: 'House Hold Ladder', path: '/ProductList/HouseHold' },
-      // { name: 'Lighting', path: '/ProductList/Lighting' },
       {
         name: 'Locks & accessories',
         subItemsName: [
@@ -4731,7 +4726,6 @@ export const sidebarSections = [
           },
         ],
       },
-      {name: 'Shop', path: '/ProductList/Shop' },
       {
         name: 'Tools',
         subItemsName: [

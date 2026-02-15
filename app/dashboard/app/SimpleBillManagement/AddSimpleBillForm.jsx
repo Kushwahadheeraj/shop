@@ -3,6 +3,21 @@ import React, { useState, useEffect } from 'react';
 import { Camera, Plus, Trash2, X } from 'lucide-react';
 import AIReceiptScanner from '../BillManagement/AIReceiptScanner';
 
+const getShopLabel = (shop) => {
+  if (!shop) return 'Unnamed Shop';
+  const name = shop.name || shop.shopName || shop.title || 'Unnamed Shop';
+  const city =
+    (shop.location && shop.location.city) ||
+    shop.city ||
+    (() => {
+      const addr = shop.address || '';
+      if (!addr) return '';
+      const parts = addr.split(',').map(p => p.trim()).filter(Boolean);
+      return parts.length ? parts[parts.length - 1] : '';
+    })();
+  return city ? `${name} - ${city}` : name;
+};
+
 const AddSimpleBillForm = ({ onClose, onSave, shops = [] }) => {
   const [formData, setFormData] = useState({
     shopId: '',
@@ -256,7 +271,7 @@ const AddSimpleBillForm = ({ onClose, onSave, shops = [] }) => {
                 </option>
                 {(Array.isArray(shops) ? shops : []).map(shop => (
                   <option key={shop._id} value={shop._id}>
-                    {shop.name} - {shop.address}
+                    {getShopLabel(shop)}
                   </option>
                 ))}
               </select>

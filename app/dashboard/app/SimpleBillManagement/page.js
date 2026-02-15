@@ -12,6 +12,21 @@ import PaymentModal from './PaymentModal';
 import API_BASE_URL from '@/lib/apiConfig';
 import { useDebounce } from '@/lib/useDebounce';
 
+const getShopLabel = (shop) => {
+  if (!shop) return 'Unnamed Shop';
+  const name = shop.name || shop.shopName || shop.title || 'Unnamed Shop';
+  const city =
+    (shop.location && shop.location.city) ||
+    shop.city ||
+    (() => {
+      const addr = shop.address || '';
+      if (!addr) return '';
+      const parts = addr.split(',').map(p => p.trim()).filter(Boolean);
+      return parts.length ? parts[parts.length - 1] : '';
+    })();
+  return city ? `${name} - ${city}` : name;
+};
+
 const SimpleBillManagementPage = () => {
   // Backend helpers - memoize these to prevent recreation
   const join = useCallback((base, path) => `${base.replace(/\/$/, '')}${path}`, []);
@@ -808,7 +823,6 @@ const SimpleBillManagementPage = () => {
             >
               <option value="">
                 {shopsLoading ? 'Loading shops...' : (() => {
-                  // Automatically filter only 'simple' category shops
                   const filteredShops = shops.filter(shop => shop.category === 'simple' || !shop.category);
                   return `All Shops (${filteredShops.length})`;
                 })()}
@@ -817,7 +831,7 @@ const SimpleBillManagementPage = () => {
                 .filter(shop => shop.category === 'simple' || !shop.category)
                 .map(shop => (
                   <option key={shop._id} value={shop._id}>
-                    {shop.name} - {shop.address}
+                    {getShopLabel(shop)}
                   </option>
                 ))}
             </select>

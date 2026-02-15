@@ -25,7 +25,7 @@ export default function DashboardLayout({ children }) {
     logout('/login/seller');
   };
 
-  // Protect dashboard routes - only sellers can access (OPTIMIZED: Non-blocking)
+  // Protect dashboard routes - only sellers can access
   useEffect(() => {
     if (isAuthRoute) return;
     
@@ -46,33 +46,30 @@ export default function DashboardLayout({ children }) {
       return;
     }
     
-    // If we have token but still loading, wait a bit (max 1 second)
+    // If we have token but still loading, wait for auth check to finish
     if (loading) {
-      const timeout = setTimeout(() => {
-        // If still loading after 1s, proceed optimistically
-        if (!isAuthenticated() || !isSeller()) {
-          // Verify in background
-          if (!user || (user.role !== 'seller' && user.role !== 'admin')) {
-            router.replace('/login/seller');
-          }
-        }
-      }, 1000);
-      return () => clearTimeout(timeout);
+      return;
     }
     
-    // Verify authentication (non-blocking)
-    if (!isAuthenticated()) {
-      router.replace('/login/seller');
-    } else if (!isSeller()) {
+    // If token exists but user is not yet loaded, stay on current route
+    if (!user) {
+      return;
+    }
+
+    // Once user is known, block non-seller roles
+    if (!isSeller()) {
       router.replace('/');
     }
-  }, [loading, isAuthenticated, isSeller, router, isAuthRoute, user]);
+  }, [loading, isSeller, router, isAuthRoute, user]);
 
-  // INSTANT RENDER: Always show layout immediately, don't block on loading
-  // Authentication check happens in background, redirect if needed
-  if (!isAuthRoute && (!isAuthenticated() || !isSeller())) {
-    // Silent redirect - no loading screen
-    return null;
+  // Show dashboard layout only when user is loaded and is seller/admin
+  if (!isAuthRoute) {
+    if (loading) {
+      return null;
+    }
+    if (!user || !isSeller()) {
+      return null;
+    }
   }
 
   if (isAuthRoute) {

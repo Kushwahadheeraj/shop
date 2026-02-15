@@ -44,8 +44,7 @@ export async function PUT(request, { params }) {
         { status: 401 }
       );
     }
-
-        if (body.pricing)     if (body.shopName)     
+    
     const response = await fetch(`${API_BASE_URL}/simple-bills/${id}`, {
       method: 'PUT',
       headers: {

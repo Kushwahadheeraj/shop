@@ -2,6 +2,21 @@
 import React, { useState, useEffect } from 'react';
 import { X, Plus, Minus, Save, AlertCircle } from 'lucide-react';
 
+const getShopLabel = (shop) => {
+  if (!shop) return 'Unnamed Shop';
+  const name = shop.name || shop.shopName || shop.title || 'Unnamed Shop';
+  const city =
+    (shop.location && shop.location.city) ||
+    shop.city ||
+    (() => {
+      const addr = shop.address || shop.street || '';
+      if (!addr) return '';
+      const parts = addr.split(',').map(p => p.trim()).filter(Boolean);
+      return parts.length ? parts[parts.length - 1] : '';
+    })();
+  return city ? `${name} - ${city}` : name;
+};
+
 const EditSimpleBillForm = ({ bill, onClose, onSave, shops }) => {
   const [formData, setFormData] = useState({
     shopId: '',
@@ -286,11 +301,9 @@ const EditSimpleBillForm = ({ bill, onClose, onSave, shops }) => {
                 <option value="">Select a shop</option>
                 {(Array.isArray(shops) ? shops : []).map((shop) => {
                   const id = shop?._id || shop?.id || shop?.shopId || '';
-                  const label = shop?.name || shop?.shopName || shop?.title || 'Unnamed Shop';
-                  const addr = shop?.address || shop?.street || shop?.city || '';
                   return (
-                    <option key={id || label} value={id}>
-                      {label}{addr ? ` - ${addr}` : ''}
+                    <option key={id || getShopLabel(shop)} value={id}>
+                      {getShopLabel(shop)}
                     </option>
                   );
                 })}

@@ -1,9 +1,0 @@
-backend/uploads/
-uploads/
-*.log
-node_modules/
-/.next/
-/.vercel/
-/.cache/
-dist/
-build/

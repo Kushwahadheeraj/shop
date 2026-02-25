@@ -2,10 +2,9 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import Link from 'next/link';
 import API_BASE_URL from '@/lib/apiConfig';
 import { getApiEndpoint } from '@/lib/apiMapping';
-import ProductDetailModal from './ProductDetailModal';
+import ProductDetailModal, { resolveImageUrl } from './ProductDetailModal';
 import PersistentShopSidebar from '@/components/PersistentShopSidebar';
 import { useCart } from '@/components/CartContext';
 
@@ -77,18 +76,6 @@ function ShopBanner({ category, title }) {
   );
 }
 
-function toKebabCase(input) {
-  const withSpaces = String(input)
-    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
-    .replace(/[^a-zA-Z0-9]+/g, ' ')
-    .trim();
-  return withSpaces
-    .split(/\s+/)
-    .filter(Boolean)
-    .map((s) => s.toLowerCase())
-    .join('-');
-}
-
 function buildEndpointFromSegments(segments) {
   if (!segments || segments.length === 0) return null;
 
@@ -97,98 +84,6 @@ function buildEndpointFromSegments(segments) {
   if (!apiPath) return null;
 
   return `${API_BASE_URL}/${apiPath}`;
-}
-
-function resolveImageUrl(item) {
-  if (!item) return null;
-
-  const normalizeUrl = (raw) => {
-    if (!raw) return null;
-    let url = String(raw).trim().replace(/\\/g, '/');
-    if (!url) return null;
-    if (url.startsWith('data:')) return url;
-    if (url.startsWith('http://') || url.startsWith('https://')) return url;
-    if (url.startsWith('//')) return `https:${url}`;
-    const ORIGIN = API_BASE_URL.replace(/\/api\/?$/, '');
-    if (url.startsWith('/')) return `${ORIGIN}${url}`;
-    // If bare filename or folder+filename, assume stored under /uploads
-    if (!/^[a-zA-Z]+:\/\//.test(url) && !url.startsWith('uploads/') && !url.startsWith('public/')) {
-      return `${ORIGIN}/uploads/${url}`;
-    }
-    // Common case: "uploads/..."
-    return `${ORIGIN}/${url}`;
-  };
-
-  // 1) photos array (string or object with url)
-  // photos used everywhere in backend
-  let photos = item.photos || item.images || item.imageUrls;
-  // Sometimes stored as comma-separated string
-  if (typeof photos === 'string' && photos.includes(',')) {
-    photos = photos.split(',').map((s) => s.trim()).filter(Boolean);
-  }
-  if (Array.isArray(photos) && photos.length > 0) {
-    const first = photos[0];
-    if (typeof first === 'string') return normalizeUrl(first);
-    if (first && typeof first === 'object') {
-      const objCandidates = [
-        first.url,
-        first.secure_url,
-        first.src,
-        first.path,
-        first.Location,
-        first.location,
-        first.href
-      ].filter(Boolean);
-      if (objCandidates.length > 0) return normalizeUrl(objCandidates[0]);
-    }
-  }
-
-  // 2) photos as string
-  if (typeof photos === 'string') {
-    return normalizeUrl(photos);
-  }
-
-  // 3) other single-value fields
-  const imageFields = ['image', 'img', 'photo', 'thumbnail', 'imageUrl', 'image_url', 'cover', 'primaryImage'];
-  for (const field of imageFields) {
-    if (item[field]) {
-      const v = item[field];
-      if (typeof v === 'string') return normalizeUrl(v);
-      if (v && typeof v === 'object') {
-        const objCandidates = [v.url, v.secure_url, v.src, v.path, v.Location, v.location, v.href].filter(Boolean);
-        if (objCandidates.length > 0) return normalizeUrl(objCandidates[0]);
-      }
-    }
-  }
-
-  // 4) Deep scan: find first string that looks like an image URL anywhere in the object
-  try {
-    const isImageString = (s) => typeof s === 'string' && /(\.png|\.jpg|\.jpeg|\.webp|\.gif)(\?.*)?$/i.test(s.trim());
-    // Check shallow values
-    for (const key of Object.keys(item)) {
-      const val = item[key];
-      if (isImageString(val)) return normalizeUrl(val);
-      if (Array.isArray(val)) {
-        for (const v of val) {
-          if (isImageString(v)) return normalizeUrl(v);
-          if (v && typeof v === 'object') {
-            for (const k2 of Object.keys(v)) {
-              const vv = v[k2];
-              if (isImageString(vv)) return normalizeUrl(vv);
-            }
-          }
-        }
-      }
-      if (val && typeof val === 'object') {
-        for (const k2 of Object.keys(val)) {
-          const vv = val[k2];
-          if (isImageString(vv)) return normalizeUrl(vv);
-        }
-      }
-    }
-  } catch {}
-
-  return null;
 }
 
 export default function UniversalShopPage() {
@@ -387,54 +282,6 @@ export default function UniversalShopPage() {
 
   return (
     <>
-      {/* Header row */}
-      <div className="bg-white border-b lg:mt-32 mt-16 border-gray-200 py-3 mb-4">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="hidden md:flex items-center justify-between">
-            <nav className="flex items-center space-x-2 text-sm">
-              <Link href="/" className="text-gray-500 hover:text-gray-700">HOME</Link>
-              <span className="text-gray-400">/</span>
-              <span className="text-gray-900 font-semibold">{title}</span>
-            </nav>
-            <div className="flex items-center gap-6">
-              <button
-                onClick={() => router.push('/all-products')}
-                className="bg-yellow-300 hover:bg-yellow-300 text-white px-4 py-2 rounded-lg font-semibold transition-colors text-sm"
-              >
-                View All Products
-              </button>
-              <p className="text-gray-600 text-sm">
-                {products.length > 0 
-                  ? `Showing 1–${Math.min(products.length, 12)} of ${products.length} results` 
-                  : 'No products found'}
-              </p>
-              <select className="border border-gray-300 rounded-md px-3 py-2 text-sm">
-                <option>Default sorting</option>
-                <option>Sort by popularity</option>
-                <option>Sort by average rating</option>
-                <option>Sort by latest</option>
-                <option>Sort by price: low to high</option>
-                <option>Sort by price: high to low</option>
-              </select>
-            </div>
-          </div>
-          <div className="md:hidden">
-            <nav className="flex items-center justify-center space-x-2 text-xs">
-              <Link href="/" className="text-gray-500 hover:text-gray-700">HOME</Link>
-              <span className="text-gray-400">/</span>
-              <span className="text-gray-900 font-semibold">{title}</span>
-            </nav>
-            <button onClick={() => setMobileOpen(true)} className="mt-2 flex items-center justify-center gap-2 text-gray-600 text-xs w-full">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path d="M3 5h18M6 12h12M10 19h4" />
-              </svg>
-              <span>FILTER</span>
-            </button>
-
-          </div>
-        </div>
-      </div>
-
       {/* Mobile sorting centered */}
       <div className="md:hidden flex justify-center mb-3">
               <select className="border border-gray-300 rounded-md px-3 py-2 text-xs w-40 text-gray-700">
@@ -447,8 +294,34 @@ export default function UniversalShopPage() {
               </select>
             </div>
 
-      {/* Category Banner - compact on mobile */}
-      <ShopBanner category={currentCategory} title={displayTitle} />
+      <div className="flex items-center justify-between mb-4 bg-white p-6 rounded-t-xl border-b border-gray-100">
+         <div className="flex items-center gap-4">
+           <button
+             onClick={() => router.push('/all-products')}
+             className="bg-[#ffdb00] hover:bg-yellow-500 text-black px-4 py-2 rounded-lg font-bold transition-all duration-300 text-xs uppercase tracking-wider"
+           >
+             View All Products
+           </button>
+           <p className="text-gray-400 text-xs font-medium uppercase tracking-wide hidden sm:block">
+             {products.length > 0 
+               ? `Showing 1–${Math.min(products.length, 12)} of ${products.length} results` 
+               : 'No products found'}
+           </p>
+         </div>
+         <select className="border border-gray-200 rounded-lg px-4 py-2 text-xs font-bold text-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all cursor-pointer">
+           <option>Default sorting</option>
+           <option>Sort by popularity</option>
+           <option>Sort by average rating</option>
+           <option>Sort by latest</option>
+           <option>Sort by price: low to high</option>
+           <option>Sort by price: high to low</option>
+         </select>
+       </div>
+
+       <div className="px-6 pb-6">
+          {/* Category Banner - compact on mobile */}
+          <ShopBanner category={currentCategory} title={displayTitle} />
+        </div>
 
       {/* Main Content */}
             

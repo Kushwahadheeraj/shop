@@ -2,16 +2,89 @@
 
 import React from 'react';
 import { X } from 'lucide-react';
+import API_BASE_URL from '@/lib/apiConfig';
 
-function resolveImageUrl(item) {
-  const photos = item && item.photos;
+export function resolveImageUrl(item) {
+  if (!item) return null;
+
+  const normalizeUrl = (raw) => {
+    if (!raw) return null;
+    let url = String(raw).trim().replace(/\\/g, '/');
+    if (!url) return null;
+    if (url.startsWith('data:')) return url;
+    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+    if (url.startsWith('//')) return `https:${url}`;
+    const ORIGIN = API_BASE_URL.replace(/\/api\/?$/, '');
+    if (url.startsWith('/')) return `${ORIGIN}${url}`;
+    if (!/^[a-zA-Z]+:\/\//.test(url) && !url.startsWith('uploads/') && !url.startsWith('public/')) {
+      return `${ORIGIN}/uploads/${url}`;
+    }
+    return `${ORIGIN}/${url}`;
+  };
+
+  let photos = item.photos || item.images || item.imageUrls;
+  if (typeof photos === 'string' && photos.includes(',')) {
+    photos = photos.split(',').map((s) => s.trim()).filter(Boolean);
+  }
   if (Array.isArray(photos) && photos.length > 0) {
     const first = photos[0];
-    if (typeof first === 'string') return first;
-    if (first && typeof first === 'object' && first.url) return first.url;
+    if (typeof first === 'string') return normalizeUrl(first);
+    if (first && typeof first === 'object') {
+      const objCandidates = [
+        first.url,
+        first.secure_url,
+        first.src,
+        first.path,
+        first.Location,
+        first.location,
+        first.href
+      ].filter(Boolean);
+      if (objCandidates.length > 0) return normalizeUrl(objCandidates[0]);
+    }
   }
-  if (typeof photos === 'string') return photos;
-  return item?.image || item?.img || item?.photo || item?.thumbnail || null;
+
+  if (typeof photos === 'string') {
+    return normalizeUrl(photos);
+  }
+
+  const imageFields = ['image', 'img', 'photo', 'thumbnail', 'imageUrl', 'image_url', 'cover', 'primaryImage'];
+  for (const field of imageFields) {
+    if (item[field]) {
+      const v = item[field];
+      if (typeof v === 'string') return normalizeUrl(v);
+      if (v && typeof v === 'object') {
+        const objCandidates = [v.url, v.secure_url, v.src, v.path, v.Location, v.location, v.href].filter(Boolean);
+        if (objCandidates.length > 0) return normalizeUrl(objCandidates[0]);
+      }
+    }
+  }
+
+  try {
+    const isImageString = (s) => typeof s === 'string' && /(\.png|\.jpg|\.jpeg|\.webp|\.gif)(\?.*)?$/i.test(s.trim());
+    for (const key of Object.keys(item)) {
+      const val = item[key];
+      if (isImageString(val)) return normalizeUrl(val);
+      if (Array.isArray(val)) {
+        for (const v of val) {
+          if (isImageString(v)) return normalizeUrl(v);
+          if (v && typeof v === 'object') {
+            for (const k2 of Object.keys(v)) {
+              const vv = v[k2];
+              if (isImageString(vv)) return normalizeUrl(vv);
+            }
+          }
+        }
+      }
+      if (val && typeof val === 'object') {
+        for (const k2 of Object.keys(val)) {
+          const vv = val[k2];
+          if (isImageString(vv)) return normalizeUrl(vv);
+        }
+      }
+    }
+  } catch {}
+
+  return null;
 }
 
 export default function ProductDetailModal({ product, isOpen, onClose }) {

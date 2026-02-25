@@ -17,12 +17,8 @@ const browse = [
   "Fiber",
   "Fitting",
   "Hardware",
-  // "Home",
   "HomeDecor",
-  // "House Hold Ladder",
-  // "LED Luminaires",
   "Locks & accessories",
-  // "Mask & Sanitizers",
   "Paints",
   "Pipes & Fittings",
   "PVC Mats",
@@ -237,7 +233,7 @@ const sanitarySubcategories = [
   "Waste Pipe",
   "Sink Wash Basin Jali",
   "Kitchen Bathroom Jali",
-  "Bathroom Shop Stand",
+  "Bathroom Soap Stand",
   "Cistern",
   "Seat Cover",
   {
@@ -267,7 +263,7 @@ const sanitarySubcategories = [
       },
       {
         label: "Bathroom Faucets",
-        sub: ["Almond", "Arrow", "Bold", "Budget", "Concept", "Deluxe", "Eeco", "Expert", "Florence", "Glass Bowl Faucet", "Idea", "Jazz", "Ket", "Milano", "Nano", "Nexa", "Niagra", "Nice", "Omega", "Passion", "Royal", "Slimline", "Splash", "Square F", "Square S", "Super", "Tri"]
+        sub: ["Almond", "Arrow", "Bold", "Budget", "Concept", "Deluxe", "Ecco", "Expert", "Florence", "Glass Bowl Faucet", "Idea", "Jazz", "Keti", "Milano", "Nano", "Nexa", "Niagra", "Nice", "Omega", "Passion", "Royal", "Slimline", "Splash", "Square F", "Square S", "Super", "Tri"]
       },
       "Flushing Cistern",
       {
@@ -311,7 +307,7 @@ const sanitarySubcategories = [
         sub: ["Hand Showers", "Overhead Showers", "Rainfall Showers", "Shower Arms"]
       },
       "Tarim",
-      "Trand"
+      "Trend"
     ]
   },
   "Faucets",
@@ -325,7 +321,7 @@ const sanitarySubcategories = [
       "Cisterns",
       {
         label: "Faucets",
-        sub: ["Angular Stop Cock", "Bath Spout", "Bib Cock", "Chbm", "Concealed Stop Cock", "Csc Exp Kit", "Deusch Mixer", "Exposed Mixers", "Flush Cock", "Medical Series", "Mixer Faucet", "Pillar Cock", "Pillar Cock Tall", "Pillar Faucet", "Pressmatic", "Recessed", "Single Lever Divertor", "Sink Cock", "Sink Mixer", "Slbm Faucet", "Slbm Faucet Tall", "Wall Mixer"]
+        sub: ["Angular Stop Cock", "Bath Spout", "Bib Cock", "Chbm", "Concealed Stop Cock", "Csc Exp Kit", "Deutsch Mixer", "Exposed Mixers", "Flush Cock", "Medical Series", "Mixer Faucet", "Pillar Cock", "Pillar Cock Tall", "Pillar Faucet", "Pressmatic", "Recessed", "Single Lever Divertor", "Sink Cock", "Sink Mixer", "Slbm Faucet", "Slbm Faucet Tall", "Wall Mixer"]
       },
       {
         label: "Showers",
@@ -461,82 +457,8 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
   const pathname = usePathname();
   const [openItems, setOpenItems] = useState([]);
 
-  // Sync open state with active category on path change
-  useEffect(() => {
-    if (!pathname) return;
-    
-    const newOpenItems = [];
-    
-    // Find the active category based on current path
-    const activeCategory = browse.find(cat => isActive(cat));
-    
-    if (activeCategory) {
-      newOpenItems.push(activeCategory);
-      
-      // Check for active nested subcategories (groups)
-      const subcategories = getSubcategories(activeCategory);
-      if (subcategories) {
-        subcategories.forEach(sub => {
-          if (typeof sub === 'object' && sub.label && sub.sub) {
-             // Check if any child of this group is active
-             const isGroupActive = sub.sub.some(childName => 
-               isNestedSubcategoryActive(activeCategory, sub.label, typeof childName === 'object' ? childName.label : childName)
-             );
-             if (isGroupActive) {
-               newOpenItems.push(sub.label);
-             }
-          }
-        });
-      }
-    }
-    
-    setOpenItems(prev => {
-       const uniqueNew = Array.from(new Set(newOpenItems));
-       // Compare with current to avoid loops - primitive check since strings
-       if (prev.length === uniqueNew.length && prev.every(i => uniqueNew.includes(i))) return prev;
-       return uniqueNew;
-    });
-  }, [pathname]);
-
-  const handleOpenChange = (item, isOpen) => {
-    setOpenItems(prev => {
-      if (isOpen) {
-        // If opening a top-level category, close other top-level categories (Accordion)
-        if (browse.includes(item)) {
-             const others = prev.filter(p => !browse.includes(p)); 
-             return [...others, item];
-        }
-        return [...prev, item];
-      } else {
-        return prev.filter(c => c !== item);
-      }
-    });
-  };
-
-  const getSubcategories = (category) => {
-    switch (category) {
-      case "Electrical Items":
-        return electricalSubcategories;                 
-      case "Locks & accessories":
-        return locksSubcategories;
-      case "Paints":
-        return paintsSubcategories;
-      case "Pipes & Fittings":
-        return pipesSubcategories;
-      case "Roofer":
-        return rooferSubcategories;
-      case "Sanitary Ware & faucets":
-        return sanitarySubcategories;
-      case "Tools":
-        return toolsSubcategories;
-      case "WaterProofing":
-        return waterproofingSubcategories;
-      case "PVC Mats":
-        return pvcMatsSubcategories;
-      default:
-        return null;
-    }
-  }; 
+  // Helper to format path segments consistently
+  const formatPath = (str) => String(str).replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
 
   const categoryMap = {
     "Adhesives": "Adhesives",
@@ -548,12 +470,8 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
     "Fiber": "Fiber",
     "Fitting": "Fitting",
     "Hardware": "Hardware",
-    // "Home": "Home",
     "HomeDecor": "HomeDecor",
-    // "House Hold Ladder": "Hardware",
-    // "LED Luminaires": "Electrical",
     "Locks & accessories": "Locks",
-    // "Mask & Sanitizers": "Cleaning",
     "Paints": "Paint",
     "Pipes & Fittings": "Pipe",
     "Roofer": "Roofer",
@@ -564,213 +482,154 @@ export default function PersistentShopSidebar({ forceMobile = false }) {
     "WaterProofing": "WaterProofing"
   };
 
-  const isActive = (category) => {
-    const folderName = (categoryMap[category] || category || '').toLowerCase();
-    if (!pathname) return false;
-    const parts = pathname.split('/').filter(Boolean);
-    const shopIndex = parts.findIndex((p) => p.toLowerCase() === 'shoppage');
-    const topSegment = shopIndex !== -1 ? (parts[shopIndex + 1] || '').toLowerCase() : '';
-    return topSegment === folderName.toLowerCase();
+  const getSubcategories = (category) => {
+    const maps = {
+      "Electrical Items": electricalSubcategories,
+      "Locks & accessories": locksSubcategories,
+      "Paints": paintsSubcategories,
+      "Pipes & Fittings": pipesSubcategories,
+      "Roofer": rooferSubcategories,
+      "Sanitary Ware & faucets": sanitarySubcategories,
+      "Tools": toolsSubcategories,
+      "WaterProofing": waterproofingSubcategories,
+      "PVC Mats": pvcMatsSubcategories
+    };
+    return maps[category] || null;
   };
 
-  const isSubcategoryActive = (category, subcategory) => {
-    if (!subcategory) return false;
-    const folderName = categoryMap[category] || category;
-    const subPath = String(subcategory).replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
-    return pathname?.includes(`/ShopPage/${folderName}/${subPath}`);
-  };
- 
-  const isCategoryHeaderActive = (category) => {
-    const folderName = (categoryMap[category] || category || '').toLowerCase();
+  const checkActive = (pathSegments) => {
     if (!pathname) return false;
-    const parts = pathname.split('/').filter(Boolean);
-    const shopIndex = parts.findIndex((p) => p.toLowerCase() === 'shoppage');
-    if (shopIndex === -1) return false;
-    const seg1 = (parts[shopIndex + 1] || '').toLowerCase();
-    const seg2 = parts[shopIndex + 2];
-    return seg1 === folderName && !seg2;
-  };
- 
-  const isGroupHeaderActive = (category, groupLabel) => {
-    if (!groupLabel) return false;
-    const folderName = categoryMap[category] || category;
-    const groupPath = String(groupLabel).replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
-    if (!pathname) return false;
-    const parts = pathname.split('/').filter(Boolean);
-    const shopIndex = parts.findIndex((p) => p.toLowerCase() === 'shoppage');
-    if (shopIndex === -1) return false;
-    const seg1 = (parts[shopIndex + 1] || '').toLowerCase();
-    const seg2 = (parts[shopIndex + 2] || '').toLowerCase();
-    const seg3 = parts[shopIndex + 3];
-    return seg1 === (folderName || '').toLowerCase() && seg2 === (groupPath || '').toLowerCase() && !seg3;
+    const currentPath = pathname.toLowerCase();
+    const targetPath = `/ShopPage/${pathSegments.map(formatPath).join('/')}`.toLowerCase();
+    
+    // Exact match or starts with (for nested items)
+    return currentPath === targetPath || (currentPath.startsWith(targetPath + '/') && pathSegments.length > 0);
   };
 
-  const isNestedSubcategoryActive = (category, subcategory, nestedSubcategory) => {
-    if (!subcategory || !nestedSubcategory) return false;
-    const folderName = categoryMap[category] || category;
-    const subPath = String(subcategory).replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
-    const nestedPath = String(nestedSubcategory).replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
-    return pathname?.includes(`/ShopPage/${folderName}/${subPath}/${nestedPath}`);
+  const handleOpenChange = (item, isOpen) => {
+    setOpenItems(prev => isOpen ? [...prev, item] : prev.filter(c => c !== item));
   };
- 
-  const isTripleNestedActive = (category, subcategory, nestedSubcategory, thirdLevel) => {
-    if (!subcategory || !nestedSubcategory || !thirdLevel) return false;
-    const folderName = categoryMap[category] || category;
-    const subPath = String(subcategory).replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
-    const nestedPath = String(nestedSubcategory).replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
-    const thirdPath = String(thirdLevel).replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
-    return pathname?.includes(`/ShopPage/${folderName}/${subPath}/${nestedPath}/${thirdPath}`);
+
+  // Sync open state with active category on path change
+  useEffect(() => {
+    if (!pathname) return;
+    const newOpenItems = [];
+    
+    browse.forEach(cat => {
+      const folderName = categoryMap[cat] || cat;
+      if (pathname.toLowerCase().includes(`/shoppage/${formatPath(folderName).toLowerCase()}`)) {
+        newOpenItems.push(cat);
+        const subs = getSubcategories(cat);
+        if (subs) {
+          subs.forEach(sub => {
+            if (typeof sub === 'object' && pathname.toLowerCase().includes(`/${formatPath(sub.label).toLowerCase()}`)) {
+              newOpenItems.push(sub.label);
+            }
+          });
+        }
+      }
+    });
+    
+    setOpenItems(prev => {
+      const unique = Array.from(new Set(newOpenItems));
+      return (prev.length === unique.length && prev.every(i => unique.includes(i))) ? prev : unique;
+    });
+  }, [pathname]);
+
+  const NavItem = ({ label, href, subItems, level = 0, parentPath = [] }) => {
+    const currentPath = [...parentPath, label];
+    const isOpened = openItems.includes(label);
+    const isActive = checkActive(currentPath);
+    
+    const activeStyles = "text-black bg-yellow-400 font-bold";
+    const baseStyles = "flex items-center w-full justify-start py-2.5 px-6 transition-all duration-200 text-left group mb-1";
+    const hoverStyles = "hover:text-yellow-600";
+    const textStyles = level === 0 ? "text-[14px]" : "text-[13px]";
+
+    const content = (
+      <div className={`${baseStyles} ${textStyles} ${isActive ? activeStyles : 'text-gray-500'} ${hoverStyles}`}>
+        <span className="flex-1 truncate uppercase">{label}</span>
+        {subItems && (
+          <ChevronDown className={`w-3 h-3 ml-auto transition-transform duration-300 ${isOpened ? 'rotate-180' : ''}`} />
+        )}
+      </div>
+    );
+
+    if (!subItems || subItems.length === 0) {
+      return (
+        <Link href={href} className="block">
+          {content}
+        </Link>
+      );
+    }
+
+    return (
+      <Collapsible open={isOpened} onOpenChange={(open) => handleOpenChange(label, open)}>
+        <CollapsibleTrigger className="w-full">
+          {content}
+        </CollapsibleTrigger>
+        <CollapsibleContent className={`pl-4 border-l border-gray-200 ml-2 mt-1 mb-1`}>
+          {subItems.map((sub, i) => {
+            const subLabel = typeof sub === 'string' ? sub : sub.label;
+            const subFolderName = formatPath(subLabel);
+            const subHref = `${href}/${subFolderName}`;
+            return (
+              <NavItem 
+                key={i}
+                label={subLabel}
+                href={subHref}
+                subItems={sub.sub}
+                level={level + 1}
+                parentPath={currentPath}
+              />
+            );
+          })}
+        </CollapsibleContent>
+      </Collapsible>
+    );
   };
 
   return (
     <aside
-      className={forceMobile ? "fixed top-0 left-0 z-[4000] block md:hidden w-72 bg-white px-3 py-1 h-[100vh] overflow-y-auto overscroll-contain text-[12px] leading-tight" : "w-64 bg-white px-6 py-1 mt-36 sticky top-24 h-fit md:block hidden"}
+      className={forceMobile ? "fixed top-0 left-0 z-[4000] block md:hidden w-72 bg-white px-0 py-6 h-[100vh] overflow-y-auto overscroll-contain text-[12px] leading-tight" : "w-64 bg-white px-0 py-8 sticky top-[180px] h-fit md:block hidden rounded-xl shadow-sm border border-gray-100"}
       style={forceMobile ? { WebkitOverflowScrolling: 'touch' } : undefined}
     >
-      <div className={forceMobile ? "mb-4" : "mb-8"}>
-        <div className="text-gray-800 font-bold text-sm">FILTER BY PRICE</div>
-        <div className="h-0.5 w-8 bg-gray-300 mb-4" />
-        <Slider
-          min={0}
-          max={149570}
-          step={1}
-          value={price}
-          onValueChange={setPrice}
-          className="mb-4"
-        />
-        <div className="flex items-center gap-3">
+      <div className={forceMobile ? "mb-6 px-6" : "mb-10 px-8"}>
+        <div className="text-[#333] font-bold text-[12px] tracking-[0.1em] mb-2 uppercase">Filter by price</div>
+        <div className="h-[2px] w-8 bg-gray-200 mb-6" />
+        <Slider min={0} max={149570} step={1} value={price} onValueChange={setPrice} className="mb-6" />
+        <div className="flex flex-col gap-4">
           <button
-            className={`bg-gray-600 text-white font-semibold rounded-full tracking-widest hover:bg-gray-700 transition-colors ${forceMobile ? 'px-4 py-1.5 text-[10px]' : 'px-5 py-2 text-xs'}`}
+            className={`bg-[#333] text-white font-bold rounded-full tracking-[0.15em] hover:bg-yellow-400 hover:text-black transition-all duration-300 w-fit ${forceMobile ? 'px-6 py-2 text-[10px]' : 'px-8 py-2.5 text-[10px]'}`}
             onClick={() => {
               try {
                 const detail = { min: price[0], max: price[1] };
-                const evt = new CustomEvent('shop-price-filter', { detail });
-                window.dispatchEvent(evt);
+                window.dispatchEvent(new CustomEvent('shop-price-filter', { detail }));
               } catch {}
             }}
           >
             FILTER
           </button>
-          <span className="text-gray-600 text-sm">
+          <span className="text-gray-400 text-[12px] font-medium">
             Price: ₹{price[0].toLocaleString()} — ₹{price[1].toLocaleString()}
           </span>
         </div>
       </div>
       
       <div>
-        <div className="text-gray-800 font-bold text-sm">BROWSE</div>
-        <div className="h-0.5 w-8 bg-gray-300 mb-4" />
-        <div className="space-y-0 text-[16px]">
-          {browse.map((cat, index) => {
-            const subcategories = getSubcategories(cat);
+        <div className="text-[#333] font-bold text-[12px] tracking-[0.1em] mb-2 px-8 uppercase">Browse</div>
+        <div className="h-[2px] w-8 bg-gray-200 mb-6 mx-8" />
+        <div className="space-y-1">
+          {browse.map((cat) => {
             const folderName = categoryMap[cat] || cat;
-
             return (
-              <div key={cat}>
-                {subcategories ? (
-                  <Collapsible
-                    open={openItems.includes(cat)}
-                    onOpenChange={(isOpen) => handleOpenChange(cat, isOpen)}
-                  >
-                    <CollapsibleTrigger className={`flex items-center w-full justify-start py-3 text-[16px] px-2 transition-colors group text-left ${isCategoryHeaderActive(cat) ? 'text-white bg-yellow-300' : 'text-gray-600 hover:text-gray-900'}`}>
-                      <span className="flex-1 min-w-0 truncate pr-2 text-left">{cat}</span>
-                      <ChevronDown className="min-w-[12px] w-3 h-3 text-gray-700 group-hover:text-gray-800 transition-colors ml-auto flex-shrink-0" />
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="pl-6 border-l border-gray-300">
-                      {subcategories.map((sub) => {
-                        if (typeof sub === "string") {
-                          return (
-                            <Link
-                              key={sub}
-                              href={`/ShopPage/${folderName}/${sub.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '')}`}
-                              className={`block w-full py-1 text-[14px] transition-all duration-200 px-2 whitespace-nowrap overflow-hidden text-ellipsis text-left ${
-                                isSubcategoryActive(cat, sub)
-                                  ? 'text-white bg-yellow-300 font-semibold'
-                                  : 'text-gray-600 hover:text-white hover:bg-yellow-300 hover:underline'
-                              }`}
-                            >
-                              <span className="whitespace-nowrap overflow-hidden text-ellipsis block">{sub}</span>
-                            </Link>
-                          );
-                        } else if (sub && typeof sub === "object" && sub.label && sub.sub) {
-                          return (
-                            <Collapsible 
-                              key={sub.label}
-                              open={openItems.includes(sub.label)}
-                              onOpenChange={(isOpen) => handleOpenChange(sub.label, isOpen)}
-                            >
-                              <CollapsibleTrigger className={`flex items-center w-full justify-start py-1 text-[14px] transition-colors px-2 group text-left ${
-                                isGroupHeaderActive(cat, sub.label)
-                                  ? 'text-white bg-yellow-300'
-                                  : 'text-gray-600 hover:text-white hover:bg-yellow-300'
-                              }`}>
-                                <span className="flex-1 min-w-0 truncate pr-2 text-left">{sub.label}</span>
-                                <ChevronDown className="min-w-[12px] w-3 h-3 text-gray-700 group-hover:text-blue-700 transition-colors ml-auto flex-shrink-0" />
-                              </CollapsibleTrigger>
-                              <CollapsibleContent className="pl-6 border-l border-gray-300">
-                                {sub.sub.map((item) => {
-                                  if (typeof item === "string") {
-                                    return (
-                                      <Link
-                                        key={item}
-                                        href={`/ShopPage/${folderName}/${sub.label.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '')}/${item.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '')}`}
-                                        className={`block w-full py-1 text-[14px] transition-all duration-200 px-2 whitespace-nowrap overflow-hidden text-ellipsis text-left ${
-                                          isNestedSubcategoryActive(cat, sub.label, item)
-                                            ? 'text-white bg-yellow-300 font-semibold'
-                                            : 'text-gray-600 hover:text-white hover:bg-yellow-300 hover:underline'
-                                        }`}
-                                      >
-                                        <span className="whitespace-nowrap overflow-hidden text-ellipsis block">{item}</span>
-                                      </Link>
-                                    );
-                                  } else if (item && typeof item === "object" && item.label && item.sub) {
-                                    return (
-                                      <Collapsible key={item.label}>
-                                        <CollapsibleTrigger className={`flex items-center w-full justify-start py-1 text-[14px] transition-colors px-2 group text-left ${
-                                          isNestedSubcategoryActive(cat, sub.label, item.label)
-                                            ? 'text-white bg-yellow-300'
-                                            : 'text-gray-600 hover:text-white hover:bg-yellow-300'
-                                        }`}>
-                                          <span className="flex-1 min-w-0 truncate pr-2 text-left">{item.label}</span>
-                                          <ChevronDown className="min-w-[12px] w-3 h-3 text-gray-700 group-hover:text-blue-700 transition-colors ml-auto flex-shrink-0" />
-                                        </CollapsibleTrigger>
-                                        <CollapsibleContent className="pl-6 border-l border-gray-300">
-                                          {item.sub.map((subItem) => (
-                                            <Link
-                                              key={subItem}
-                                              href={`/ShopPage/${folderName}/${sub.label.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '')}/${item.label.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '')}/${subItem.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '')}`}
-                                              className={`block w-full py-1 text-[14px] transition-all duration-200 px-2 whitespace-nowrap overflow-hidden text-ellipsis text-left ${
-                                                isTripleNestedActive(cat, sub.label, item.label, subItem)
-                                                  ? 'text-white bg-yellow-300 font-semibold'
-                                                  : 'text-gray-500 hover:text-white hover:bg-yellow-300 hover:underline'
-                                              }`}
-                                            >
-                                              <span className="whitespace-nowrap overflow-hidden text-ellipsis block">{subItem}</span>
-                                            </Link>
-                                          ))}
-                                        </CollapsibleContent>
-                                      </Collapsible>
-                                    );
-                                  }
-                                  return null;
-                                })}
-                              </CollapsibleContent>
-                            </Collapsible>
-                          );
-                        }
-                        return null;
-                      })}
-                    </CollapsibleContent>
-                  </Collapsible>
-                ) : (
-                  <Link
-                    href={`/ShopPage/${folderName}`}
-                    className={`block py-3 text-[16px] transition-colors px-2 whitespace-nowrap overflow-hidden text-ellipsis text-left ${isActive(cat) ? 'text-white bg-yellow-300 font-semibold' : 'text-gray-600 hover:text-gray-900'}`}
-                  >
-                    <span className="whitespace-nowrap overflow-hidden text-ellipsis block text-left">{cat}</span>
-                  </Link>
-                )}
-              </div>
+              <NavItem 
+                key={cat}
+                label={cat}
+                href={`/ShopPage/${formatPath(folderName)}`}
+                subItems={getSubcategories(cat)}
+                parentPath={[]}
+              />
             );
           })}
         </div>

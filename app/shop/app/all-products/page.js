@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { resolveImageUrl } from '../../components/ProductDetailModal';
 
 export default function AllProductsPage() {
   const router = useRouter();
@@ -12,8 +13,7 @@ export default function AllProductsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('name');
   const [filterPrice, setFilterPrice] = useState({ min: '', max: '' });
-  const [currentPage, setCurrentPage] = useState(1);
-  const [productsPerPage] = useState(12);
+  const [visibleCount, setVisibleCount] = useState(12);
 
   useEffect(() => {
     fetchAllProducts();
@@ -33,24 +33,6 @@ export default function AllProductsPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const resolveImageUrl = (item) => {
-    if (!item) return null;
-    
-    const imageFields = ['photos', 'image', 'img', 'photo', 'thumbnail'];
-    
-    for (const field of imageFields) {
-      if (item[field]) {
-        if (Array.isArray(item[field]) && item[field].length > 0) {
-          return item[field][0];
-        } else if (typeof item[field] === 'string' && item[field].trim()) {
-          return item[field];
-        }
-      }
-    }
-    
-    return null;
   };
 
   const filteredProducts = products.filter(product => {
@@ -79,9 +61,7 @@ export default function AllProductsPage() {
     }
   });
 
-  const totalPages = Math.ceil(sortedProducts.length / productsPerPage);
-  const startIndex = (currentPage - 1) * productsPerPage;
-  const paginatedProducts = sortedProducts.slice(startIndex, startIndex + productsPerPage);
+  const paginatedProducts = sortedProducts.slice(0, visibleCount);
 
   const handleProductClick = (product) => {
     router.push(`/product/${product._id || product.id}`);
@@ -284,40 +264,15 @@ export default function AllProductsPage() {
               })}
             </div>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
+            {paginatedProducts.length < sortedProducts.length && (
               <div className="mt-8 flex justify-center">
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                    disabled={currentPage === 1}
-                    className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Previous
-                  </button>
-                  
-                  {[...Array(totalPages)].map((_, i) => (
-                    <button
-                      key={i + 1}
-                      onClick={() => setCurrentPage(i + 1)}
-                      className={`px-3 py-2 text-sm font-medium rounded-lg ${
-                        currentPage === i + 1
-                          ? 'bg-yellow-300 text-white'
-                          : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50'
-                      }`}
-                    >
-                      {i + 1}
-                    </button>
-                  ))}
-                  
-                  <button
-                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                    disabled={currentPage === totalPages}
-                    className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Next
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  className="px-6 py-2 rounded-full border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-100 transition-colors"
+                  onClick={() => setVisibleCount((prev) => prev + 12)}
+                >
+                  Load more products
+                </button>
               </div>
             )}
           </>

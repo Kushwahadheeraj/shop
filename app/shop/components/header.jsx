@@ -33,6 +33,12 @@ export default function Header() {
   const searchRef = useRef(null);
 
   useEffect(() => {
+    try {
+      router.prefetch('/Shop');
+    } catch {}
+  }, [router]);
+
+  useEffect(() => {
     const handleScroll = () => {
       if (window.innerWidth >= 768 && window.scrollY > 50) {
         setIsScrolled(true);

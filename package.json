@@ -14,7 +14,7 @@
     "build:shop": "npm install --workspace=shop && npm run build --workspace=shop",
     "build:dashboard": "npm install --workspace=dashboard && npm run build --workspace=dashboard",
     "build:backend": "cd backend && npm install",
-    "build:render": "npm install && npm run build:shop && npm run build:backend",
+    "build:render": "npm install --include=optional && npm run build:shop && npm run build:backend",
     "install:all": "npm install"
   },
   "devDependencies": {
@@ -28,6 +28,7 @@
     "@jridgewell/remapping": "^2.3.0"
   },
   "dependencies": {
-    "aws4": "^1.13.2"
+    "aws4": "^1.13.2",
+    "lightningcss": "^1.29.1"
   }
 }

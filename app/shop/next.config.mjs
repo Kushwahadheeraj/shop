@@ -1,8 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  swcMinify: true,
   reactStrictMode: true,
   compress: true,
+  output: 'standalone',
+  outputFileTracingRoot: '../../',
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
   },

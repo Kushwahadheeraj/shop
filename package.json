@@ -23,7 +23,9 @@
     "next": "^15.1.0",
     "tailwindcss": "^4.0.0",
     "lines-and-columns": "^2.0.4",
-    "@alloc/quick-lru": "^5.2.0"
+    "@alloc/quick-lru": "^5.2.0",
+    "@jridgewell/gen-mapping": "^0.3.8",
+    "@jridgewell/remapping": "^2.3.0"
   },
   "dependencies": {
     "aws4": "^1.13.2"

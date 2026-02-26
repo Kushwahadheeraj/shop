@@ -45,7 +45,11 @@
     "shop-monorepo": "file:../..",
     "tailwind-merge": "^3.3.0",
     "tailwindcss": "^4",
-    "tw-animate-css": "^1.3.2"
+    "tw-animate-css": "^1.3.2",
+    "lines-and-columns": "^2.0.4",
+    "@alloc/quick-lru": "^5.2.0",
+    "@jridgewell/gen-mapping": "^0.3.8",
+    "@jridgewell/remapping": "^2.3.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

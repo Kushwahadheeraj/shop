@@ -25,6 +25,7 @@ export const metadata = {
     shortcut: [{ url: '/logo1.png', sizes: 'any' }],
     apple: [{ url: '/logo1.png' }],
   },
+  themeColor: "#f59e0b",
 };
 
 export const runtime = "nodejs";
@@ -32,16 +33,6 @@ export const runtime = "nodejs";
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <head>
-        <link rel="icon" href="/logo1.png?v=20251226" type="image/png" sizes="32x32" />
-        <link rel="icon" href="/logo1.png?v=20251226" type="image/png" sizes="16x16" />
-        <link rel="icon" href="/shop/logo1.png?v=20251226" type="image/png" sizes="32x32" />
-        <link rel="icon" href="/shop/logo1.png?v=20251226" type="image/png" sizes="16x16" />
-        <link rel="apple-touch-icon" href="/logo1.png?v=20251226" />
-        <link rel="shortcut icon" href="/logo1.png?v=20251226" />
-        <link rel="manifest" href="/site.webmanifest" />
-        <meta name="theme-color" content="#f59e0b" />
-      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ClientAuthProvider>
           <ClientCartProvider>

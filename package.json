@@ -10,11 +10,11 @@
     "dev:shop": "npm run dev --workspace=shop",
     "dev:dashboard": "npm run dev --workspace=dashboard",
     "dev:backend": "npm start --workspace=backend",
-    "build": "npm run build:render",
+    "build": "npm run build:backend",
     "build:shop": "npm install --workspace=shop && npm run build --workspace=shop",
     "build:dashboard": "npm install --workspace=dashboard && npm run build --workspace=dashboard",
     "build:backend": "cd backend && npm install",
-    "build:render": "rm -rf node_modules package-lock.json app/shop/node_modules app/shop/package-lock.json && npm install --include=optional && npm run build:shop && npm run build:backend",
+    "build:render": "npm run build:backend",
     "install:all": "npm install"
   },
   "devDependencies": {

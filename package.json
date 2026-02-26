@@ -11,8 +11,8 @@
     "dev:dashboard": "npm run dev --workspace=dashboard",
     "dev:backend": "npm start --workspace=backend",
     "build": "npm run build:render",
-    "build:shop": "npm run build --workspace=shop",
-    "build:dashboard": "npm run build --workspace=dashboard",
+    "build:shop": "npm install --workspace=shop && npm run build --workspace=shop",
+    "build:dashboard": "npm install --workspace=dashboard && npm run build --workspace=dashboard",
     "build:backend": "cd backend && npm install",
     "build:render": "npm install && npm run build:shop && npm run build:backend",
     "install:all": "npm install"

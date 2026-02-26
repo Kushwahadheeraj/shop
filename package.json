@@ -10,6 +10,7 @@
     "dev:shop": "npm run dev --workspace=shop",
     "dev:dashboard": "npm run dev --workspace=dashboard",
     "dev:backend": "npm start --workspace=backend",
+    "build": "npm run build:render",
     "build:shop": "npm run build --workspace=shop",
     "build:dashboard": "npm run build --workspace=dashboard",
     "build:backend": "cd backend && npm install",

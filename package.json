@@ -14,7 +14,7 @@
     "build:shop": "npm install --workspace=shop && npm run build --workspace=shop",
     "build:dashboard": "npm install --workspace=dashboard && npm run build --workspace=dashboard",
     "build:backend": "cd backend && npm install",
-    "build:render": "npm install --include=optional && npm run build:shop && npm run build:backend",
+    "build:render": "rm -rf node_modules package-lock.json app/shop/node_modules app/shop/package-lock.json && npm install --include=optional && npm run build:shop && npm run build:backend",
     "install:all": "npm install"
   },
   "devDependencies": {
@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "aws4": "^1.13.2",
-    "lightningcss": "^1.29.1"
+    "lightningcss": "^1.29.1",
+    "@tailwindcss/oxide": "^4.0.0"
   }
 }

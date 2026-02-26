@@ -7,20 +7,22 @@
     "backend"
   ],
   "scripts": {
-    "dev:shop": "cd app/shop && npm run dev",
-    "dev:dashboard": "cd app/dashboard && npm run dev",
-    "dev:backend": "cd backend && npm start",
-    "build": "cd backend && npm install",
-    "start": "cd backend && npm start",
-    "build:render": "npm install && cd backend && npm install",
-    "start:backend": "cd backend && npm start",
-    "install:backend": "npm install && cd backend && npm install"
+    "dev:shop": "npm run dev --workspace=shop",
+    "dev:dashboard": "npm run dev --workspace=dashboard",
+    "dev:backend": "npm start --workspace=backend",
+    "build:shop": "npm run build --workspace=shop",
+    "build:dashboard": "npm run build --workspace=dashboard",
+    "build:backend": "cd backend && npm install",
+    "build:render": "npm install && npm run build:shop && npm run build:backend",
+    "install:all": "npm install"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
-    "cross-env": "^10.1.0",
-    "next": "^16.0.3",
-    "tailwindcss": "^4.1.18"
+    "cross-env": "^7.0.3",
+    "next": "^15.1.0",
+    "tailwindcss": "^4.0.0",
+    "lines-and-columns": "^2.0.4",
+    "@alloc/quick-lru": "^5.2.0"
   },
   "dependencies": {
     "aws4": "^1.13.2"

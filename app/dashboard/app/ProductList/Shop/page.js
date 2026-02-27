@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://shop-backend-qf50.onrender.com/api';
 
 export default function ProductList() {
   const router = useRouter();
@@ -180,7 +180,7 @@ export default function ProductList() {
                       src={(() => {
                         if (!product.image) return '/placeholder.png';
                         // Backend stores images as /uploads/products/...
-                        // API_BASE_URL is http://localhost:5000/api
+                        // API_BASE_URL is https://shop-backend-qf50.onrender.com/api
                         // Static files are served from root, not /api
                         const baseUrl = API_BASE_URL.replace('/api', '');
                         const imagePath = product.image.startsWith('/') ? product.image : `/${product.image}`;

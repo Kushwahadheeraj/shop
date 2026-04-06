@@ -5,7 +5,7 @@ import { Plus, Search, Trash2, MessageCircle, X, Edit, Calendar, DollarSign, Cre
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/AuthContext';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://shop-backend-qf50.onrender.com/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000/api';
 
 const BalanceManagementPage = () => {
   const router = useRouter();

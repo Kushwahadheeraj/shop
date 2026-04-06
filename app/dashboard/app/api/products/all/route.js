@@ -8,7 +8,7 @@ const apiBase =
   process.env.NEXT_PUBLIC_BACKEND_URL ||
   process.env.API_BASE_URL ||
   process.env.BACKEND_API_URL ||
-  'https://shop-backend-qf50.onrender.com/api';
+  'http://localhost:5000/api';
 
 const API_BASE_URL = apiBase.replace(/\/+$/, '');
 

@@ -400,7 +400,7 @@ const AddSimpleBillForm = ({ onClose, onSave, shops = [] }) => {
                   placeholder="0.00"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Adds {(parseFloat(formData.pricing.extraCharge || 0) / (formData.items.reduce((sum, item) => sum + (parseFloat(item.quantity) || 0), 0) || 1)).toFixed(2)} per unit
+                  Total extra charge added to bill
                 </p>
               </div>
               <div>

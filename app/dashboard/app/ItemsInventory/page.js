@@ -73,17 +73,22 @@ const BillItemsInventoryPage = () => {
       // Extract all items from bills
       const items = [];
       bills.forEach((bill, billIndex) => {
-        // Calculate extra charge per unit for this bill
-        const billTotalQty = Array.isArray(bill.items) 
-          ? bill.items.reduce((sum, i) => sum + (parseFloat(i.quantity || i.qty) || 0), 0)
-          : 0;
+        // Calculate extra charge based on item value for this bill
+        const billItems = Array.isArray(bill.items) ? bill.items : [];
+        const billTotalValue = billItems.reduce((sum, i) => {
+          const quantity = parseFloat(i.quantity || i.qty) || 0;
+          const unitPrice = parseFloat(i.unitPrice || i.price) || 0;
+          return sum + (quantity * unitPrice);
+        }, 0);
         const billExtraCharge = parseFloat(bill.pricing?.extraCharge) || 0;
-        const extraChargePerUnit = billTotalQty > 0 ? billExtraCharge / billTotalQty : 0;
+        const chargeRatio = billTotalValue > 0 ? billExtraCharge / billTotalValue : 0;
 
-        if (Array.isArray(bill.items)) {
-          bill.items.forEach((item, itemIndex) => {
+        billItems.forEach((item, itemIndex) => {
             const quantity = parseFloat(item.quantity || item.qty) || 0;
-            const itemExtraCharge = extraChargePerUnit * quantity;
+            const unitPrice = parseFloat(item.unitPrice || item.price) || 0;
+            const itemValue = quantity * unitPrice;
+            const itemExtraCharge = itemValue * chargeRatio;
+            const extraChargePerUnit = quantity > 0 ? itemExtraCharge / quantity : 0;
 
             items.push({
               ...item,
@@ -91,9 +96,8 @@ const BillItemsInventoryPage = () => {
               billDate: bill.billDate || bill.createdAt || bill.date,
               billType: 'simple',
               shopName: bill.shopName || bill.shop || 'N/A',
-              // For Simple Bill: unitPrice is per piece, totalPrice is quantity * unitPrice
-              unitPrice: item.unitPrice || item.price || 0,
-              totalPrice: item.totalPrice || item.total || (quantity * (item.unitPrice || item.price || 0)) || 0,
+              unitPrice: unitPrice,
+              totalPrice: (item.totalPrice || item.total || itemValue || 0) + itemExtraCharge,
               quantity: quantity,
               category: item.category || item.type || 'Uncategorized',
               name: item.name || item.itemName || item.productName || 'Unknown Item',
@@ -101,8 +105,6 @@ const BillItemsInventoryPage = () => {
               itemExtraCharge: itemExtraCharge
             });
           });
-        } else {
-                  }
       });
       
             if (items.length > 0) {
@@ -158,17 +160,22 @@ const BillItemsInventoryPage = () => {
       // Extract all items from bills (these are GST bills from BillManagement)
       const items = [];
       bills.forEach((bill, billIndex) => {
-        // Calculate extra charge per unit for this bill
-        const billTotalQty = Array.isArray(bill.items) 
-          ? bill.items.reduce((sum, i) => sum + (parseFloat(i.quantity || i.qty) || 0), 0)
-          : 0;
+        // Calculate extra charge based on item value for this bill
+        const billItems = Array.isArray(bill.items) ? bill.items : [];
+        const billTotalValue = billItems.reduce((sum, i) => {
+          const quantity = parseFloat(i.quantity || i.qty) || 0;
+          const unitPrice = parseFloat(i.unitPrice || i.price) || 0;
+          return sum + (quantity * unitPrice);
+        }, 0);
         const billExtraCharge = parseFloat(bill.pricing?.extraCharge) || 0;
-        const extraChargePerUnit = billTotalQty > 0 ? billExtraCharge / billTotalQty : 0;
+        const chargeRatio = billTotalValue > 0 ? billExtraCharge / billTotalValue : 0;
 
-        if (Array.isArray(bill.items)) {
-          bill.items.forEach((item, itemIndex) => {
+        billItems.forEach((item, itemIndex) => {
             const quantity = parseFloat(item.quantity || item.qty) || 0;
-            const itemExtraCharge = extraChargePerUnit * quantity;
+            const unitPrice = parseFloat(item.unitPrice || item.price) || 0;
+            const itemValue = quantity * unitPrice;
+            const itemExtraCharge = itemValue * chargeRatio;
+            const extraChargePerUnit = quantity > 0 ? itemExtraCharge / quantity : 0;
 
             items.push({
               ...item,
@@ -176,9 +183,8 @@ const BillItemsInventoryPage = () => {
               billDate: bill.billDate || bill.createdAt || bill.date,
               billType: 'gst',
               shopName: bill.shopName || bill.shop || 'N/A',
-              // For BillManagement bills: unitPrice is per piece, totalPrice is quantity * unitPrice
-              unitPrice: item.unitPrice || item.price || 0,
-              totalPrice: item.totalPrice || item.total || (quantity * (item.unitPrice || item.price || 0)) || 0,
+              unitPrice: unitPrice,
+              totalPrice: (item.totalPrice || item.total || itemValue || 0) + itemExtraCharge,
               quantity: quantity,
               category: item.category || item.type || 'Uncategorized',
               name: item.name || item.itemName || item.productName || 'Unknown Item',
@@ -186,8 +192,6 @@ const BillItemsInventoryPage = () => {
               itemExtraCharge: itemExtraCharge
             });
           });
-        } else {
-                  }
       });
       
             if (items.length > 0) {

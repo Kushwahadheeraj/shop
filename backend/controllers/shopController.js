@@ -56,12 +56,10 @@ const createShop = async (req, res) => {
   }
 };
 
-// Get all shops with filtering and pagination
+// Get all shops with filtering (no pagination)
 const getShops = async (req, res) => {
   try {
     const {
-      page = 1,
-      limit = 10,
       status,
       search,
       city,
@@ -91,22 +89,13 @@ const getShops = async (req, res) => {
     }
 
     const shops = await Shop.find(filter)
-      .sort({ name: 1 })
-      .limit(limit * 1)
-      .skip((page - 1) * limit);
+      .sort({ name: 1 });
 
     const total = await Shop.countDocuments(filter);
 
     res.json({
       success: true,
-      data: {
-        shops,
-        pagination: {
-          current: parseInt(page),
-          pages: Math.ceil(total / limit),
-          total
-        }
-      }
+      data: shops
     });
   } catch (error) {
         res.status(500).json({

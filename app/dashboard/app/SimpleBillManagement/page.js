@@ -822,20 +822,15 @@ const SimpleBillManagementPage = () => {
               disabled={shopsLoading}
             >
               <option value="">
-                {shopsLoading ? 'Loading shops...' : (() => {
-                  const filteredShops = shops.filter(shop => shop.category === 'simple' || !shop.category);
-                  return `All Shops (${filteredShops.length})`;
-                })()}
+                {shopsLoading ? 'Loading shops...' : `All Shops (${shops.length})`}
               </option>
-              {shops
-                .filter(shop => shop.category === 'simple' || !shop.category)
-                .map(shop => (
-                  <option key={shop._id} value={shop._id}>
-                    {getShopLabel(shop)}
-                  </option>
-                ))}
+              {shops.map(shop => (
+                <option key={shop._id} value={shop._id}>
+                  {getShopLabel(shop)}
+                </option>
+              ))}
             </select>
-            {shops.filter(shop => shop.category === 'simple' || !shop.category).length === 0 && !shopsLoading && (
+            {shops.length === 0 && !shopsLoading && (
               <p className="text-sm text-red-500 mt-1">No Simple Bill shops found. Add a shop first.</p>
             )}
           </div>
@@ -1064,7 +1059,7 @@ const SimpleBillManagementPage = () => {
         <AddSimpleBillForm
           onClose={() => setShowAddBillForm(false)}
           onSave={handleSaveBill}
-          shops={shops.filter(shop => shop.category === 'simple' || !shop.category)}
+          shops={shops}
         />
       )}
 
@@ -1097,7 +1092,7 @@ const SimpleBillManagementPage = () => {
             setSelectedBill(null);
           }}
           onSave={handleUpdateBill}
-          shops={shops.filter(shop => shop.category === 'simple' || !shop.category)}
+          shops={shops}
         />
       )}
 

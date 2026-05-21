@@ -61,7 +61,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Connect to DB
-connectDB();
+const PORT = process.env.PORT || 5000;
 
 // Stream files from GridFS with correct headers
 const gridfsBucket = () => new mongoose.mongo.GridFSBucket(mongoose.connection.db, { bucketName: 'uploads' });
@@ -137,5 +137,19 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Something went wrong!' });
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {}); 
+async function startServer() {
+  try {
+    await connectDB();
+
+    app.listen(PORT, () => {
+      console.log(`[SERVER] Backend running on http://localhost:${PORT}`);
+      console.log(`[SERVER] API base URL: http://localhost:${PORT}/api`);
+      console.log('[SERVER] Ready to accept requests');
+    });
+  } catch (error) {
+    console.error('[SERVER] Failed to start backend:', error.message);
+    process.exit(1);
+  }
+}
+
+startServer();

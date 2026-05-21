@@ -36,20 +36,25 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
 
   // Calculate totals whenever items or pricing changes
   useEffect(() => {
-    // 1. Calculate total quantity
-    const totalQuantity = formData.items.reduce((sum, item) => sum + (parseFloat(item.quantity) || 0), 0);
+    // 1. Calculate total value (unitPrice * quantity) for all items
+    const totalValue = formData.items.reduce((sum, item) => {
+      const quantity = parseFloat(item.quantity) || 0;
+      const unitPrice = parseFloat(item.unitPrice) || 0;
+      return sum + (quantity * unitPrice);
+    }, 0);
     
-    // 2. Calculate extra charge per unit
+    // 2. Calculate extra charge ratio
     const extraCharge = parseFloat(formData.pricing.extraCharge) || 0;
-    const chargePerUnit = totalQuantity > 0 ? extraCharge / totalQuantity : 0;
+    const chargeRatio = totalValue > 0 ? extraCharge / totalValue : 0;
 
-    // 3. Calculate subtotal with extra charge distributed
+    // 3. Calculate subtotal with extra charge distributed based on unit price
     const subtotal = formData.items.reduce((sum, item) => {
       const quantity = parseFloat(item.quantity) || 0;
       const unitPrice = parseFloat(item.unitPrice) || 0;
-      // Add charge per unit to item price for calculation
-      const adjustedPrice = unitPrice + chargePerUnit;
-      return sum + (quantity * adjustedPrice);
+      const itemTotal = quantity * unitPrice;
+      // Add charge proportional to item's value
+      const itemExtraCharge = itemTotal * chargeRatio;
+      return sum + itemTotal + itemExtraCharge;
     }, 0);
 
     const gstRate = parseFloat(formData.pricing.gstRate) || 0;
@@ -412,7 +417,7 @@ const AddBillForm = ({ onClose, onSave, shops = [] }) => {
                   placeholder="0.00"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Adds {(parseFloat(formData.pricing.extraCharge || 0) / (formData.items.reduce((sum, item) => sum + (parseFloat(item.quantity) || 0), 0) || 1)).toFixed(2)} per unit
+                  Extra charge distributed proportionally based on item value
                 </p>
               </div>
               <div>

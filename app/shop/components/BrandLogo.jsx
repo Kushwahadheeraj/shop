@@ -5,15 +5,15 @@ import Image from "next/image";
 
 export default function BrandLogo({ className = "", size = 64, showText = true, compact = false }) {
   const diamondSize = size;
-  const bgSize = size * 0.9; // Yellow diamond background size
-  
+  const bgSize = size * 0.9;
+
   return (
     <div className={`flex items-center gap-2 text-zinc-900 dark:text-white w-full ${className}`}>
       <div
         className="relative flex items-center justify-center flex-shrink-0"
         style={{ width: diamondSize, height: diamondSize }}
       >
-        {/* Amber/Yellow Diamond Background with gradient */}
+        {/* Yellow diamond background */}
         <div
           className="absolute rounded-lg"
           style={{
@@ -29,11 +29,12 @@ export default function BrandLogo({ className = "", size = 64, showText = true, 
             marginTop: `-${bgSize / 2}px`
           }}
         />
-        {/* Logo Image on top - centered inside diamond */}
+
+        {/* Logo Image */}
         <div
           className="relative z-10 flex items-center justify-center"
-          style={{ 
-            width: size * 1.4, 
+          style={{
+            width: size * 1.4,
             height: size * 1.4
           }}
         >
@@ -47,6 +48,7 @@ export default function BrandLogo({ className = "", size = 64, showText = true, 
           />
         </div>
       </div>
+
       {showText && (
         <div className="text-left leading-tight flex-1 min-w-0">
           <p className={`${compact ? 'text-lg' : 'text-2xl'} font-bold text-zinc-900 dark:text-white tracking-tight transition-all duration-300`}>Kushwaha</p>
